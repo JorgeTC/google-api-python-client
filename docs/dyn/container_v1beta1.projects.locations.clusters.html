@@ -324,7 +324,7 @@ Args:
       ],
     },
     &quot;binaryAuthorization&quot;: { # Configuration for Binary Authorization. # Configuration for Binary Authorization.
-      &quot;enabled&quot;: True or False, # Enable Binary Authorization for this cluster. If enabled, all container images will be validated by Google Binauthz.
+      &quot;enabled&quot;: True or False, # Enable Binary Authorization for this cluster. If enabled, all container images will be validated by Binary Authorization.
     },
     &quot;clusterIpv4Cidr&quot;: &quot;A String&quot;, # The IP address range of the container pods in this cluster, in [CIDR](http://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) notation (e.g. `10.96.0.0/14`). Leave blank to have one automatically chosen or specify a `/14` block in `10.0.0.0/8`.
     &quot;clusterTelemetry&quot;: { # Telemetry integration for the cluster. # Telemetry integration for the cluster.
@@ -486,7 +486,7 @@ Args:
       &quot;enabled&quot;: True or False, # Whether network policy is enabled on the cluster.
       &quot;provider&quot;: &quot;A String&quot;, # The selected network policy provider.
     },
-    &quot;nodeConfig&quot;: { # Parameters that describe the nodes in a cluster. # Parameters used in creating the cluster&#x27;s nodes. For requests, this field should only be used in lieu of a &quot;node_pool&quot; object, since this configuration (along with the &quot;initial_node_count&quot;) will be used to create a &quot;NodePool&quot; object with an auto-generated name. Do not use this and a node_pool at the same time. For responses, this field will be populated with the node configuration of the first node pool. (For configuration of each node pool, see `node_pool.config`) If unspecified, the defaults are used. This field is deprecated, use node_pool.config instead.
+    &quot;nodeConfig&quot;: { # Parameters that describe the nodes in a cluster. *Note:* GKE Autopilot clusters do not recognize parameters in `NodeConfig`. Use AutoprovisioningNodePoolDefaults instead. # Parameters used in creating the cluster&#x27;s nodes. For requests, this field should only be used in lieu of a &quot;node_pool&quot; object, since this configuration (along with the &quot;initial_node_count&quot;) will be used to create a &quot;NodePool&quot; object with an auto-generated name. Do not use this and a node_pool at the same time. For responses, this field will be populated with the node configuration of the first node pool. (For configuration of each node pool, see `node_pool.config`) If unspecified, the defaults are used. This field is deprecated, use node_pool.config instead.
       &quot;accelerators&quot;: [ # A list of hardware accelerators to be attached to each node. See https://cloud.google.com/compute/docs/gpus for more information about support for GPUs.
         { # AcceleratorConfig represents a Hardware Accelerator request.
           &quot;acceleratorCount&quot;: &quot;A String&quot;, # The number of the accelerator cards exposed to an instance.
@@ -498,6 +498,9 @@ Args:
         &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
       },
       &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
+      &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
+        &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+      },
       &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
       &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
       &quot;ephemeralStorageConfig&quot;: { # EphemeralStorageConfig contains configuration for the ephemeral storage filesystem. # Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
@@ -514,12 +517,13 @@ Args:
         &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
         &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
         &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+        &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
       },
       &quot;labels&quot;: { # The map of Kubernetes labels (key/value pairs) to be applied to each node. These will added in addition to any default label(s) that Kubernetes may apply to the node. In case of conflict in label keys, the applied set may differ depending on the Kubernetes version -- it&#x27;s best to assume the behavior is undefined and conflicts should be avoided. For more information, including usage and the valid values, see: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
-        &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
+        &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
           &quot;a_key&quot;: &quot;A String&quot;,
         },
       },
@@ -596,7 +600,7 @@ Args:
             &quot;message&quot;: &quot;A String&quot;, # Human-friendly representation of the condition
           },
         ],
-        &quot;config&quot;: { # Parameters that describe the nodes in a cluster. # The node configuration of the pool.
+        &quot;config&quot;: { # Parameters that describe the nodes in a cluster. *Note:* GKE Autopilot clusters do not recognize parameters in `NodeConfig`. Use AutoprovisioningNodePoolDefaults instead. # The node configuration of the pool.
           &quot;accelerators&quot;: [ # A list of hardware accelerators to be attached to each node. See https://cloud.google.com/compute/docs/gpus for more information about support for GPUs.
             { # AcceleratorConfig represents a Hardware Accelerator request.
               &quot;acceleratorCount&quot;: &quot;A String&quot;, # The number of the accelerator cards exposed to an instance.
@@ -608,6 +612,9 @@ Args:
             &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
           },
           &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
+          &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
+            &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+          },
           &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
           &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
           &quot;ephemeralStorageConfig&quot;: { # EphemeralStorageConfig contains configuration for the ephemeral storage filesystem. # Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
@@ -624,12 +631,13 @@ Args:
             &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
             &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
             &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+            &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
           },
           &quot;labels&quot;: { # The map of Kubernetes labels (key/value pairs) to be applied to each node. These will added in addition to any default label(s) that Kubernetes may apply to the node. In case of conflict in label keys, the applied set may differ depending on the Kubernetes version -- it&#x27;s best to assume the behavior is undefined and conflicts should be avoided. For more information, including usage and the valid values, see: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
             &quot;a_key&quot;: &quot;A String&quot;,
           },
           &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
-            &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
+            &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
               &quot;a_key&quot;: &quot;A String&quot;,
             },
           },
@@ -1028,7 +1036,7 @@ Returns:
     ],
   },
   &quot;binaryAuthorization&quot;: { # Configuration for Binary Authorization. # Configuration for Binary Authorization.
-    &quot;enabled&quot;: True or False, # Enable Binary Authorization for this cluster. If enabled, all container images will be validated by Google Binauthz.
+    &quot;enabled&quot;: True or False, # Enable Binary Authorization for this cluster. If enabled, all container images will be validated by Binary Authorization.
   },
   &quot;clusterIpv4Cidr&quot;: &quot;A String&quot;, # The IP address range of the container pods in this cluster, in [CIDR](http://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) notation (e.g. `10.96.0.0/14`). Leave blank to have one automatically chosen or specify a `/14` block in `10.0.0.0/8`.
   &quot;clusterTelemetry&quot;: { # Telemetry integration for the cluster. # Telemetry integration for the cluster.
@@ -1190,7 +1198,7 @@ Returns:
     &quot;enabled&quot;: True or False, # Whether network policy is enabled on the cluster.
     &quot;provider&quot;: &quot;A String&quot;, # The selected network policy provider.
   },
-  &quot;nodeConfig&quot;: { # Parameters that describe the nodes in a cluster. # Parameters used in creating the cluster&#x27;s nodes. For requests, this field should only be used in lieu of a &quot;node_pool&quot; object, since this configuration (along with the &quot;initial_node_count&quot;) will be used to create a &quot;NodePool&quot; object with an auto-generated name. Do not use this and a node_pool at the same time. For responses, this field will be populated with the node configuration of the first node pool. (For configuration of each node pool, see `node_pool.config`) If unspecified, the defaults are used. This field is deprecated, use node_pool.config instead.
+  &quot;nodeConfig&quot;: { # Parameters that describe the nodes in a cluster. *Note:* GKE Autopilot clusters do not recognize parameters in `NodeConfig`. Use AutoprovisioningNodePoolDefaults instead. # Parameters used in creating the cluster&#x27;s nodes. For requests, this field should only be used in lieu of a &quot;node_pool&quot; object, since this configuration (along with the &quot;initial_node_count&quot;) will be used to create a &quot;NodePool&quot; object with an auto-generated name. Do not use this and a node_pool at the same time. For responses, this field will be populated with the node configuration of the first node pool. (For configuration of each node pool, see `node_pool.config`) If unspecified, the defaults are used. This field is deprecated, use node_pool.config instead.
     &quot;accelerators&quot;: [ # A list of hardware accelerators to be attached to each node. See https://cloud.google.com/compute/docs/gpus for more information about support for GPUs.
       { # AcceleratorConfig represents a Hardware Accelerator request.
         &quot;acceleratorCount&quot;: &quot;A String&quot;, # The number of the accelerator cards exposed to an instance.
@@ -1202,6 +1210,9 @@ Returns:
       &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
     },
     &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
+    &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
+      &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+    },
     &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
     &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
     &quot;ephemeralStorageConfig&quot;: { # EphemeralStorageConfig contains configuration for the ephemeral storage filesystem. # Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
@@ -1218,12 +1229,13 @@ Returns:
       &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
       &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
       &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+      &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
     },
     &quot;labels&quot;: { # The map of Kubernetes labels (key/value pairs) to be applied to each node. These will added in addition to any default label(s) that Kubernetes may apply to the node. In case of conflict in label keys, the applied set may differ depending on the Kubernetes version -- it&#x27;s best to assume the behavior is undefined and conflicts should be avoided. For more information, including usage and the valid values, see: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
       &quot;a_key&quot;: &quot;A String&quot;,
     },
     &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
-      &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
+      &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
         &quot;a_key&quot;: &quot;A String&quot;,
       },
     },
@@ -1300,7 +1312,7 @@ Returns:
           &quot;message&quot;: &quot;A String&quot;, # Human-friendly representation of the condition
         },
       ],
-      &quot;config&quot;: { # Parameters that describe the nodes in a cluster. # The node configuration of the pool.
+      &quot;config&quot;: { # Parameters that describe the nodes in a cluster. *Note:* GKE Autopilot clusters do not recognize parameters in `NodeConfig`. Use AutoprovisioningNodePoolDefaults instead. # The node configuration of the pool.
         &quot;accelerators&quot;: [ # A list of hardware accelerators to be attached to each node. See https://cloud.google.com/compute/docs/gpus for more information about support for GPUs.
           { # AcceleratorConfig represents a Hardware Accelerator request.
             &quot;acceleratorCount&quot;: &quot;A String&quot;, # The number of the accelerator cards exposed to an instance.
@@ -1312,6 +1324,9 @@ Returns:
           &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
         },
         &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
+        &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
+          &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+        },
         &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
         &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
         &quot;ephemeralStorageConfig&quot;: { # EphemeralStorageConfig contains configuration for the ephemeral storage filesystem. # Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
@@ -1328,12 +1343,13 @@ Returns:
           &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
           &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
           &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+          &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
         },
         &quot;labels&quot;: { # The map of Kubernetes labels (key/value pairs) to be applied to each node. These will added in addition to any default label(s) that Kubernetes may apply to the node. In case of conflict in label keys, the applied set may differ depending on the Kubernetes version -- it&#x27;s best to assume the behavior is undefined and conflicts should be avoided. For more information, including usage and the valid values, see: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
-          &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
+          &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
             &quot;a_key&quot;: &quot;A String&quot;,
           },
         },
@@ -1635,7 +1651,7 @@ Returns:
         ],
       },
       &quot;binaryAuthorization&quot;: { # Configuration for Binary Authorization. # Configuration for Binary Authorization.
-        &quot;enabled&quot;: True or False, # Enable Binary Authorization for this cluster. If enabled, all container images will be validated by Google Binauthz.
+        &quot;enabled&quot;: True or False, # Enable Binary Authorization for this cluster. If enabled, all container images will be validated by Binary Authorization.
       },
       &quot;clusterIpv4Cidr&quot;: &quot;A String&quot;, # The IP address range of the container pods in this cluster, in [CIDR](http://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing) notation (e.g. `10.96.0.0/14`). Leave blank to have one automatically chosen or specify a `/14` block in `10.0.0.0/8`.
       &quot;clusterTelemetry&quot;: { # Telemetry integration for the cluster. # Telemetry integration for the cluster.
@@ -1797,7 +1813,7 @@ Returns:
         &quot;enabled&quot;: True or False, # Whether network policy is enabled on the cluster.
         &quot;provider&quot;: &quot;A String&quot;, # The selected network policy provider.
       },
-      &quot;nodeConfig&quot;: { # Parameters that describe the nodes in a cluster. # Parameters used in creating the cluster&#x27;s nodes. For requests, this field should only be used in lieu of a &quot;node_pool&quot; object, since this configuration (along with the &quot;initial_node_count&quot;) will be used to create a &quot;NodePool&quot; object with an auto-generated name. Do not use this and a node_pool at the same time. For responses, this field will be populated with the node configuration of the first node pool. (For configuration of each node pool, see `node_pool.config`) If unspecified, the defaults are used. This field is deprecated, use node_pool.config instead.
+      &quot;nodeConfig&quot;: { # Parameters that describe the nodes in a cluster. *Note:* GKE Autopilot clusters do not recognize parameters in `NodeConfig`. Use AutoprovisioningNodePoolDefaults instead. # Parameters used in creating the cluster&#x27;s nodes. For requests, this field should only be used in lieu of a &quot;node_pool&quot; object, since this configuration (along with the &quot;initial_node_count&quot;) will be used to create a &quot;NodePool&quot; object with an auto-generated name. Do not use this and a node_pool at the same time. For responses, this field will be populated with the node configuration of the first node pool. (For configuration of each node pool, see `node_pool.config`) If unspecified, the defaults are used. This field is deprecated, use node_pool.config instead.
         &quot;accelerators&quot;: [ # A list of hardware accelerators to be attached to each node. See https://cloud.google.com/compute/docs/gpus for more information about support for GPUs.
           { # AcceleratorConfig represents a Hardware Accelerator request.
             &quot;acceleratorCount&quot;: &quot;A String&quot;, # The number of the accelerator cards exposed to an instance.
@@ -1809,6 +1825,9 @@ Returns:
           &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
         },
         &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
+        &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
+          &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+        },
         &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
         &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
         &quot;ephemeralStorageConfig&quot;: { # EphemeralStorageConfig contains configuration for the ephemeral storage filesystem. # Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
@@ -1825,12 +1844,13 @@ Returns:
           &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
           &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
           &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+          &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
         },
         &quot;labels&quot;: { # The map of Kubernetes labels (key/value pairs) to be applied to each node. These will added in addition to any default label(s) that Kubernetes may apply to the node. In case of conflict in label keys, the applied set may differ depending on the Kubernetes version -- it&#x27;s best to assume the behavior is undefined and conflicts should be avoided. For more information, including usage and the valid values, see: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
-          &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
+          &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
             &quot;a_key&quot;: &quot;A String&quot;,
           },
         },
@@ -1907,7 +1927,7 @@ Returns:
               &quot;message&quot;: &quot;A String&quot;, # Human-friendly representation of the condition
             },
           ],
-          &quot;config&quot;: { # Parameters that describe the nodes in a cluster. # The node configuration of the pool.
+          &quot;config&quot;: { # Parameters that describe the nodes in a cluster. *Note:* GKE Autopilot clusters do not recognize parameters in `NodeConfig`. Use AutoprovisioningNodePoolDefaults instead. # The node configuration of the pool.
             &quot;accelerators&quot;: [ # A list of hardware accelerators to be attached to each node. See https://cloud.google.com/compute/docs/gpus for more information about support for GPUs.
               { # AcceleratorConfig represents a Hardware Accelerator request.
                 &quot;acceleratorCount&quot;: &quot;A String&quot;, # The number of the accelerator cards exposed to an instance.
@@ -1919,6 +1939,9 @@ Returns:
               &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
             },
             &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
+            &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
+              &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+            },
             &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
             &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
             &quot;ephemeralStorageConfig&quot;: { # EphemeralStorageConfig contains configuration for the ephemeral storage filesystem. # Parameters for the ephemeral storage filesystem. If unspecified, ephemeral storage is backed by the boot disk.
@@ -1935,12 +1958,13 @@ Returns:
               &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
               &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
               &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+              &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
             },
             &quot;labels&quot;: { # The map of Kubernetes labels (key/value pairs) to be applied to each node. These will added in addition to any default label(s) that Kubernetes may apply to the node. In case of conflict in label keys, the applied set may differ depending on the Kubernetes version -- it&#x27;s best to assume the behavior is undefined and conflicts should be avoided. For more information, including usage and the valid values, see: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
               &quot;a_key&quot;: &quot;A String&quot;,
             },
             &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
-              &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
+              &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
                 &quot;a_key&quot;: &quot;A String&quot;,
               },
             },
@@ -3026,7 +3050,7 @@ Args:
       &quot;securityGroup&quot;: &quot;A String&quot;, # The name of the security group-of-groups to be used. Only relevant if enabled = true.
     },
     &quot;desiredBinaryAuthorization&quot;: { # Configuration for Binary Authorization. # The desired configuration options for the Binary Authorization feature.
-      &quot;enabled&quot;: True or False, # Enable Binary Authorization for this cluster. If enabled, all container images will be validated by Google Binauthz.
+      &quot;enabled&quot;: True or False, # Enable Binary Authorization for this cluster. If enabled, all container images will be validated by Binary Authorization.
     },
     &quot;desiredClusterAutoscaling&quot;: { # ClusterAutoscaling contains global, per-cluster information required by Cluster Autoscaler to automatically adjust the size of the cluster and create/delete node pools based on the current needs. # Cluster-level autoscaling configuration.
       &quot;autoprovisioningLocations&quot;: [ # The list of Google Compute Engine [zones](https://cloud.google.com/compute/docs/zones#available) in which the NodePool&#x27;s nodes can be created by NAP.

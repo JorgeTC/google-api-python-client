@@ -58,6 +58,10 @@
 * [v1beta](http://googleapis.github.io/google-api-python-client/docs/dyn/analyticsdata_v1beta.html)
 
 
+## analyticshub
+* [v1beta1](http://googleapis.github.io/google-api-python-client/docs/dyn/analyticshub_v1beta1.html)
+
+
 ## analyticsreporting
 * [v4](http://googleapis.github.io/google-api-python-client/docs/dyn/analyticsreporting_v4.html)
 
@@ -380,8 +384,6 @@
 
 
 ## dfareporting
-* [v3.3](http://googleapis.github.io/google-api-python-client/docs/dyn/dfareporting_v3_3.html)
-* [v3.4](http://googleapis.github.io/google-api-python-client/docs/dyn/dfareporting_v3_4.html)
 * [v3.5](http://googleapis.github.io/google-api-python-client/docs/dyn/dfareporting_v3_5.html)
 
 
@@ -546,6 +548,10 @@
 * [v2alpha1](http://googleapis.github.io/google-api-python-client/docs/dyn/genomics_v2alpha1.html)
 
 
+## gkebackup
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/gkebackup_v1.html)
+
+
 ## gkehub
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/gkehub_v1.html)
 * [v1alpha](http://googleapis.github.io/google-api-python-client/docs/dyn/gkehub_v1alpha.html)
@@ -583,6 +589,7 @@
 
 ## iam
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/iam_v1.html)
+* [v2beta](http://googleapis.github.io/google-api-python-client/docs/dyn/iam_v2beta.html)
 
 
 ## iamcredentials
