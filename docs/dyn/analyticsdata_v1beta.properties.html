@@ -94,7 +94,7 @@ h1, h2, h3 {
 <p class="firstline">Returns a customized pivot report of your Google Analytics event data. Pivot reports are more advanced and expressive formats than regular reports. In a pivot report, dimensions are only visible if they are included in a pivot. Multiple pivots can be specified to further dissect your data.</p>
 <p class="toc_element">
   <code><a href="#runRealtimeReport">runRealtimeReport(property, body=None, x__xgafv=None)</a></code></p>
-<p class="firstline">The Google Analytics Realtime API returns a customized report of realtime event data for your property. These reports show events and usage from the last 30 minutes. For a guide to constructing realtime requests & understanding responses, see [Creating a Realtime Report](https://developers.google.com/analytics/devguides/reporting/data/v1/realtime-basics).</p>
+<p class="firstline">Returns a customized report of realtime event data for your property. Events appear in realtime reports seconds after they have been sent to the Google Analytics. Realtime reports show events and usage data for the periods of time ranging from the present moment to 30 minutes ago (up to 60 minutes for Google Analytics 360 properties). For a guide to constructing realtime requests & understanding responses, see [Creating a Realtime Report](https://developers.google.com/analytics/devguides/reporting/data/v1/realtime-basics).</p>
 <p class="toc_element">
   <code><a href="#runReport">runReport(property, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Returns a customized report of your Google Analytics event data. Reports contain statistics derived from data collected by the Google Analytics tracking code. The data returned from the API is as a table with columns for the requested dimensions and metrics. Metrics are individual measurements of user activity on your property, such as active users or event count. Dimensions break down metrics across some common criteria, such as country or event name. For a guide to constructing requests & understanding responses, see [Creating a Report](https://developers.google.com/analytics/devguides/reporting/data/v1/basics).</p>
@@ -157,7 +157,7 @@ Args:
               &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
             },
           },
-          &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+          &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
           &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
             &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
             &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -221,7 +221,7 @@ Args:
               &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
             },
           },
-          &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+          &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
           &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
             &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
             &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -380,7 +380,11 @@ Returns:
           &quot;consumed&quot;: 42, # Quota consumed by this request.
           &quot;remaining&quot;: 42, # Quota remaining after this request.
         },
-        &quot;tokensPerHour&quot;: { # Current state for a particular quota group. # Standard Analytics Properties can use up to 5,000 tokens per hour; Analytics 360 Properties can use 50,000 tokens per hour. An API request consumes a single number of tokens, and that number is deducted from both the hourly and daily quotas.
+        &quot;tokensPerHour&quot;: { # Current state for a particular quota group. # Standard Analytics Properties can use up to 5,000 tokens per hour; Analytics 360 Properties can use 50,000 tokens per hour. An API request consumes a single number of tokens, and that number is deducted from all of the hourly, daily, and per project hourly quotas.
+          &quot;consumed&quot;: 42, # Quota consumed by this request.
+          &quot;remaining&quot;: 42, # Quota remaining after this request.
+        },
+        &quot;tokensPerProjectPerHour&quot;: { # Current state for a particular quota group. # Analytics Properties can use up to 25% of their tokens per project per hour. This amounts to standard Analytics Properties can use up to 1,250 tokens per project per hour, and Analytics 360 Properties can use 12,500 tokens per project per hour. An API request consumes a single number of tokens, and that number is deducted from all of the hourly, daily, and per project hourly quotas.
           &quot;consumed&quot;: 42, # Quota consumed by this request.
           &quot;remaining&quot;: 42, # Quota remaining after this request.
         },
@@ -462,7 +466,7 @@ Args:
               &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
             },
           },
-          &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+          &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
           &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
             &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
             &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -530,7 +534,7 @@ Args:
               &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
             },
           },
-          &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+          &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
           &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
             &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
             &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -678,7 +682,11 @@ Returns:
           &quot;consumed&quot;: 42, # Quota consumed by this request.
           &quot;remaining&quot;: 42, # Quota remaining after this request.
         },
-        &quot;tokensPerHour&quot;: { # Current state for a particular quota group. # Standard Analytics Properties can use up to 5,000 tokens per hour; Analytics 360 Properties can use 50,000 tokens per hour. An API request consumes a single number of tokens, and that number is deducted from both the hourly and daily quotas.
+        &quot;tokensPerHour&quot;: { # Current state for a particular quota group. # Standard Analytics Properties can use up to 5,000 tokens per hour; Analytics 360 Properties can use 50,000 tokens per hour. An API request consumes a single number of tokens, and that number is deducted from all of the hourly, daily, and per project hourly quotas.
+          &quot;consumed&quot;: 42, # Quota consumed by this request.
+          &quot;remaining&quot;: 42, # Quota remaining after this request.
+        },
+        &quot;tokensPerProjectPerHour&quot;: { # Current state for a particular quota group. # Analytics Properties can use up to 25% of their tokens per project per hour. This amounts to standard Analytics Properties can use up to 1,250 tokens per project per hour, and Analytics 360 Properties can use 12,500 tokens per project per hour. An API request consumes a single number of tokens, and that number is deducted from all of the hourly, daily, and per project hourly quotas.
           &quot;consumed&quot;: 42, # Quota consumed by this request.
           &quot;remaining&quot;: 42, # Quota remaining after this request.
         },
@@ -745,7 +753,7 @@ Args:
           &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
         },
       },
-      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
       &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
         &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
         &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -808,7 +816,7 @@ Args:
           &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
         },
       },
-      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
       &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
         &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
         &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -1000,7 +1008,7 @@ Args:
           &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
         },
       },
-      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
       &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
         &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
         &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -1064,7 +1072,7 @@ Args:
           &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
         },
       },
-      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
       &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
         &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
         &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -1218,7 +1226,11 @@ Returns:
       &quot;consumed&quot;: 42, # Quota consumed by this request.
       &quot;remaining&quot;: 42, # Quota remaining after this request.
     },
-    &quot;tokensPerHour&quot;: { # Current state for a particular quota group. # Standard Analytics Properties can use up to 5,000 tokens per hour; Analytics 360 Properties can use 50,000 tokens per hour. An API request consumes a single number of tokens, and that number is deducted from both the hourly and daily quotas.
+    &quot;tokensPerHour&quot;: { # Current state for a particular quota group. # Standard Analytics Properties can use up to 5,000 tokens per hour; Analytics 360 Properties can use 50,000 tokens per hour. An API request consumes a single number of tokens, and that number is deducted from all of the hourly, daily, and per project hourly quotas.
+      &quot;consumed&quot;: 42, # Quota consumed by this request.
+      &quot;remaining&quot;: 42, # Quota remaining after this request.
+    },
+    &quot;tokensPerProjectPerHour&quot;: { # Current state for a particular quota group. # Analytics Properties can use up to 25% of their tokens per project per hour. This amounts to standard Analytics Properties can use up to 1,250 tokens per project per hour, and Analytics 360 Properties can use 12,500 tokens per project per hour. An API request consumes a single number of tokens, and that number is deducted from all of the hourly, daily, and per project hourly quotas.
       &quot;consumed&quot;: 42, # Quota consumed by this request.
       &quot;remaining&quot;: 42, # Quota remaining after this request.
     },
@@ -1242,7 +1254,7 @@ Returns:
 
 <div class="method">
     <code class="details" id="runRealtimeReport">runRealtimeReport(property, body=None, x__xgafv=None)</code>
-  <pre>The Google Analytics Realtime API returns a customized report of realtime event data for your property. These reports show events and usage from the last 30 minutes. For a guide to constructing realtime requests &amp; understanding responses, see [Creating a Realtime Report](https://developers.google.com/analytics/devguides/reporting/data/v1/realtime-basics).
+  <pre>Returns a customized report of realtime event data for your property. Events appear in realtime reports seconds after they have been sent to the Google Analytics. Realtime reports show events and usage data for the periods of time ranging from the present moment to 30 minutes ago (up to 60 minutes for Google Analytics 360 properties). For a guide to constructing realtime requests &amp; understanding responses, see [Creating a Realtime Report](https://developers.google.com/analytics/devguides/reporting/data/v1/realtime-basics).
 
 Args:
   property: string, A Google Analytics GA4 property identifier whose events are tracked. Specified in the URL path and not the body. To learn more, see [where to find your Property ID](https://developers.google.com/analytics/devguides/reporting/data/v1/property-id). Example: properties/1234 (required)
@@ -1250,7 +1262,7 @@ Args:
     The object takes the form of:
 
 { # The request to generate a realtime report.
-  &quot;dimensionFilter&quot;: { # To express dimension or metric filters. The fields in the same FilterExpression need to be either all dimensions or all metrics. # The filter clause of dimensions. Dimensions must be requested to be used in this filter. Metrics cannot be used in this filter.
+  &quot;dimensionFilter&quot;: { # To express dimension or metric filters. The fields in the same FilterExpression need to be either all dimensions or all metrics. # The filter clause of dimensions. Metrics cannot be used in this filter.
     &quot;andGroup&quot;: { # A list of filter expressions. # The FilterExpressions in and_group have an AND relationship.
       &quot;expressions&quot;: [ # A list of filter expressions.
         # Object with schema name: FilterExpression
@@ -1267,7 +1279,7 @@ Args:
           &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
         },
       },
-      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
       &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
         &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
         &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -1317,7 +1329,7 @@ Args:
   &quot;metricAggregations&quot;: [ # Aggregation of metrics. Aggregated metric values will be shown in rows where the dimension_values are set to &quot;RESERVED_(MetricAggregation)&quot;.
     &quot;A String&quot;,
   ],
-  &quot;metricFilter&quot;: { # To express dimension or metric filters. The fields in the same FilterExpression need to be either all dimensions or all metrics. # The filter clause of metrics. Applied at post aggregation phase, similar to SQL having-clause. Metrics must be requested to be used in this filter. Dimensions cannot be used in this filter.
+  &quot;metricFilter&quot;: { # To express dimension or metric filters. The fields in the same FilterExpression need to be either all dimensions or all metrics. # The filter clause of metrics. Applied at post aggregation phase, similar to SQL having-clause. Dimensions cannot be used in this filter.
     &quot;andGroup&quot;: { # A list of filter expressions. # The FilterExpressions in and_group have an AND relationship.
       &quot;expressions&quot;: [ # A list of filter expressions.
         # Object with schema name: FilterExpression
@@ -1334,7 +1346,7 @@ Args:
           &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
         },
       },
-      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
       &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
         &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
         &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -1465,7 +1477,11 @@ Returns:
       &quot;consumed&quot;: 42, # Quota consumed by this request.
       &quot;remaining&quot;: 42, # Quota remaining after this request.
     },
-    &quot;tokensPerHour&quot;: { # Current state for a particular quota group. # Standard Analytics Properties can use up to 5,000 tokens per hour; Analytics 360 Properties can use 50,000 tokens per hour. An API request consumes a single number of tokens, and that number is deducted from both the hourly and daily quotas.
+    &quot;tokensPerHour&quot;: { # Current state for a particular quota group. # Standard Analytics Properties can use up to 5,000 tokens per hour; Analytics 360 Properties can use 50,000 tokens per hour. An API request consumes a single number of tokens, and that number is deducted from all of the hourly, daily, and per project hourly quotas.
+      &quot;consumed&quot;: 42, # Quota consumed by this request.
+      &quot;remaining&quot;: 42, # Quota remaining after this request.
+    },
+    &quot;tokensPerProjectPerHour&quot;: { # Current state for a particular quota group. # Analytics Properties can use up to 25% of their tokens per project per hour. This amounts to standard Analytics Properties can use up to 1,250 tokens per project per hour, and Analytics 360 Properties can use 12,500 tokens per project per hour. An API request consumes a single number of tokens, and that number is deducted from all of the hourly, daily, and per project hourly quotas.
       &quot;consumed&quot;: 42, # Quota consumed by this request.
       &quot;remaining&quot;: 42, # Quota remaining after this request.
     },
@@ -1558,7 +1574,7 @@ Args:
           &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
         },
       },
-      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
       &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
         &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
         &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -1626,7 +1642,7 @@ Args:
           &quot;int64Value&quot;: &quot;A String&quot;, # Integer value
         },
       },
-      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. Must be a name defined in dimensions or metrics.
+      &quot;fieldName&quot;: &quot;A String&quot;, # The dimension name or metric name. In most methods, dimensions &amp; metrics can be used for the first time in this field. However in a RunPivotReportRequest, this field must be additionally specified by name in the RunPivotReportRequest&#x27;s dimensions or metrics.
       &quot;inListFilter&quot;: { # The result needs to be in a list of string values. # A filter for in list values.
         &quot;caseSensitive&quot;: True or False, # If true, the string value is case sensitive.
         &quot;values&quot;: [ # The list of string values. Must be non-empty.
@@ -1769,7 +1785,11 @@ Returns:
       &quot;consumed&quot;: 42, # Quota consumed by this request.
       &quot;remaining&quot;: 42, # Quota remaining after this request.
     },
-    &quot;tokensPerHour&quot;: { # Current state for a particular quota group. # Standard Analytics Properties can use up to 5,000 tokens per hour; Analytics 360 Properties can use 50,000 tokens per hour. An API request consumes a single number of tokens, and that number is deducted from both the hourly and daily quotas.
+    &quot;tokensPerHour&quot;: { # Current state for a particular quota group. # Standard Analytics Properties can use up to 5,000 tokens per hour; Analytics 360 Properties can use 50,000 tokens per hour. An API request consumes a single number of tokens, and that number is deducted from all of the hourly, daily, and per project hourly quotas.
+      &quot;consumed&quot;: 42, # Quota consumed by this request.
+      &quot;remaining&quot;: 42, # Quota remaining after this request.
+    },
+    &quot;tokensPerProjectPerHour&quot;: { # Current state for a particular quota group. # Analytics Properties can use up to 25% of their tokens per project per hour. This amounts to standard Analytics Properties can use up to 1,250 tokens per project per hour, and Analytics 360 Properties can use 12,500 tokens per project per hour. An API request consumes a single number of tokens, and that number is deducted from all of the hourly, daily, and per project hourly quotas.
       &quot;consumed&quot;: 42, # Quota consumed by this request.
       &quot;remaining&quot;: 42, # Quota remaining after this request.
     },

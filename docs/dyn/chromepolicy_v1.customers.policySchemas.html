@@ -84,7 +84,7 @@ h1, h2, h3 {
   <code><a href="#list">list(parent, filter=None, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Gets a list of policy schemas that match a specified filter value for a given customer.</p>
 <p class="toc_element">
-  <code><a href="#list_next">list_next(previous_request, previous_response)</a></code></p>
+  <code><a href="#list_next">list_next()</a></code></p>
 <p class="firstline">Retrieves the next page of results.</p>
 <h3>Method Details</h3>
 <div class="method">
@@ -106,7 +106,7 @@ Args:
 Returns:
   An object of the form:
 
-    { # Resource representing a policy schema. Next ID: 12
+    { # Resource representing a policy schema. Next ID: 14
   &quot;accessRestrictions&quot;: [ # Output only. Specific access restrictions related to this policy.
     &quot;A String&quot;,
   ],
@@ -116,6 +116,7 @@ Returns:
       &quot;keyDescription&quot;: &quot;A String&quot;, # Key description.
     },
   ],
+  &quot;categoryTitle&quot;: &quot;A String&quot;, # Output only. Title of the category in which a setting belongs.
   &quot;definition&quot;: { # Describes a complete .proto file. # Schema definition using proto descriptor.
     &quot;enumType&quot;: [
       { # Describes an enum type.
@@ -167,13 +168,13 @@ Returns:
     ],
     &quot;name&quot;: &quot;A String&quot;, # file name, relative to root of source tree
     &quot;package&quot;: &quot;A String&quot;, # e.g. &quot;foo&quot;, &quot;foo.bar&quot;, etc.
-    &quot;syntax&quot;: &quot;A String&quot;, # The syntax of the proto file. The supported values are &quot;proto2&quot; and &quot;proto3&quot;.
+    &quot;syntax&quot;: &quot;A String&quot;, # The syntax of the proto file. The supported values are &quot;proto2&quot;, &quot;proto3&quot;, and &quot;editions&quot;. If `edition` is present, this value must be &quot;editions&quot;.
   },
   &quot;fieldDescriptions&quot;: [ # Output only. Detailed description of each field that is part of the schema.
     { # Provides detailed information for a particular field that is part of a PolicySchema.
       &quot;description&quot;: &quot;A String&quot;, # Output only. The description for the field.
       &quot;field&quot;: &quot;A String&quot;, # Output only. The name of the field for associated with this description.
-      &quot;fieldDependencies&quot;: [ # Output only. Provides a list of fields and the values they must have for this field to be allowed to be set.
+      &quot;fieldDependencies&quot;: [ # Output only. Provides a list of fields and values. At least one of the fields must have the corresponding value in order for this field to be allowed to be set.
         { # The field and the value it must have for another field to be allowed to be set.
           &quot;sourceField&quot;: &quot;A String&quot;, # The source field which this field depends on.
           &quot;sourceFieldValue&quot;: &quot;A String&quot;, # The value which the source field must have for this field to be allowed to be set.
@@ -210,7 +211,16 @@ Returns:
       &quot;noticeValue&quot;: &quot;A String&quot;, # Output only. The value of the field that has a notice. When setting the field to this value, the user may be required to acknowledge the notice message in order for the value to be set.
     },
   ],
-  &quot;policyApiLifeycle&quot;: { # Output only. Current life cycle information.
+  &quot;policyApiLifecycle&quot;: { # Output only. Current lifecycle information.
+    &quot;description&quot;: &quot;A String&quot;, # Description about current life cycle.
+    &quot;endSupport&quot;: { # Represents a whole or partial calendar date, such as a birthday. The time of day and time zone are either specified elsewhere or are insignificant. The date is relative to the Gregorian Calendar. This can represent one of the following: * A full date, with non-zero year, month, and day values. * A month and day, with a zero year (for example, an anniversary). * A year on its own, with a zero month and a zero day. * A year and month, with a zero day (for example, a credit card expiration date). Related types: * google.type.TimeOfDay * google.type.DateTime * google.protobuf.Timestamp # End supporting date for current policy.
+      &quot;day&quot;: 42, # Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn&#x27;t significant.
+      &quot;month&quot;: 42, # Month of a year. Must be from 1 to 12, or 0 to specify a year without a month and day.
+      &quot;year&quot;: 42, # Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.
+    },
+    &quot;policyApiLifecycleStage&quot;: &quot;A String&quot;, # Indicate current life cycle stage of the policy API.
+  },
+  &quot;policyApiLifeycle&quot;: { # Deprecated field because of typo.
     &quot;description&quot;: &quot;A String&quot;, # Description about current life cycle.
     &quot;endSupport&quot;: { # Represents a whole or partial calendar date, such as a birthday. The time of day and time zone are either specified elsewhere or are insignificant. The date is relative to the Gregorian Calendar. This can represent one of the following: * A full date, with non-zero year, month, and day values. * A month and day, with a zero year (for example, an anniversary). * A year on its own, with a zero month and a zero day. * A year and month, with a zero day (for example, a credit card expiration date). Related types: * google.type.TimeOfDay * google.type.DateTime * google.protobuf.Timestamp # End supporting date for current policy.
       &quot;day&quot;: 42, # Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn&#x27;t significant.
@@ -220,7 +230,7 @@ Returns:
     &quot;policyApiLifecycleStage&quot;: &quot;A String&quot;, # Indicate current life cycle stage of the policy API.
   },
   &quot;policyDescription&quot;: &quot;A String&quot;, # Output only. Description about the policy schema for user consumption.
-  &quot;schemaName&quot;: &quot;A String&quot;, # Output only. The fully qualified name of the policy schema. This value is used to fill the field `policy_schema` in PolicyValue when calling BatchInheritOrgUnitPolicies or BatchModifyOrgUnitPolicies
+  &quot;schemaName&quot;: &quot;A String&quot;, # Output only. The fully qualified name of the policy schema. This value is used to fill the field `policy_schema` in PolicyValue when calling BatchInheritOrgUnitPolicies BatchModifyOrgUnitPolicies BatchModifyGroupPolicies or BatchDeleteGroupPolicies.
   &quot;supportUri&quot;: &quot;A String&quot;, # Output only. URI to related support article for this schema.
   &quot;validTargetResources&quot;: [ # Output only. Information about applicable target resources for the policy.
     &quot;A String&quot;,
@@ -248,7 +258,7 @@ Returns:
     { # Response message for listing policy schemas that match a filter.
   &quot;nextPageToken&quot;: &quot;A String&quot;, # The page token used to get the next page of policy schemas.
   &quot;policySchemas&quot;: [ # The list of policy schemas that match the query.
-    { # Resource representing a policy schema. Next ID: 12
+    { # Resource representing a policy schema. Next ID: 14
       &quot;accessRestrictions&quot;: [ # Output only. Specific access restrictions related to this policy.
         &quot;A String&quot;,
       ],
@@ -258,6 +268,7 @@ Returns:
           &quot;keyDescription&quot;: &quot;A String&quot;, # Key description.
         },
       ],
+      &quot;categoryTitle&quot;: &quot;A String&quot;, # Output only. Title of the category in which a setting belongs.
       &quot;definition&quot;: { # Describes a complete .proto file. # Schema definition using proto descriptor.
         &quot;enumType&quot;: [
           { # Describes an enum type.
@@ -309,13 +320,13 @@ Returns:
         ],
         &quot;name&quot;: &quot;A String&quot;, # file name, relative to root of source tree
         &quot;package&quot;: &quot;A String&quot;, # e.g. &quot;foo&quot;, &quot;foo.bar&quot;, etc.
-        &quot;syntax&quot;: &quot;A String&quot;, # The syntax of the proto file. The supported values are &quot;proto2&quot; and &quot;proto3&quot;.
+        &quot;syntax&quot;: &quot;A String&quot;, # The syntax of the proto file. The supported values are &quot;proto2&quot;, &quot;proto3&quot;, and &quot;editions&quot;. If `edition` is present, this value must be &quot;editions&quot;.
       },
       &quot;fieldDescriptions&quot;: [ # Output only. Detailed description of each field that is part of the schema.
         { # Provides detailed information for a particular field that is part of a PolicySchema.
           &quot;description&quot;: &quot;A String&quot;, # Output only. The description for the field.
           &quot;field&quot;: &quot;A String&quot;, # Output only. The name of the field for associated with this description.
-          &quot;fieldDependencies&quot;: [ # Output only. Provides a list of fields and the values they must have for this field to be allowed to be set.
+          &quot;fieldDependencies&quot;: [ # Output only. Provides a list of fields and values. At least one of the fields must have the corresponding value in order for this field to be allowed to be set.
             { # The field and the value it must have for another field to be allowed to be set.
               &quot;sourceField&quot;: &quot;A String&quot;, # The source field which this field depends on.
               &quot;sourceFieldValue&quot;: &quot;A String&quot;, # The value which the source field must have for this field to be allowed to be set.
@@ -352,7 +363,16 @@ Returns:
           &quot;noticeValue&quot;: &quot;A String&quot;, # Output only. The value of the field that has a notice. When setting the field to this value, the user may be required to acknowledge the notice message in order for the value to be set.
         },
       ],
-      &quot;policyApiLifeycle&quot;: { # Output only. Current life cycle information.
+      &quot;policyApiLifecycle&quot;: { # Output only. Current lifecycle information.
+        &quot;description&quot;: &quot;A String&quot;, # Description about current life cycle.
+        &quot;endSupport&quot;: { # Represents a whole or partial calendar date, such as a birthday. The time of day and time zone are either specified elsewhere or are insignificant. The date is relative to the Gregorian Calendar. This can represent one of the following: * A full date, with non-zero year, month, and day values. * A month and day, with a zero year (for example, an anniversary). * A year on its own, with a zero month and a zero day. * A year and month, with a zero day (for example, a credit card expiration date). Related types: * google.type.TimeOfDay * google.type.DateTime * google.protobuf.Timestamp # End supporting date for current policy.
+          &quot;day&quot;: 42, # Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn&#x27;t significant.
+          &quot;month&quot;: 42, # Month of a year. Must be from 1 to 12, or 0 to specify a year without a month and day.
+          &quot;year&quot;: 42, # Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.
+        },
+        &quot;policyApiLifecycleStage&quot;: &quot;A String&quot;, # Indicate current life cycle stage of the policy API.
+      },
+      &quot;policyApiLifeycle&quot;: { # Deprecated field because of typo.
         &quot;description&quot;: &quot;A String&quot;, # Description about current life cycle.
         &quot;endSupport&quot;: { # Represents a whole or partial calendar date, such as a birthday. The time of day and time zone are either specified elsewhere or are insignificant. The date is relative to the Gregorian Calendar. This can represent one of the following: * A full date, with non-zero year, month, and day values. * A month and day, with a zero year (for example, an anniversary). * A year on its own, with a zero month and a zero day. * A year and month, with a zero day (for example, a credit card expiration date). Related types: * google.type.TimeOfDay * google.type.DateTime * google.protobuf.Timestamp # End supporting date for current policy.
           &quot;day&quot;: 42, # Day of a month. Must be from 1 to 31 and valid for the year and month, or 0 to specify a year by itself or a year and month where the day isn&#x27;t significant.
@@ -362,7 +382,7 @@ Returns:
         &quot;policyApiLifecycleStage&quot;: &quot;A String&quot;, # Indicate current life cycle stage of the policy API.
       },
       &quot;policyDescription&quot;: &quot;A String&quot;, # Output only. Description about the policy schema for user consumption.
-      &quot;schemaName&quot;: &quot;A String&quot;, # Output only. The fully qualified name of the policy schema. This value is used to fill the field `policy_schema` in PolicyValue when calling BatchInheritOrgUnitPolicies or BatchModifyOrgUnitPolicies
+      &quot;schemaName&quot;: &quot;A String&quot;, # Output only. The fully qualified name of the policy schema. This value is used to fill the field `policy_schema` in PolicyValue when calling BatchInheritOrgUnitPolicies BatchModifyOrgUnitPolicies BatchModifyGroupPolicies or BatchDeleteGroupPolicies.
       &quot;supportUri&quot;: &quot;A String&quot;, # Output only. URI to related support article for this schema.
       &quot;validTargetResources&quot;: [ # Output only. Information about applicable target resources for the policy.
         &quot;A String&quot;,
@@ -373,17 +393,17 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="list_next">list_next(previous_request, previous_response)</code>
+    <code class="details" id="list_next">list_next()</code>
   <pre>Retrieves the next page of results.
 
-Args:
-  previous_request: The request for the previous page. (required)
-  previous_response: The response from the request for the previous page. (required)
+        Args:
+          previous_request: The request for the previous page. (required)
+          previous_response: The response from the request for the previous page. (required)
 
-Returns:
-  A request object that you can call &#x27;execute()&#x27; on to request the next
-  page. Returns None if there are no more items in the collection.
-    </pre>
+        Returns:
+          A request object that you can call &#x27;execute()&#x27; on to request the next
+          page. Returns None if there are no more items in the collection.
+        </pre>
 </div>
 
 </body></html>

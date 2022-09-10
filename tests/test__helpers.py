@@ -15,9 +15,9 @@
 """Unit tests for googleapiclient._helpers."""
 
 import unittest
+from unittest import mock
 import urllib
 
-import mock
 from googleapiclient import _helpers
 
 

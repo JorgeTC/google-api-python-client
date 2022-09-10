@@ -81,7 +81,7 @@ h1, h2, h3 {
   <code><a href="#delete">delete(projectId, datasetId, tableId)</a></code></p>
 <p class="firstline">Deletes the table specified by tableId from the dataset. If the table contains data, all the data will be deleted.</p>
 <p class="toc_element">
-  <code><a href="#get">get(projectId, datasetId, tableId, selectedFields=None)</a></code></p>
+  <code><a href="#get">get(projectId, datasetId, tableId, selectedFields=None, view=None)</a></code></p>
 <p class="firstline">Gets the specified table resource by table ID. This method does not return the data in the table, it only returns the table resource, which describes the structure of this table.</p>
 <p class="toc_element">
   <code><a href="#getIamPolicy">getIamPolicy(resource, body=None)</a></code></p>
@@ -93,7 +93,7 @@ h1, h2, h3 {
   <code><a href="#list">list(projectId, datasetId, maxResults=None, pageToken=None)</a></code></p>
 <p class="firstline">Lists all tables in the specified dataset. Requires the READER dataset role.</p>
 <p class="toc_element">
-  <code><a href="#list_next">list_next(previous_request, previous_response)</a></code></p>
+  <code><a href="#list_next">list_next()</a></code></p>
 <p class="firstline">Retrieves the next page of results.</p>
 <p class="toc_element">
   <code><a href="#patch">patch(projectId, datasetId, tableId, autodetect_schema=None, body=None)</a></code></p>
@@ -125,7 +125,7 @@ Args:
 </div>
 
 <div class="method">
-    <code class="details" id="get">get(projectId, datasetId, tableId, selectedFields=None)</code>
+    <code class="details" id="get">get(projectId, datasetId, tableId, selectedFields=None, view=None)</code>
   <pre>Gets the specified table resource by table ID. This method does not return the data in the table, it only returns the table resource, which describes the structure of this table.
 
 Args:
@@ -133,6 +133,12 @@ Args:
   datasetId: string, Dataset ID of the requested table (required)
   tableId: string, Table ID of the requested table (required)
   selectedFields: string, List of fields to return (comma-separated). If unspecified, all fields are returned
+  view: string, Specifies the view that determines which table information is returned. By default, basic table information and storage statistics (STORAGE_STATS) are returned.
+    Allowed values
+      BASIC - Includes basic table information including schema and partitioning specification. This view does not include storage statistics such as numRows or numBytes. This view is significantly more efficient and should be used to support high query rates.
+      FULL - Includes all table information, including storage statistics. It returns same information as STORAGE_STATS view, but may contain additional information in the future.
+      STORAGE_STATS - Includes all information in the BASIC view as well as storage statistics (numBytes, numLongTermBytes, numRows and lastModifiedTime).
+      TABLE_METADATA_VIEW_UNSPECIFIED - The default value. Default to the STORAGE_STATS view.
 
 Returns:
   An object of the form:
@@ -194,6 +200,7 @@ Returns:
       &quot;encoding&quot;: &quot;A String&quot;, # [Optional] The character encoding of the data. The supported values are UTF-8 or ISO-8859-1. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # [Optional] The separator for fields in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. BigQuery also supports the escape sequence &quot;\t&quot; to specify a tab separator. The default value is a comma (&#x27;,&#x27;).
       &quot;null_marker&quot;: &quot;A String&quot;, # [Optional] An custom string that will represent a NULL value in CSV import data.
+      &quot;preserveAsciiControlCharacters&quot;: True or False, # [Optional] Preserves the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) when loading from CSV. Only applicable to CSV, ignored for other formats.
       &quot;quote&quot;: &quot;&quot;&quot;, # [Optional] The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&#x27;&quot;&#x27;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # [Optional] The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
     },
@@ -215,6 +222,7 @@ Returns:
       &quot;enableListInference&quot;: True or False, # [Optional] Indicates whether to use schema inference specifically for Parquet LIST logical type.
       &quot;enumAsString&quot;: True or False, # [Optional] Indicates whether to infer Parquet ENUM logical type as STRING instead of BYTES by default.
     },
+    &quot;referenceFileSchemaUri&quot;: &quot;A String&quot;, # [Optional] Provide a referencing file with the expected table schema. Enabled for the format: AVRO, PARQUET, ORC.
     &quot;schema&quot;: { # [Optional] The schema for the data. Schema is required for CSV and JSON formats. Schema is disallowed for Google Cloud Bigtable, Cloud Datastore backups, and Avro formats.
       &quot;fields&quot;: [ # Describes the fields in a table.
         {
@@ -223,7 +231,8 @@ Returns:
               &quot;A String&quot;,
             ],
           },
-          &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
           &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
           &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
             # Object with schema name: TableFieldSchema
@@ -258,9 +267,11 @@ Returns:
   &quot;materializedView&quot;: { # [Optional] Materialized view definition.
     &quot;enableRefresh&quot;: True or False, # [Optional] [TrustedTester] Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # [Output-only] [TrustedTester] The time when this materialized view was last modified, in milliseconds since the epoch.
+    &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
     &quot;query&quot;: &quot;A String&quot;, # [Required] A query whose result is persisted.
     &quot;refreshIntervalMs&quot;: &quot;A String&quot;, # [Optional] [TrustedTester] The maximum frequency at which this materialized view will be refreshed. The default value is &quot;1800000&quot; (30 minutes).
   },
+  &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when table or materialized view is queried (formatted as Google SQL Interval type).
   &quot;model&quot;: { # [Output-only, Beta] Present iff this table represents a ML model. Describes the training information for the model, and it is required to run &#x27;PREDICT&#x27; queries.
     &quot;modelOptions&quot;: { # [Output-only, Beta] Model options used for the first training run. These options are immutable for subsequent training runs. Default values are used for any options not specified in the input query.
       &quot;labels&quot;: [
@@ -325,7 +336,8 @@ Returns:
             &quot;A String&quot;,
           ],
         },
-        &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
         &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
         &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
           # Object with schema name: TableFieldSchema
@@ -389,7 +401,7 @@ Returns:
   <pre>Gets the access control policy for a resource. Returns an empty policy if the resource exists and does not have a policy set.
 
 Args:
-  resource: string, REQUIRED: The resource for which the policy is being requested. See the operation documentation for the appropriate value for this field. (required)
+  resource: string, REQUIRED: The resource for which the policy is being requested. See [Resource names](https://cloud.google.com/apis/design/resource_names) for the appropriate value for this field. (required)
   body: object, The request body.
     The object takes the form of:
 
@@ -405,7 +417,7 @@ Returns:
 
     { # An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** { &quot;bindings&quot;: [ { &quot;role&quot;: &quot;roles/resourcemanager.organizationAdmin&quot;, &quot;members&quot;: [ &quot;user:mike@example.com&quot;, &quot;group:admins@example.com&quot;, &quot;domain:google.com&quot;, &quot;serviceAccount:my-project-id@appspot.gserviceaccount.com&quot; ] }, { &quot;role&quot;: &quot;roles/resourcemanager.organizationViewer&quot;, &quot;members&quot;: [ &quot;user:eve@example.com&quot; ], &quot;condition&quot;: { &quot;title&quot;: &quot;expirable access&quot;, &quot;description&quot;: &quot;Does not grant access after Sep 2020&quot;, &quot;expression&quot;: &quot;request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;)&quot;, } } ], &quot;etag&quot;: &quot;BwWWja0YfJA=&quot;, &quot;version&quot;: 3 } **YAML example:** bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;) etag: BwWWja0YfJA= version: 3 For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/).
   &quot;auditConfigs&quot;: [ # Specifies cloud audit logging configuration for this policy.
-    { # Specifies the audit configuration for a service. The configuration determines which permission types are logged, and what identities, if any, are exempted from logging. An AuditConfig must have one or more AuditLogConfigs. If there are AuditConfigs for both `allServices` and a specific service, the union of the two AuditConfigs is used for that service: the log_types specified in each AuditConfig are enabled, and the exempted_members in each AuditLogConfig are exempted. Example Policy with multiple AuditConfigs: { &quot;audit_configs&quot;: [ { &quot;service&quot;: &quot;allServices&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot;, &quot;exempted_members&quot;: [ &quot;user:jose@example.com&quot; ] }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot; }, { &quot;log_type&quot;: &quot;ADMIN_READ&quot; } ] }, { &quot;service&quot;: &quot;sampleservice.googleapis.com&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot; }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot;, &quot;exempted_members&quot;: [ &quot;user:aliya@example.com&quot; ] } ] } ] } For sampleservice, this policy enables DATA_READ, DATA_WRITE and ADMIN_READ logging. It also exempts jose@example.com from DATA_READ logging, and aliya@example.com from DATA_WRITE logging.
+    { # Specifies the audit configuration for a service. The configuration determines which permission types are logged, and what identities, if any, are exempted from logging. An AuditConfig must have one or more AuditLogConfigs. If there are AuditConfigs for both `allServices` and a specific service, the union of the two AuditConfigs is used for that service: the log_types specified in each AuditConfig are enabled, and the exempted_members in each AuditLogConfig are exempted. Example Policy with multiple AuditConfigs: { &quot;audit_configs&quot;: [ { &quot;service&quot;: &quot;allServices&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot;, &quot;exempted_members&quot;: [ &quot;user:jose@example.com&quot; ] }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot; }, { &quot;log_type&quot;: &quot;ADMIN_READ&quot; } ] }, { &quot;service&quot;: &quot;sampleservice.googleapis.com&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot; }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot;, &quot;exempted_members&quot;: [ &quot;user:aliya@example.com&quot; ] } ] } ] } For sampleservice, this policy enables DATA_READ, DATA_WRITE and ADMIN_READ logging. It also exempts `jose@example.com` from DATA_READ logging, and `aliya@example.com` from DATA_WRITE logging.
       &quot;auditLogConfigs&quot;: [ # The configuration for logging of each type of permission.
         { # Provides the configuration for logging a type of permissions. Example: { &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot;, &quot;exempted_members&quot;: [ &quot;user:jose@example.com&quot; ] }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot; } ] } This enables &#x27;DATA_READ&#x27; and &#x27;DATA_WRITE&#x27; logging, while exempting jose@example.com from DATA_READ logging.
           &quot;exemptedMembers&quot;: [ # Specifies the identities that do not cause logging for this type of permission. Follows the same format of Binding.members.
@@ -425,7 +437,7 @@ Returns:
         &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
         &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
       },
-      &quot;members&quot;: [ # Specifies the principals requesting access for a Cloud Platform resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`.
+      &quot;members&quot;: [ # Specifies the principals requesting access for a Google Cloud resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a Google service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]`: An identifier for a [Kubernetes service account](https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, `my-project.svc.id.goog[my-namespace/my-kubernetes-sa]`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`.
         &quot;A String&quot;,
       ],
       &quot;role&quot;: &quot;A String&quot;, # Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`.
@@ -503,6 +515,7 @@ Args:
       &quot;encoding&quot;: &quot;A String&quot;, # [Optional] The character encoding of the data. The supported values are UTF-8 or ISO-8859-1. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # [Optional] The separator for fields in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. BigQuery also supports the escape sequence &quot;\t&quot; to specify a tab separator. The default value is a comma (&#x27;,&#x27;).
       &quot;null_marker&quot;: &quot;A String&quot;, # [Optional] An custom string that will represent a NULL value in CSV import data.
+      &quot;preserveAsciiControlCharacters&quot;: True or False, # [Optional] Preserves the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) when loading from CSV. Only applicable to CSV, ignored for other formats.
       &quot;quote&quot;: &quot;&quot;&quot;, # [Optional] The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&#x27;&quot;&#x27;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # [Optional] The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
     },
@@ -524,6 +537,7 @@ Args:
       &quot;enableListInference&quot;: True or False, # [Optional] Indicates whether to use schema inference specifically for Parquet LIST logical type.
       &quot;enumAsString&quot;: True or False, # [Optional] Indicates whether to infer Parquet ENUM logical type as STRING instead of BYTES by default.
     },
+    &quot;referenceFileSchemaUri&quot;: &quot;A String&quot;, # [Optional] Provide a referencing file with the expected table schema. Enabled for the format: AVRO, PARQUET, ORC.
     &quot;schema&quot;: { # [Optional] The schema for the data. Schema is required for CSV and JSON formats. Schema is disallowed for Google Cloud Bigtable, Cloud Datastore backups, and Avro formats.
       &quot;fields&quot;: [ # Describes the fields in a table.
         {
@@ -532,7 +546,8 @@ Args:
               &quot;A String&quot;,
             ],
           },
-          &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
           &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
           &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
             # Object with schema name: TableFieldSchema
@@ -567,9 +582,11 @@ Args:
   &quot;materializedView&quot;: { # [Optional] Materialized view definition.
     &quot;enableRefresh&quot;: True or False, # [Optional] [TrustedTester] Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # [Output-only] [TrustedTester] The time when this materialized view was last modified, in milliseconds since the epoch.
+    &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
     &quot;query&quot;: &quot;A String&quot;, # [Required] A query whose result is persisted.
     &quot;refreshIntervalMs&quot;: &quot;A String&quot;, # [Optional] [TrustedTester] The maximum frequency at which this materialized view will be refreshed. The default value is &quot;1800000&quot; (30 minutes).
   },
+  &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when table or materialized view is queried (formatted as Google SQL Interval type).
   &quot;model&quot;: { # [Output-only, Beta] Present iff this table represents a ML model. Describes the training information for the model, and it is required to run &#x27;PREDICT&#x27; queries.
     &quot;modelOptions&quot;: { # [Output-only, Beta] Model options used for the first training run. These options are immutable for subsequent training runs. Default values are used for any options not specified in the input query.
       &quot;labels&quot;: [
@@ -634,7 +651,8 @@ Args:
             &quot;A String&quot;,
           ],
         },
-        &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
         &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
         &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
           # Object with schema name: TableFieldSchema
@@ -753,6 +771,7 @@ Returns:
       &quot;encoding&quot;: &quot;A String&quot;, # [Optional] The character encoding of the data. The supported values are UTF-8 or ISO-8859-1. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # [Optional] The separator for fields in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. BigQuery also supports the escape sequence &quot;\t&quot; to specify a tab separator. The default value is a comma (&#x27;,&#x27;).
       &quot;null_marker&quot;: &quot;A String&quot;, # [Optional] An custom string that will represent a NULL value in CSV import data.
+      &quot;preserveAsciiControlCharacters&quot;: True or False, # [Optional] Preserves the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) when loading from CSV. Only applicable to CSV, ignored for other formats.
       &quot;quote&quot;: &quot;&quot;&quot;, # [Optional] The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&#x27;&quot;&#x27;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # [Optional] The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
     },
@@ -774,6 +793,7 @@ Returns:
       &quot;enableListInference&quot;: True or False, # [Optional] Indicates whether to use schema inference specifically for Parquet LIST logical type.
       &quot;enumAsString&quot;: True or False, # [Optional] Indicates whether to infer Parquet ENUM logical type as STRING instead of BYTES by default.
     },
+    &quot;referenceFileSchemaUri&quot;: &quot;A String&quot;, # [Optional] Provide a referencing file with the expected table schema. Enabled for the format: AVRO, PARQUET, ORC.
     &quot;schema&quot;: { # [Optional] The schema for the data. Schema is required for CSV and JSON formats. Schema is disallowed for Google Cloud Bigtable, Cloud Datastore backups, and Avro formats.
       &quot;fields&quot;: [ # Describes the fields in a table.
         {
@@ -782,7 +802,8 @@ Returns:
               &quot;A String&quot;,
             ],
           },
-          &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
           &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
           &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
             # Object with schema name: TableFieldSchema
@@ -817,9 +838,11 @@ Returns:
   &quot;materializedView&quot;: { # [Optional] Materialized view definition.
     &quot;enableRefresh&quot;: True or False, # [Optional] [TrustedTester] Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # [Output-only] [TrustedTester] The time when this materialized view was last modified, in milliseconds since the epoch.
+    &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
     &quot;query&quot;: &quot;A String&quot;, # [Required] A query whose result is persisted.
     &quot;refreshIntervalMs&quot;: &quot;A String&quot;, # [Optional] [TrustedTester] The maximum frequency at which this materialized view will be refreshed. The default value is &quot;1800000&quot; (30 minutes).
   },
+  &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when table or materialized view is queried (formatted as Google SQL Interval type).
   &quot;model&quot;: { # [Output-only, Beta] Present iff this table represents a ML model. Describes the training information for the model, and it is required to run &#x27;PREDICT&#x27; queries.
     &quot;modelOptions&quot;: { # [Output-only, Beta] Model options used for the first training run. These options are immutable for subsequent training runs. Default values are used for any options not specified in the input query.
       &quot;labels&quot;: [
@@ -884,7 +907,8 @@ Returns:
             &quot;A String&quot;,
           ],
         },
-        &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
         &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
         &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
           # Object with schema name: TableFieldSchema
@@ -1005,17 +1029,17 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="list_next">list_next(previous_request, previous_response)</code>
+    <code class="details" id="list_next">list_next()</code>
   <pre>Retrieves the next page of results.
 
-Args:
-  previous_request: The request for the previous page. (required)
-  previous_response: The response from the request for the previous page. (required)
+        Args:
+          previous_request: The request for the previous page. (required)
+          previous_response: The response from the request for the previous page. (required)
 
-Returns:
-  A request object that you can call &#x27;execute()&#x27; on to request the next
-  page. Returns None if there are no more items in the collection.
-    </pre>
+        Returns:
+          A request object that you can call &#x27;execute()&#x27; on to request the next
+          page. Returns None if there are no more items in the collection.
+        </pre>
 </div>
 
 <div class="method">
@@ -1086,6 +1110,7 @@ Args:
       &quot;encoding&quot;: &quot;A String&quot;, # [Optional] The character encoding of the data. The supported values are UTF-8 or ISO-8859-1. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # [Optional] The separator for fields in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. BigQuery also supports the escape sequence &quot;\t&quot; to specify a tab separator. The default value is a comma (&#x27;,&#x27;).
       &quot;null_marker&quot;: &quot;A String&quot;, # [Optional] An custom string that will represent a NULL value in CSV import data.
+      &quot;preserveAsciiControlCharacters&quot;: True or False, # [Optional] Preserves the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) when loading from CSV. Only applicable to CSV, ignored for other formats.
       &quot;quote&quot;: &quot;&quot;&quot;, # [Optional] The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&#x27;&quot;&#x27;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # [Optional] The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
     },
@@ -1107,6 +1132,7 @@ Args:
       &quot;enableListInference&quot;: True or False, # [Optional] Indicates whether to use schema inference specifically for Parquet LIST logical type.
       &quot;enumAsString&quot;: True or False, # [Optional] Indicates whether to infer Parquet ENUM logical type as STRING instead of BYTES by default.
     },
+    &quot;referenceFileSchemaUri&quot;: &quot;A String&quot;, # [Optional] Provide a referencing file with the expected table schema. Enabled for the format: AVRO, PARQUET, ORC.
     &quot;schema&quot;: { # [Optional] The schema for the data. Schema is required for CSV and JSON formats. Schema is disallowed for Google Cloud Bigtable, Cloud Datastore backups, and Avro formats.
       &quot;fields&quot;: [ # Describes the fields in a table.
         {
@@ -1115,7 +1141,8 @@ Args:
               &quot;A String&quot;,
             ],
           },
-          &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
           &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
           &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
             # Object with schema name: TableFieldSchema
@@ -1150,9 +1177,11 @@ Args:
   &quot;materializedView&quot;: { # [Optional] Materialized view definition.
     &quot;enableRefresh&quot;: True or False, # [Optional] [TrustedTester] Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # [Output-only] [TrustedTester] The time when this materialized view was last modified, in milliseconds since the epoch.
+    &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
     &quot;query&quot;: &quot;A String&quot;, # [Required] A query whose result is persisted.
     &quot;refreshIntervalMs&quot;: &quot;A String&quot;, # [Optional] [TrustedTester] The maximum frequency at which this materialized view will be refreshed. The default value is &quot;1800000&quot; (30 minutes).
   },
+  &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when table or materialized view is queried (formatted as Google SQL Interval type).
   &quot;model&quot;: { # [Output-only, Beta] Present iff this table represents a ML model. Describes the training information for the model, and it is required to run &#x27;PREDICT&#x27; queries.
     &quot;modelOptions&quot;: { # [Output-only, Beta] Model options used for the first training run. These options are immutable for subsequent training runs. Default values are used for any options not specified in the input query.
       &quot;labels&quot;: [
@@ -1217,7 +1246,8 @@ Args:
             &quot;A String&quot;,
           ],
         },
-        &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
         &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
         &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
           # Object with schema name: TableFieldSchema
@@ -1337,6 +1367,7 @@ Returns:
       &quot;encoding&quot;: &quot;A String&quot;, # [Optional] The character encoding of the data. The supported values are UTF-8 or ISO-8859-1. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # [Optional] The separator for fields in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. BigQuery also supports the escape sequence &quot;\t&quot; to specify a tab separator. The default value is a comma (&#x27;,&#x27;).
       &quot;null_marker&quot;: &quot;A String&quot;, # [Optional] An custom string that will represent a NULL value in CSV import data.
+      &quot;preserveAsciiControlCharacters&quot;: True or False, # [Optional] Preserves the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) when loading from CSV. Only applicable to CSV, ignored for other formats.
       &quot;quote&quot;: &quot;&quot;&quot;, # [Optional] The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&#x27;&quot;&#x27;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # [Optional] The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
     },
@@ -1358,6 +1389,7 @@ Returns:
       &quot;enableListInference&quot;: True or False, # [Optional] Indicates whether to use schema inference specifically for Parquet LIST logical type.
       &quot;enumAsString&quot;: True or False, # [Optional] Indicates whether to infer Parquet ENUM logical type as STRING instead of BYTES by default.
     },
+    &quot;referenceFileSchemaUri&quot;: &quot;A String&quot;, # [Optional] Provide a referencing file with the expected table schema. Enabled for the format: AVRO, PARQUET, ORC.
     &quot;schema&quot;: { # [Optional] The schema for the data. Schema is required for CSV and JSON formats. Schema is disallowed for Google Cloud Bigtable, Cloud Datastore backups, and Avro formats.
       &quot;fields&quot;: [ # Describes the fields in a table.
         {
@@ -1366,7 +1398,8 @@ Returns:
               &quot;A String&quot;,
             ],
           },
-          &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
           &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
           &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
             # Object with schema name: TableFieldSchema
@@ -1401,9 +1434,11 @@ Returns:
   &quot;materializedView&quot;: { # [Optional] Materialized view definition.
     &quot;enableRefresh&quot;: True or False, # [Optional] [TrustedTester] Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # [Output-only] [TrustedTester] The time when this materialized view was last modified, in milliseconds since the epoch.
+    &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
     &quot;query&quot;: &quot;A String&quot;, # [Required] A query whose result is persisted.
     &quot;refreshIntervalMs&quot;: &quot;A String&quot;, # [Optional] [TrustedTester] The maximum frequency at which this materialized view will be refreshed. The default value is &quot;1800000&quot; (30 minutes).
   },
+  &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when table or materialized view is queried (formatted as Google SQL Interval type).
   &quot;model&quot;: { # [Output-only, Beta] Present iff this table represents a ML model. Describes the training information for the model, and it is required to run &#x27;PREDICT&#x27; queries.
     &quot;modelOptions&quot;: { # [Output-only, Beta] Model options used for the first training run. These options are immutable for subsequent training runs. Default values are used for any options not specified in the input query.
       &quot;labels&quot;: [
@@ -1468,7 +1503,8 @@ Returns:
             &quot;A String&quot;,
           ],
         },
-        &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
         &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
         &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
           # Object with schema name: TableFieldSchema
@@ -1532,14 +1568,14 @@ Returns:
   <pre>Sets the access control policy on the specified resource. Replaces any existing policy. Can return `NOT_FOUND`, `INVALID_ARGUMENT`, and `PERMISSION_DENIED` errors.
 
 Args:
-  resource: string, REQUIRED: The resource for which the policy is being specified. See the operation documentation for the appropriate value for this field. (required)
+  resource: string, REQUIRED: The resource for which the policy is being specified. See [Resource names](https://cloud.google.com/apis/design/resource_names) for the appropriate value for this field. (required)
   body: object, The request body.
     The object takes the form of:
 
 { # Request message for `SetIamPolicy` method.
-  &quot;policy&quot;: { # An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** { &quot;bindings&quot;: [ { &quot;role&quot;: &quot;roles/resourcemanager.organizationAdmin&quot;, &quot;members&quot;: [ &quot;user:mike@example.com&quot;, &quot;group:admins@example.com&quot;, &quot;domain:google.com&quot;, &quot;serviceAccount:my-project-id@appspot.gserviceaccount.com&quot; ] }, { &quot;role&quot;: &quot;roles/resourcemanager.organizationViewer&quot;, &quot;members&quot;: [ &quot;user:eve@example.com&quot; ], &quot;condition&quot;: { &quot;title&quot;: &quot;expirable access&quot;, &quot;description&quot;: &quot;Does not grant access after Sep 2020&quot;, &quot;expression&quot;: &quot;request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;)&quot;, } } ], &quot;etag&quot;: &quot;BwWWja0YfJA=&quot;, &quot;version&quot;: 3 } **YAML example:** bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;) etag: BwWWja0YfJA= version: 3 For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/). # REQUIRED: The complete policy to be applied to the `resource`. The size of the policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Cloud Platform services (such as Projects) might reject them.
+  &quot;policy&quot;: { # An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** { &quot;bindings&quot;: [ { &quot;role&quot;: &quot;roles/resourcemanager.organizationAdmin&quot;, &quot;members&quot;: [ &quot;user:mike@example.com&quot;, &quot;group:admins@example.com&quot;, &quot;domain:google.com&quot;, &quot;serviceAccount:my-project-id@appspot.gserviceaccount.com&quot; ] }, { &quot;role&quot;: &quot;roles/resourcemanager.organizationViewer&quot;, &quot;members&quot;: [ &quot;user:eve@example.com&quot; ], &quot;condition&quot;: { &quot;title&quot;: &quot;expirable access&quot;, &quot;description&quot;: &quot;Does not grant access after Sep 2020&quot;, &quot;expression&quot;: &quot;request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;)&quot;, } } ], &quot;etag&quot;: &quot;BwWWja0YfJA=&quot;, &quot;version&quot;: 3 } **YAML example:** bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;) etag: BwWWja0YfJA= version: 3 For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/). # REQUIRED: The complete policy to be applied to the `resource`. The size of the policy is limited to a few 10s of KB. An empty policy is a valid policy but certain Google Cloud services (such as Projects) might reject them.
     &quot;auditConfigs&quot;: [ # Specifies cloud audit logging configuration for this policy.
-      { # Specifies the audit configuration for a service. The configuration determines which permission types are logged, and what identities, if any, are exempted from logging. An AuditConfig must have one or more AuditLogConfigs. If there are AuditConfigs for both `allServices` and a specific service, the union of the two AuditConfigs is used for that service: the log_types specified in each AuditConfig are enabled, and the exempted_members in each AuditLogConfig are exempted. Example Policy with multiple AuditConfigs: { &quot;audit_configs&quot;: [ { &quot;service&quot;: &quot;allServices&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot;, &quot;exempted_members&quot;: [ &quot;user:jose@example.com&quot; ] }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot; }, { &quot;log_type&quot;: &quot;ADMIN_READ&quot; } ] }, { &quot;service&quot;: &quot;sampleservice.googleapis.com&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot; }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot;, &quot;exempted_members&quot;: [ &quot;user:aliya@example.com&quot; ] } ] } ] } For sampleservice, this policy enables DATA_READ, DATA_WRITE and ADMIN_READ logging. It also exempts jose@example.com from DATA_READ logging, and aliya@example.com from DATA_WRITE logging.
+      { # Specifies the audit configuration for a service. The configuration determines which permission types are logged, and what identities, if any, are exempted from logging. An AuditConfig must have one or more AuditLogConfigs. If there are AuditConfigs for both `allServices` and a specific service, the union of the two AuditConfigs is used for that service: the log_types specified in each AuditConfig are enabled, and the exempted_members in each AuditLogConfig are exempted. Example Policy with multiple AuditConfigs: { &quot;audit_configs&quot;: [ { &quot;service&quot;: &quot;allServices&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot;, &quot;exempted_members&quot;: [ &quot;user:jose@example.com&quot; ] }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot; }, { &quot;log_type&quot;: &quot;ADMIN_READ&quot; } ] }, { &quot;service&quot;: &quot;sampleservice.googleapis.com&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot; }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot;, &quot;exempted_members&quot;: [ &quot;user:aliya@example.com&quot; ] } ] } ] } For sampleservice, this policy enables DATA_READ, DATA_WRITE and ADMIN_READ logging. It also exempts `jose@example.com` from DATA_READ logging, and `aliya@example.com` from DATA_WRITE logging.
         &quot;auditLogConfigs&quot;: [ # The configuration for logging of each type of permission.
           { # Provides the configuration for logging a type of permissions. Example: { &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot;, &quot;exempted_members&quot;: [ &quot;user:jose@example.com&quot; ] }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot; } ] } This enables &#x27;DATA_READ&#x27; and &#x27;DATA_WRITE&#x27; logging, while exempting jose@example.com from DATA_READ logging.
             &quot;exemptedMembers&quot;: [ # Specifies the identities that do not cause logging for this type of permission. Follows the same format of Binding.members.
@@ -1559,7 +1595,7 @@ Args:
           &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
           &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
         },
-        &quot;members&quot;: [ # Specifies the principals requesting access for a Cloud Platform resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`.
+        &quot;members&quot;: [ # Specifies the principals requesting access for a Google Cloud resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a Google service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]`: An identifier for a [Kubernetes service account](https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, `my-project.svc.id.goog[my-namespace/my-kubernetes-sa]`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`.
           &quot;A String&quot;,
         ],
         &quot;role&quot;: &quot;A String&quot;, # Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`.
@@ -1577,7 +1613,7 @@ Returns:
 
     { # An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** { &quot;bindings&quot;: [ { &quot;role&quot;: &quot;roles/resourcemanager.organizationAdmin&quot;, &quot;members&quot;: [ &quot;user:mike@example.com&quot;, &quot;group:admins@example.com&quot;, &quot;domain:google.com&quot;, &quot;serviceAccount:my-project-id@appspot.gserviceaccount.com&quot; ] }, { &quot;role&quot;: &quot;roles/resourcemanager.organizationViewer&quot;, &quot;members&quot;: [ &quot;user:eve@example.com&quot; ], &quot;condition&quot;: { &quot;title&quot;: &quot;expirable access&quot;, &quot;description&quot;: &quot;Does not grant access after Sep 2020&quot;, &quot;expression&quot;: &quot;request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;)&quot;, } } ], &quot;etag&quot;: &quot;BwWWja0YfJA=&quot;, &quot;version&quot;: 3 } **YAML example:** bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;) etag: BwWWja0YfJA= version: 3 For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/).
   &quot;auditConfigs&quot;: [ # Specifies cloud audit logging configuration for this policy.
-    { # Specifies the audit configuration for a service. The configuration determines which permission types are logged, and what identities, if any, are exempted from logging. An AuditConfig must have one or more AuditLogConfigs. If there are AuditConfigs for both `allServices` and a specific service, the union of the two AuditConfigs is used for that service: the log_types specified in each AuditConfig are enabled, and the exempted_members in each AuditLogConfig are exempted. Example Policy with multiple AuditConfigs: { &quot;audit_configs&quot;: [ { &quot;service&quot;: &quot;allServices&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot;, &quot;exempted_members&quot;: [ &quot;user:jose@example.com&quot; ] }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot; }, { &quot;log_type&quot;: &quot;ADMIN_READ&quot; } ] }, { &quot;service&quot;: &quot;sampleservice.googleapis.com&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot; }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot;, &quot;exempted_members&quot;: [ &quot;user:aliya@example.com&quot; ] } ] } ] } For sampleservice, this policy enables DATA_READ, DATA_WRITE and ADMIN_READ logging. It also exempts jose@example.com from DATA_READ logging, and aliya@example.com from DATA_WRITE logging.
+    { # Specifies the audit configuration for a service. The configuration determines which permission types are logged, and what identities, if any, are exempted from logging. An AuditConfig must have one or more AuditLogConfigs. If there are AuditConfigs for both `allServices` and a specific service, the union of the two AuditConfigs is used for that service: the log_types specified in each AuditConfig are enabled, and the exempted_members in each AuditLogConfig are exempted. Example Policy with multiple AuditConfigs: { &quot;audit_configs&quot;: [ { &quot;service&quot;: &quot;allServices&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot;, &quot;exempted_members&quot;: [ &quot;user:jose@example.com&quot; ] }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot; }, { &quot;log_type&quot;: &quot;ADMIN_READ&quot; } ] }, { &quot;service&quot;: &quot;sampleservice.googleapis.com&quot;, &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot; }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot;, &quot;exempted_members&quot;: [ &quot;user:aliya@example.com&quot; ] } ] } ] } For sampleservice, this policy enables DATA_READ, DATA_WRITE and ADMIN_READ logging. It also exempts `jose@example.com` from DATA_READ logging, and `aliya@example.com` from DATA_WRITE logging.
       &quot;auditLogConfigs&quot;: [ # The configuration for logging of each type of permission.
         { # Provides the configuration for logging a type of permissions. Example: { &quot;audit_log_configs&quot;: [ { &quot;log_type&quot;: &quot;DATA_READ&quot;, &quot;exempted_members&quot;: [ &quot;user:jose@example.com&quot; ] }, { &quot;log_type&quot;: &quot;DATA_WRITE&quot; } ] } This enables &#x27;DATA_READ&#x27; and &#x27;DATA_WRITE&#x27; logging, while exempting jose@example.com from DATA_READ logging.
           &quot;exemptedMembers&quot;: [ # Specifies the identities that do not cause logging for this type of permission. Follows the same format of Binding.members.
@@ -1597,7 +1633,7 @@ Returns:
         &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
         &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
       },
-      &quot;members&quot;: [ # Specifies the principals requesting access for a Cloud Platform resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`.
+      &quot;members&quot;: [ # Specifies the principals requesting access for a Google Cloud resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. * `user:{emailid}`: An email address that represents a specific Google account. For example, `alice@example.com` . * `serviceAccount:{emailid}`: An email address that represents a Google service account. For example, `my-other-app@appspot.gserviceaccount.com`. * `serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]`: An identifier for a [Kubernetes service account](https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, `my-project.svc.id.goog[my-namespace/my-kubernetes-sa]`. * `group:{emailid}`: An email address that represents a Google group. For example, `admins@example.com`. * `deleted:user:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a user that has been recently deleted. For example, `alice@example.com?uid=123456789012345678901`. If the user is recovered, this value reverts to `user:{emailid}` and the recovered user retains the role in the binding. * `deleted:serviceAccount:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, `my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901`. If the service account is undeleted, this value reverts to `serviceAccount:{emailid}` and the undeleted service account retains the role in the binding. * `deleted:group:{emailid}?uid={uniqueid}`: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, `admins@example.com?uid=123456789012345678901`. If the group is recovered, this value reverts to `group:{emailid}` and the recovered group retains the role in the binding. * `domain:{domain}`: The G Suite domain (primary) that represents all the users of that domain. For example, `google.com` or `example.com`.
         &quot;A String&quot;,
       ],
       &quot;role&quot;: &quot;A String&quot;, # Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`.
@@ -1613,12 +1649,12 @@ Returns:
   <pre>Returns permissions that a caller has on the specified resource. If the resource does not exist, this will return an empty set of permissions, not a `NOT_FOUND` error. Note: This operation is designed to be used for building permission-aware UIs and command-line tools, not for authorization checking. This operation may &quot;fail open&quot; without warning.
 
 Args:
-  resource: string, REQUIRED: The resource for which the policy detail is being requested. See the operation documentation for the appropriate value for this field. (required)
+  resource: string, REQUIRED: The resource for which the policy detail is being requested. See [Resource names](https://cloud.google.com/apis/design/resource_names) for the appropriate value for this field. (required)
   body: object, The request body.
     The object takes the form of:
 
 { # Request message for `TestIamPermissions` method.
-  &quot;permissions&quot;: [ # The set of permissions to check for the `resource`. Permissions with wildcards (such as &#x27;*&#x27; or &#x27;storage.*&#x27;) are not allowed. For more information see [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).
+  &quot;permissions&quot;: [ # The set of permissions to check for the `resource`. Permissions with wildcards (such as `*` or `storage.*`) are not allowed. For more information see [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).
     &quot;A String&quot;,
   ],
 }
@@ -1702,6 +1738,7 @@ Args:
       &quot;encoding&quot;: &quot;A String&quot;, # [Optional] The character encoding of the data. The supported values are UTF-8 or ISO-8859-1. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # [Optional] The separator for fields in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. BigQuery also supports the escape sequence &quot;\t&quot; to specify a tab separator. The default value is a comma (&#x27;,&#x27;).
       &quot;null_marker&quot;: &quot;A String&quot;, # [Optional] An custom string that will represent a NULL value in CSV import data.
+      &quot;preserveAsciiControlCharacters&quot;: True or False, # [Optional] Preserves the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) when loading from CSV. Only applicable to CSV, ignored for other formats.
       &quot;quote&quot;: &quot;&quot;&quot;, # [Optional] The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&#x27;&quot;&#x27;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # [Optional] The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
     },
@@ -1723,6 +1760,7 @@ Args:
       &quot;enableListInference&quot;: True or False, # [Optional] Indicates whether to use schema inference specifically for Parquet LIST logical type.
       &quot;enumAsString&quot;: True or False, # [Optional] Indicates whether to infer Parquet ENUM logical type as STRING instead of BYTES by default.
     },
+    &quot;referenceFileSchemaUri&quot;: &quot;A String&quot;, # [Optional] Provide a referencing file with the expected table schema. Enabled for the format: AVRO, PARQUET, ORC.
     &quot;schema&quot;: { # [Optional] The schema for the data. Schema is required for CSV and JSON formats. Schema is disallowed for Google Cloud Bigtable, Cloud Datastore backups, and Avro formats.
       &quot;fields&quot;: [ # Describes the fields in a table.
         {
@@ -1731,7 +1769,8 @@ Args:
               &quot;A String&quot;,
             ],
           },
-          &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
           &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
           &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
             # Object with schema name: TableFieldSchema
@@ -1766,9 +1805,11 @@ Args:
   &quot;materializedView&quot;: { # [Optional] Materialized view definition.
     &quot;enableRefresh&quot;: True or False, # [Optional] [TrustedTester] Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # [Output-only] [TrustedTester] The time when this materialized view was last modified, in milliseconds since the epoch.
+    &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
     &quot;query&quot;: &quot;A String&quot;, # [Required] A query whose result is persisted.
     &quot;refreshIntervalMs&quot;: &quot;A String&quot;, # [Optional] [TrustedTester] The maximum frequency at which this materialized view will be refreshed. The default value is &quot;1800000&quot; (30 minutes).
   },
+  &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when table or materialized view is queried (formatted as Google SQL Interval type).
   &quot;model&quot;: { # [Output-only, Beta] Present iff this table represents a ML model. Describes the training information for the model, and it is required to run &#x27;PREDICT&#x27; queries.
     &quot;modelOptions&quot;: { # [Output-only, Beta] Model options used for the first training run. These options are immutable for subsequent training runs. Default values are used for any options not specified in the input query.
       &quot;labels&quot;: [
@@ -1833,7 +1874,8 @@ Args:
             &quot;A String&quot;,
           ],
         },
-        &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
         &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
         &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
           # Object with schema name: TableFieldSchema
@@ -1953,6 +1995,7 @@ Returns:
       &quot;encoding&quot;: &quot;A String&quot;, # [Optional] The character encoding of the data. The supported values are UTF-8 or ISO-8859-1. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # [Optional] The separator for fields in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. BigQuery also supports the escape sequence &quot;\t&quot; to specify a tab separator. The default value is a comma (&#x27;,&#x27;).
       &quot;null_marker&quot;: &quot;A String&quot;, # [Optional] An custom string that will represent a NULL value in CSV import data.
+      &quot;preserveAsciiControlCharacters&quot;: True or False, # [Optional] Preserves the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) when loading from CSV. Only applicable to CSV, ignored for other formats.
       &quot;quote&quot;: &quot;&quot;&quot;, # [Optional] The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&#x27;&quot;&#x27;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # [Optional] The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
     },
@@ -1974,6 +2017,7 @@ Returns:
       &quot;enableListInference&quot;: True or False, # [Optional] Indicates whether to use schema inference specifically for Parquet LIST logical type.
       &quot;enumAsString&quot;: True or False, # [Optional] Indicates whether to infer Parquet ENUM logical type as STRING instead of BYTES by default.
     },
+    &quot;referenceFileSchemaUri&quot;: &quot;A String&quot;, # [Optional] Provide a referencing file with the expected table schema. Enabled for the format: AVRO, PARQUET, ORC.
     &quot;schema&quot;: { # [Optional] The schema for the data. Schema is required for CSV and JSON formats. Schema is disallowed for Google Cloud Bigtable, Cloud Datastore backups, and Avro formats.
       &quot;fields&quot;: [ # Describes the fields in a table.
         {
@@ -1982,7 +2026,8 @@ Returns:
               &quot;A String&quot;,
             ],
           },
-          &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+          &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
           &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
           &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
             # Object with schema name: TableFieldSchema
@@ -2017,9 +2062,11 @@ Returns:
   &quot;materializedView&quot;: { # [Optional] Materialized view definition.
     &quot;enableRefresh&quot;: True or False, # [Optional] [TrustedTester] Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # [Output-only] [TrustedTester] The time when this materialized view was last modified, in milliseconds since the epoch.
+    &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
     &quot;query&quot;: &quot;A String&quot;, # [Required] A query whose result is persisted.
     &quot;refreshIntervalMs&quot;: &quot;A String&quot;, # [Optional] [TrustedTester] The maximum frequency at which this materialized view will be refreshed. The default value is &quot;1800000&quot; (30 minutes).
   },
+  &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when table or materialized view is queried (formatted as Google SQL Interval type).
   &quot;model&quot;: { # [Output-only, Beta] Present iff this table represents a ML model. Describes the training information for the model, and it is required to run &#x27;PREDICT&#x27; queries.
     &quot;modelOptions&quot;: { # [Output-only, Beta] Model options used for the first training run. These options are immutable for subsequent training runs. Default values are used for any options not specified in the input query.
       &quot;labels&quot;: [
@@ -2084,7 +2131,8 @@ Returns:
             &quot;A String&quot;,
           ],
         },
-        &quot;collationSpec&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;collation&quot;: &quot;A String&quot;, # Optional. Collation specification of the field. It only can be set on string type field.
+        &quot;defaultValueExpression&quot;: &quot;A String&quot;, # Optional. A SQL expression to specify the default value for this field. It can only be set for top level fields (columns). You can use struct or array expression to specify default value for the entire struct or array. The valid SQL expressions are: - Literals for all data types, including STRUCT and ARRAY. - Following functions: - CURRENT_TIMESTAMP - CURRENT_TIME - CURRENT_DATE - CURRENT_DATETIME - GENERATE_UUID - RAND - SESSION_USER - ST_GEOGPOINT - Struct or array composed with the above allowed functions, for example, [CURRENT_DATE(), DATE &#x27;2020-01-01&#x27;]
         &quot;description&quot;: &quot;A String&quot;, # [Optional] The field description. The maximum length is 1,024 characters.
         &quot;fields&quot;: [ # [Optional] Describes the nested schema fields if the type property is set to RECORD.
           # Object with schema name: TableFieldSchema

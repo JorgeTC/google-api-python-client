@@ -307,7 +307,7 @@
       }
     }
   },
-  "revision": "20220422",
+  "revision": "20220904",
   "rootUrl": "https://servicenetworking.googleapis.com/",
   "schemas": {
     "AddDnsRecordSetMetadata": {
@@ -644,6 +644,26 @@
       },
       "type": "object"
     },
+    "CloudSQLConfig": {
+      "description": "Cloud SQL configuration.",
+      "id": "CloudSQLConfig",
+      "properties": {
+        "service": {
+          "description": "Peering service used for peering with the Cloud SQL project.",
+          "type": "string"
+        },
+        "umbrellaNetwork": {
+          "description": "The name of the umbrella network in the Cloud SQL umbrella project.",
+          "type": "string"
+        },
+        "umbrellaProject": {
+          "description": "The project number of the Cloud SQL umbrella project.",
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "Connection": {
       "description": "Represents a private connection resource. A private connection is implemented as a VPC Network Peering connection between a service producer's VPC network and a service consumer's VPC network.",
       "id": "Connection",
@@ -676,6 +696,13 @@
       "description": "Configuration information for a private service access connection.",
       "id": "ConsumerConfig",
       "properties": {
+        "cloudsqlConfigs": {
+          "description": "Represents one or multiple Cloud SQL configurations.",
+          "items": {
+            "$ref": "CloudSQLConfig"
+          },
+          "type": "array"
+        },
         "consumerExportCustomRoutes": {
           "description": "Export custom routes flag value for peering from consumer to producer.",
           "type": "boolean"
@@ -717,6 +744,14 @@
           "description": "Output only. The reserved ranges associated with this private service access connection.",
           "items": {
             "$ref": "GoogleCloudServicenetworkingV1ConsumerConfigReservedRange"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "usedIpRanges": {
+          "description": "Output only. The IP ranges already in use by consumer or producer",
+          "items": {
+            "type": "string"
           },
           "readOnly": true,
           "type": "array"
@@ -1868,18 +1903,18 @@
       "type": "object"
     },
     "Quota": {
-      "description": "Quota configuration helps to achieve fairness and budgeting in service usage. The metric based quota configuration works this way: - The service configuration defines a set of metrics. - For API calls, the quota.metric_rules maps methods to metrics with corresponding costs. - The quota.limits defines limits on the metrics, which will be used for quota checks at runtime. An example quota configuration in yaml format: quota: limits: - name: apiWriteQpsPerProject metric: library.googleapis.com/write_calls unit: \"1/min/{project}\" # rate limit for consumer projects values: STANDARD: 10000 # The metric rules bind all methods to the read_calls metric, # except for the UpdateBook and DeleteBook methods. These two methods # are mapped to the write_calls metric, with the UpdateBook method # consuming at twice rate as the DeleteBook method. metric_rules: - selector: \"*\" metric_costs: library.googleapis.com/read_calls: 1 - selector: google.example.library.v1.LibraryService.UpdateBook metric_costs: library.googleapis.com/write_calls: 2 - selector: google.example.library.v1.LibraryService.DeleteBook metric_costs: library.googleapis.com/write_calls: 1 Corresponding Metric definition: metrics: - name: library.googleapis.com/read_calls display_name: Read requests metric_kind: DELTA value_type: INT64 - name: library.googleapis.com/write_calls display_name: Write requests metric_kind: DELTA value_type: INT64 ",
+      "description": "Quota configuration helps to achieve fairness and budgeting in service usage. The metric based quota configuration works this way: - The service configuration defines a set of metrics. - For API calls, the quota.metric_rules maps methods to metrics with corresponding costs. - The quota.limits defines limits on the metrics, which will be used for quota checks at runtime. An example quota configuration in yaml format: quota: limits: - name: apiWriteQpsPerProject metric: library.googleapis.com/write_calls unit: \"1/min/{project}\" # rate limit for consumer projects values: STANDARD: 10000 (The metric rules bind all methods to the read_calls metric, except for the UpdateBook and DeleteBook methods. These two methods are mapped to the write_calls metric, with the UpdateBook method consuming at twice rate as the DeleteBook method.) metric_rules: - selector: \"*\" metric_costs: library.googleapis.com/read_calls: 1 - selector: google.example.library.v1.LibraryService.UpdateBook metric_costs: library.googleapis.com/write_calls: 2 - selector: google.example.library.v1.LibraryService.DeleteBook metric_costs: library.googleapis.com/write_calls: 1 Corresponding Metric definition: metrics: - name: library.googleapis.com/read_calls display_name: Read requests metric_kind: DELTA value_type: INT64 - name: library.googleapis.com/write_calls display_name: Write requests metric_kind: DELTA value_type: INT64 ",
       "id": "Quota",
       "properties": {
         "limits": {
-          "description": "List of `QuotaLimit` definitions for the service.",
+          "description": "List of QuotaLimit definitions for the service.",
           "items": {
             "$ref": "QuotaLimit"
           },
           "type": "array"
         },
         "metricRules": {
-          "description": "List of `MetricRule` definitions, each one mapping a selected method to one or more metrics.",
+          "description": "List of MetricRule definitions, each one mapping a selected method to one or more metrics.",
           "items": {
             "$ref": "MetricRule"
           },

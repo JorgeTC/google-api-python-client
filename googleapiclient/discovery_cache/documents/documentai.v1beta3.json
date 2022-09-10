@@ -297,6 +297,46 @@
                 }
               }
             },
+            "processorTypes": {
+              "methods": {
+                "list": {
+                  "description": "Lists the processor types that exist.",
+                  "flatPath": "v1beta3/projects/{projectsId}/locations/{locationsId}/processorTypes",
+                  "httpMethod": "GET",
+                  "id": "documentai.projects.locations.processorTypes.list",
+                  "parameterOrder": [
+                    "parent"
+                  ],
+                  "parameters": {
+                    "pageSize": {
+                      "description": "The maximum number of processor types to return. If unspecified, at most 100 processor types will be returned. The maximum value is 500; values above 500 will be coerced to 500.",
+                      "format": "int32",
+                      "location": "query",
+                      "type": "integer"
+                    },
+                    "pageToken": {
+                      "description": "Used to retrieve the next page of results, empty if at the end of the list.",
+                      "location": "query",
+                      "type": "string"
+                    },
+                    "parent": {
+                      "description": "Required. The location of processor type to list. The available processor types may depend on the allow-listing on projects. Format: `projects/{project}/locations/{location}`",
+                      "location": "path",
+                      "pattern": "^projects/[^/]+/locations/[^/]+$",
+                      "required": true,
+                      "type": "string"
+                    }
+                  },
+                  "path": "v1beta3/{+parent}/processorTypes",
+                  "response": {
+                    "$ref": "GoogleCloudDocumentaiV1beta3ListProcessorTypesResponse"
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud-platform"
+                  ]
+                }
+              }
+            },
             "processors": {
               "methods": {
                 "batchProcess": {
@@ -796,7 +836,7 @@
       }
     }
   },
-  "revision": "20220409",
+  "revision": "20220824",
   "rootUrl": "https://documentai.googleapis.com/",
   "schemas": {
     "GoogleCloudDocumentaiUiv1beta3BatchDeleteDocumentsMetadata": {
@@ -805,6 +845,38 @@
         "commonMetadata": {
           "$ref": "GoogleCloudDocumentaiUiv1beta3CommonOperationMetadata",
           "description": "The basic metadata of the long running operation."
+        },
+        "errorDocumentCount": {
+          "description": "Total number of documents that failed to be deleted in storage.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "individualBatchDeleteStatuses": {
+          "description": "The list of response details of each document.",
+          "items": {
+            "$ref": "GoogleCloudDocumentaiUiv1beta3BatchDeleteDocumentsMetadataIndividualBatchDeleteStatus"
+          },
+          "type": "array"
+        },
+        "totalDocumentCount": {
+          "description": "Total number of documents deleting from dataset.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiUiv1beta3BatchDeleteDocumentsMetadataIndividualBatchDeleteStatus": {
+      "description": "The status of each individual document in the batch delete process.",
+      "id": "GoogleCloudDocumentaiUiv1beta3BatchDeleteDocumentsMetadataIndividualBatchDeleteStatus",
+      "properties": {
+        "documentId": {
+          "$ref": "GoogleCloudDocumentaiUiv1beta3DocumentId",
+          "description": "The document id of the document."
+        },
+        "status": {
+          "$ref": "GoogleRpcStatus",
+          "description": "The status of deleting the document in storage."
         }
       },
       "type": "object"
@@ -1087,6 +1159,84 @@
       },
       "type": "object"
     },
+    "GoogleCloudDocumentaiUiv1beta3ExportDocumentsMetadata": {
+      "description": "Metadata of the batch export documents operation.",
+      "id": "GoogleCloudDocumentaiUiv1beta3ExportDocumentsMetadata",
+      "properties": {
+        "commonMetadata": {
+          "$ref": "GoogleCloudDocumentaiUiv1beta3CommonOperationMetadata",
+          "description": "The basic metadata of the long running operation."
+        },
+        "individualExportStatuses": {
+          "description": "The list of response details of each document.",
+          "items": {
+            "$ref": "GoogleCloudDocumentaiUiv1beta3ExportDocumentsMetadataIndividualExportStatus"
+          },
+          "type": "array"
+        },
+        "splitExportStats": {
+          "description": "The list of statistics for each dataset split type.",
+          "items": {
+            "$ref": "GoogleCloudDocumentaiUiv1beta3ExportDocumentsMetadataSplitExportStat"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiUiv1beta3ExportDocumentsMetadataIndividualExportStatus": {
+      "description": "The status of each individual document in the export process.",
+      "id": "GoogleCloudDocumentaiUiv1beta3ExportDocumentsMetadataIndividualExportStatus",
+      "properties": {
+        "documentId": {
+          "$ref": "GoogleCloudDocumentaiUiv1beta3DocumentId",
+          "description": "The path to source docproto of the document."
+        },
+        "outputGcsDestination": {
+          "description": "The output_gcs_destination of the exported document if it was successful, otherwise empty.",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "GoogleRpcStatus",
+          "description": "The status of the exporting of the document."
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiUiv1beta3ExportDocumentsMetadataSplitExportStat": {
+      "description": "The statistic representing a dataset split type for this export.",
+      "id": "GoogleCloudDocumentaiUiv1beta3ExportDocumentsMetadataSplitExportStat",
+      "properties": {
+        "splitType": {
+          "description": "The dataset split type.",
+          "enum": [
+            "DATASET_SPLIT_TYPE_UNSPECIFIED",
+            "DATASET_SPLIT_TRAIN",
+            "DATASET_SPLIT_TEST",
+            "DATASET_SPLIT_UNASSIGNED"
+          ],
+          "enumDescriptions": [
+            "Default value if the enum is not set. go/protodosdonts#do-include-an-unspecified-value-in-an-enum",
+            "Identifies the train documents.",
+            "Identifies the test documents.",
+            "Identifies the unassigned documents."
+          ],
+          "type": "string"
+        },
+        "totalDocumentCount": {
+          "description": "Total number of documents with the given dataset split type to be exported.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiUiv1beta3ExportDocumentsResponse": {
+      "description": "The response proto of ExportDocuments method.",
+      "id": "GoogleCloudDocumentaiUiv1beta3ExportDocumentsResponse",
+      "properties": {},
+      "type": "object"
+    },
     "GoogleCloudDocumentaiUiv1beta3ExportProcessorVersionMetadata": {
       "description": "Metadata message associated with the ExportProcessorVersion operation.",
       "id": "GoogleCloudDocumentaiUiv1beta3ExportProcessorVersionMetadata",
@@ -1117,12 +1267,39 @@
           "$ref": "GoogleCloudDocumentaiUiv1beta3CommonOperationMetadata",
           "description": "The basic metadata of the long running operation."
         },
+        "importConfigValidationResults": {
+          "description": "Validation statuses of the batch documents import config.",
+          "items": {
+            "$ref": "GoogleCloudDocumentaiUiv1beta3ImportDocumentsMetadataImportConfigValidationResult"
+          },
+          "type": "array"
+        },
         "individualImportStatuses": {
           "description": "The list of response details of each document.",
           "items": {
             "$ref": "GoogleCloudDocumentaiUiv1beta3ImportDocumentsMetadataIndividualImportStatus"
           },
           "type": "array"
+        },
+        "totalDocumentCount": {
+          "description": "Total number of the documents that are qualified for importing.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiUiv1beta3ImportDocumentsMetadataImportConfigValidationResult": {
+      "description": "The validation status of each import config. Status is set to errors if there is no documents to import in the import_config, or OK if the operation will try to proceed at least one document.",
+      "id": "GoogleCloudDocumentaiUiv1beta3ImportDocumentsMetadataImportConfigValidationResult",
+      "properties": {
+        "inputGcsSource": {
+          "description": "The source Cloud Storage URI specified in the import config.",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "GoogleRpcStatus",
+          "description": "The validation status of import config."
         }
       },
       "type": "object"
@@ -1160,31 +1337,73 @@
           "$ref": "GoogleCloudDocumentaiUiv1beta3CommonOperationMetadata",
           "description": "The basic metadata of the long running operation."
         },
-        "newlyAddedDocuments": {
-          "description": "Returns the newly added document Cloud Storage prefix if the documents are founded in Cloud Storage while not in Document Service storage.",
+        "datasetResyncStatuses": {
+          "description": "The list of dataset resync statuses. Not checked when `dataset_documents` is specified in ResyncRequest.",
           "items": {
-            "$ref": "GoogleCloudDocumentaiUiv1beta3ResyncDatasetMetadataUpdatedDocument"
+            "$ref": "GoogleCloudDocumentaiUiv1beta3ResyncDatasetMetadataDatasetResyncStatus"
+          },
+          "type": "array"
+        },
+        "individualDocumentResyncStatuses": {
+          "description": "The list of document resync statuses. The same document could have multiple `individual_document_resync_statuses` if it has multiple inconsistencies.",
+          "items": {
+            "$ref": "GoogleCloudDocumentaiUiv1beta3ResyncDatasetMetadataIndividualDocumentResyncStatus"
           },
           "type": "array"
         }
       },
       "type": "object"
     },
-    "GoogleCloudDocumentaiUiv1beta3ResyncDatasetMetadataUpdatedDocument": {
-      "description": "The proto for updated document in resync pipeline.",
-      "id": "GoogleCloudDocumentaiUiv1beta3ResyncDatasetMetadataUpdatedDocument",
+    "GoogleCloudDocumentaiUiv1beta3ResyncDatasetMetadataDatasetResyncStatus": {
+      "description": "Resync status against inconsistency types on the dataset level.",
+      "id": "GoogleCloudDocumentaiUiv1beta3ResyncDatasetMetadataDatasetResyncStatus",
       "properties": {
-        "destinationPrefix": {
-          "description": "The prefix of cloud storage, identifies the destination document which should be updated by resync pipeline.",
-          "type": "string"
-        },
-        "sourcePrefix": {
-          "description": "The prefix of cloud storage, identifies the original document which should be updated by resync pipeline.",
+        "datasetInconsistencyType": {
+          "description": "The type of the inconsistency of the dataset.",
+          "enum": [
+            "DATASET_INCONSISTENCY_TYPE_UNSPECIFIED",
+            "DATASET_INCONSISTENCY_TYPE_NO_STORAGE_MARKER"
+          ],
+          "enumDescriptions": [
+            "Default value.",
+            "The marker file under the dataset folder is not found."
+          ],
           "type": "string"
         },
         "status": {
           "$ref": "GoogleRpcStatus",
-          "description": "The final status of the documents which should be updated by resync pipeline."
+          "description": "The status of resyncing the dataset with regards to the detected inconsistency. Empty if `validate_only` is true in the request."
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiUiv1beta3ResyncDatasetMetadataIndividualDocumentResyncStatus": {
+      "description": "Resync status for each document per inconsistency type.",
+      "id": "GoogleCloudDocumentaiUiv1beta3ResyncDatasetMetadataIndividualDocumentResyncStatus",
+      "properties": {
+        "documentId": {
+          "$ref": "GoogleCloudDocumentaiUiv1beta3DocumentId",
+          "description": "The document identifier."
+        },
+        "documentInconsistencyType": {
+          "description": "The type of document inconsistency.",
+          "enum": [
+            "DOCUMENT_INCONSISTENCY_TYPE_UNSPECIFIED",
+            "DOCUMENT_INCONSISTENCY_TYPE_INVALID_DOCPROTO",
+            "DOCUMENT_INCONSISTENCY_TYPE_MISMATCHED_METADATA",
+            "DOCUMENT_INCONSISTENCY_TYPE_NO_PAGE_IMAGE"
+          ],
+          "enumDescriptions": [
+            "Default value.",
+            "The document proto is invalid.",
+            "Indexed docproto metadata is mismatched.",
+            "The page image or thumbnails are missing."
+          ],
+          "type": "string"
+        },
+        "status": {
+          "$ref": "GoogleRpcStatus",
+          "description": "The status of resyncing the document with regards to the detected inconsistency. Empty if `validate_only` is true in the request."
         }
       },
       "type": "object"
@@ -1419,7 +1638,7 @@
         },
         "status": {
           "$ref": "GoogleRpcStatus",
-          "description": "The status of the processing of the document."
+          "description": "The status processing the document."
         }
       },
       "type": "object"
@@ -1601,7 +1820,25 @@
       "id": "GoogleCloudDocumentaiV1ReviewDocumentResponse",
       "properties": {
         "gcsDestination": {
-          "description": "The Cloud Storage uri for the human reviewed document.",
+          "description": "The Cloud Storage uri for the human reviewed document if the review is succeeded.",
+          "type": "string"
+        },
+        "rejectionReason": {
+          "description": "The reason why the review is rejected by reviewer.",
+          "type": "string"
+        },
+        "state": {
+          "description": "The state of the review operation.",
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "REJECTED",
+            "SUCCEEDED"
+          ],
+          "enumDescriptions": [
+            "The default value. This value is used if the state is omitted.",
+            "The review operation is rejected by the reviewer.",
+            "The review operation is succeeded."
+          ],
           "type": "string"
         }
       },
@@ -1692,6 +1929,25 @@
         "updateTime": {
           "description": "The last update time of the operation.",
           "format": "google-datetime",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiV1beta1Barcode": {
+      "description": "Encodes the detailed information of a barcode.",
+      "id": "GoogleCloudDocumentaiV1beta1Barcode",
+      "properties": {
+        "format": {
+          "description": "Format of a barcode. The supported formats are: CODE_128: Code 128 type. CODE_39: Code 39 type. CODE_93: Code 93 type. CODABAR: Codabar type. DATA_MATRIX: 2D Data Matrix type. ITF: ITF type. EAN_13: EAN-13 type. EAN_8: EAN-8 type. QR_CODE: 2D QR code type. UPC_A: UPC-A type. UPC_E: UPC-E type. PDF417: PDF417 type. AZTEC: 2D Aztec code type. DATABAR: GS1 DataBar code type.",
+          "type": "string"
+        },
+        "rawValue": {
+          "description": "Raw value encoded in the barcode. For example, 'MEBKM:TITLE:Google;URL:https://www.google.com;;'.",
+          "type": "string"
+        },
+        "valueFormat": {
+          "description": "Value format describes the format of the value that a barcode encodes. The supported formats are: CONTACT_INFO: Contact information. EMAIL: Email address. ISBN: ISBN identifier. PHONE: Phone number. PRODUCT: Product. SMS: SMS message. TEXT: Text string. URL: URL address. WIFI: Wifi information. GEO: Geo-localization. CALENDAR_EVENT: Calendar event. DRIVER_LICENSE: Driver's license.",
           "type": "string"
         }
       },
@@ -1827,10 +2083,6 @@
           "description": "Optional. Text value in the document e.g. `1600 Amphitheatre Pkwy`. If the entity is not present in the document, this field will be empty.",
           "type": "string"
         },
-        "nonPresent": {
-          "description": "Optional. This attribute indicates that the processing didn't actually identify this entity, but a confidence score was assigned that represent the potential that this could be a false negative. A non-present entity should have an empty mention_text and text_anchor.",
-          "type": "boolean"
-        },
         "normalizedValue": {
           "$ref": "GoogleCloudDocumentaiV1beta1DocumentEntityNormalizedValue",
           "description": "Optional. Normalized entity value. Absent if the extracted value could not be converted or the type (e.g. address) is not supported for certain parsers. This field is also only populated for certain supported document types."
@@ -1933,6 +2185,13 @@
           "description": "A list of visually detected text blocks on the page. A block has a set of lines (collected into paragraphs) that have a common line-spacing and orientation.",
           "items": {
             "$ref": "GoogleCloudDocumentaiV1beta1DocumentPageBlock"
+          },
+          "type": "array"
+        },
+        "detectedBarcodes": {
+          "description": "A list of detected barcodes.",
+          "items": {
+            "$ref": "GoogleCloudDocumentaiV1beta1DocumentPageDetectedBarcode"
           },
           "type": "array"
         },
@@ -2104,6 +2363,21 @@
         "provenance": {
           "$ref": "GoogleCloudDocumentaiV1beta1DocumentProvenance",
           "description": "The history of this annotation."
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiV1beta1DocumentPageDetectedBarcode": {
+      "description": "A detected barcode.",
+      "id": "GoogleCloudDocumentaiV1beta1DocumentPageDetectedBarcode",
+      "properties": {
+        "barcode": {
+          "$ref": "GoogleCloudDocumentaiV1beta1Barcode",
+          "description": "Detailed barcode information of the DetectedBarcode."
+        },
+        "layout": {
+          "$ref": "GoogleCloudDocumentaiV1beta1DocumentPageLayout",
+          "description": "Layout for DetectedBarcode."
         }
       },
       "type": "object"
@@ -2887,6 +3161,25 @@
       },
       "type": "object"
     },
+    "GoogleCloudDocumentaiV1beta2Barcode": {
+      "description": "Encodes the detailed information of a barcode.",
+      "id": "GoogleCloudDocumentaiV1beta2Barcode",
+      "properties": {
+        "format": {
+          "description": "Format of a barcode. The supported formats are: CODE_128: Code 128 type. CODE_39: Code 39 type. CODE_93: Code 93 type. CODABAR: Codabar type. DATA_MATRIX: 2D Data Matrix type. ITF: ITF type. EAN_13: EAN-13 type. EAN_8: EAN-8 type. QR_CODE: 2D QR code type. UPC_A: UPC-A type. UPC_E: UPC-E type. PDF417: PDF417 type. AZTEC: 2D Aztec code type. DATABAR: GS1 DataBar code type.",
+          "type": "string"
+        },
+        "rawValue": {
+          "description": "Raw value encoded in the barcode. For example, 'MEBKM:TITLE:Google;URL:https://www.google.com;;'.",
+          "type": "string"
+        },
+        "valueFormat": {
+          "description": "Value format describes the format of the value that a barcode encodes. The supported formats are: CONTACT_INFO: Contact information. EMAIL: Email address. ISBN: ISBN identifier. PHONE: Phone number. PRODUCT: Product. SMS: SMS message. TEXT: Text string. URL: URL address. WIFI: Wifi information. GEO: Geo-localization. CALENDAR_EVENT: Calendar event. DRIVER_LICENSE: Driver's license.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "GoogleCloudDocumentaiV1beta2BatchProcessDocumentsResponse": {
       "description": "Response to an batch document processing request. This is returned in the LRO Operation after the operation is complete.",
       "id": "GoogleCloudDocumentaiV1beta2BatchProcessDocumentsResponse",
@@ -3024,10 +3317,6 @@
           "description": "Optional. Text value in the document e.g. `1600 Amphitheatre Pkwy`. If the entity is not present in the document, this field will be empty.",
           "type": "string"
         },
-        "nonPresent": {
-          "description": "Optional. This attribute indicates that the processing didn't actually identify this entity, but a confidence score was assigned that represent the potential that this could be a false negative. A non-present entity should have an empty mention_text and text_anchor.",
-          "type": "boolean"
-        },
         "normalizedValue": {
           "$ref": "GoogleCloudDocumentaiV1beta2DocumentEntityNormalizedValue",
           "description": "Optional. Normalized entity value. Absent if the extracted value could not be converted or the type (e.g. address) is not supported for certain parsers. This field is also only populated for certain supported document types."
@@ -3150,6 +3439,13 @@
           "description": "A list of visually detected text blocks on the page. A block has a set of lines (collected into paragraphs) that have a common line-spacing and orientation.",
           "items": {
             "$ref": "GoogleCloudDocumentaiV1beta2DocumentPageBlock"
+          },
+          "type": "array"
+        },
+        "detectedBarcodes": {
+          "description": "A list of detected barcodes.",
+          "items": {
+            "$ref": "GoogleCloudDocumentaiV1beta2DocumentPageDetectedBarcode"
           },
           "type": "array"
         },
@@ -3321,6 +3617,21 @@
         "provenance": {
           "$ref": "GoogleCloudDocumentaiV1beta2DocumentProvenance",
           "description": "The history of this annotation."
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiV1beta2DocumentPageDetectedBarcode": {
+      "description": "A detected barcode.",
+      "id": "GoogleCloudDocumentaiV1beta2DocumentPageDetectedBarcode",
+      "properties": {
+        "barcode": {
+          "$ref": "GoogleCloudDocumentaiV1beta2Barcode",
+          "description": "Detailed barcode information of the DetectedBarcode."
+        },
+        "layout": {
+          "$ref": "GoogleCloudDocumentaiV1beta2DocumentPageLayout",
+          "description": "Layout for DetectedBarcode."
         }
       },
       "type": "object"
@@ -4109,6 +4420,25 @@
       },
       "type": "object"
     },
+    "GoogleCloudDocumentaiV1beta3Barcode": {
+      "description": "Encodes the detailed information of a barcode.",
+      "id": "GoogleCloudDocumentaiV1beta3Barcode",
+      "properties": {
+        "format": {
+          "description": "Format of a barcode. The supported formats are: CODE_128: Code 128 type. CODE_39: Code 39 type. CODE_93: Code 93 type. CODABAR: Codabar type. DATA_MATRIX: 2D Data Matrix type. ITF: ITF type. EAN_13: EAN-13 type. EAN_8: EAN-8 type. QR_CODE: 2D QR code type. UPC_A: UPC-A type. UPC_E: UPC-E type. PDF417: PDF417 type. AZTEC: 2D Aztec code type. DATABAR: GS1 DataBar code type.",
+          "type": "string"
+        },
+        "rawValue": {
+          "description": "Raw value encoded in the barcode. For example, 'MEBKM:TITLE:Google;URL:https://www.google.com;;'.",
+          "type": "string"
+        },
+        "valueFormat": {
+          "description": "Value format describes the format of the value that a barcode encodes. The supported formats are: CONTACT_INFO: Contact information. EMAIL: Email address. ISBN: ISBN identifier. PHONE: Phone number. PRODUCT: Product. SMS: SMS message. TEXT: Text string. URL: URL address. WIFI: Wifi information. GEO: Geo-localization. CALENDAR_EVENT: Calendar event. DRIVER_LICENSE: Driver's license.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "GoogleCloudDocumentaiV1beta3BatchDocumentsInputConfig": {
       "description": "The common config to specify a set of documents used as input.",
       "id": "GoogleCloudDocumentaiV1beta3BatchDocumentsInputConfig",
@@ -4196,7 +4526,7 @@
         },
         "status": {
           "$ref": "GoogleRpcStatus",
-          "description": "The status of the processing of the document."
+          "description": "The status processing the document."
         }
       },
       "type": "object"
@@ -4492,10 +4822,6 @@
           "description": "Optional. Text value in the document e.g. `1600 Amphitheatre Pkwy`. If the entity is not present in the document, this field will be empty.",
           "type": "string"
         },
-        "nonPresent": {
-          "description": "Optional. This attribute indicates that the processing didn't actually identify this entity, but a confidence score was assigned that represent the potential that this could be a false negative. A non-present entity should have an empty mention_text and text_anchor.",
-          "type": "boolean"
-        },
         "normalizedValue": {
           "$ref": "GoogleCloudDocumentaiV1beta3DocumentEntityNormalizedValue",
           "description": "Optional. Normalized entity value. Absent if the extracted value could not be converted or the type (e.g. address) is not supported for certain parsers. This field is also only populated for certain supported document types."
@@ -4620,6 +4946,13 @@
           "description": "A list of visually detected text blocks on the page. A block has a set of lines (collected into paragraphs) that have a common line-spacing and orientation.",
           "items": {
             "$ref": "GoogleCloudDocumentaiV1beta3DocumentPageBlock"
+          },
+          "type": "array"
+        },
+        "detectedBarcodes": {
+          "description": "A list of detected barcodes.",
+          "items": {
+            "$ref": "GoogleCloudDocumentaiV1beta3DocumentPageDetectedBarcode"
           },
           "type": "array"
         },
@@ -4791,6 +5124,21 @@
         "provenance": {
           "$ref": "GoogleCloudDocumentaiV1beta3DocumentProvenance",
           "description": "The history of this annotation."
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiV1beta3DocumentPageDetectedBarcode": {
+      "description": "A detected barcode.",
+      "id": "GoogleCloudDocumentaiV1beta3DocumentPageDetectedBarcode",
+      "properties": {
+        "barcode": {
+          "$ref": "GoogleCloudDocumentaiV1beta3Barcode",
+          "description": "Detailed barcode information of the DetectedBarcode."
+        },
+        "layout": {
+          "$ref": "GoogleCloudDocumentaiV1beta3DocumentPageLayout",
+          "description": "Layout for DetectedBarcode."
         }
       },
       "type": "object"
@@ -5301,6 +5649,143 @@
       },
       "type": "object"
     },
+    "GoogleCloudDocumentaiV1beta3DocumentSchema": {
+      "description": "The schema defines the output of the processed document by a processor.",
+      "id": "GoogleCloudDocumentaiV1beta3DocumentSchema",
+      "properties": {
+        "description": {
+          "description": "Description of the schema.",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "Display name to show to users.",
+          "type": "string"
+        },
+        "entityTypes": {
+          "description": "Entity types of the schema.",
+          "items": {
+            "$ref": "GoogleCloudDocumentaiV1beta3DocumentSchemaEntityType"
+          },
+          "type": "array"
+        },
+        "metadata": {
+          "$ref": "GoogleCloudDocumentaiV1beta3DocumentSchemaMetadata",
+          "description": "Metadata of the schema."
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiV1beta3DocumentSchemaEntityType": {
+      "description": "EntityType is the wrapper of a label of the corresponding model with detailed attributes and limitations for entity-based processors. Multiple types can also compose a dependency tree to represent nested types.",
+      "id": "GoogleCloudDocumentaiV1beta3DocumentSchemaEntityType",
+      "properties": {
+        "baseTypes": {
+          "description": "The entity type that this type is derived from. For now, one and only one should be set.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "displayName": {
+          "description": "User defined name for the type.",
+          "type": "string"
+        },
+        "entityTypeMetadata": {
+          "$ref": "GoogleCloudDocumentaiV1beta3EntityTypeMetadata",
+          "description": "Metadata for the entity type."
+        },
+        "enumValues": {
+          "$ref": "GoogleCloudDocumentaiV1beta3DocumentSchemaEntityTypeEnumValues",
+          "description": "If specified, lists all the possible values for this entity. This should not be more than a handful of values. If the number of values is >10 or could change frequently use the `EntityType.value_ontology` field and specify a list of all possible values in a value ontology file."
+        },
+        "name": {
+          "description": "Name of the type. It must be unique within the schema file and cannot be a 'Common Type'. Besides that we use the following naming conventions: - *use snake_casing* - name matching is case-insensitive - Maximum 64 characters. - Must start with a letter. - Allowed characters: ASCII letters `[a-z0-9_-]`. (For backward compatibility internal infrastructure and tooling can handle any ascii character) - The '/' is sometimes used to denote a property of a type. For example line_item/amount. This convention is deprecated, but will still be honored for backward compatibility.",
+          "type": "string"
+        },
+        "properties": {
+          "description": "Describing the nested structure, or composition of an entity.",
+          "items": {
+            "$ref": "GoogleCloudDocumentaiV1beta3DocumentSchemaEntityTypeProperty"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiV1beta3DocumentSchemaEntityTypeEnumValues": {
+      "description": "Defines the a list of enum values.",
+      "id": "GoogleCloudDocumentaiV1beta3DocumentSchemaEntityTypeEnumValues",
+      "properties": {
+        "values": {
+          "description": "The individual values that this enum values type can include.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiV1beta3DocumentSchemaEntityTypeProperty": {
+      "description": "Defines properties that can be part of the entity type.",
+      "id": "GoogleCloudDocumentaiV1beta3DocumentSchemaEntityTypeProperty",
+      "properties": {
+        "name": {
+          "description": "The name of the property. Follows the same guidelines as the EntityType name.",
+          "type": "string"
+        },
+        "occurrenceType": {
+          "description": "Occurrence type limits the number of instances an entity type appears in the document.",
+          "enum": [
+            "OCCURRENCE_TYPE_UNSPECIFIED",
+            "OPTIONAL_ONCE",
+            "OPTIONAL_MULTIPLE",
+            "REQUIRED_ONCE",
+            "REQUIRED_MULTIPLE"
+          ],
+          "enumDescriptions": [
+            "Unspecified occurrence type.",
+            "There will be zero or one instance of this entity type.",
+            "The entity type will appear zero or multiple times.",
+            "The entity type will only appear exactly once.",
+            "The entity type will appear once or more times."
+          ],
+          "type": "string"
+        },
+        "propertyMetadata": {
+          "$ref": "GoogleCloudDocumentaiV1beta3PropertyMetadata",
+          "description": "Any additional metadata about the property can be added here."
+        },
+        "valueType": {
+          "description": "A reference to the value type of the property. This type is subject to the same conventions as the `Entity.base_types` field.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiV1beta3DocumentSchemaMetadata": {
+      "description": "Metadata for global schema behavior.",
+      "id": "GoogleCloudDocumentaiV1beta3DocumentSchemaMetadata",
+      "properties": {
+        "documentAllowMultipleLabels": {
+          "description": "If true, on a given page, there can be multiple `document` annotations covering it.",
+          "type": "boolean"
+        },
+        "documentSplitter": {
+          "description": "If true, a `document` entity type can be applied to subdocument ( splitting). Otherwise, it can only be applied to the entire document (classification).",
+          "type": "boolean"
+        },
+        "prefixedNamingOnProperties": {
+          "description": "If set, all the nested entities must be prefixed with the parents.",
+          "type": "boolean"
+        },
+        "skipNamingValidation": {
+          "description": "If set, we will skip the naming format validation in the schema. So the string values in `DocumentSchema.EntityType.name` and `DocumentSchema.EntityType.Property.name` will not be checked.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
     "GoogleCloudDocumentaiV1beta3DocumentShardInfo": {
       "description": "For a large document, sharding may be performed to produce several document shards. Each document shard contains this field to detail which shard it is.",
       "id": "GoogleCloudDocumentaiV1beta3DocumentShardInfo",
@@ -5454,6 +5939,29 @@
       "properties": {},
       "type": "object"
     },
+    "GoogleCloudDocumentaiV1beta3EntityTypeMetadata": {
+      "description": "Metadata about an entity type.",
+      "id": "GoogleCloudDocumentaiV1beta3EntityTypeMetadata",
+      "properties": {
+        "humanReviewLabelingMetadata": {
+          "$ref": "GoogleCloudDocumentaiV1beta3HumanReviewLabelingMetadata",
+          "description": "Human review labeling config on the property."
+        },
+        "humanReviewMetadata": {
+          "$ref": "GoogleCloudDocumentaiV1beta3HumanReviewValidationMetadata",
+          "description": "Human review config on the entity type."
+        },
+        "inactive": {
+          "description": "Whether the entity type should be considered as \"inactive\".",
+          "type": "boolean"
+        },
+        "prefixedNamingOnProperties": {
+          "description": "If set, the properties of this entity type must be prefixed with the parents.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
     "GoogleCloudDocumentaiV1beta3FetchProcessorTypesResponse": {
       "description": "Response message for fetch processor types.",
       "id": "GoogleCloudDocumentaiV1beta3FetchProcessorTypesResponse",
@@ -5508,6 +6016,17 @@
       },
       "type": "object"
     },
+    "GoogleCloudDocumentaiV1beta3HumanReviewLabelingMetadata": {
+      "description": "Metadata for human review labeling config.",
+      "id": "GoogleCloudDocumentaiV1beta3HumanReviewLabelingMetadata",
+      "properties": {
+        "enableNormalizationEditing": {
+          "description": "Whether to enable normalization editing.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
     "GoogleCloudDocumentaiV1beta3HumanReviewStatus": {
       "description": "The status of human review on a processed document.",
       "id": "GoogleCloudDocumentaiV1beta3HumanReviewStatus",
@@ -5537,6 +6056,40 @@
         "stateMessage": {
           "description": "A message providing more details about the human review state.",
           "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiV1beta3HumanReviewValidationMetadata": {
+      "description": "Metadata for Human Review config.",
+      "id": "GoogleCloudDocumentaiV1beta3HumanReviewValidationMetadata",
+      "properties": {
+        "confidenceThreshold": {
+          "description": "The confidence threshold if human review validation is enabled.",
+          "format": "float",
+          "type": "number"
+        },
+        "enableValidation": {
+          "description": "Whether to enable human review validation.",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleCloudDocumentaiV1beta3ListProcessorTypesResponse": {
+      "description": "Response message for list processor types.",
+      "id": "GoogleCloudDocumentaiV1beta3ListProcessorTypesResponse",
+      "properties": {
+        "nextPageToken": {
+          "description": "Points to the next page, otherwise empty.",
+          "type": "string"
+        },
+        "processorTypes": {
+          "description": "The processor types.",
+          "items": {
+            "$ref": "GoogleCloudDocumentaiV1beta3ProcessorType"
+          },
+          "type": "array"
         }
       },
       "type": "object"
@@ -5601,6 +6154,11 @@
         "document": {
           "$ref": "GoogleCloudDocumentaiV1beta3Document",
           "description": "The document payload, the [content] and [mime_type] fields must be set."
+        },
+        "fieldMask": {
+          "description": "Specifies which fields to include in ProcessResponse's document.",
+          "format": "google-fieldmask",
+          "type": "string"
         },
         "inlineDocument": {
           "$ref": "GoogleCloudDocumentaiV1beta3Document",
@@ -5840,6 +6398,25 @@
       },
       "type": "object"
     },
+    "GoogleCloudDocumentaiV1beta3PropertyMetadata": {
+      "description": "Metadata about a property.",
+      "id": "GoogleCloudDocumentaiV1beta3PropertyMetadata",
+      "properties": {
+        "humanReviewLabelingMetadata": {
+          "$ref": "GoogleCloudDocumentaiV1beta3HumanReviewLabelingMetadata",
+          "description": "Human review labeling config on the property."
+        },
+        "humanReviewMetadata": {
+          "$ref": "GoogleCloudDocumentaiV1beta3HumanReviewValidationMetadata",
+          "description": "Human review validation config on the property."
+        },
+        "inactive": {
+          "description": "Whether the property should be considered as \"inactive\".",
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
     "GoogleCloudDocumentaiV1beta3RawDocument": {
       "description": "Payload message of raw document content (bytes).",
       "id": "GoogleCloudDocumentaiV1beta3RawDocument",
@@ -5913,6 +6490,10 @@
           "$ref": "GoogleCloudDocumentaiV1beta3Document",
           "description": "The document that needs human review."
         },
+        "documentSchema": {
+          "$ref": "GoogleCloudDocumentaiV1beta3DocumentSchema",
+          "description": "The document schema of the human review task."
+        },
         "enableSchemaValidation": {
           "description": "Whether the validation should be performed on the ad-hoc review request.",
           "type": "boolean"
@@ -5941,7 +6522,25 @@
       "id": "GoogleCloudDocumentaiV1beta3ReviewDocumentResponse",
       "properties": {
         "gcsDestination": {
-          "description": "The Cloud Storage uri for the human reviewed document.",
+          "description": "The Cloud Storage uri for the human reviewed document if the review is succeeded.",
+          "type": "string"
+        },
+        "rejectionReason": {
+          "description": "The reason why the review is rejected by reviewer.",
+          "type": "string"
+        },
+        "state": {
+          "description": "The state of the review operation.",
+          "enum": [
+            "STATE_UNSPECIFIED",
+            "REJECTED",
+            "SUCCEEDED"
+          ],
+          "enumDescriptions": [
+            "The default value. This value is used if the state is omitted.",
+            "The review operation is rejected by the reviewer.",
+            "The review operation is succeeded."
+          ],
           "type": "string"
         }
       },
@@ -5963,7 +6562,7 @@
       "id": "GoogleCloudDocumentaiV1beta3SetDefaultProcessorVersionRequest",
       "properties": {
         "defaultProcessorVersion": {
-          "description": "Required. The resource name of child ProcessorVersion to use as default.",
+          "description": "Required. The resource name of child ProcessorVersion to use as default. Format: `projects/{project}/locations/{location}/processors/{processor}/processorVersions/{version}`",
           "type": "string"
         }
       },
@@ -6203,36 +6802,36 @@
       "type": "object"
     },
     "GoogleTypeDateTime": {
-      "description": "Represents civil time (or occasionally physical time). This type can represent a civil time in one of a few possible ways: * When utc_offset is set and time_zone is unset: a civil time on a calendar day with a particular offset from UTC. * When time_zone is set and utc_offset is unset: a civil time on a calendar day in a particular time zone. * When neither time_zone nor utc_offset is set: a civil time on a calendar day in local time. The date is relative to the Proleptic Gregorian Calendar. If year is 0, the DateTime is considered not to have a specific year. month and day must have valid, non-zero values. This type may also be used to represent a physical time if all the date and time fields are set and either case of the `time_offset` oneof is set. Consider using `Timestamp` message for physical time instead. If your use case also would like to store the user's timezone, that can be done in another field. This type is more flexible than some applications may want. Make sure to document and validate your application's limitations.",
+      "description": "Represents civil time (or occasionally physical time). This type can represent a civil time in one of a few possible ways: * When utc_offset is set and time_zone is unset: a civil time on a calendar day with a particular offset from UTC. * When time_zone is set and utc_offset is unset: a civil time on a calendar day in a particular time zone. * When neither time_zone nor utc_offset is set: a civil time on a calendar day in local time. The date is relative to the Proleptic Gregorian Calendar. If year, month, or day are 0, the DateTime is considered not to have a specific year, month, or day respectively. This type may also be used to represent a physical time if all the date and time fields are set and either case of the `time_offset` oneof is set. Consider using `Timestamp` message for physical time instead. If your use case also would like to store the user's timezone, that can be done in another field. This type is more flexible than some applications may want. Make sure to document and validate your application's limitations.",
       "id": "GoogleTypeDateTime",
       "properties": {
         "day": {
-          "description": "Required. Day of month. Must be from 1 to 31 and valid for the year and month.",
+          "description": "Optional. Day of month. Must be from 1 to 31 and valid for the year and month, or 0 if specifying a datetime without a day.",
           "format": "int32",
           "type": "integer"
         },
         "hours": {
-          "description": "Required. Hours of day in 24 hour format. Should be from 0 to 23. An API may choose to allow the value \"24:00:00\" for scenarios like business closing time.",
+          "description": "Optional. Hours of day in 24 hour format. Should be from 0 to 23, defaults to 0 (midnight). An API may choose to allow the value \"24:00:00\" for scenarios like business closing time.",
           "format": "int32",
           "type": "integer"
         },
         "minutes": {
-          "description": "Required. Minutes of hour of day. Must be from 0 to 59.",
+          "description": "Optional. Minutes of hour of day. Must be from 0 to 59, defaults to 0.",
           "format": "int32",
           "type": "integer"
         },
         "month": {
-          "description": "Required. Month of year. Must be from 1 to 12.",
+          "description": "Optional. Month of year. Must be from 1 to 12, or 0 if specifying a datetime without a month.",
           "format": "int32",
           "type": "integer"
         },
         "nanos": {
-          "description": "Required. Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.",
+          "description": "Optional. Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999, defaults to 0.",
           "format": "int32",
           "type": "integer"
         },
         "seconds": {
-          "description": "Required. Seconds of minutes of the time. Must normally be from 0 to 59. An API may allow the value 60 if it allows leap-seconds.",
+          "description": "Optional. Seconds of minutes of the time. Must normally be from 0 to 59, defaults to 0. An API may allow the value 60 if it allows leap-seconds.",
           "format": "int32",
           "type": "integer"
         },
@@ -6275,7 +6874,7 @@
       "type": "object"
     },
     "GoogleTypePostalAddress": {
-      "description": "Represents a postal address, e.g. for postal delivery or payments addresses. Given a postal address, a postal service can deliver items to a premise, P.O. Box or similar. It is not intended to model geographical locations (roads, towns, mountains). In typical usage an address would be created via user input or from importing existing data, depending on the type of process. Advice on address input / editing: - Use an i18n-ready address widget such as https://github.com/google/libaddressinput) - Users should not be presented with UI elements for input or editing of fields outside countries where that field is used. For more guidance on how to use this schema, please see: https://support.google.com/business/answer/6397478",
+      "description": "Represents a postal address, e.g. for postal delivery or payments addresses. Given a postal address, a postal service can deliver items to a premise, P.O. Box or similar. It is not intended to model geographical locations (roads, towns, mountains). In typical usage an address would be created via user input or from importing existing data, depending on the type of process. Advice on address input / editing: - Use an internationalization-ready address widget such as https://github.com/google/libaddressinput) - Users should not be presented with UI elements for input or editing of fields outside countries where that field is used. For more guidance on how to use this schema, please see: https://support.google.com/business/answer/6397478",
       "id": "GoogleTypePostalAddress",
       "properties": {
         "addressLines": {

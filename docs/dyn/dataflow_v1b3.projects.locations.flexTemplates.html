@@ -108,7 +108,8 @@ Args:
         },
         &quot;autoscalingAlgorithm&quot;: &quot;A String&quot;, # The algorithm to use for autoscaling
         &quot;diskSizeGb&quot;: 42, # Worker disk size, in gigabytes.
-        &quot;dumpHeapOnOom&quot;: True or False, # If true, save a heap dump before killing a thread or process which is GC thrashing or out of memory. The location of the heap file will either be echoed back to the user, or the user will be given the opportunity to download the heap file.
+        &quot;dumpHeapOnOom&quot;: True or False, # If true, when processing time is spent almost entirely on garbage collection (GC), saves a heap dump before ending the thread or process. If false, ends the thread or process without saving a heap dump. Does not save a heap dump when the Java Virtual Machine (JVM) has an out of memory error during processing. The location of the heap file is either echoed back to the user, or the user is given the opportunity to download the heap file.
+        &quot;enableLauncherVmSerialPortLogging&quot;: True or False, # If true serial port logging will be enabled for the launcher VM.
         &quot;enableStreamingEngine&quot;: True or False, # Whether to enable Streaming Engine for the job.
         &quot;flexrsGoal&quot;: &quot;A String&quot;, # Set FlexRS goal for the job. https://cloud.google.com/dataflow/docs/guides/flexrs
         &quot;ipConfiguration&quot;: &quot;A String&quot;, # Configuration for VM IPs.
@@ -118,7 +119,7 @@ Args:
         &quot;maxWorkers&quot;: 42, # The maximum number of Google Compute Engine instances to be made available to your pipeline during execution, from 1 to 1000.
         &quot;network&quot;: &quot;A String&quot;, # Network to which VMs will be assigned. If empty or unspecified, the service will use the network &quot;default&quot;.
         &quot;numWorkers&quot;: 42, # The initial number of Google Compute Engine instances for the job.
-        &quot;saveHeapDumpsToGcsPath&quot;: &quot;A String&quot;, # Cloud Storage bucket (directory) to upload heap dumps to the given location. Enabling this implies that heap dumps should be generated on OOM (dump_heap_on_oom is set to true).
+        &quot;saveHeapDumpsToGcsPath&quot;: &quot;A String&quot;, # Cloud Storage bucket (directory) to upload heap dumps to. Enabling this field implies that `dump_heap_on_oom` is set to true.
         &quot;sdkContainerImage&quot;: &quot;A String&quot;, # Docker registry location of container image to use for the &#x27;worker harness. Default is the container for the version of the SDK. Note this field is only valid for portable pipelines.
         &quot;serviceAccountEmail&quot;: &quot;A String&quot;, # The email address of the service account to run the job as.
         &quot;stagingLocation&quot;: &quot;A String&quot;, # The Cloud Storage path for staging local files. Must be a valid Cloud Storage URL, beginning with `gs://`.
@@ -166,7 +167,8 @@ Args:
       },
       &quot;autoscalingAlgorithm&quot;: &quot;A String&quot;, # The algorithm to use for autoscaling
       &quot;diskSizeGb&quot;: 42, # Worker disk size, in gigabytes.
-      &quot;dumpHeapOnOom&quot;: True or False, # If true, save a heap dump before killing a thread or process which is GC thrashing or out of memory. The location of the heap file will either be echoed back to the user, or the user will be given the opportunity to download the heap file.
+      &quot;dumpHeapOnOom&quot;: True or False, # If true, when processing time is spent almost entirely on garbage collection (GC), saves a heap dump before ending the thread or process. If false, ends the thread or process without saving a heap dump. Does not save a heap dump when the Java Virtual Machine (JVM) has an out of memory error during processing. The location of the heap file is either echoed back to the user, or the user is given the opportunity to download the heap file.
+      &quot;enableLauncherVmSerialPortLogging&quot;: True or False, # If true serial port logging will be enabled for the launcher VM.
       &quot;enableStreamingEngine&quot;: True or False, # Whether to enable Streaming Engine for the job.
       &quot;flexrsGoal&quot;: &quot;A String&quot;, # Set FlexRS goal for the job. https://cloud.google.com/dataflow/docs/guides/flexrs
       &quot;ipConfiguration&quot;: &quot;A String&quot;, # Configuration for VM IPs.
@@ -176,7 +178,7 @@ Args:
       &quot;maxWorkers&quot;: 42, # The maximum number of Google Compute Engine instances to be made available to your pipeline during execution, from 1 to 1000.
       &quot;network&quot;: &quot;A String&quot;, # Network to which VMs will be assigned. If empty or unspecified, the service will use the network &quot;default&quot;.
       &quot;numWorkers&quot;: 42, # The initial number of Google Compute Engine instances for the job.
-      &quot;saveHeapDumpsToGcsPath&quot;: &quot;A String&quot;, # Cloud Storage bucket (directory) to upload heap dumps to the given location. Enabling this implies that heap dumps should be generated on OOM (dump_heap_on_oom is set to true).
+      &quot;saveHeapDumpsToGcsPath&quot;: &quot;A String&quot;, # Cloud Storage bucket (directory) to upload heap dumps to. Enabling this field implies that `dump_heap_on_oom` is set to true.
       &quot;sdkContainerImage&quot;: &quot;A String&quot;, # Docker registry location of container image to use for the &#x27;worker harness. Default is the container for the version of the SDK. Note this field is only valid for portable pipelines.
       &quot;serviceAccountEmail&quot;: &quot;A String&quot;, # The email address of the service account to run the job as.
       &quot;stagingLocation&quot;: &quot;A String&quot;, # The Cloud Storage path for staging local files. Must be a valid Cloud Storage URL, beginning with `gs://`.
@@ -282,8 +284,8 @@ Returns:
             &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
           },
           &quot;sdkHarnessContainerImages&quot;: [ # Set of SDK harness containers needed to execute this pipeline. This will only be set in the Fn API path. For non-cross-language pipelines this should have only one entry. Cross-language pipelines will have two or more entries.
-            { # Defines a SDK harness container for executing Dataflow pipelines.
-              &quot;capabilities&quot;: [ # The set of capabilities enumerated in the above Environment proto. See also https://github.com/apache/beam/blob/master/model/pipeline/src/main/proto/beam_runner_api.proto
+            { # Defines an SDK harness container for executing Dataflow pipelines.
+              &quot;capabilities&quot;: [ # The set of capabilities enumerated in the above Environment proto. See also [beam_runner_api.proto](https://github.com/apache/beam/blob/master/model/pipeline/src/main/proto/org/apache/beam/model/pipeline/v1/beam_runner_api.proto)
                 &quot;A String&quot;,
               ],
               &quot;containerImage&quot;: &quot;A String&quot;, # A docker container image that resides in Google Container Registry.
@@ -390,7 +392,7 @@ Returns:
       &quot;a_key&quot;: &quot;A String&quot;,
     },
     &quot;location&quot;: &quot;A String&quot;, # The [regional endpoint] (https://cloud.google.com/dataflow/docs/concepts/regional-endpoints) that contains this job.
-    &quot;name&quot;: &quot;A String&quot;, # The user-specified Cloud Dataflow job name. Only one Job with a given name may exist in a project at any given time. If a caller attempts to create a Job with the same name as an already-existing Job, the attempt returns the existing Job. The name must match the regular expression `[a-z]([-a-z0-9]{0,38}[a-z0-9])?`
+    &quot;name&quot;: &quot;A String&quot;, # The user-specified Cloud Dataflow job name. Only one Job with a given name can exist in a project within one region at any given time. Jobs in different regions can have the same name. If a caller attempts to create a Job with the same name as an already-existing Job, the attempt returns the existing Job. The name must match the regular expression `[a-z]([-a-z0-9]{0,1022}[a-z0-9])?`
     &quot;pipelineDescription&quot;: { # A descriptive representation of submitted pipeline as well as the executed form. This data is provided by the Dataflow service for ease of visualizing the pipeline and interpreting Dataflow provided metrics. # Preliminary field: The format of this data may change at any time. A description of the user pipeline and stages through which it is executed. Created by Cloud Dataflow service. Only retrieved with JOB_VIEW_DESCRIPTION or JOB_VIEW_ALL.
       &quot;displayData&quot;: [ # Pipeline level display data.
         { # Data provided with a pipeline or transform to provide descriptive info.
