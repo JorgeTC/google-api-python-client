@@ -997,7 +997,7 @@
                   "type": "boolean"
                 },
                 "requestOptions.languageCode": {
-                  "description": "The BCP-47 language code, such as \"en-US\" or \"sr-Latn\". For more information, see http://www.unicode.org/reports/tr35/#Unicode_locale_identifier. For translations. Set this field using the language set in browser or for the page. In the event that the user's language preference is known, set this field to the known user language. When specified, the documents in search results are biased towards the specified language. The suggest API does not use this parameter. Instead, suggest autocompletes only based on characters in the query.",
+                  "description": "The BCP-47 language code, such as \"en-US\" or \"sr-Latn\". For more information, see http://www.unicode.org/reports/tr35/#Unicode_locale_identifier. For translations. Set this field using the language set in browser or for the page. In the event that the user's language preference is known, set this field to the known user language. When specified, the documents in search results are biased towards the specified language. From Suggest API perspective, for 3p suggest this is used as a hint while making predictions to add language boosting.",
                   "location": "query",
                   "type": "string"
                 },
@@ -1213,6 +1213,12 @@
                   "pattern": "^datasources/[^/]+$",
                   "required": true,
                   "type": "string"
+                },
+                "updateMask": {
+                  "description": "Update mask to control which fields to update. If update_mask is non-empty then only the fields specified in the update_mask are updated. If you specify a field in the update_mask, but don't specify its value in the source that field will be cleared. If the update_mask is not present or empty or has the value * then all fields will be updated. Some example field paths: name, display_name",
+                  "format": "google-fieldmask",
+                  "location": "query",
+                  "type": "string"
                 }
               },
               "path": "v1/settings/{+name}",
@@ -1395,6 +1401,12 @@
                   "pattern": "^searchapplications/[^/]+$",
                   "required": true,
                   "type": "string"
+                },
+                "updateMask": {
+                  "description": "Update mask to control which fields to update. If update_mask is non-empty then only the fields specified in the update_mask are updated. If you specify a field in the update_mask, but don't specify its value in the search_application then that field will be cleared. If the update_mask is not present or empty or has the value * then all fields will be updated. Some example field paths: search_application.name, search_application.display_name",
+                  "format": "google-fieldmask",
+                  "location": "query",
+                  "type": "string"
                 }
               },
               "path": "v1/settings/{+name}",
@@ -1454,6 +1466,12 @@
                   "location": "path",
                   "pattern": "^searchapplications/[^/]+$",
                   "required": true,
+                  "type": "string"
+                },
+                "updateMask": {
+                  "description": "Update mask to control which fields to update. If update_mask is non-empty then only the fields specified in the update_mask are updated. If you specify a field in the update_mask, but don't specify its value in the search_application then that field will be cleared. If the update_mask is not present or empty or has the value * then all fields will be updated. Some example field paths: search_application.name, search_application.display_name",
+                  "format": "google-fieldmask",
+                  "location": "query",
                   "type": "string"
                 }
               },
@@ -2059,7 +2077,7 @@
       }
     }
   },
-  "revision": "20220823",
+  "revision": "20220927",
   "rootUrl": "https://cloudsearch.googleapis.com/",
   "schemas": {
     "AbuseReportingConfig": {
@@ -2500,7 +2518,8 @@
             "ASSISTIVE_SUGGESTION_APP",
             "CONTACTS_APP",
             "ACTIVITY_FEED_APP",
-            "DRIVE_APP"
+            "DRIVE_APP",
+            "CHAT_IN_MEET_APP"
           ],
           "enumDescriptions": [
             "",
@@ -2511,6 +2530,7 @@
             "",
             "",
             "Powered by Bullseye",
+            "",
             "",
             "",
             ""
@@ -2581,12 +2601,17 @@
       "type": "object"
     },
     "AppsDynamiteSharedActivityFeedAnnotationData": {
-      "description": "Next Id: 5",
+      "description": "Next Id: 7",
       "id": "AppsDynamiteSharedActivityFeedAnnotationData",
       "properties": {
-        "activityFeedMessageId": {
-          "description": "Unique id of the Activity Feed message. This will be in the form of \"space-id/message-id\" or \"dm-id/message-id\", where the space-/dm-id and message-id components are extracted from the top-level MessageId in message.proto (http://shortn/_SulV51DNfF). This is copied into annotations so that no client changes are needed to access this value. Clients will need a unique id for every Activity Feed message to implement click-to-source.",
+        "activityFeedMessageCreateTime": {
+          "description": "Timestamp of when the Activity Feed message that contains this annotation was created. This is roughly when the activity happened, such as when a reaction happened, but will have at least some small delay, since the Activity Feed message is created asynchronously after. This timestamp should only be used for display when the activity create time is not available in the Chat UI, like the time of a reaction.",
+          "format": "google-datetime",
           "type": "string"
+        },
+        "activityFeedMessageId": {
+          "$ref": "MessageId",
+          "description": "Unique id of the Activity Feed message used by clients to implement click-to-source. This is the same messageId as the top-level id field for the Activity Feed item."
         },
         "chatItem": {
           "$ref": "AppsDynamiteSharedChatItem"
@@ -3366,7 +3391,7 @@
             "A flat room that contains a single thread.",
             "A threaded room. Topics in this room are threaded, and users can reply to any topic.",
             "A DM with immutable group membership. It can be a 1:1 DM or a group DM with multiple human users.",
-            "A post room. Topics in this room are organized in a post/reply style. See the design doc for more details: go/PostRoomsInDynamite.",
+            "A post room. Topics in this room are organized in a post/reply style. See the design doc for more details: go/PostRoomsInDynamite. Deprecated. Post rooms are no longer supported.",
             "Represents an Activity Feed space. These groups are modeled like flat rooms and contain items for users to catch up on important things. Each user should only have one group of this type. See go/activity-feed. LINT.ThenChange(//depot/google3/logs/proto/apps_dynamite/dynamite_visual_element_entry.proto:LoggingGroupType,//depot/google3/java/com/google/apps/dynamite/v1/web/ui/group/groups.js:LoggingGroupType)"
           ],
           "type": "string"
@@ -3523,6 +3548,9 @@
             "SPAM",
             "CONFIDENTIAL_INFORMATION",
             "SENSITIVE_INFORMATION",
+            "FRAUD",
+            "MALWARE",
+            "ILLEGAL_ACTIVITIES",
             "OTHER"
           ],
           "enumDescriptions": [
@@ -3533,6 +3561,9 @@
             "\"Spam\"",
             "\"Confidential information\"",
             "\"Sensitive information\"",
+            "Phishing, impersonation/misrepresentation, or deceiving other users into sharing information under false pretenses.",
+            "Malware, viruses, Trojan horses, corrupted files, destructive code, etc.",
+            "Promoting, organizing, or engaging in illegal activities.",
             "\"Something else\""
           ],
           "type": "string"
@@ -4152,12 +4183,24 @@
       "type": "object"
     },
     "AppsDynamiteSharedMessageInfo": {
-      "description": "Information that references a Dynamite chat message.",
+      "description": "Information that references a Dynamite chat message. This is only used for Activity Feed messages.",
       "id": "AppsDynamiteSharedMessageInfo",
       "properties": {
         "messageId": {
           "$ref": "MessageId",
           "description": "Id of the source chat message. This is kept here because the top-level message ID to refers the AF message ID."
+        },
+        "messageType": {
+          "description": "The type of the source chat message.",
+          "enum": [
+            "MESSAGE_TYPE_UNSPECIFIED",
+            "INLINE_REPLY"
+          ],
+          "enumDescriptions": [
+            "Default value where type is not specified.",
+            "The source chat message is a threaded reply to another message."
+          ],
+          "type": "string"
         },
         "topicReadTimeUsec": {
           "description": "Timestamp of when the topic containing the message has been read by the user. This is populated if the message references an inline reply, in which case the space may be marked as read but the topic still has unread messages.",
@@ -4400,6 +4443,60 @@
             "The message/topic should be kept with a 24-hour TTL."
           ],
           "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "AppsDynamiteSharedSegmentedMembershipCount": {
+      "description": "Contains info on membership count for member types: HUMAN_USER, APP_USER & ROSTER_MEMBER different states: INVITED, JOINED",
+      "id": "AppsDynamiteSharedSegmentedMembershipCount",
+      "properties": {
+        "memberType": {
+          "enum": [
+            "MEMBER_TYPE_UNSPECIFIED",
+            "HUMAN_USER",
+            "ROSTER_MEMBER"
+          ],
+          "enumDescriptions": [
+            "default value",
+            "member is a human user",
+            "member is a roster"
+          ],
+          "type": "string"
+        },
+        "membershipCount": {
+          "description": "count of members with given type and state",
+          "format": "int32",
+          "type": "integer"
+        },
+        "membershipState": {
+          "enum": [
+            "MEMBER_UNKNOWN",
+            "MEMBER_INVITED",
+            "MEMBER_JOINED",
+            "MEMBER_NOT_A_MEMBER",
+            "MEMBER_FAILED"
+          ],
+          "enumDescriptions": [
+            "Default state, do not use",
+            "An invitation to the space has been sent",
+            "User has joined the space",
+            "User is not a member",
+            "This state should never be stored in Spanner. It is a state for responses to the clients to indicate that membership mutations have failed and the member is in its previous state."
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "AppsDynamiteSharedSegmentedMembershipCounts": {
+      "id": "AppsDynamiteSharedSegmentedMembershipCounts",
+      "properties": {
+        "value": {
+          "items": {
+            "$ref": "AppsDynamiteSharedSegmentedMembershipCount"
+          },
+          "type": "array"
         }
       },
       "type": "object"
@@ -4731,9 +4828,13 @@
             "UNKNOWN_STATUS",
             "SUCCESS",
             "ERROR",
-            "NOT_APPLICABLE"
+            "NOT_APPLICABLE",
+            "THUMBNAIL_SUCCESS",
+            "GO_LIVE_SUCCESS"
           ],
           "enumDescriptions": [
+            "",
+            "",
             "",
             "",
             "",
@@ -5172,6 +5273,21 @@
       "description": "Bot-specific profile information.",
       "id": "BotInfo",
       "properties": {
+        "appAllowlistStatus": {
+          "enum": [
+            "UNSPECIFIED_STATUS",
+            "ALLOWED",
+            "ALL_APPS_DISABLED_BY_ADMIN",
+            "APP_NOT_ALLOWLISTED_BY_ADMIN"
+          ],
+          "enumDescriptions": [
+            "",
+            "",
+            "For both ALL_APPS_DISABLED_BY_ADMIN and APP_NOT_ALLOWLISTED_BY_ADMIN, the app should still be visible in the catalog, but usage of the app will be disabled. Indicates that all apps have been disabled by the dasher admin.",
+            "Indicates that the customer is using allowlisting, but that the bot is not allowlisted."
+          ],
+          "type": "string"
+        },
         "appId": {
           "$ref": "AppId",
           "description": "Identifier of the application associated with the bot."
@@ -5210,6 +5326,10 @@
           ],
           "type": "string"
         },
+        "supportHomeScreen": {
+          "description": "If the app supports a home screen.",
+          "type": "boolean"
+        },
         "supportUrls": {
           "$ref": "SupportUrls",
           "description": "Urls with additional information related to the bot. This field should always be set even if all the fields within it are empty, so that it is convenient for clients to work with this field in javascript."
@@ -5232,21 +5352,6 @@
             "type": "string"
           },
           "type": "array"
-        },
-        "whitelistStatus": {
-          "enum": [
-            "UNSPECIFIED_STATUS",
-            "ALLOWED",
-            "ALL_BOTS_DISABLED_BY_ADMIN",
-            "BOT_NOT_WHITELISTED_BY_ADMIN"
-          ],
-          "enumDescriptions": [
-            "",
-            "",
-            "For both ALL_BOTS_DISABLED_BY_ADMIN and BOT_NOT_WHITELISTED_BY_ADMIN, the bot should still be visible in the catalog, but usage of the bot will be disabled. Indicates that all bots has been disabled by the dasher admin.",
-            "Indicates that the customer is using whitelisting, but that the bot is not whitelisted."
-          ],
-          "type": "string"
         }
       },
       "type": "object"
@@ -5512,15 +5617,11 @@
           "type": "boolean"
         },
         "moderationEnabled": {
-          "description": "Indicates whether the current call is moderated. go/meet-multimod-dd",
+          "description": "Indicates whether the current call is moderated.",
           "type": "boolean"
         },
         "presentLock": {
           "description": "Indicates whether the present lock is currently on or off.",
-          "type": "boolean"
-        },
-        "projectDinoEnabled": {
-          "description": "Indicates whether project Dino is currently on or off. WARNING: This is currently an experimental field. It should not be used without getting an explicit review and approval from the Meet team.",
           "type": "boolean"
         },
         "reactionsLock": {
@@ -9054,7 +9155,7 @@
       "type": "object"
     },
     "GoogleDocsMetadata": {
-      "description": "The corpus specific metadata for office-type documents, from Google Docs and other sources. This message is passed to the scorer and beyond. Next tag: 7",
+      "description": "The corpus specific metadata for office-type documents, from Google Docs and other sources. This message is passed to the scorer and beyond. Next tag: 9",
       "id": "GoogleDocsMetadata",
       "properties": {
         "aclInfo": {
@@ -9111,6 +9212,16 @@
           "description": "The last time this document was modified, in seconds since epoch. Only counts content modifications.",
           "format": "int64",
           "type": "string"
+        },
+        "numSubscribers": {
+          "description": "Contains number of subscribers for the document.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "numViewers": {
+          "description": "Size of untruncated viewers list.",
+          "format": "int32",
+          "type": "integer"
         },
         "resultInfo": {
           "$ref": "GoogleDocsResultInfo",
@@ -10865,7 +10976,7 @@
           "type": "array"
         },
         "meetingAlias": {
-          "description": "An optional alias for the meeting space. The alias can in some cases be resolved to the meeting space, similar to the meeting code. The limitation is that the user needs to be in the same meeting domain as the meeting space. See go/thor-backend/meeting-alias for more details.",
+          "description": "An optional alias for the meeting space. The alias can in some cases be resolved to the meeting space, similar to the meeting code. The limitation is that the user needs to be in the same meeting domain as the meeting space.",
           "type": "string"
         },
         "meetingCode": {
@@ -10881,7 +10992,7 @@
           "type": "string"
         },
         "moreJoinUrl": {
-          "description": "Output only. A URL that clients (e.g. Calendar) can use to show the web page with all join methods available for this meeting space. This link is also used in iOS universal links and Android intents, used for opening the \"More ways to join\" view in the Thor mobile apps. Example: https://tel.meet/mee-ting-cod?pin=1234567891011 Here, \"pin\" is the universal phone PIN. We include it explicitly to better support the offline case on the mobile. This is set when the meeting space has either a universal PIN or an interop PIN and clients who can show a \"more ways to join\" button should show it whenever this field is set.",
+          "description": "Output only. A URL that clients (e.g. Calendar) can use to show the web page with all join methods available for this meeting space. This link is also used in iOS universal links and Android intents, used for opening the \"More ways to join\" view in the Meet mobile apps. Example: https://tel.meet/mee-ting-cod?pin=1234567891011 Here, \"pin\" is the universal phone PIN. We include it explicitly to better support the offline case on the mobile. This is set when the meeting space has either a universal PIN or an interop PIN and clients who can show a \"more ways to join\" button should show it whenever this field is set.",
           "readOnly": true,
           "type": "string"
         },
@@ -11239,6 +11350,10 @@
           "$ref": "MessageId",
           "description": "ID of the resource."
         },
+        "isContentPurged": {
+          "description": "Whether the message is content purged. Content purged messages contain only data required for tombstone (see go/chat-infinite-tombstone). This field is only used by Vault to display tombstone and should only be set to true if the message is a tombstone.",
+          "type": "boolean"
+        },
         "isInlineReply": {
           "description": "Output only. Indicates if the message is an inline reply. Set to true only if the message's ParentPath is non-NULL. Currently, only inline replies have non-NULL ParentPath. See go/chat-be-inline-reply-indicator.",
           "readOnly": true,
@@ -11338,7 +11453,7 @@
           ],
           "enumDescriptions": [
             "Unspecified state for QuotedByState.",
-            "State to indicate that this message is quoted by another message (excluding soft-deleted message and purged ones).",
+            "State to indicate that this message is quoted by another message (excluding purged message).",
             "State to indicate that this message are not quoted by another message."
           ],
           "readOnly": true,
@@ -12450,7 +12565,7 @@
           "type": "boolean"
         },
         "isWildcardSearchable": {
-          "description": "Indicates that users can perform wildcard search for this property. Only supported for Text properties. IsReturnable must be true to set this option. In a given datasource maximum of 5 properties can be marked as is_wildcard_searchable.",
+          "description": "Indicates that users can perform wildcard search for this property. Only supported for Text properties. IsReturnable must be true to set this option. In a given datasource maximum of 5 properties can be marked as is_wildcard_searchable. For more details, see [Define object properties](https://developers.google.com/cloud-search/docs/guides/schema-guide#properties)",
           "type": "boolean"
         },
         "name": {
@@ -12825,10 +12940,22 @@
           "readOnly": true,
           "type": "string"
         },
+        "createTimeMicros": {
+          "description": "Output only. Time when the quoted message was posted in microseconds.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "string"
+        },
         "creatorId": {
           "$ref": "UserId",
           "description": "Output only. ID of the User who posted the quoted message. This includes information to identify if the quoted message was posted by an App on behalf of a user.",
           "readOnly": true
+        },
+        "lastEditTimeMicros": {
+          "description": "Output only. Time when the quoted message was last edited by a user at the time when quoting action happens. Time is in microseconds.",
+          "format": "int64",
+          "readOnly": true,
+          "type": "string"
         },
         "lastUpdateTimeWhenQuotedMicros": {
           "description": "The `last_update_time` of the original message when the client initiated the quote creation. This is derived from the request payload passed from clients. Used to fetch the quoted message contents at a specific time on the read path. This field is populated from storage directly.",
@@ -12844,12 +12971,14 @@
           "enum": [
             "MESSAGE_STATE_UNSPECIFIED",
             "MESSAGE_STATE_ACTIVE",
-            "MESSAGE_STATE_DELETED"
+            "MESSAGE_STATE_DELETED",
+            "MESSAGE_STATE_OTR_EDITED"
           ],
           "enumDescriptions": [
             "",
-            "",
-            ""
+            "The original message is present in storage and not deleted; the message contents can be hydrated.",
+            "The original message has been deleted; the message contents cannot be hydrated.",
+            "The OTR original message was edited and therefore no longer retrievable from storage; the message contents cannot be hydrated. See go/message-quoting-otr-edits for more context."
           ],
           "readOnly": true,
           "type": "string"
@@ -12864,8 +12993,13 @@
           "readOnly": true,
           "type": "string"
         },
+        "updaterId": {
+          "$ref": "UserId",
+          "description": "Output only. ID of the User who last updated (created/edited/deleted) the quoted message at the time when quoting action happens. This includes information to identify if the quoted message was posted by an App on behalf of a user.",
+          "readOnly": true
+        },
         "uploadMetadata": {
-          "description": "Output only. Upload metadata of the quoted message. NEXT TAG: 11",
+          "description": "Output only. Upload metadata of the quoted message.",
           "items": {
             "$ref": "UploadMetadata"
           },
@@ -12996,8 +13130,8 @@
           "enumDescriptions": [
             "This is never used.",
             "A meeting recording saved to a video file in Google Drive.",
-            "A *Google Live* managed stream. See go/thor-managed-streaming.",
-            "A meeting broadcast. See go/thor-streaming-prd."
+            "A *Google Live* managed stream.",
+            "A meeting broadcast."
           ],
           "type": "string"
         },
@@ -13108,7 +13242,7 @@
           "description": "Debug options of the request"
         },
         "languageCode": {
-          "description": "The BCP-47 language code, such as \"en-US\" or \"sr-Latn\". For more information, see http://www.unicode.org/reports/tr35/#Unicode_locale_identifier. For translations. Set this field using the language set in browser or for the page. In the event that the user's language preference is known, set this field to the known user language. When specified, the documents in search results are biased towards the specified language. The suggest API does not use this parameter. Instead, suggest autocompletes only based on characters in the query.",
+          "description": "The BCP-47 language code, such as \"en-US\" or \"sr-Latn\". For more information, see http://www.unicode.org/reports/tr35/#Unicode_locale_identifier. For translations. Set this field using the language set in browser or for the page. In the event that the user's language preference is known, set this field to the known user language. When specified, the documents in search results are biased towards the specified language. From Suggest API perspective, for 3p suggest this is used as a hint while making predictions to add language boosting.",
           "type": "string"
         },
         "searchApplicationId": {
@@ -13130,9 +13264,11 @@
           "items": {
             "enum": [
               "REQUIRED_FEATURE_UNSPECIFIED",
-              "REQUIRED_FEATURE_MESSAGE_QUOTING"
+              "REQUIRED_FEATURE_MESSAGE_QUOTING",
+              "REQUIRED_FEATURE_TOMBSTONES_IN_DMS_AND_UFRS"
             ],
             "enumDescriptions": [
+              "",
               "",
               ""
             ],
@@ -13402,6 +13538,10 @@
             "Roster deleted"
           ],
           "type": "string"
+        },
+        "segmentedMembershipCounts": {
+          "$ref": "AppsDynamiteSharedSegmentedMembershipCounts",
+          "description": "Roster membership count. May contain counts based on member type and membership state."
         }
       },
       "type": "object"
@@ -14036,7 +14176,7 @@
           "type": "boolean"
         },
         "cohostArtifactSharingEnabled": {
-          "description": "Whether meeting artifacts will be shared with co-hosts.",
+          "description": "Whether meeting artifacts will be shared with cohosts.",
           "type": "boolean"
         },
         "cseEnabled": {
@@ -14048,7 +14188,7 @@
           "type": "boolean"
         },
         "moderationEnabled": {
-          "description": "Indicates whether the meeting space is moderated. go/meet-multimod-dd",
+          "description": "Indicates whether the meeting space is moderated.",
           "type": "boolean"
         },
         "presentLock": {
@@ -14515,8 +14655,8 @@
           "enumDescriptions": [
             "This is never used.",
             "A meeting recording saved to a video file in Google Drive.",
-            "A *Google Live* managed stream. See go/thor-managed-streaming.",
-            "A meeting broadcast. See go/thor-streaming-prd."
+            "A *Google Live* managed stream.",
+            "A meeting broadcast."
           ],
           "type": "string"
         },
@@ -15097,6 +15237,11 @@
         },
         "source": {
           "$ref": "DataSource"
+        },
+        "updateMask": {
+          "description": "Update mask to control which fields to update. If update_mask is non-empty then only the fields specified in the update_mask are updated. If you specify a field in the update_mask, but don't specify its value in the source that field will be cleared. If the update_mask is not present or empty or has the value * then all fields will be updated. Some example field paths: name, display_name",
+          "format": "google-fieldmask",
+          "type": "string"
         }
       },
       "type": "object"
@@ -15253,7 +15398,7 @@
           "type": "integer"
         },
         "mimeType": {
-          "description": "Mime type of the content (Currently mapped from Page Render Service ItemType) Note that this is not necessarily the mime type of the http resource. For example a text/html from youtube or vimeo may actually be classified as a video type. Then we shall mark it as video/* since we don't know exactly what type of video it is. NEXT TAG : 16",
+          "description": "Mime type of the content (Currently mapped from Page Render Service ItemType) Note that this is not necessarily the mime type of the http resource. For example a text/html from youtube or vimeo may actually be classified as a video type. Then we shall mark it as video/* since we don't know exactly what type of video it is.",
           "type": "string"
         },
         "redirectUrl": {
@@ -15275,6 +15420,20 @@
         "url": {
           "$ref": "SafeUrlProto",
           "description": "The original URL."
+        },
+        "urlSource": {
+          "description": "NEXT TAG : 17",
+          "enum": [
+            "URL_SOURCE_UNKNOWN",
+            "USER_SUPPLIED_URL",
+            "SERVER_SUPPLIED_POLICY_VIOLATION"
+          ],
+          "enumDescriptions": [
+            "",
+            "",
+            ""
+          ],
+          "type": "string"
         }
       },
       "type": "object"
@@ -15428,20 +15587,26 @@
       "type": "object"
     },
     "UserInfo": {
-      "description": "Contains info regarding the updater of an Activity Feed item. Next Id: 6",
+      "description": "Contains info regarding the updater of an Activity Feed item. Next Id: 8",
       "id": "UserInfo",
       "properties": {
+        "driveNotificationAvatarUrl": {
+          "description": "Avatar url of the user who triggered the Drive Notification email. This field will be populated if we can extract such information from the Drive Notification email. This should only be used to fetch user avatars when updater_to_show_email is not populated. This field is not set for non-Drive Notification items.",
+          "type": "string"
+        },
         "updaterCountDisplayType": {
           "description": "Describes how updater_count_to_show should be used.",
           "enum": [
             "UPDATER_COUNT_DISPLAY_TYPE_UNSPECIFIED",
+            "NO_DISPLAY_COUNT",
             "EXACT_COUNT",
             "NONZERO_COUNT"
           ],
           "enumDescriptions": [
             "",
-            "A precise updater count is known and the value set in updater_count_to_show should be used. If set, updater_count_to_show is set to the total number of updaters minus the one set in updater_to_show.",
-            "A precise updater count could not be calculated, but there is at least one. Any value set in updater_count_to_show should NOT be used."
+            "No additional updaters where involved. Shows up in clients as \"$USERNAME replied\".",
+            "A precise updater count is known and the value set in updater_count_to_show should be used. If set, updater_count_to_show is set to the total number of updaters minus the one set in updater_to_show. Shows up in clients as \"$USERNAME and $NUM others replied\".",
+            "A precise updater count could not be calculated, but there is at least one. Any value set in updater_count_to_show should NOT be used. Shows up in clients as \"$USERNAME and others replied\"."
           ],
           "type": "string"
         },
@@ -15451,12 +15616,16 @@
           "type": "integer"
         },
         "updaterToShowEmail": {
-          "description": "The email of the updater for clients to show used for Gmail items.",
+          "description": "The email of the updater for clients to show used for Gmail items. For Drive Notifications, this is the email of the user who triggered the Drive Notification email. This field will be populated if we can extract such information from the Drive Notification email. This is not the actual sender of the email, as the sender is always comments-noreply@docs.google.com.",
           "type": "string"
         },
         "updaterToShowGaiaId": {
           "description": "The gaia id of the updater for clients to show used for Gmail items. If the updater is an external user, the email field below should be populated.",
           "format": "int64",
+          "type": "string"
+        },
+        "updaterToShowName": {
+          "description": "The display name of the updater for clients to show used for Gmail items. For non-Drive Notification items, this field will always be populated. If the display name cannot be found for the user, the fallback string will be the email address. For Drive Notification items, this is the name of the user who triggered the Drive notification email. This field will be populated if we can extract such information from the Drive Notification email. If the name cannot be extracted, then the email will be the fallback string, which is used as the display name text in the UI when needed. This is not the actual sender of the email, as the sender is always comments-noreply@docs.google.com.",
           "type": "string"
         },
         "updaterToShowUserId": {

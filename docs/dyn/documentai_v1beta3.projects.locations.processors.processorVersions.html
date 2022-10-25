@@ -114,6 +114,7 @@ Args:
 { # Request message for batch process document method.
   &quot;documentOutputConfig&quot;: { # Config that controls the output of documents. All documents will be written as a JSON file. # The overall output config for batch process.
     &quot;gcsOutputConfig&quot;: { # The configuration used when outputting documents. # Output config to write the results to Cloud Storage.
+      &quot;fieldMask&quot;: &quot;A String&quot;, # Specifies which fields to include in the output documents. Only supports top level document and pages field so it must be in the form of `{document_field_name}` or `pages.{page_field_name}`.
       &quot;gcsUri&quot;: &quot;A String&quot;, # The Cloud Storage uri (a directory) of the output.
     },
   },
@@ -348,7 +349,7 @@ Args:
         &quot;confidence&quot;: 3.14, # Optional. Confidence of detected Schema entity. Range [0, 1].
         &quot;id&quot;: &quot;A String&quot;, # Optional. Canonical id. This will be a unique value in the entity list for this document.
         &quot;mentionId&quot;: &quot;A String&quot;, # Optional. Deprecated. Use `id` field instead.
-        &quot;mentionText&quot;: &quot;A String&quot;, # Optional. Text value in the document e.g. `1600 Amphitheatre Pkwy`. If the entity is not present in the document, this field will be empty.
+        &quot;mentionText&quot;: &quot;A String&quot;, # Optional. Text value of the entity e.g. `1600 Amphitheatre Pkwy`.
         &quot;normalizedValue&quot;: { # Parsed and normalized entity value. # Optional. Normalized entity value. Absent if the extracted value could not be converted or the type (e.g. address) is not supported for certain parsers. This field is also only populated for certain supported document types.
           &quot;addressValue&quot;: { # Represents a postal address, e.g. for postal delivery or payments addresses. Given a postal address, a postal service can deliver items to a premise, P.O. Box or similar. It is not intended to model geographical locations (roads, towns, mountains). In typical usage an address would be created via user input or from importing existing data, depending on the type of process. Advice on address input / editing: - Use an internationalization-ready address widget such as https://github.com/google/libaddressinput) - Users should not be presented with UI elements for input or editing of fields outside countries where that field is used. For more guidance on how to use this schema, please see: https://support.google.com/business/answer/6397478 # Postal address. See also: https://github.com/googleapis/googleapis/blob/master/google/type/postal_address.proto
             &quot;addressLines&quot;: [ # Unstructured address lines describing the lower levels of an address. Because values in address_lines do not have type information and may sometimes contain multiple values in a single field (e.g. &quot;Austin, TX&quot;), it is important that the line order is clear. The order of address lines should be &quot;envelope order&quot; for the country/region of the address. In places where this can vary (e.g. Japan), address_language is used to make it explicit (e.g. &quot;ja&quot; for large-to-small ordering and &quot;ja-Latn&quot; or &quot;en&quot; for small-to-large). This way, the most specific line of an address can be selected based on the language. The minimum permitted structural representation of an address consists of a region_code with all remaining information placed in the address_lines. It would be possible to format such an address very approximately without geocoding, but no semantic reasoning could be made about any of the address components until it was at least partially resolved. Creating an address only containing a region_code and address_lines, and then geocoding is the recommended way to handle completely unstructured addresses (as opposed to guessing which parts of the address should be localities or administrative areas).
@@ -654,6 +655,15 @@ Args:
           &quot;mimeType&quot;: &quot;A String&quot;, # Encoding mime type for the image.
           &quot;width&quot;: 42, # Width of the image in pixels.
         },
+        &quot;imageQualityScores&quot;: { # Image Quality Scores for the page image # Image Quality Scores.
+          &quot;detectedDefects&quot;: [ # A list of detected defects.
+            { # Image Quality Defects
+              &quot;confidence&quot;: 3.14, # Confidence of detected defect. Range [0, 1] where 1 indicates strong confidence of that the defect exists.
+              &quot;type&quot;: &quot;A String&quot;, # Name of the defect type. Supported values are &quot;quality/defect_blurry&quot;, &quot;quality/defect_noisy&quot;, &quot;quality/defect_dark&quot;, &quot;quality/defect_faint&quot;, &quot;quality/defect_text_too_small&quot;, &quot;quality/defect_document_cutoff&quot;, &quot;quality/defect_text_cutoff&quot;, &quot;quality/defect_glare&quot;
+            },
+          ],
+          &quot;qualityScore&quot;: 3.14, # The overall quality score. Range [0, 1] where 1 is perfect quality.
+        },
         &quot;layout&quot;: { # Visual element describing a layout unit on a page. # Layout for the page.
           &quot;boundingPoly&quot;: { # A bounding polygon for the detected image annotation. # The bounding polygon for the Layout.
             &quot;normalizedVertices&quot;: [ # The bounding polygon normalized vertices.
@@ -950,6 +960,18 @@ Args:
                 ],
               },
             },
+            &quot;provenance&quot;: { # Structure to identify provenance relationships between annotations in different revisions. # The history of this table.
+              &quot;id&quot;: 42, # The Id of this operation. Needs to be unique within the scope of the revision.
+              &quot;parents&quot;: [ # References to the original elements that are replaced.
+                { # The parent element the current element is based on. Used for referencing/aligning, removal and replacement operations.
+                  &quot;id&quot;: 42, # The id of the parent provenance.
+                  &quot;index&quot;: 42, # The index of the parent item in the corresponding item list (eg. list of entities, properties within entities, etc.) in the parent revision.
+                  &quot;revision&quot;: 42, # The index of the index into current revision&#x27;s parent_ids list.
+                },
+              ],
+              &quot;revision&quot;: 42, # The index of the revision that produced this element.
+              &quot;type&quot;: &quot;A String&quot;, # The type of provenance operation.
+            },
           },
         ],
         &quot;tokens&quot;: [ # A list of visually detected tokens on the page.
@@ -1118,6 +1140,7 @@ Args:
           &quot;green&quot;: 3.14, # The amount of green in the color as a value in the interval [0, 1].
           &quot;red&quot;: 3.14, # The amount of red in the color as a value in the interval [0, 1].
         },
+        &quot;fontFamily&quot;: &quot;A String&quot;, # Font family such as &quot;Arial&quot;, &quot;Times New Roman&quot;. https://www.w3schools.com/cssref/pr_font_font-family.asp
         &quot;fontSize&quot;: { # Font size with unit. # Font size.
           &quot;size&quot;: 3.14, # Font size for the text.
           &quot;unit&quot;: &quot;A String&quot;, # Unit for the font size. Follows CSS naming (in, px, pt, etc.).
@@ -1138,7 +1161,7 @@ Args:
     ],
     &quot;uri&quot;: &quot;A String&quot;, # Optional. Currently supports Google Cloud Storage URI of the form `gs://bucket_name/object_name`. Object versioning is not supported. See [Google Cloud Storage Request URIs](https://cloud.google.com/storage/docs/reference-uris) for more info.
   },
-  &quot;fieldMask&quot;: &quot;A String&quot;, # Specifies which fields to include in ProcessResponse&#x27;s document.
+  &quot;fieldMask&quot;: &quot;A String&quot;, # Specifies which fields to include in ProcessResponse&#x27;s document. Only supports top level document and pages field so it must be in the form of `{document_field_name}` or `pages.{page_field_name}`.
   &quot;inlineDocument&quot;: { # Document represents the canonical document resource in Document AI. It is an interchange format that provides insights into documents and allows for collaboration between users and Document AI to iterate and optimize for quality. # An inline document proto.
     &quot;content&quot;: &quot;A String&quot;, # Optional. Inline document content, represented as a stream of bytes. Note: As with all `bytes` fields, protobuffers use a pure binary representation, whereas JSON representations use base64.
     &quot;entities&quot;: [ # A list of entities detected on Document.text. For document shards, entities in this list may cross shard boundaries.
@@ -1146,7 +1169,7 @@ Args:
         &quot;confidence&quot;: 3.14, # Optional. Confidence of detected Schema entity. Range [0, 1].
         &quot;id&quot;: &quot;A String&quot;, # Optional. Canonical id. This will be a unique value in the entity list for this document.
         &quot;mentionId&quot;: &quot;A String&quot;, # Optional. Deprecated. Use `id` field instead.
-        &quot;mentionText&quot;: &quot;A String&quot;, # Optional. Text value in the document e.g. `1600 Amphitheatre Pkwy`. If the entity is not present in the document, this field will be empty.
+        &quot;mentionText&quot;: &quot;A String&quot;, # Optional. Text value of the entity e.g. `1600 Amphitheatre Pkwy`.
         &quot;normalizedValue&quot;: { # Parsed and normalized entity value. # Optional. Normalized entity value. Absent if the extracted value could not be converted or the type (e.g. address) is not supported for certain parsers. This field is also only populated for certain supported document types.
           &quot;addressValue&quot;: { # Represents a postal address, e.g. for postal delivery or payments addresses. Given a postal address, a postal service can deliver items to a premise, P.O. Box or similar. It is not intended to model geographical locations (roads, towns, mountains). In typical usage an address would be created via user input or from importing existing data, depending on the type of process. Advice on address input / editing: - Use an internationalization-ready address widget such as https://github.com/google/libaddressinput) - Users should not be presented with UI elements for input or editing of fields outside countries where that field is used. For more guidance on how to use this schema, please see: https://support.google.com/business/answer/6397478 # Postal address. See also: https://github.com/googleapis/googleapis/blob/master/google/type/postal_address.proto
             &quot;addressLines&quot;: [ # Unstructured address lines describing the lower levels of an address. Because values in address_lines do not have type information and may sometimes contain multiple values in a single field (e.g. &quot;Austin, TX&quot;), it is important that the line order is clear. The order of address lines should be &quot;envelope order&quot; for the country/region of the address. In places where this can vary (e.g. Japan), address_language is used to make it explicit (e.g. &quot;ja&quot; for large-to-small ordering and &quot;ja-Latn&quot; or &quot;en&quot; for small-to-large). This way, the most specific line of an address can be selected based on the language. The minimum permitted structural representation of an address consists of a region_code with all remaining information placed in the address_lines. It would be possible to format such an address very approximately without geocoding, but no semantic reasoning could be made about any of the address components until it was at least partially resolved. Creating an address only containing a region_code and address_lines, and then geocoding is the recommended way to handle completely unstructured addresses (as opposed to guessing which parts of the address should be localities or administrative areas).
@@ -1452,6 +1475,15 @@ Args:
           &quot;mimeType&quot;: &quot;A String&quot;, # Encoding mime type for the image.
           &quot;width&quot;: 42, # Width of the image in pixels.
         },
+        &quot;imageQualityScores&quot;: { # Image Quality Scores for the page image # Image Quality Scores.
+          &quot;detectedDefects&quot;: [ # A list of detected defects.
+            { # Image Quality Defects
+              &quot;confidence&quot;: 3.14, # Confidence of detected defect. Range [0, 1] where 1 indicates strong confidence of that the defect exists.
+              &quot;type&quot;: &quot;A String&quot;, # Name of the defect type. Supported values are &quot;quality/defect_blurry&quot;, &quot;quality/defect_noisy&quot;, &quot;quality/defect_dark&quot;, &quot;quality/defect_faint&quot;, &quot;quality/defect_text_too_small&quot;, &quot;quality/defect_document_cutoff&quot;, &quot;quality/defect_text_cutoff&quot;, &quot;quality/defect_glare&quot;
+            },
+          ],
+          &quot;qualityScore&quot;: 3.14, # The overall quality score. Range [0, 1] where 1 is perfect quality.
+        },
         &quot;layout&quot;: { # Visual element describing a layout unit on a page. # Layout for the page.
           &quot;boundingPoly&quot;: { # A bounding polygon for the detected image annotation. # The bounding polygon for the Layout.
             &quot;normalizedVertices&quot;: [ # The bounding polygon normalized vertices.
@@ -1748,6 +1780,18 @@ Args:
                 ],
               },
             },
+            &quot;provenance&quot;: { # Structure to identify provenance relationships between annotations in different revisions. # The history of this table.
+              &quot;id&quot;: 42, # The Id of this operation. Needs to be unique within the scope of the revision.
+              &quot;parents&quot;: [ # References to the original elements that are replaced.
+                { # The parent element the current element is based on. Used for referencing/aligning, removal and replacement operations.
+                  &quot;id&quot;: 42, # The id of the parent provenance.
+                  &quot;index&quot;: 42, # The index of the parent item in the corresponding item list (eg. list of entities, properties within entities, etc.) in the parent revision.
+                  &quot;revision&quot;: 42, # The index of the index into current revision&#x27;s parent_ids list.
+                },
+              ],
+              &quot;revision&quot;: 42, # The index of the revision that produced this element.
+              &quot;type&quot;: &quot;A String&quot;, # The type of provenance operation.
+            },
           },
         ],
         &quot;tokens&quot;: [ # A list of visually detected tokens on the page.
@@ -1916,6 +1960,7 @@ Args:
           &quot;green&quot;: 3.14, # The amount of green in the color as a value in the interval [0, 1].
           &quot;red&quot;: 3.14, # The amount of red in the color as a value in the interval [0, 1].
         },
+        &quot;fontFamily&quot;: &quot;A String&quot;, # Font family such as &quot;Arial&quot;, &quot;Times New Roman&quot;. https://www.w3schools.com/cssref/pr_font_font-family.asp
         &quot;fontSize&quot;: { # Font size with unit. # Font size.
           &quot;size&quot;: 3.14, # Font size for the text.
           &quot;unit&quot;: &quot;A String&quot;, # Unit for the font size. Follows CSS naming (in, px, pt, etc.).
@@ -1959,7 +2004,7 @@ Returns:
         &quot;confidence&quot;: 3.14, # Optional. Confidence of detected Schema entity. Range [0, 1].
         &quot;id&quot;: &quot;A String&quot;, # Optional. Canonical id. This will be a unique value in the entity list for this document.
         &quot;mentionId&quot;: &quot;A String&quot;, # Optional. Deprecated. Use `id` field instead.
-        &quot;mentionText&quot;: &quot;A String&quot;, # Optional. Text value in the document e.g. `1600 Amphitheatre Pkwy`. If the entity is not present in the document, this field will be empty.
+        &quot;mentionText&quot;: &quot;A String&quot;, # Optional. Text value of the entity e.g. `1600 Amphitheatre Pkwy`.
         &quot;normalizedValue&quot;: { # Parsed and normalized entity value. # Optional. Normalized entity value. Absent if the extracted value could not be converted or the type (e.g. address) is not supported for certain parsers. This field is also only populated for certain supported document types.
           &quot;addressValue&quot;: { # Represents a postal address, e.g. for postal delivery or payments addresses. Given a postal address, a postal service can deliver items to a premise, P.O. Box or similar. It is not intended to model geographical locations (roads, towns, mountains). In typical usage an address would be created via user input or from importing existing data, depending on the type of process. Advice on address input / editing: - Use an internationalization-ready address widget such as https://github.com/google/libaddressinput) - Users should not be presented with UI elements for input or editing of fields outside countries where that field is used. For more guidance on how to use this schema, please see: https://support.google.com/business/answer/6397478 # Postal address. See also: https://github.com/googleapis/googleapis/blob/master/google/type/postal_address.proto
             &quot;addressLines&quot;: [ # Unstructured address lines describing the lower levels of an address. Because values in address_lines do not have type information and may sometimes contain multiple values in a single field (e.g. &quot;Austin, TX&quot;), it is important that the line order is clear. The order of address lines should be &quot;envelope order&quot; for the country/region of the address. In places where this can vary (e.g. Japan), address_language is used to make it explicit (e.g. &quot;ja&quot; for large-to-small ordering and &quot;ja-Latn&quot; or &quot;en&quot; for small-to-large). This way, the most specific line of an address can be selected based on the language. The minimum permitted structural representation of an address consists of a region_code with all remaining information placed in the address_lines. It would be possible to format such an address very approximately without geocoding, but no semantic reasoning could be made about any of the address components until it was at least partially resolved. Creating an address only containing a region_code and address_lines, and then geocoding is the recommended way to handle completely unstructured addresses (as opposed to guessing which parts of the address should be localities or administrative areas).
@@ -2265,6 +2310,15 @@ Returns:
           &quot;mimeType&quot;: &quot;A String&quot;, # Encoding mime type for the image.
           &quot;width&quot;: 42, # Width of the image in pixels.
         },
+        &quot;imageQualityScores&quot;: { # Image Quality Scores for the page image # Image Quality Scores.
+          &quot;detectedDefects&quot;: [ # A list of detected defects.
+            { # Image Quality Defects
+              &quot;confidence&quot;: 3.14, # Confidence of detected defect. Range [0, 1] where 1 indicates strong confidence of that the defect exists.
+              &quot;type&quot;: &quot;A String&quot;, # Name of the defect type. Supported values are &quot;quality/defect_blurry&quot;, &quot;quality/defect_noisy&quot;, &quot;quality/defect_dark&quot;, &quot;quality/defect_faint&quot;, &quot;quality/defect_text_too_small&quot;, &quot;quality/defect_document_cutoff&quot;, &quot;quality/defect_text_cutoff&quot;, &quot;quality/defect_glare&quot;
+            },
+          ],
+          &quot;qualityScore&quot;: 3.14, # The overall quality score. Range [0, 1] where 1 is perfect quality.
+        },
         &quot;layout&quot;: { # Visual element describing a layout unit on a page. # Layout for the page.
           &quot;boundingPoly&quot;: { # A bounding polygon for the detected image annotation. # The bounding polygon for the Layout.
             &quot;normalizedVertices&quot;: [ # The bounding polygon normalized vertices.
@@ -2561,6 +2615,18 @@ Returns:
                 ],
               },
             },
+            &quot;provenance&quot;: { # Structure to identify provenance relationships between annotations in different revisions. # The history of this table.
+              &quot;id&quot;: 42, # The Id of this operation. Needs to be unique within the scope of the revision.
+              &quot;parents&quot;: [ # References to the original elements that are replaced.
+                { # The parent element the current element is based on. Used for referencing/aligning, removal and replacement operations.
+                  &quot;id&quot;: 42, # The id of the parent provenance.
+                  &quot;index&quot;: 42, # The index of the parent item in the corresponding item list (eg. list of entities, properties within entities, etc.) in the parent revision.
+                  &quot;revision&quot;: 42, # The index of the index into current revision&#x27;s parent_ids list.
+                },
+              ],
+              &quot;revision&quot;: 42, # The index of the revision that produced this element.
+              &quot;type&quot;: &quot;A String&quot;, # The type of provenance operation.
+            },
           },
         ],
         &quot;tokens&quot;: [ # A list of visually detected tokens on the page.
@@ -2729,6 +2795,7 @@ Returns:
           &quot;green&quot;: 3.14, # The amount of green in the color as a value in the interval [0, 1].
           &quot;red&quot;: 3.14, # The amount of red in the color as a value in the interval [0, 1].
         },
+        &quot;fontFamily&quot;: &quot;A String&quot;, # Font family such as &quot;Arial&quot;, &quot;Times New Roman&quot;. https://www.w3schools.com/cssref/pr_font_font-family.asp
         &quot;fontSize&quot;: { # Font size with unit. # Font size.
           &quot;size&quot;: 3.14, # Font size for the text.
           &quot;unit&quot;: &quot;A String&quot;, # Unit for the font size. Follows CSS naming (in, px, pt, etc.).

@@ -149,7 +149,7 @@ Args:
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Release` was created.
   &quot;deliveryPipelineSnapshot&quot;: { # A `DeliveryPipeline` resource in the Google Cloud Deploy API. A `DeliveryPipeline` defines a pipeline through which a Skaffold configuration can progress. # Output only. Snapshot of the parent pipeline taken at release creation time.
-    &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Google Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
+    &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Google Cloud Deploy.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
     &quot;condition&quot;: { # PipelineCondition contains all conditions relevant to a Delivery Pipeline. # Output only. Information around the state of the Delivery Pipeline.
@@ -178,6 +178,11 @@ Args:
           &quot;profiles&quot;: [ # Skaffold profiles to use when rendering the manifest for this stage&#x27;s `Target`.
             &quot;A String&quot;,
           ],
+          &quot;strategy&quot;: { # Strategy contains deployment strategy information. # Optional. The strategy to use for a `Rollout` to this stage.
+            &quot;standard&quot;: { # Standard represents the standard deployment strategy. # Standard deployment strategy executes a single deploy and allows verifying the deployment.
+              &quot;verify&quot;: True or False, # Whether to verify a deployment.
+            },
+          },
           &quot;targetId&quot;: &quot;A String&quot;, # The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
         },
       ],
@@ -208,6 +213,7 @@ Args:
   &quot;targetRenders&quot;: { # Output only. Map from target ID to details of the render operation for that target.
     &quot;a_key&quot;: { # Details of rendering for a single target.
       &quot;failureCause&quot;: &quot;A String&quot;, # Output only. Reason this render failed. This will always be unspecified while the render in progress.
+      &quot;failureMessage&quot;: &quot;A String&quot;, # Output only. Additional information about the render failure, if available.
       &quot;renderingBuild&quot;: &quot;A String&quot;, # Output only. The resource name of the Cloud Build `Build` object that is used to render the manifest for this target. Format is `projects/{project}/locations/{location}/builds/{build}`.
       &quot;renderingState&quot;: &quot;A String&quot;, # Output only. Current state of the render operation for this Target.
     },
@@ -252,6 +258,9 @@ Args:
       },
       &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `Target`. Format is projects/{project}/locations/{location}/targets/a-z{0,62}.
       &quot;requireApproval&quot;: True or False, # Optional. Whether or not the `Target` requires approval.
+      &quot;run&quot;: { # Information specifying where to deploy a Cloud Run Service. # Information specifying a Cloud Run deployment target.
+        &quot;location&quot;: &quot;A String&quot;, # Required. The location for the Cloud Run Service. Format must be `projects/{project}/locations/{location}`.
+      },
       &quot;targetId&quot;: &quot;A String&quot;, # Output only. Resource id of the `Target`.
       &quot;uid&quot;: &quot;A String&quot;, # Output only. Unique identifier of the `Target`.
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Most recent time at which the `Target` was updated.
@@ -319,7 +328,7 @@ Returns:
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Release` was created.
   &quot;deliveryPipelineSnapshot&quot;: { # A `DeliveryPipeline` resource in the Google Cloud Deploy API. A `DeliveryPipeline` defines a pipeline through which a Skaffold configuration can progress. # Output only. Snapshot of the parent pipeline taken at release creation time.
-    &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Google Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
+    &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Google Cloud Deploy.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
     &quot;condition&quot;: { # PipelineCondition contains all conditions relevant to a Delivery Pipeline. # Output only. Information around the state of the Delivery Pipeline.
@@ -348,6 +357,11 @@ Returns:
           &quot;profiles&quot;: [ # Skaffold profiles to use when rendering the manifest for this stage&#x27;s `Target`.
             &quot;A String&quot;,
           ],
+          &quot;strategy&quot;: { # Strategy contains deployment strategy information. # Optional. The strategy to use for a `Rollout` to this stage.
+            &quot;standard&quot;: { # Standard represents the standard deployment strategy. # Standard deployment strategy executes a single deploy and allows verifying the deployment.
+              &quot;verify&quot;: True or False, # Whether to verify a deployment.
+            },
+          },
           &quot;targetId&quot;: &quot;A String&quot;, # The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
         },
       ],
@@ -378,6 +392,7 @@ Returns:
   &quot;targetRenders&quot;: { # Output only. Map from target ID to details of the render operation for that target.
     &quot;a_key&quot;: { # Details of rendering for a single target.
       &quot;failureCause&quot;: &quot;A String&quot;, # Output only. Reason this render failed. This will always be unspecified while the render in progress.
+      &quot;failureMessage&quot;: &quot;A String&quot;, # Output only. Additional information about the render failure, if available.
       &quot;renderingBuild&quot;: &quot;A String&quot;, # Output only. The resource name of the Cloud Build `Build` object that is used to render the manifest for this target. Format is `projects/{project}/locations/{location}/builds/{build}`.
       &quot;renderingState&quot;: &quot;A String&quot;, # Output only. Current state of the render operation for this Target.
     },
@@ -422,6 +437,9 @@ Returns:
       },
       &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `Target`. Format is projects/{project}/locations/{location}/targets/a-z{0,62}.
       &quot;requireApproval&quot;: True or False, # Optional. Whether or not the `Target` requires approval.
+      &quot;run&quot;: { # Information specifying where to deploy a Cloud Run Service. # Information specifying a Cloud Run deployment target.
+        &quot;location&quot;: &quot;A String&quot;, # Required. The location for the Cloud Run Service. Format must be `projects/{project}/locations/{location}`.
+      },
       &quot;targetId&quot;: &quot;A String&quot;, # Output only. Resource id of the `Target`.
       &quot;uid&quot;: &quot;A String&quot;, # Output only. Unique identifier of the `Target`.
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Most recent time at which the `Target` was updated.
@@ -465,7 +483,7 @@ Returns:
       ],
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Release` was created.
       &quot;deliveryPipelineSnapshot&quot;: { # A `DeliveryPipeline` resource in the Google Cloud Deploy API. A `DeliveryPipeline` defines a pipeline through which a Skaffold configuration can progress. # Output only. Snapshot of the parent pipeline taken at release creation time.
-        &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Google Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
+        &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Google Cloud Deploy.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;condition&quot;: { # PipelineCondition contains all conditions relevant to a Delivery Pipeline. # Output only. Information around the state of the Delivery Pipeline.
@@ -494,6 +512,11 @@ Returns:
               &quot;profiles&quot;: [ # Skaffold profiles to use when rendering the manifest for this stage&#x27;s `Target`.
                 &quot;A String&quot;,
               ],
+              &quot;strategy&quot;: { # Strategy contains deployment strategy information. # Optional. The strategy to use for a `Rollout` to this stage.
+                &quot;standard&quot;: { # Standard represents the standard deployment strategy. # Standard deployment strategy executes a single deploy and allows verifying the deployment.
+                  &quot;verify&quot;: True or False, # Whether to verify a deployment.
+                },
+              },
               &quot;targetId&quot;: &quot;A String&quot;, # The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
             },
           ],
@@ -524,6 +547,7 @@ Returns:
       &quot;targetRenders&quot;: { # Output only. Map from target ID to details of the render operation for that target.
         &quot;a_key&quot;: { # Details of rendering for a single target.
           &quot;failureCause&quot;: &quot;A String&quot;, # Output only. Reason this render failed. This will always be unspecified while the render in progress.
+          &quot;failureMessage&quot;: &quot;A String&quot;, # Output only. Additional information about the render failure, if available.
           &quot;renderingBuild&quot;: &quot;A String&quot;, # Output only. The resource name of the Cloud Build `Build` object that is used to render the manifest for this target. Format is `projects/{project}/locations/{location}/builds/{build}`.
           &quot;renderingState&quot;: &quot;A String&quot;, # Output only. Current state of the render operation for this Target.
         },
@@ -568,6 +592,9 @@ Returns:
           },
           &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `Target`. Format is projects/{project}/locations/{location}/targets/a-z{0,62}.
           &quot;requireApproval&quot;: True or False, # Optional. Whether or not the `Target` requires approval.
+          &quot;run&quot;: { # Information specifying where to deploy a Cloud Run Service. # Information specifying a Cloud Run deployment target.
+            &quot;location&quot;: &quot;A String&quot;, # Required. The location for the Cloud Run Service. Format must be `projects/{project}/locations/{location}`.
+          },
           &quot;targetId&quot;: &quot;A String&quot;, # Output only. Resource id of the `Target`.
           &quot;uid&quot;: &quot;A String&quot;, # Output only. Unique identifier of the `Target`.
           &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Most recent time at which the `Target` was updated.

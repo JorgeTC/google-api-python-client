@@ -59,6 +59,7 @@
 
 
 ## analyticshub
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/analyticshub_v1.html)
 * [v1beta1](http://googleapis.github.io/google-api-python-client/docs/dyn/analyticshub_v1beta1.html)
 
 
@@ -117,6 +118,7 @@
 
 ## assuredworkloads
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/assuredworkloads_v1.html)
+* [v1beta1](http://googleapis.github.io/google-api-python-client/docs/dyn/assuredworkloads_v1beta1.html)
 
 
 ## authorizedbuyersmarketplace
@@ -127,6 +129,10 @@
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/baremetalsolution_v1.html)
 * [v1alpha1](http://googleapis.github.io/google-api-python-client/docs/dyn/baremetalsolution_v1alpha1.html)
 * [v2](http://googleapis.github.io/google-api-python-client/docs/dyn/baremetalsolution_v2.html)
+
+
+## batch
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/batch_v1.html)
 
 
 ## beyondcorp
@@ -220,6 +226,7 @@
 
 ## cloudbilling
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/cloudbilling_v1.html)
+* [v1beta](http://googleapis.github.io/google-api-python-client/docs/dyn/cloudbilling_v1beta.html)
 
 
 ## cloudbuild
@@ -341,6 +348,10 @@
 * [v2.1](http://googleapis.github.io/google-api-python-client/docs/dyn/content_v2_1.html)
 
 
+## contentwarehouse
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/contentwarehouse_v1.html)
+
+
 ## customsearch
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/customsearch_v1.html)
 
@@ -419,6 +430,7 @@
 
 ## displayvideo
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/displayvideo_v1.html)
+* [v2](http://googleapis.github.io/google-api-python-client/docs/dyn/displayvideo_v2.html)
 
 
 ## dlp
@@ -639,6 +651,10 @@
 
 ## indexing
 * [v3](http://googleapis.github.io/google-api-python-client/docs/dyn/indexing_v3.html)
+
+
+## integrations
+* [v1alpha](http://googleapis.github.io/google-api-python-client/docs/dyn/integrations_v1alpha.html)
 
 
 ## jobs

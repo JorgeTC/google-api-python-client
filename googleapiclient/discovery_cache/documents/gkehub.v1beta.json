@@ -670,7 +670,7 @@
       }
     }
   },
-  "revision": "20220828",
+  "revision": "20220923",
   "rootUrl": "https://gkehub.googleapis.com/",
   "schemas": {
     "AnthosObservabilityFeatureSpec": {
@@ -970,6 +970,10 @@
       "description": "Configuration for Config Sync",
       "id": "ConfigManagementConfigSync",
       "properties": {
+        "allowVerticalScale": {
+          "description": "Set to true to allow the vertical scaling. Defaults to false which disallows vertical scaling.",
+          "type": "boolean"
+        },
         "enabled": {
           "description": "Enables the installation of ConfigSync. If set to true, ConfigSync resources will be created and the other ConfigSync fields will be applied if exist. If set to false, all other ConfigSync fields will be ignored, ConfigSync resources will be deleted. If omitted, ConfigSync resources will be managed depends on the presence of git field.",
           "type": "boolean"
@@ -2510,8 +2514,8 @@
             "The PC is fully installed on the cluster and in an operational mode. In this state PCH will be reconciling state with the PC, and the PC will be performing it's operational tasks per that software. Entering a READY state requires that the hub has confirmed the PC is installed and its pods are operational with the version of the PC the PCH expects.",
             "The PC is fully installed, but in the process of changing the configuration (including changing the version of PC either up and down, or modifying the manifests of PC) of the resources running on the cluster. The PCH has a Membership, is aware of the version the cluster should be running in, but has not confirmed for itself that the PC is running with that version.",
             "The PC may have resources on the cluster, but the PCH wishes to remove the Membership. The Membership still exists.",
-            "The PC is not operational, and the PCH is unable to act to make it operational. Entering a CLUSTER_ERROR state happens automatically when the PCH determines that a PC installed on the cluster is non-operative or that the cluster does not meet requirements set for the PCH to administer the cluster but has nevertheless been given an instruction to do so (such as \u2018install').",
-            "In this state, the PC may still be operational, and only the PCH is unable to act. The hub should not issue instructions to change the PC state, or otherwise interfere with the on-cluster resources. Entering a HUB_ERROR state happens automatically when the PCH determines the hub is in an unhealthy state and it wishes to \u2018take hands off' to avoid corrupting the PC or other data.",
+            "The PC is not operational, and the PCH is unable to act to make it operational. Entering a CLUSTER_ERROR state happens automatically when the PCH determines that a PC installed on the cluster is non-operative or that the cluster does not meet requirements set for the PCH to administer the cluster but has nevertheless been given an instruction to do so (such as 'install').",
+            "In this state, the PC may still be operational, and only the PCH is unable to act. The hub should not issue instructions to change the PC state, or otherwise interfere with the on-cluster resources. Entering a HUB_ERROR state happens automatically when the PCH determines the hub is in an unhealthy state and it wishes to 'take hands off' to avoid corrupting the PC or other data.",
             "Policy Controller (PC) is installed but suspended. This means that the policies are not enforced, but violations are still recorded (through audit)."
           ],
           "type": "string"
@@ -2571,8 +2575,8 @@
             "The PC is fully installed on the cluster and in an operational mode. In this state PCH will be reconciling state with the PC, and the PC will be performing it's operational tasks per that software. Entering a READY state requires that the hub has confirmed the PC is installed and its pods are operational with the version of the PC the PCH expects.",
             "The PC is fully installed, but in the process of changing the configuration (including changing the version of PC either up and down, or modifying the manifests of PC) of the resources running on the cluster. The PCH has a Membership, is aware of the version the cluster should be running in, but has not confirmed for itself that the PC is running with that version.",
             "The PC may have resources on the cluster, but the PCH wishes to remove the Membership. The Membership still exists.",
-            "The PC is not operational, and the PCH is unable to act to make it operational. Entering a CLUSTER_ERROR state happens automatically when the PCH determines that a PC installed on the cluster is non-operative or that the cluster does not meet requirements set for the PCH to administer the cluster but has nevertheless been given an instruction to do so (such as \u2018install').",
-            "In this state, the PC may still be operational, and only the PCH is unable to act. The hub should not issue instructions to change the PC state, or otherwise interfere with the on-cluster resources. Entering a HUB_ERROR state happens automatically when the PCH determines the hub is in an unhealthy state and it wishes to \u2018take hands off' to avoid corrupting the PC or other data.",
+            "The PC is not operational, and the PCH is unable to act to make it operational. Entering a CLUSTER_ERROR state happens automatically when the PCH determines that a PC installed on the cluster is non-operative or that the cluster does not meet requirements set for the PCH to administer the cluster but has nevertheless been given an instruction to do so (such as 'install').",
+            "In this state, the PC may still be operational, and only the PCH is unable to act. The hub should not issue instructions to change the PC state, or otherwise interfere with the on-cluster resources. Entering a HUB_ERROR state happens automatically when the PCH determines the hub is in an unhealthy state and it wishes to 'take hands off' to avoid corrupting the PC or other data.",
             "Policy Controller (PC) is installed but suspended. This means that the policies are not enforced, but violations are still recorded (through audit)."
           ],
           "type": "string"
@@ -2629,6 +2633,44 @@
       },
       "type": "object"
     },
+    "ServiceMeshDataPlaneManagement": {
+      "description": "Status of data plane management. Only reported per-member.",
+      "id": "ServiceMeshDataPlaneManagement",
+      "properties": {
+        "details": {
+          "description": "Explanation of the status.",
+          "items": {
+            "$ref": "ServiceMeshStatusDetails"
+          },
+          "type": "array"
+        },
+        "state": {
+          "description": "Lifecycle status of data plane management.",
+          "enum": [
+            "LIFECYCLE_STATE_UNSPECIFIED",
+            "DISABLED",
+            "FAILED_PRECONDITION",
+            "PROVISIONING",
+            "ACTIVE",
+            "STALLED",
+            "NEEDS_ATTENTION",
+            "DEGRADED"
+          ],
+          "enumDescriptions": [
+            "Unspecified",
+            "DISABLED means that the component is not enabled.",
+            "FAILED_PRECONDITION means that provisioning cannot proceed because of some characteristic of the member cluster.",
+            "PROVISIONING means that provisioning is in progress.",
+            "ACTIVE means that the component is ready for use.",
+            "STALLED means that provisioning could not be done.",
+            "NEEDS_ATTENTION means that the component is ready, but some user intervention is required. (For example that the user should migrate workloads to a new control plane revision.)",
+            "DEGRADED means that the component is ready, but operating in a degraded state."
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "ServiceMeshMembershipSpec": {
       "description": "**Service Mesh**: Spec for a single Membership for the servicemesh feature",
       "id": "ServiceMeshMembershipSpec",
@@ -2646,6 +2688,20 @@
             "User will manually configure the control plane (e.g. via CLI, or via the ControlPlaneRevision KRM API)"
           ],
           "type": "string"
+        },
+        "management": {
+          "description": "Enables automatic Service Mesh management.",
+          "enum": [
+            "MANAGEMENT_UNSPECIFIED",
+            "MANAGEMENT_AUTOMATIC",
+            "MANAGEMENT_MANUAL"
+          ],
+          "enumDescriptions": [
+            "Unspecified",
+            "Google should manage my Service Mesh for the cluster.",
+            "User will manually configure their service mesh components."
+          ],
+          "type": "string"
         }
       },
       "type": "object"
@@ -2657,6 +2713,11 @@
         "controlPlaneManagement": {
           "$ref": "ServiceMeshControlPlaneManagement",
           "description": "Output only. Status of control plane management",
+          "readOnly": true
+        },
+        "dataPlaneManagement": {
+          "$ref": "ServiceMeshDataPlaneManagement",
+          "description": "Output only. Status of data plane management.",
           "readOnly": true
         }
       },
