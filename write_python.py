@@ -88,13 +88,35 @@ class Class:
                 self.class_dependencies.append(type_)
             else:
                 type_ = None
+
+            if type_ == 'array':
+                type_ = self.complete_array_type(info['items'])
+
             if 'enum' in info:
-                enum_class = EnumClass(
-                    f"{self.class_name}{class_capitalize(name)}", info)
+                enum_class = EnumClass(f"{self.class_name}{class_capitalize(name)}",
+                                       info)
                 self.class_dependencies.append(enum_class.class_name)
                 self.file.classes[enum_class.class_name] = enum_class
                 type_ = enum_class.class_name
             self.add_class_attribute(name, None, info['description'], type_)
+
+    def complete_array_type(self, info_items: dict[str, dict]):
+        try:
+            items_type = self.extract_list_items_type(info_items)
+        except ValueError:
+            return 'list'
+
+        return f'list[{items_type}]'
+
+    def extract_list_items_type(self, info_items: dict[str, dict]):
+        if '$ref' in info_items:
+            items_type = info_items['$ref']
+            self.class_dependencies.append(items_type)
+            return items_type
+        elif 'type' in info_items:
+            return Attribute.translate_type(info_items['type'])
+
+        raise ValueError
 
     def add_resources(self, methods: dict[str, dict]):
         for resource_name, resource in methods.items():
@@ -181,7 +203,6 @@ class Class:
             return f"'{default_value}'"
 
         raise TypeError
-
 
     @staticmethod
     def get_writer():
@@ -277,8 +298,8 @@ class Method:
         self.description: str = description
 
     def sort_arguments(self, arguments_order: list[str]):
-        index_arguments = {
-            argument.name: argument for argument in self.arguments}
+        index_arguments = {argument.name: argument
+                           for argument in self.arguments}
 
         new_list = []
         for argument in arguments_order:
@@ -294,7 +315,6 @@ class Method:
 
         self.arguments = new_list
 
-    
     def load_parameters_description(self, method_dict: dict[str, dict]):
         try:
             params_dict = method_dict['parameters']
@@ -532,9 +552,9 @@ class EnumClassWriter(PythonWriter):
 
     def write_value(self, value: EnumClassElement):
         if value.annotation:
+            self.write_line()
             self.write_line(f"# {value.annotation}")
         self.write_line(f"{value.name.upper()} = '{value.value}'")
-        self.write_line()
 
 
 def get_discovery(api_id: str):
