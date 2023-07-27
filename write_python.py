@@ -27,23 +27,30 @@ class File:
         del discovery_dict['schemas']
 
         api_id: str = discovery_dict['id']
-        self.add_class(''.join(class_capitalize(i) for i in api_id.split(':')),
-                       discovery_dict)
+        self.add_new_class(''.join(class_capitalize(i) for i in api_id.split(':')),
+                           discovery_dict)
         self.add_resources(discovery_dict['resources'])
 
         self.file_name = f"{'_'.join(i.lower() for i in api_id.split(':'))}.py"
 
-    def add_class(self, class_name: str, class_dict: dict):
+    def add_new_class(self, class_name: str, class_dict: dict):
         new_class = Class(class_name, class_dict, self)
-        self.classes[class_name] = new_class
+        self.add_class(new_class)
+
+    def add_class(self, new_class: 'Class'):
+        if new_class.class_name in self.classes:
+            raise ValueError(f"The class {new_class.class_name} "
+                             "will be shaded.")
+        self.classes[new_class.class_name] = new_class
 
     def add_schemas(self, schemas: dict[str, dict]):
         for schema_name, schema_dict in schemas.items():
-            self.add_class(schema_name, schema_dict)
+            self.add_new_class(schema_name, schema_dict)
 
     def add_resources(self, resources: dict[str, dict]):
         for resource_name, resource_dict in resources.items():
-            self.add_class(resource_class_name(resource_name), resource_dict)
+            self.add_new_class(resource_class_name(resource_name),
+                               resource_dict)
 
 
 class Class:
@@ -79,7 +86,7 @@ class Class:
                             type_: str | None = None):
         self.class_attributes.append(Attribute(name, value, comment, type_))
 
-    def add_properties(self, properties: dict):
+    def add_properties(self, properties: dict[str, dict]):
         for name, info in properties.items():
             if 'type' in info:
                 type_ = info['type']
@@ -90,22 +97,35 @@ class Class:
                 type_ = None
 
             if type_ == 'array':
-                type_ = self.complete_array_type(info['items'])
+                type_ = self.complete_array_type(name, info['items'])
+            elif type_ == 'object':
+                type_ = self.complete_object_type(name, info)
 
             if 'enum' in info:
                 enum_class = EnumClass(f"{self.class_name}{class_capitalize(name)}",
                                        info)
                 self.class_dependencies.append(enum_class.class_name)
-                self.file.classes[enum_class.class_name] = enum_class
+                self.file.add_class(enum_class)
                 type_ = enum_class.class_name
-            self.add_class_attribute(name, None, info['description'], type_)
+            description = info.get('description', "")
+            self.add_class_attribute(name, None, description, type_)
 
-    def complete_array_type(self, info_items: dict[str, dict]):
+    def complete_object_type(self, name: str, info: dict[str, dict]):
+        new_class_name = f"{self.class_name}{class_capitalize(name)}"
+        new_class = Class(new_class_name, info, self.file)
+        self.class_dependencies.append(new_class.class_name)
+        self.file.add_class(new_class)
+
+        return new_class.class_name
+
+    def complete_array_type(self, name: str, info_items: dict[str, dict]):
         try:
             items_type = self.extract_list_items_type(info_items)
         except ValueError:
             return 'list'
 
+        if items_type == 'dict':
+            items_type = self.complete_object_type(name, info_items)
         return f'list[{items_type}]'
 
     def extract_list_items_type(self, info_items: dict[str, dict]):
@@ -162,9 +182,11 @@ class Class:
                 argument.default_value = Class.load_default_value(argument_dict.get("default", ""),
                                                                   argument.annotation_type)
             else:
-                enum_class = EnumClass(argument_name, argument_dict)
+                argument_path = ''.join(class_capitalize(prt)
+                                        for prt in chain(str(method_dict['id']).split('.'), [argument_name]))
+                enum_class = EnumClass(argument_path, argument_dict)
                 self.class_dependencies.append(enum_class.class_name)
-                self.file.classes[enum_class.class_name] = enum_class
+                self.file.add_class(enum_class)
                 argument.annotation_type = enum_class.class_name
                 argument.default_value = enum_class.load_default_value(
                     argument_dict)
@@ -266,6 +288,7 @@ class Attribute:
                       'int32': 'int',
                       'integer': 'int',
                       'boolean': 'bool',
+                      'number': 'float',
                       'array': 'list',
                       'object': 'dict'}
 
@@ -434,7 +457,8 @@ class ClassWriter(PythonWriter):
             return
 
         self.write_line("'''")
-        self.write_line(self.class_.description)
+        for description_line in self.class_.description.split("\n"):
+            self.write_line(description_line)
         self.write_line("'''")
 
     def write_class_attributes(self):
