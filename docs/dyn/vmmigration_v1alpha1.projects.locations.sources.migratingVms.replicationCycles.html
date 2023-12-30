@@ -72,7 +72,7 @@ h1, h2, h3 {
 
 </style>
 
-<h1><a href="vmmigration_v1alpha1.html">Migrate to Virtual Machines API</a> . <a href="vmmigration_v1alpha1.projects.html">projects</a> . <a href="vmmigration_v1alpha1.projects.locations.html">locations</a> . <a href="vmmigration_v1alpha1.projects.locations.sources.html">sources</a> . <a href="vmmigration_v1alpha1.projects.locations.sources.migratingVms.html">migratingVms</a> . <a href="vmmigration_v1alpha1.projects.locations.sources.migratingVms.replicationCycles.html">replicationCycles</a></h1>
+<h1><a href="vmmigration_v1alpha1.html">VM Migration API</a> . <a href="vmmigration_v1alpha1.projects.html">projects</a> . <a href="vmmigration_v1alpha1.projects.locations.html">locations</a> . <a href="vmmigration_v1alpha1.projects.locations.sources.html">sources</a> . <a href="vmmigration_v1alpha1.projects.locations.sources.migratingVms.html">migratingVms</a> . <a href="vmmigration_v1alpha1.projects.locations.sources.migratingVms.replicationCycles.html">replicationCycles</a></h1>
 <h2>Instance Methods</h2>
 <p class="toc_element">
   <code><a href="#close">close()</a></code></p>
@@ -120,9 +120,9 @@ Returns:
   },
   &quot;name&quot;: &quot;A String&quot;, # The identifier of the ReplicationCycle.
   &quot;progress&quot;: 42, # The current progress in percentage of this cycle.
-  &quot;progressPercent&quot;: 42, # The current progress in percentage of this cycle.
+  &quot;progressPercent&quot;: 42, # The current progress in percentage of this cycle. Was replaced by &#x27;steps&#x27; field, which breaks down the cycle progression more accurately.
   &quot;startTime&quot;: &quot;A String&quot;, # The time the replication cycle has started.
-  &quot;state&quot;: &quot;A String&quot;, # State of the MigratingVm.
+  &quot;state&quot;: &quot;A String&quot;, # State of the ReplicationCycle.
   &quot;steps&quot;: [ # The cycle&#x27;s steps list representing its progress.
     { # CycleStep holds information about a step progress.
       &quot;endTime&quot;: &quot;A String&quot;, # The time the cycle step has ended.
@@ -140,6 +140,26 @@ Returns:
     },
   ],
   &quot;totalPauseDuration&quot;: &quot;A String&quot;, # The accumulated duration the replication cycle was paused.
+  &quot;warnings&quot;: [ # Output only. Warnings that occurred during the cycle.
+    { # Represents migration resource warning information that can be used with google.rpc.Status message. MigrationWarning is used to present the user with warning information in migration operations.
+      &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Suggested action for solving the warning.
+        &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
+        &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
+      },
+      &quot;code&quot;: &quot;A String&quot;, # The warning code.
+      &quot;helpLinks&quot;: [ # URL(s) pointing to additional information on handling the current warning.
+        { # Describes a URL link.
+          &quot;description&quot;: &quot;A String&quot;, # Describes what the link offers.
+          &quot;url&quot;: &quot;A String&quot;, # The URL of the link.
+        },
+      ],
+      &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # The localized warning message.
+        &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
+        &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
+      },
+      &quot;warningTime&quot;: &quot;A String&quot;, # The time the warning occurred.
+    },
+  ],
 }</pre>
 </div>
 
@@ -178,9 +198,9 @@ Returns:
       },
       &quot;name&quot;: &quot;A String&quot;, # The identifier of the ReplicationCycle.
       &quot;progress&quot;: 42, # The current progress in percentage of this cycle.
-      &quot;progressPercent&quot;: 42, # The current progress in percentage of this cycle.
+      &quot;progressPercent&quot;: 42, # The current progress in percentage of this cycle. Was replaced by &#x27;steps&#x27; field, which breaks down the cycle progression more accurately.
       &quot;startTime&quot;: &quot;A String&quot;, # The time the replication cycle has started.
-      &quot;state&quot;: &quot;A String&quot;, # State of the MigratingVm.
+      &quot;state&quot;: &quot;A String&quot;, # State of the ReplicationCycle.
       &quot;steps&quot;: [ # The cycle&#x27;s steps list representing its progress.
         { # CycleStep holds information about a step progress.
           &quot;endTime&quot;: &quot;A String&quot;, # The time the cycle step has ended.
@@ -198,6 +218,26 @@ Returns:
         },
       ],
       &quot;totalPauseDuration&quot;: &quot;A String&quot;, # The accumulated duration the replication cycle was paused.
+      &quot;warnings&quot;: [ # Output only. Warnings that occurred during the cycle.
+        { # Represents migration resource warning information that can be used with google.rpc.Status message. MigrationWarning is used to present the user with warning information in migration operations.
+          &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Suggested action for solving the warning.
+            &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
+            &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
+          },
+          &quot;code&quot;: &quot;A String&quot;, # The warning code.
+          &quot;helpLinks&quot;: [ # URL(s) pointing to additional information on handling the current warning.
+            { # Describes a URL link.
+              &quot;description&quot;: &quot;A String&quot;, # Describes what the link offers.
+              &quot;url&quot;: &quot;A String&quot;, # The URL of the link.
+            },
+          ],
+          &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # The localized warning message.
+            &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
+            &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
+          },
+          &quot;warningTime&quot;: &quot;A String&quot;, # The time the warning occurred.
+        },
+      ],
     },
   ],
   &quot;unreachable&quot;: [ # Output only. Locations that could not be reached.

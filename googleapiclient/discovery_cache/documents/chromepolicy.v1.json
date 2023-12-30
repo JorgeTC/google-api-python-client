@@ -557,41 +557,9 @@
       }
     }
   },
-  "revision": "20221021",
+  "revision": "20231210",
   "rootUrl": "https://chromepolicy.googleapis.com/",
   "schemas": {
-    "ChromeCrosDpanelAutosettingsProtoPolicyApiLifecycle": {
-      "id": "ChromeCrosDpanelAutosettingsProtoPolicyApiLifecycle",
-      "properties": {
-        "description": {
-          "description": "Description about current life cycle.",
-          "type": "string"
-        },
-        "endSupport": {
-          "$ref": "GoogleTypeDate",
-          "description": "End supporting date for current policy."
-        },
-        "policyApiLifecycleStage": {
-          "description": "Indicate current life cycle stage of the policy API.",
-          "enum": [
-            "API_UNSPECIFIED",
-            "API_PREVIEW",
-            "API_DEVELOPMENT",
-            "API_CURRENT",
-            "API_DEPRECATED"
-          ],
-          "enumDescriptions": [
-            "unspecified.",
-            "Policy is not working yet, but giving developers heads up on format. This stage can transfer to API_DEVELOPEMNT or API_CURRENT.",
-            "Policy can change format in backward incompatible way (breaking change). This stage can transfer to API_CURRENT or API_DEPRECATED. This could be used for policies launched only to TTs or launched to selected customers for emergency usage.",
-            "Policy in official format. Policy can change format in backward compatible way (non-breaking change). Example: this policy can introduce a new field, which is considered non-breaking change, when field masks are properly utilized. This stage can transfer to API_DEPRECATED.",
-            "Please stop using this policy. This policy is deprecated and may/will be removed in the future. Most likely a new policy was introduced to replace this one."
-          ],
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
     "GoogleChromePolicyVersionsV1AdditionalTargetKeyName": {
       "description": "Additional key names that will be used to identify the target of the policy value.",
       "id": "GoogleChromePolicyVersionsV1AdditionalTargetKeyName",
@@ -787,6 +755,17 @@
       },
       "type": "object"
     },
+    "GoogleChromePolicyVersionsV1FieldConstraints": {
+      "description": "Information about any range constraints.",
+      "id": "GoogleChromePolicyVersionsV1FieldConstraints",
+      "properties": {
+        "numericRangeConstraint": {
+          "$ref": "GoogleChromePolicyVersionsV1NumericRangeConstraint",
+          "description": "The allowed range for numeric fields."
+        }
+      },
+      "type": "object"
+    },
     "GoogleChromePolicyVersionsV1InheritOrgUnitPolicyRequest": {
       "description": "Request parameters for inheriting policy value of a specific org unit target from the policy value of its parent org unit.",
       "id": "GoogleChromePolicyVersionsV1InheritOrgUnitPolicyRequest",
@@ -807,7 +786,11 @@
       "id": "GoogleChromePolicyVersionsV1ListGroupPriorityOrderingRequest",
       "properties": {
         "policyNamespace": {
-          "description": "Required. The namespace of the policy type for the request.",
+          "description": "The namespace of the policy type for the request.",
+          "type": "string"
+        },
+        "policySchema": {
+          "description": "The schema name of the policy for the request.",
           "type": "string"
         },
         "policyTargetKey": {
@@ -831,6 +814,11 @@
         },
         "policyNamespace": {
           "description": "Output only. The namespace of the policy type of the group IDs.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "policySchema": {
+          "description": "Output only. The schema name of the policy for the group IDs.",
           "readOnly": true,
           "type": "string"
         },
@@ -919,6 +907,118 @@
       },
       "type": "object"
     },
+    "GoogleChromePolicyVersionsV1NumericRangeConstraint": {
+      "description": "A constraint on upper and/or lower bounds, with at least one being set.",
+      "id": "GoogleChromePolicyVersionsV1NumericRangeConstraint",
+      "properties": {
+        "maximum": {
+          "description": "Maximum value.",
+          "format": "int64",
+          "type": "string"
+        },
+        "minimum": {
+          "description": "Minimum value.",
+          "format": "int64",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleChromePolicyVersionsV1PolicyApiLifecycle": {
+      "description": "Lifecycle information.",
+      "id": "GoogleChromePolicyVersionsV1PolicyApiLifecycle",
+      "properties": {
+        "deprecatedInFavorOf": {
+          "description": "In the event that this policy was deprecated in favor of another policy, the fully qualified namespace(s) of the new policies as they will show in PolicyAPI. Could only be set if policy_api_lifecycle_stage is API_DEPRECATED.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "description": {
+          "description": "Description about current life cycle.",
+          "type": "string"
+        },
+        "endSupport": {
+          "$ref": "GoogleTypeDate",
+          "description": "End supporting date for current policy. Attempting to modify a policy after its end support date will result in a Bad Request (400 error). Could only be set if policy_api_lifecycle_stage is API_DEPRECATED."
+        },
+        "policyApiLifecycleStage": {
+          "description": "Indicates current life cycle stage of the policy API.",
+          "enum": [
+            "API_UNSPECIFIED",
+            "API_PREVIEW",
+            "API_DEVELOPMENT",
+            "API_CURRENT",
+            "API_DEPRECATED"
+          ],
+          "enumDescriptions": [
+            "Policy Api Lifecycle is Unspecified.",
+            "Policy is not working yet, but giving developers heads up on format. This stage can transfer to API_DEVELOPEMNT or API_CURRENT.",
+            "Policy can change format in backward incompatible way (breaking change). This stage can transfer to API_CURRENT or API_DEPRECATED. This could be used for policies launched only to TTs or launched to selected customers for emergency usage.",
+            "Policy in official format. Policy can change format in backward compatible way (non-breaking change). Example: this policy can introduce a new field, which is considered non-breaking change, when field masks are properly utilized. This stage can transfer to API_DEPRECATED.",
+            "Please stop using this policy. This policy is deprecated and may/will be removed in the future. Most likely a new policy was introduced to replace this one."
+          ],
+          "type": "string"
+        },
+        "scheduledToDeprecatePolicies": {
+          "description": "Corresponding to deprecated_in_favor_of, the fully qualified namespace(s) of the old policies that will be deprecated because of introduction of this policy. This field should not be manually set but will be set and exposed through PolicyAPI automatically.",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "GoogleChromePolicyVersionsV1PolicyModificationError": {
+      "description": "Error information for a modification request of a specific policy on a specific target.",
+      "id": "GoogleChromePolicyVersionsV1PolicyModificationError",
+      "properties": {
+        "errors": {
+          "description": "Output only. The non-field errors related to the modification.",
+          "items": {
+            "type": "string"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "fieldErrors": {
+          "description": "Output only. The error messages related to the modification.",
+          "items": {
+            "$ref": "GoogleChromePolicyVersionsV1PolicyModificationFieldError"
+          },
+          "readOnly": true,
+          "type": "array"
+        },
+        "policySchema": {
+          "description": "Output only. The specific policy schema modification that had an error.",
+          "readOnly": true,
+          "type": "string"
+        },
+        "policyTargetKey": {
+          "$ref": "GoogleChromePolicyVersionsV1PolicyTargetKey",
+          "description": "Output only. The specific policy target modification that had error.",
+          "readOnly": true
+        }
+      },
+      "type": "object"
+    },
+    "GoogleChromePolicyVersionsV1PolicyModificationErrorDetails": {
+      "description": "Details of the errors encountered during a policy modification request. This message will be returned as part of the details of a google.rpc.Status returned to the user when there is an error in their request.",
+      "id": "GoogleChromePolicyVersionsV1PolicyModificationErrorDetails",
+      "properties": {
+        "modificationErrors": {
+          "description": "Output only. List of specific policy modifications errors that may have occurred during a modifying request.",
+          "items": {
+            "$ref": "GoogleChromePolicyVersionsV1PolicyModificationError"
+          },
+          "readOnly": true,
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
     "GoogleChromePolicyVersionsV1PolicyModificationFieldError": {
       "description": "Error information for a modification request of a specific field on a specific policy.",
       "id": "GoogleChromePolicyVersionsV1PolicyModificationFieldError",
@@ -965,7 +1065,7 @@
           "description": "Schema definition using proto descriptor."
         },
         "fieldDescriptions": {
-          "description": "Output only. Detailed description of each field that is part of the schema.",
+          "description": "Output only. Detailed description of each field that is part of the schema. Fields are suggested to be displayed by the ordering in this list, not by field number.",
           "items": {
             "$ref": "GoogleChromePolicyVersionsV1PolicySchemaFieldDescription"
           },
@@ -985,13 +1085,9 @@
           "type": "array"
         },
         "policyApiLifecycle": {
-          "$ref": "ChromeCrosDpanelAutosettingsProtoPolicyApiLifecycle",
+          "$ref": "GoogleChromePolicyVersionsV1PolicyApiLifecycle",
           "description": "Output only. Current lifecycle information.",
           "readOnly": true
-        },
-        "policyApiLifeycle": {
-          "$ref": "ChromeCrosDpanelAutosettingsProtoPolicyApiLifecycle",
-          "description": "Deprecated field because of typo."
         },
         "policyDescription": {
           "description": "Output only. Description about the policy schema for user consumption.",
@@ -1054,6 +1150,7 @@
           "type": "any"
         },
         "description": {
+          "deprecated": true,
           "description": "Deprecated. Use name and field_description instead. The description for the field.",
           "type": "string"
         },
@@ -1061,6 +1158,11 @@
           "description": "Output only. The name of the field for associated with this description.",
           "readOnly": true,
           "type": "string"
+        },
+        "fieldConstraints": {
+          "$ref": "GoogleChromePolicyVersionsV1FieldConstraints",
+          "description": "Output only. Information on any input constraints associated on the values for the field.",
+          "readOnly": true
         },
         "fieldDependencies": {
           "description": "Output only. Provides a list of fields and values. At least one of the fields must have the corresponding value in order for this field to be allowed to be set.",
@@ -1094,7 +1196,7 @@
           "type": "string"
         },
         "nestedFieldDescriptions": {
-          "description": "Output only. Provides the description of the fields nested in this field, if the field is a message type that defines multiple fields.",
+          "description": "Output only. Provides the description of the fields nested in this field, if the field is a message type that defines multiple fields. Fields are suggested to be displayed by the ordering in this list, not by field number.",
           "items": {
             "$ref": "GoogleChromePolicyVersionsV1PolicySchemaFieldDescription"
           },
@@ -1120,6 +1222,14 @@
           "description": "Output only. Additional description for this value.",
           "readOnly": true,
           "type": "string"
+        },
+        "fieldDependencies": {
+          "description": "Output only. Field conditions required for this value to be valid.",
+          "items": {
+            "$ref": "GoogleChromePolicyVersionsV1PolicySchemaFieldDependencies"
+          },
+          "readOnly": true,
+          "type": "array"
         },
         "value": {
           "description": "Output only. The string represenstation of the value that can be set for the field.",
@@ -1285,12 +1395,12 @@
           "type": "string"
         },
         "policySchemaFilter": {
-          "description": "The schema filter to apply to the resolve request. Specify a schema name to view a particular schema, for example: chrome.users.ShowLogoutButton Wildcards are supported, but only in the leaf portion of the schema name. Wildcards cannot be used in namespace directly. Please read https://developers.google.com/chrome/policy/guides/policy-schemas for details on schema namespaces. For example: Valid: \"chrome.users.*\", \"chrome.users.apps.*\", \"chrome.printers.*\" Invalid: \"*\", \"*.users\", \"chrome.*\", \"chrome.*.apps.*\"",
+          "description": "Required. The schema filter to apply to the resolve request. Specify a schema name to view a particular schema, for example: chrome.users.ShowLogoutButton Wildcards are supported, but only in the leaf portion of the schema name. Wildcards cannot be used in namespace directly. Please read https://developers.google.com/chrome/policy/guides/policy-schemas for details on schema namespaces. For example: Valid: \"chrome.users.*\", \"chrome.users.apps.*\", \"chrome.printers.*\" Invalid: \"*\", \"*.users\", \"chrome.*\", \"chrome.*.apps.*\"",
           "type": "string"
         },
         "policyTargetKey": {
           "$ref": "GoogleChromePolicyVersionsV1PolicyTargetKey",
-          "description": "Required. The key of the target resource on which the policies should be resolved. The target resource must point to an Org Unit."
+          "description": "Required. The key of the target resource on which the policies should be resolved."
         }
       },
       "type": "object"
@@ -1352,7 +1462,11 @@
           "type": "array"
         },
         "policyNamespace": {
-          "description": "Required. The namespace of the policy type for the request.",
+          "description": "The namespace of the policy type for the request.",
+          "type": "string"
+        },
+        "policySchema": {
+          "description": "The schema name of the policy for the request.",
           "type": "string"
         },
         "policyTargetKey": {
@@ -1491,13 +1605,13 @@
         "label": {
           "enum": [
             "LABEL_OPTIONAL",
-            "LABEL_REQUIRED",
-            "LABEL_REPEATED"
+            "LABEL_REPEATED",
+            "LABEL_REQUIRED"
           ],
           "enumDescriptions": [
             "0 is reserved for errors",
             "",
-            ""
+            "The required label is only allowed in proto2. In proto3 and Editions it's explicitly prohibited. In Editions, the `field_presence` feature can be used to get this behavior."
           ],
           "type": "string"
         },
@@ -1514,7 +1628,7 @@
           "type": "integer"
         },
         "proto3Optional": {
-          "description": "If true, this is a proto3 \"optional\". When a proto3 field is optional, it tracks presence regardless of field type. When proto3_optional is true, this field must be belong to a oneof to signal to old proto3 clients that presence is tracked for this field. This oneof is known as a \"synthetic\" oneof, and this field must be its sole member (each proto3 optional field gets its own synthetic oneof). Synthetic oneofs exist in the descriptor only, and do not generate any API. Synthetic oneofs must be ordered after all \"real\" oneofs. For message fields, proto3_optional doesn't create any semantic change, since non-repeated message fields always track presence. However it still indicates the semantic detail of whether the user wrote \"optional\" or not. This can be useful for round-tripping the .proto file. For consistency we give message fields a synthetic oneof also, even though it is not required to track presence. This is especially important because the parser can't tell if a field is a message or an enum, so it must always create a synthetic oneof. Proto2 optional fields do not set this flag, because they already indicate optional with `LABEL_OPTIONAL`.",
+          "description": "If true, this is a proto3 \"optional\". When a proto3 field is optional, it tracks presence regardless of field type. When proto3_optional is true, this field must belong to a oneof to signal to old proto3 clients that presence is tracked for this field. This oneof is known as a \"synthetic\" oneof, and this field must be its sole member (each proto3 optional field gets its own synthetic oneof). Synthetic oneofs exist in the descriptor only, and do not generate any API. Synthetic oneofs must be ordered after all \"real\" oneofs. For message fields, proto3_optional doesn't create any semantic change, since non-repeated message fields always track presence. However it still indicates the semantic detail of whether the user wrote \"optional\" or not. This can be useful for round-tripping the .proto file. For consistency we give message fields a synthetic oneof also, even though it is not required to track presence. This is especially important because the parser can't tell if a field is a message or an enum, so it must always create a synthetic oneof. Proto2 optional fields do not set this flag, because they already indicate optional with `LABEL_OPTIONAL`.",
           "type": "boolean"
         },
         "type": {
@@ -1549,7 +1663,7 @@
             "",
             "",
             "",
-            "Tag-delimited aggregate. Group type is deprecated and not supported in proto3. However, Proto3 implementations should still be able to parse the group wire format and treat group fields as unknown fields.",
+            "Tag-delimited aggregate. Group type is deprecated and not supported after proto2. However, Proto3 implementations should still be able to parse the group wire format and treat group fields as unknown fields. In Editions, the group wire format can be enabled via the `message_encoding` feature.",
             "Length-delimited aggregate.",
             "New in version 2.",
             "",
@@ -1572,6 +1686,11 @@
       "description": "Describes a complete .proto file.",
       "id": "Proto2FileDescriptorProto",
       "properties": {
+        "editionDeprecated": {
+          "deprecated": true,
+          "description": "BEGIN GOOGLE-INTERNAL TODO(b/297898292) Deprecate and remove this field in favor of enums. END GOOGLE-INTERNAL",
+          "type": "string"
+        },
         "enumType": {
           "items": {
             "$ref": "Proto2EnumDescriptorProto"

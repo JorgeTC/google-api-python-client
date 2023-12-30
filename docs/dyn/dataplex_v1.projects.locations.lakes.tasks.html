@@ -104,6 +104,9 @@ h1, h2, h3 {
   <code><a href="#patch">patch(name, body=None, updateMask=None, validateOnly=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Update the task resource.</p>
 <p class="toc_element">
+  <code><a href="#run">run(name, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Run an on demand execution of a Task.</p>
+<p class="toc_element">
   <code><a href="#setIamPolicy">setIamPolicy(resource, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Sets the access control policy on the specified resource. Replaces any existing policy.Can return NOT_FOUND, INVALID_ARGUMENT, and PERMISSION_DENIED errors.</p>
 <p class="toc_element">
@@ -140,6 +143,18 @@ Args:
   &quot;executionStatus&quot;: { # Status of the task execution (e.g. Jobs). # Output only. Status of the latest task executions.
     &quot;latestJob&quot;: { # A job represents an instance of a task. # Output only. latest job execution
       &quot;endTime&quot;: &quot;A String&quot;, # Output only. The time when the job ended.
+      &quot;executionSpec&quot;: { # Execution related settings, like retry and service_account. # Output only. Spec related to how a task is executed.
+        &quot;args&quot;: { # Optional. The arguments to pass to the task. The args can use placeholders of the format ${placeholder} as part of key/value string. These will be interpolated before passing the args to the driver. Currently supported placeholders: - ${task_id} - ${job_time} To pass positional args, set the key as TASK_ARGS. The value should be a comma-separated string of all the positional arguments. To use a delimiter other than comma, refer to https://cloud.google.com/sdk/gcloud/reference/topic/escaping. In case of other keys being present in the args, then TASK_ARGS will be passed as the last argument.
+          &quot;a_key&quot;: &quot;A String&quot;,
+        },
+        &quot;kmsKey&quot;: &quot;A String&quot;, # Optional. The Cloud KMS key to use for encryption, of the form: projects/{project_number}/locations/{location_id}/keyRings/{key-ring-name}/cryptoKeys/{key-name}.
+        &quot;maxJobExecutionLifetime&quot;: &quot;A String&quot;, # Optional. The maximum duration after which the job execution is expired.
+        &quot;project&quot;: &quot;A String&quot;, # Optional. The project in which jobs are run. By default, the project containing the Lake is used. If a project is provided, the ExecutionSpec.service_account must belong to this project.
+        &quot;serviceAccount&quot;: &quot;A String&quot;, # Required. Service account to use to execute a task. If not provided, the default Compute service account for the project is used.
+      },
+      &quot;labels&quot;: { # Output only. User-defined labels for the task.
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
       &quot;message&quot;: &quot;A String&quot;, # Output only. Additional information about the current state.
       &quot;name&quot;: &quot;A String&quot;, # Output only. The relative resource name of the job, of the form: projects/{project_number}/locations/{location_id}/lakes/{lake_id}/tasks/{task_id}/jobs/{job_id}.
       &quot;retryCount&quot;: 42, # Output only. The number of times the job has been retried (excluding the initial attempt).
@@ -147,6 +162,7 @@ Args:
       &quot;serviceJob&quot;: &quot;A String&quot;, # Output only. The full resource name for the job run under a particular service.
       &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time when the job was started.
       &quot;state&quot;: &quot;A String&quot;, # Output only. Execution state for the job.
+      &quot;trigger&quot;: &quot;A String&quot;, # Output only. Job execution trigger.
       &quot;uid&quot;: &quot;A String&quot;, # Output only. System generated globally unique ID for the job.
     },
     &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Last update time of the status.
@@ -231,7 +247,7 @@ Args:
   &quot;triggerSpec&quot;: { # Task scheduling and trigger settings. # Required. Spec related to how often and when a task should be triggered.
     &quot;disabled&quot;: True or False, # Optional. Prevent the task from executing. This does not cancel already running tasks. It is intended to temporarily disable RECURRING tasks.
     &quot;maxRetries&quot;: 42, # Optional. Number of retry attempts before aborting. Set to zero to never attempt to retry a failed task.
-    &quot;schedule&quot;: &quot;A String&quot;, # Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running tasks periodically. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: &quot;CRON_TZ=${IANA_TIME_ZONE}&quot; or &quot;TZ=${IANA_TIME_ZONE}&quot;. The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, &quot;CRON_TZ=America/New_York 1 * * * *&quot;, or &quot;TZ=America/New_York 1 * * * *&quot;. This field is required for RECURRING tasks.
+    &quot;schedule&quot;: &quot;A String&quot;, # Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running tasks periodically. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: &quot;CRON_TZ=${IANA_TIME_ZONE}&quot; or &quot;TZ=${IANA_TIME_ZONE}&quot;. The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, CRON_TZ=America/New_York 1 * * * *, or TZ=America/New_York 1 * * * *. This field is required for RECURRING tasks.
     &quot;startTime&quot;: &quot;A String&quot;, # Optional. The first run of the task will be after this time. If not specified, the task will run shortly after being submitted if ON_DEMAND and based on the schedule if RECURRING.
     &quot;type&quot;: &quot;A String&quot;, # Required. Immutable. Trigger type of the user-specified Task.
   },
@@ -264,7 +280,7 @@ Returns:
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
   &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the name should be a resource name ending with operations/{unique_id}.
-  &quot;response&quot;: { # The normal response of the operation in case of success. If the original method returns no data on success, such as Delete, the response is google.protobuf.Empty. If the original method is standard Get/Create/Update, the response should be the resource. For other methods, the response should have the type XxxResponse, where Xxx is the original method name. For example, if the original method name is TakeSnapshot(), the inferred response type is TakeSnapshotResponse.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as Delete, the response is google.protobuf.Empty. If the original method is standard Get/Create/Update, the response should be the resource. For other methods, the response should have the type XxxResponse, where Xxx is the original method name. For example, if the original method name is TakeSnapshot(), the inferred response type is TakeSnapshotResponse.
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
 }</pre>
@@ -299,7 +315,7 @@ Returns:
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
   &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the name should be a resource name ending with operations/{unique_id}.
-  &quot;response&quot;: { # The normal response of the operation in case of success. If the original method returns no data on success, such as Delete, the response is google.protobuf.Empty. If the original method is standard Get/Create/Update, the response should be the resource. For other methods, the response should have the type XxxResponse, where Xxx is the original method name. For example, if the original method name is TakeSnapshot(), the inferred response type is TakeSnapshotResponse.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as Delete, the response is google.protobuf.Empty. If the original method is standard Get/Create/Update, the response should be the resource. For other methods, the response should have the type XxxResponse, where Xxx is the original method name. For example, if the original method name is TakeSnapshot(), the inferred response type is TakeSnapshotResponse.
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
 }</pre>
@@ -335,6 +351,18 @@ Returns:
   &quot;executionStatus&quot;: { # Status of the task execution (e.g. Jobs). # Output only. Status of the latest task executions.
     &quot;latestJob&quot;: { # A job represents an instance of a task. # Output only. latest job execution
       &quot;endTime&quot;: &quot;A String&quot;, # Output only. The time when the job ended.
+      &quot;executionSpec&quot;: { # Execution related settings, like retry and service_account. # Output only. Spec related to how a task is executed.
+        &quot;args&quot;: { # Optional. The arguments to pass to the task. The args can use placeholders of the format ${placeholder} as part of key/value string. These will be interpolated before passing the args to the driver. Currently supported placeholders: - ${task_id} - ${job_time} To pass positional args, set the key as TASK_ARGS. The value should be a comma-separated string of all the positional arguments. To use a delimiter other than comma, refer to https://cloud.google.com/sdk/gcloud/reference/topic/escaping. In case of other keys being present in the args, then TASK_ARGS will be passed as the last argument.
+          &quot;a_key&quot;: &quot;A String&quot;,
+        },
+        &quot;kmsKey&quot;: &quot;A String&quot;, # Optional. The Cloud KMS key to use for encryption, of the form: projects/{project_number}/locations/{location_id}/keyRings/{key-ring-name}/cryptoKeys/{key-name}.
+        &quot;maxJobExecutionLifetime&quot;: &quot;A String&quot;, # Optional. The maximum duration after which the job execution is expired.
+        &quot;project&quot;: &quot;A String&quot;, # Optional. The project in which jobs are run. By default, the project containing the Lake is used. If a project is provided, the ExecutionSpec.service_account must belong to this project.
+        &quot;serviceAccount&quot;: &quot;A String&quot;, # Required. Service account to use to execute a task. If not provided, the default Compute service account for the project is used.
+      },
+      &quot;labels&quot;: { # Output only. User-defined labels for the task.
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
       &quot;message&quot;: &quot;A String&quot;, # Output only. Additional information about the current state.
       &quot;name&quot;: &quot;A String&quot;, # Output only. The relative resource name of the job, of the form: projects/{project_number}/locations/{location_id}/lakes/{lake_id}/tasks/{task_id}/jobs/{job_id}.
       &quot;retryCount&quot;: 42, # Output only. The number of times the job has been retried (excluding the initial attempt).
@@ -342,6 +370,7 @@ Returns:
       &quot;serviceJob&quot;: &quot;A String&quot;, # Output only. The full resource name for the job run under a particular service.
       &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time when the job was started.
       &quot;state&quot;: &quot;A String&quot;, # Output only. Execution state for the job.
+      &quot;trigger&quot;: &quot;A String&quot;, # Output only. Job execution trigger.
       &quot;uid&quot;: &quot;A String&quot;, # Output only. System generated globally unique ID for the job.
     },
     &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Last update time of the status.
@@ -426,7 +455,7 @@ Returns:
   &quot;triggerSpec&quot;: { # Task scheduling and trigger settings. # Required. Spec related to how often and when a task should be triggered.
     &quot;disabled&quot;: True or False, # Optional. Prevent the task from executing. This does not cancel already running tasks. It is intended to temporarily disable RECURRING tasks.
     &quot;maxRetries&quot;: 42, # Optional. Number of retry attempts before aborting. Set to zero to never attempt to retry a failed task.
-    &quot;schedule&quot;: &quot;A String&quot;, # Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running tasks periodically. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: &quot;CRON_TZ=${IANA_TIME_ZONE}&quot; or &quot;TZ=${IANA_TIME_ZONE}&quot;. The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, &quot;CRON_TZ=America/New_York 1 * * * *&quot;, or &quot;TZ=America/New_York 1 * * * *&quot;. This field is required for RECURRING tasks.
+    &quot;schedule&quot;: &quot;A String&quot;, # Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running tasks periodically. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: &quot;CRON_TZ=${IANA_TIME_ZONE}&quot; or &quot;TZ=${IANA_TIME_ZONE}&quot;. The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, CRON_TZ=America/New_York 1 * * * *, or TZ=America/New_York 1 * * * *. This field is required for RECURRING tasks.
     &quot;startTime&quot;: &quot;A String&quot;, # Optional. The first run of the task will be after this time. If not specified, the task will run shortly after being submitted if ON_DEMAND and based on the schedule if RECURRING.
     &quot;type&quot;: &quot;A String&quot;, # Required. Immutable. Trigger type of the user-specified Task.
   },
@@ -472,7 +501,7 @@ Returns:
         &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
         &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
       },
-      &quot;members&quot;: [ # Specifies the principals requesting access for a Google Cloud resource. members can have the following values: allUsers: A special identifier that represents anyone who is on the internet; with or without a Google account. allAuthenticatedUsers: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. user:{emailid}: An email address that represents a specific Google account. For example, alice@example.com . serviceAccount:{emailid}: An email address that represents a Google service account. For example, my-other-app@appspot.gserviceaccount.com. serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]: An identifier for a Kubernetes service account (https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, my-project.svc.id.goog[my-namespace/my-kubernetes-sa]. group:{emailid}: An email address that represents a Google group. For example, admins@example.com. deleted:user:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a user that has been recently deleted. For example, alice@example.com?uid=123456789012345678901. If the user is recovered, this value reverts to user:{emailid} and the recovered user retains the role in the binding. deleted:serviceAccount:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901. If the service account is undeleted, this value reverts to serviceAccount:{emailid} and the undeleted service account retains the role in the binding. deleted:group:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, admins@example.com?uid=123456789012345678901. If the group is recovered, this value reverts to group:{emailid} and the recovered group retains the role in the binding. domain:{domain}: The G Suite domain (primary) that represents all the users of that domain. For example, google.com or example.com.
+      &quot;members&quot;: [ # Specifies the principals requesting access for a Google Cloud resource. members can have the following values: allUsers: A special identifier that represents anyone who is on the internet; with or without a Google account. allAuthenticatedUsers: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. user:{emailid}: An email address that represents a specific Google account. For example, alice@example.com . serviceAccount:{emailid}: An email address that represents a Google service account. For example, my-other-app@appspot.gserviceaccount.com. serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]: An identifier for a Kubernetes service account (https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, my-project.svc.id.goog[my-namespace/my-kubernetes-sa]. group:{emailid}: An email address that represents a Google group. For example, admins@example.com. domain:{domain}: The G Suite domain (primary) that represents all the users of that domain. For example, google.com or example.com. deleted:user:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a user that has been recently deleted. For example, alice@example.com?uid=123456789012345678901. If the user is recovered, this value reverts to user:{emailid} and the recovered user retains the role in the binding. deleted:serviceAccount:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901. If the service account is undeleted, this value reverts to serviceAccount:{emailid} and the undeleted service account retains the role in the binding. deleted:group:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, admins@example.com?uid=123456789012345678901. If the group is recovered, this value reverts to group:{emailid} and the recovered group retains the role in the binding.
         &quot;A String&quot;,
       ],
       &quot;role&quot;: &quot;A String&quot;, # Role that is assigned to the list of members, or principals. For example, roles/viewer, roles/editor, or roles/owner.
@@ -520,6 +549,18 @@ Returns:
       &quot;executionStatus&quot;: { # Status of the task execution (e.g. Jobs). # Output only. Status of the latest task executions.
         &quot;latestJob&quot;: { # A job represents an instance of a task. # Output only. latest job execution
           &quot;endTime&quot;: &quot;A String&quot;, # Output only. The time when the job ended.
+          &quot;executionSpec&quot;: { # Execution related settings, like retry and service_account. # Output only. Spec related to how a task is executed.
+            &quot;args&quot;: { # Optional. The arguments to pass to the task. The args can use placeholders of the format ${placeholder} as part of key/value string. These will be interpolated before passing the args to the driver. Currently supported placeholders: - ${task_id} - ${job_time} To pass positional args, set the key as TASK_ARGS. The value should be a comma-separated string of all the positional arguments. To use a delimiter other than comma, refer to https://cloud.google.com/sdk/gcloud/reference/topic/escaping. In case of other keys being present in the args, then TASK_ARGS will be passed as the last argument.
+              &quot;a_key&quot;: &quot;A String&quot;,
+            },
+            &quot;kmsKey&quot;: &quot;A String&quot;, # Optional. The Cloud KMS key to use for encryption, of the form: projects/{project_number}/locations/{location_id}/keyRings/{key-ring-name}/cryptoKeys/{key-name}.
+            &quot;maxJobExecutionLifetime&quot;: &quot;A String&quot;, # Optional. The maximum duration after which the job execution is expired.
+            &quot;project&quot;: &quot;A String&quot;, # Optional. The project in which jobs are run. By default, the project containing the Lake is used. If a project is provided, the ExecutionSpec.service_account must belong to this project.
+            &quot;serviceAccount&quot;: &quot;A String&quot;, # Required. Service account to use to execute a task. If not provided, the default Compute service account for the project is used.
+          },
+          &quot;labels&quot;: { # Output only. User-defined labels for the task.
+            &quot;a_key&quot;: &quot;A String&quot;,
+          },
           &quot;message&quot;: &quot;A String&quot;, # Output only. Additional information about the current state.
           &quot;name&quot;: &quot;A String&quot;, # Output only. The relative resource name of the job, of the form: projects/{project_number}/locations/{location_id}/lakes/{lake_id}/tasks/{task_id}/jobs/{job_id}.
           &quot;retryCount&quot;: 42, # Output only. The number of times the job has been retried (excluding the initial attempt).
@@ -527,6 +568,7 @@ Returns:
           &quot;serviceJob&quot;: &quot;A String&quot;, # Output only. The full resource name for the job run under a particular service.
           &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time when the job was started.
           &quot;state&quot;: &quot;A String&quot;, # Output only. Execution state for the job.
+          &quot;trigger&quot;: &quot;A String&quot;, # Output only. Job execution trigger.
           &quot;uid&quot;: &quot;A String&quot;, # Output only. System generated globally unique ID for the job.
         },
         &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Last update time of the status.
@@ -611,7 +653,7 @@ Returns:
       &quot;triggerSpec&quot;: { # Task scheduling and trigger settings. # Required. Spec related to how often and when a task should be triggered.
         &quot;disabled&quot;: True or False, # Optional. Prevent the task from executing. This does not cancel already running tasks. It is intended to temporarily disable RECURRING tasks.
         &quot;maxRetries&quot;: 42, # Optional. Number of retry attempts before aborting. Set to zero to never attempt to retry a failed task.
-        &quot;schedule&quot;: &quot;A String&quot;, # Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running tasks periodically. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: &quot;CRON_TZ=${IANA_TIME_ZONE}&quot; or &quot;TZ=${IANA_TIME_ZONE}&quot;. The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, &quot;CRON_TZ=America/New_York 1 * * * *&quot;, or &quot;TZ=America/New_York 1 * * * *&quot;. This field is required for RECURRING tasks.
+        &quot;schedule&quot;: &quot;A String&quot;, # Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running tasks periodically. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: &quot;CRON_TZ=${IANA_TIME_ZONE}&quot; or &quot;TZ=${IANA_TIME_ZONE}&quot;. The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, CRON_TZ=America/New_York 1 * * * *, or TZ=America/New_York 1 * * * *. This field is required for RECURRING tasks.
         &quot;startTime&quot;: &quot;A String&quot;, # Optional. The first run of the task will be after this time. If not specified, the task will run shortly after being submitted if ON_DEMAND and based on the schedule if RECURRING.
         &quot;type&quot;: &quot;A String&quot;, # Required. Immutable. Trigger type of the user-specified Task.
       },
@@ -664,6 +706,18 @@ Args:
   &quot;executionStatus&quot;: { # Status of the task execution (e.g. Jobs). # Output only. Status of the latest task executions.
     &quot;latestJob&quot;: { # A job represents an instance of a task. # Output only. latest job execution
       &quot;endTime&quot;: &quot;A String&quot;, # Output only. The time when the job ended.
+      &quot;executionSpec&quot;: { # Execution related settings, like retry and service_account. # Output only. Spec related to how a task is executed.
+        &quot;args&quot;: { # Optional. The arguments to pass to the task. The args can use placeholders of the format ${placeholder} as part of key/value string. These will be interpolated before passing the args to the driver. Currently supported placeholders: - ${task_id} - ${job_time} To pass positional args, set the key as TASK_ARGS. The value should be a comma-separated string of all the positional arguments. To use a delimiter other than comma, refer to https://cloud.google.com/sdk/gcloud/reference/topic/escaping. In case of other keys being present in the args, then TASK_ARGS will be passed as the last argument.
+          &quot;a_key&quot;: &quot;A String&quot;,
+        },
+        &quot;kmsKey&quot;: &quot;A String&quot;, # Optional. The Cloud KMS key to use for encryption, of the form: projects/{project_number}/locations/{location_id}/keyRings/{key-ring-name}/cryptoKeys/{key-name}.
+        &quot;maxJobExecutionLifetime&quot;: &quot;A String&quot;, # Optional. The maximum duration after which the job execution is expired.
+        &quot;project&quot;: &quot;A String&quot;, # Optional. The project in which jobs are run. By default, the project containing the Lake is used. If a project is provided, the ExecutionSpec.service_account must belong to this project.
+        &quot;serviceAccount&quot;: &quot;A String&quot;, # Required. Service account to use to execute a task. If not provided, the default Compute service account for the project is used.
+      },
+      &quot;labels&quot;: { # Output only. User-defined labels for the task.
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
       &quot;message&quot;: &quot;A String&quot;, # Output only. Additional information about the current state.
       &quot;name&quot;: &quot;A String&quot;, # Output only. The relative resource name of the job, of the form: projects/{project_number}/locations/{location_id}/lakes/{lake_id}/tasks/{task_id}/jobs/{job_id}.
       &quot;retryCount&quot;: 42, # Output only. The number of times the job has been retried (excluding the initial attempt).
@@ -671,6 +725,7 @@ Args:
       &quot;serviceJob&quot;: &quot;A String&quot;, # Output only. The full resource name for the job run under a particular service.
       &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time when the job was started.
       &quot;state&quot;: &quot;A String&quot;, # Output only. Execution state for the job.
+      &quot;trigger&quot;: &quot;A String&quot;, # Output only. Job execution trigger.
       &quot;uid&quot;: &quot;A String&quot;, # Output only. System generated globally unique ID for the job.
     },
     &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Last update time of the status.
@@ -755,7 +810,7 @@ Args:
   &quot;triggerSpec&quot;: { # Task scheduling and trigger settings. # Required. Spec related to how often and when a task should be triggered.
     &quot;disabled&quot;: True or False, # Optional. Prevent the task from executing. This does not cancel already running tasks. It is intended to temporarily disable RECURRING tasks.
     &quot;maxRetries&quot;: 42, # Optional. Number of retry attempts before aborting. Set to zero to never attempt to retry a failed task.
-    &quot;schedule&quot;: &quot;A String&quot;, # Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running tasks periodically. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: &quot;CRON_TZ=${IANA_TIME_ZONE}&quot; or &quot;TZ=${IANA_TIME_ZONE}&quot;. The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, &quot;CRON_TZ=America/New_York 1 * * * *&quot;, or &quot;TZ=America/New_York 1 * * * *&quot;. This field is required for RECURRING tasks.
+    &quot;schedule&quot;: &quot;A String&quot;, # Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running tasks periodically. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: &quot;CRON_TZ=${IANA_TIME_ZONE}&quot; or &quot;TZ=${IANA_TIME_ZONE}&quot;. The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, CRON_TZ=America/New_York 1 * * * *, or TZ=America/New_York 1 * * * *. This field is required for RECURRING tasks.
     &quot;startTime&quot;: &quot;A String&quot;, # Optional. The first run of the task will be after this time. If not specified, the task will run shortly after being submitted if ON_DEMAND and based on the schedule if RECURRING.
     &quot;type&quot;: &quot;A String&quot;, # Required. Immutable. Trigger type of the user-specified Task.
   },
@@ -788,8 +843,62 @@ Returns:
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
   &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the name should be a resource name ending with operations/{unique_id}.
-  &quot;response&quot;: { # The normal response of the operation in case of success. If the original method returns no data on success, such as Delete, the response is google.protobuf.Empty. If the original method is standard Get/Create/Update, the response should be the resource. For other methods, the response should have the type XxxResponse, where Xxx is the original method name. For example, if the original method name is TakeSnapshot(), the inferred response type is TakeSnapshotResponse.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as Delete, the response is google.protobuf.Empty. If the original method is standard Get/Create/Update, the response should be the resource. For other methods, the response should have the type XxxResponse, where Xxx is the original method name. For example, if the original method name is TakeSnapshot(), the inferred response type is TakeSnapshotResponse.
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="run">run(name, body=None, x__xgafv=None)</code>
+  <pre>Run an on demand execution of a Task.
+
+Args:
+  name: string, Required. The resource name of the task: projects/{project_number}/locations/{location_id}/lakes/{lake_id}/tasks/{task_id}. (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{
+  &quot;args&quot;: { # Optional. Execution spec arguments. If the map is left empty, the task will run with existing execution spec args from task definition. If the map contains an entry with a new key, the same will be added to existing set of args. If the map contains an entry with an existing arg key in task definition, the task will run with new arg value for that entry. Clearing an existing arg will require arg value to be explicitly set to a hyphen &quot;-&quot;. The arg value cannot be empty.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
+  &quot;labels&quot;: { # Optional. User-defined labels for the task. If the map is left empty, the task will run with existing labels from task definition. If the map contains an entry with a new key, the same will be added to existing set of labels. If the map contains an entry with an existing label key in task definition, the task will run with new label value for that entry. Clearing an existing label will require label value to be explicitly set to a hyphen &quot;-&quot;. The label value cannot be empty.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    {
+  &quot;job&quot;: { # A job represents an instance of a task. # Jobs created by RunTask API.
+    &quot;endTime&quot;: &quot;A String&quot;, # Output only. The time when the job ended.
+    &quot;executionSpec&quot;: { # Execution related settings, like retry and service_account. # Output only. Spec related to how a task is executed.
+      &quot;args&quot;: { # Optional. The arguments to pass to the task. The args can use placeholders of the format ${placeholder} as part of key/value string. These will be interpolated before passing the args to the driver. Currently supported placeholders: - ${task_id} - ${job_time} To pass positional args, set the key as TASK_ARGS. The value should be a comma-separated string of all the positional arguments. To use a delimiter other than comma, refer to https://cloud.google.com/sdk/gcloud/reference/topic/escaping. In case of other keys being present in the args, then TASK_ARGS will be passed as the last argument.
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
+      &quot;kmsKey&quot;: &quot;A String&quot;, # Optional. The Cloud KMS key to use for encryption, of the form: projects/{project_number}/locations/{location_id}/keyRings/{key-ring-name}/cryptoKeys/{key-name}.
+      &quot;maxJobExecutionLifetime&quot;: &quot;A String&quot;, # Optional. The maximum duration after which the job execution is expired.
+      &quot;project&quot;: &quot;A String&quot;, # Optional. The project in which jobs are run. By default, the project containing the Lake is used. If a project is provided, the ExecutionSpec.service_account must belong to this project.
+      &quot;serviceAccount&quot;: &quot;A String&quot;, # Required. Service account to use to execute a task. If not provided, the default Compute service account for the project is used.
+    },
+    &quot;labels&quot;: { # Output only. User-defined labels for the task.
+      &quot;a_key&quot;: &quot;A String&quot;,
+    },
+    &quot;message&quot;: &quot;A String&quot;, # Output only. Additional information about the current state.
+    &quot;name&quot;: &quot;A String&quot;, # Output only. The relative resource name of the job, of the form: projects/{project_number}/locations/{location_id}/lakes/{lake_id}/tasks/{task_id}/jobs/{job_id}.
+    &quot;retryCount&quot;: 42, # Output only. The number of times the job has been retried (excluding the initial attempt).
+    &quot;service&quot;: &quot;A String&quot;, # Output only. The underlying service running a job.
+    &quot;serviceJob&quot;: &quot;A String&quot;, # Output only. The full resource name for the job run under a particular service.
+    &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time when the job was started.
+    &quot;state&quot;: &quot;A String&quot;, # Output only. Execution state for the job.
+    &quot;trigger&quot;: &quot;A String&quot;, # Output only. Job execution trigger.
+    &quot;uid&quot;: &quot;A String&quot;, # Output only. System generated globally unique ID for the job.
   },
 }</pre>
 </div>
@@ -826,7 +935,7 @@ Args:
           &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
           &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
         },
-        &quot;members&quot;: [ # Specifies the principals requesting access for a Google Cloud resource. members can have the following values: allUsers: A special identifier that represents anyone who is on the internet; with or without a Google account. allAuthenticatedUsers: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. user:{emailid}: An email address that represents a specific Google account. For example, alice@example.com . serviceAccount:{emailid}: An email address that represents a Google service account. For example, my-other-app@appspot.gserviceaccount.com. serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]: An identifier for a Kubernetes service account (https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, my-project.svc.id.goog[my-namespace/my-kubernetes-sa]. group:{emailid}: An email address that represents a Google group. For example, admins@example.com. deleted:user:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a user that has been recently deleted. For example, alice@example.com?uid=123456789012345678901. If the user is recovered, this value reverts to user:{emailid} and the recovered user retains the role in the binding. deleted:serviceAccount:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901. If the service account is undeleted, this value reverts to serviceAccount:{emailid} and the undeleted service account retains the role in the binding. deleted:group:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, admins@example.com?uid=123456789012345678901. If the group is recovered, this value reverts to group:{emailid} and the recovered group retains the role in the binding. domain:{domain}: The G Suite domain (primary) that represents all the users of that domain. For example, google.com or example.com.
+        &quot;members&quot;: [ # Specifies the principals requesting access for a Google Cloud resource. members can have the following values: allUsers: A special identifier that represents anyone who is on the internet; with or without a Google account. allAuthenticatedUsers: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. user:{emailid}: An email address that represents a specific Google account. For example, alice@example.com . serviceAccount:{emailid}: An email address that represents a Google service account. For example, my-other-app@appspot.gserviceaccount.com. serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]: An identifier for a Kubernetes service account (https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, my-project.svc.id.goog[my-namespace/my-kubernetes-sa]. group:{emailid}: An email address that represents a Google group. For example, admins@example.com. domain:{domain}: The G Suite domain (primary) that represents all the users of that domain. For example, google.com or example.com. deleted:user:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a user that has been recently deleted. For example, alice@example.com?uid=123456789012345678901. If the user is recovered, this value reverts to user:{emailid} and the recovered user retains the role in the binding. deleted:serviceAccount:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901. If the service account is undeleted, this value reverts to serviceAccount:{emailid} and the undeleted service account retains the role in the binding. deleted:group:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, admins@example.com?uid=123456789012345678901. If the group is recovered, this value reverts to group:{emailid} and the recovered group retains the role in the binding.
           &quot;A String&quot;,
         ],
         &quot;role&quot;: &quot;A String&quot;, # Role that is assigned to the list of members, or principals. For example, roles/viewer, roles/editor, or roles/owner.
@@ -868,7 +977,7 @@ Returns:
         &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
         &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
       },
-      &quot;members&quot;: [ # Specifies the principals requesting access for a Google Cloud resource. members can have the following values: allUsers: A special identifier that represents anyone who is on the internet; with or without a Google account. allAuthenticatedUsers: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. user:{emailid}: An email address that represents a specific Google account. For example, alice@example.com . serviceAccount:{emailid}: An email address that represents a Google service account. For example, my-other-app@appspot.gserviceaccount.com. serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]: An identifier for a Kubernetes service account (https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, my-project.svc.id.goog[my-namespace/my-kubernetes-sa]. group:{emailid}: An email address that represents a Google group. For example, admins@example.com. deleted:user:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a user that has been recently deleted. For example, alice@example.com?uid=123456789012345678901. If the user is recovered, this value reverts to user:{emailid} and the recovered user retains the role in the binding. deleted:serviceAccount:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901. If the service account is undeleted, this value reverts to serviceAccount:{emailid} and the undeleted service account retains the role in the binding. deleted:group:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, admins@example.com?uid=123456789012345678901. If the group is recovered, this value reverts to group:{emailid} and the recovered group retains the role in the binding. domain:{domain}: The G Suite domain (primary) that represents all the users of that domain. For example, google.com or example.com.
+      &quot;members&quot;: [ # Specifies the principals requesting access for a Google Cloud resource. members can have the following values: allUsers: A special identifier that represents anyone who is on the internet; with or without a Google account. allAuthenticatedUsers: A special identifier that represents anyone who is authenticated with a Google account or a service account. Does not include identities that come from external identity providers (IdPs) through identity federation. user:{emailid}: An email address that represents a specific Google account. For example, alice@example.com . serviceAccount:{emailid}: An email address that represents a Google service account. For example, my-other-app@appspot.gserviceaccount.com. serviceAccount:{projectid}.svc.id.goog[{namespace}/{kubernetes-sa}]: An identifier for a Kubernetes service account (https://cloud.google.com/kubernetes-engine/docs/how-to/kubernetes-service-accounts). For example, my-project.svc.id.goog[my-namespace/my-kubernetes-sa]. group:{emailid}: An email address that represents a Google group. For example, admins@example.com. domain:{domain}: The G Suite domain (primary) that represents all the users of that domain. For example, google.com or example.com. deleted:user:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a user that has been recently deleted. For example, alice@example.com?uid=123456789012345678901. If the user is recovered, this value reverts to user:{emailid} and the recovered user retains the role in the binding. deleted:serviceAccount:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a service account that has been recently deleted. For example, my-other-app@appspot.gserviceaccount.com?uid=123456789012345678901. If the service account is undeleted, this value reverts to serviceAccount:{emailid} and the undeleted service account retains the role in the binding. deleted:group:{emailid}?uid={uniqueid}: An email address (plus unique identifier) representing a Google group that has been recently deleted. For example, admins@example.com?uid=123456789012345678901. If the group is recovered, this value reverts to group:{emailid} and the recovered group retains the role in the binding.
         &quot;A String&quot;,
       ],
       &quot;role&quot;: &quot;A String&quot;, # Role that is assigned to the list of members, or principals. For example, roles/viewer, roles/editor, or roles/owner.

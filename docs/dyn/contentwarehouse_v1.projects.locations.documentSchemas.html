@@ -72,7 +72,7 @@ h1, h2, h3 {
 
 </style>
 
-<h1><a href="contentwarehouse_v1.html">contentwarehouse API</a> . <a href="contentwarehouse_v1.projects.html">projects</a> . <a href="contentwarehouse_v1.projects.locations.html">locations</a> . <a href="contentwarehouse_v1.projects.locations.documentSchemas.html">documentSchemas</a></h1>
+<h1><a href="contentwarehouse_v1.html">Document AI Warehouse API</a> . <a href="contentwarehouse_v1.projects.html">projects</a> . <a href="contentwarehouse_v1.projects.locations.html">locations</a> . <a href="contentwarehouse_v1.projects.locations.documentSchemas.html">documentSchemas</a></h1>
 <h2>Instance Methods</h2>
 <p class="toc_element">
   <code><a href="#close">close()</a></code></p>
@@ -113,7 +113,7 @@ Args:
 { # A document schema used to define document structure.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the document schema is created.
   &quot;description&quot;: &quot;A String&quot;, # Schema description.
-  &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per customer.
+  &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per project.
   &quot;documentIsFolder&quot;: True or False, # Document Type, true refers the document is a folder, otherwise it is a typical document.
   &quot;name&quot;: &quot;A String&quot;, # The resource name of the document schema. Format: projects/{project_number}/locations/{location}/documentSchemas/{document_schema_id}. The name is ignored when creating a document schema.
   &quot;propertyDefinitions&quot;: [ # Document details.
@@ -132,7 +132,7 @@ Args:
       &quot;integerTypeOptions&quot;: { # Configurations for an integer property. # Integer property.
       },
       &quot;isFilterable&quot;: True or False, # Whether the property can be filtered. If this is a sub-property, all the parent properties must be marked filterable.
-      &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata.
+      &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata. This out-of-the box placeholder setting can be used to tag derived properties. Its value and interpretation logic should be implemented by API user.
       &quot;isRepeatable&quot;: True or False, # Whether the property can have multiple values.
       &quot;isRequired&quot;: True or False, # Whether the property is mandatory. Default is &#x27;false&#x27;, i.e. populating property value can be skipped. If &#x27;true&#x27; then user must populate the value for this property.
       &quot;isSearchable&quot;: True or False, # Indicates that the property should be included in a global search.
@@ -144,6 +144,13 @@ Args:
           # Object with schema name: GoogleCloudContentwarehouseV1PropertyDefinition
         ],
       },
+      &quot;retrievalImportance&quot;: &quot;A String&quot;, # The retrieval importance of the property during search.
+      &quot;schemaSources&quot;: [ # The mapping information between this property to another schema source.
+        { # The schema source information.
+          &quot;name&quot;: &quot;A String&quot;, # The schema name in the source.
+          &quot;processorType&quot;: &quot;A String&quot;, # The Doc AI processor type name.
+        },
+      ],
       &quot;textTypeOptions&quot;: { # Configurations for a text property. # Text/string property.
       },
       &quot;timestampTypeOptions&quot;: { # Configurations for a timestamp property. # Timestamp property. It is not supported by CMEK compliant deployment.
@@ -164,7 +171,7 @@ Returns:
     { # A document schema used to define document structure.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the document schema is created.
   &quot;description&quot;: &quot;A String&quot;, # Schema description.
-  &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per customer.
+  &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per project.
   &quot;documentIsFolder&quot;: True or False, # Document Type, true refers the document is a folder, otherwise it is a typical document.
   &quot;name&quot;: &quot;A String&quot;, # The resource name of the document schema. Format: projects/{project_number}/locations/{location}/documentSchemas/{document_schema_id}. The name is ignored when creating a document schema.
   &quot;propertyDefinitions&quot;: [ # Document details.
@@ -183,7 +190,7 @@ Returns:
       &quot;integerTypeOptions&quot;: { # Configurations for an integer property. # Integer property.
       },
       &quot;isFilterable&quot;: True or False, # Whether the property can be filtered. If this is a sub-property, all the parent properties must be marked filterable.
-      &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata.
+      &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata. This out-of-the box placeholder setting can be used to tag derived properties. Its value and interpretation logic should be implemented by API user.
       &quot;isRepeatable&quot;: True or False, # Whether the property can have multiple values.
       &quot;isRequired&quot;: True or False, # Whether the property is mandatory. Default is &#x27;false&#x27;, i.e. populating property value can be skipped. If &#x27;true&#x27; then user must populate the value for this property.
       &quot;isSearchable&quot;: True or False, # Indicates that the property should be included in a global search.
@@ -195,6 +202,13 @@ Returns:
           # Object with schema name: GoogleCloudContentwarehouseV1PropertyDefinition
         ],
       },
+      &quot;retrievalImportance&quot;: &quot;A String&quot;, # The retrieval importance of the property during search.
+      &quot;schemaSources&quot;: [ # The mapping information between this property to another schema source.
+        { # The schema source information.
+          &quot;name&quot;: &quot;A String&quot;, # The schema name in the source.
+          &quot;processorType&quot;: &quot;A String&quot;, # The Doc AI processor type name.
+        },
+      ],
       &quot;textTypeOptions&quot;: { # Configurations for a text property. # Text/string property.
       },
       &quot;timestampTypeOptions&quot;: { # Configurations for a timestamp property. # Timestamp property. It is not supported by CMEK compliant deployment.
@@ -240,7 +254,7 @@ Returns:
     { # A document schema used to define document structure.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the document schema is created.
   &quot;description&quot;: &quot;A String&quot;, # Schema description.
-  &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per customer.
+  &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per project.
   &quot;documentIsFolder&quot;: True or False, # Document Type, true refers the document is a folder, otherwise it is a typical document.
   &quot;name&quot;: &quot;A String&quot;, # The resource name of the document schema. Format: projects/{project_number}/locations/{location}/documentSchemas/{document_schema_id}. The name is ignored when creating a document schema.
   &quot;propertyDefinitions&quot;: [ # Document details.
@@ -259,7 +273,7 @@ Returns:
       &quot;integerTypeOptions&quot;: { # Configurations for an integer property. # Integer property.
       },
       &quot;isFilterable&quot;: True or False, # Whether the property can be filtered. If this is a sub-property, all the parent properties must be marked filterable.
-      &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata.
+      &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata. This out-of-the box placeholder setting can be used to tag derived properties. Its value and interpretation logic should be implemented by API user.
       &quot;isRepeatable&quot;: True or False, # Whether the property can have multiple values.
       &quot;isRequired&quot;: True or False, # Whether the property is mandatory. Default is &#x27;false&#x27;, i.e. populating property value can be skipped. If &#x27;true&#x27; then user must populate the value for this property.
       &quot;isSearchable&quot;: True or False, # Indicates that the property should be included in a global search.
@@ -271,6 +285,13 @@ Returns:
           # Object with schema name: GoogleCloudContentwarehouseV1PropertyDefinition
         ],
       },
+      &quot;retrievalImportance&quot;: &quot;A String&quot;, # The retrieval importance of the property during search.
+      &quot;schemaSources&quot;: [ # The mapping information between this property to another schema source.
+        { # The schema source information.
+          &quot;name&quot;: &quot;A String&quot;, # The schema name in the source.
+          &quot;processorType&quot;: &quot;A String&quot;, # The Doc AI processor type name.
+        },
+      ],
       &quot;textTypeOptions&quot;: { # Configurations for a text property. # Text/string property.
       },
       &quot;timestampTypeOptions&quot;: { # Configurations for a timestamp property. # Timestamp property. It is not supported by CMEK compliant deployment.
@@ -302,7 +323,7 @@ Returns:
     { # A document schema used to define document structure.
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the document schema is created.
       &quot;description&quot;: &quot;A String&quot;, # Schema description.
-      &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per customer.
+      &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per project.
       &quot;documentIsFolder&quot;: True or False, # Document Type, true refers the document is a folder, otherwise it is a typical document.
       &quot;name&quot;: &quot;A String&quot;, # The resource name of the document schema. Format: projects/{project_number}/locations/{location}/documentSchemas/{document_schema_id}. The name is ignored when creating a document schema.
       &quot;propertyDefinitions&quot;: [ # Document details.
@@ -321,7 +342,7 @@ Returns:
           &quot;integerTypeOptions&quot;: { # Configurations for an integer property. # Integer property.
           },
           &quot;isFilterable&quot;: True or False, # Whether the property can be filtered. If this is a sub-property, all the parent properties must be marked filterable.
-          &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata.
+          &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata. This out-of-the box placeholder setting can be used to tag derived properties. Its value and interpretation logic should be implemented by API user.
           &quot;isRepeatable&quot;: True or False, # Whether the property can have multiple values.
           &quot;isRequired&quot;: True or False, # Whether the property is mandatory. Default is &#x27;false&#x27;, i.e. populating property value can be skipped. If &#x27;true&#x27; then user must populate the value for this property.
           &quot;isSearchable&quot;: True or False, # Indicates that the property should be included in a global search.
@@ -333,6 +354,13 @@ Returns:
               # Object with schema name: GoogleCloudContentwarehouseV1PropertyDefinition
             ],
           },
+          &quot;retrievalImportance&quot;: &quot;A String&quot;, # The retrieval importance of the property during search.
+          &quot;schemaSources&quot;: [ # The mapping information between this property to another schema source.
+            { # The schema source information.
+              &quot;name&quot;: &quot;A String&quot;, # The schema name in the source.
+              &quot;processorType&quot;: &quot;A String&quot;, # The Doc AI processor type name.
+            },
+          ],
           &quot;textTypeOptions&quot;: { # Configurations for a text property. # Text/string property.
           },
           &quot;timestampTypeOptions&quot;: { # Configurations for a timestamp property. # Timestamp property. It is not supported by CMEK compliant deployment.
@@ -373,7 +401,7 @@ Args:
   &quot;documentSchema&quot;: { # A document schema used to define document structure. # Required. The document schema to update with.
     &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the document schema is created.
     &quot;description&quot;: &quot;A String&quot;, # Schema description.
-    &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per customer.
+    &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per project.
     &quot;documentIsFolder&quot;: True or False, # Document Type, true refers the document is a folder, otherwise it is a typical document.
     &quot;name&quot;: &quot;A String&quot;, # The resource name of the document schema. Format: projects/{project_number}/locations/{location}/documentSchemas/{document_schema_id}. The name is ignored when creating a document schema.
     &quot;propertyDefinitions&quot;: [ # Document details.
@@ -392,7 +420,7 @@ Args:
         &quot;integerTypeOptions&quot;: { # Configurations for an integer property. # Integer property.
         },
         &quot;isFilterable&quot;: True or False, # Whether the property can be filtered. If this is a sub-property, all the parent properties must be marked filterable.
-        &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata.
+        &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata. This out-of-the box placeholder setting can be used to tag derived properties. Its value and interpretation logic should be implemented by API user.
         &quot;isRepeatable&quot;: True or False, # Whether the property can have multiple values.
         &quot;isRequired&quot;: True or False, # Whether the property is mandatory. Default is &#x27;false&#x27;, i.e. populating property value can be skipped. If &#x27;true&#x27; then user must populate the value for this property.
         &quot;isSearchable&quot;: True or False, # Indicates that the property should be included in a global search.
@@ -404,6 +432,13 @@ Args:
             # Object with schema name: GoogleCloudContentwarehouseV1PropertyDefinition
           ],
         },
+        &quot;retrievalImportance&quot;: &quot;A String&quot;, # The retrieval importance of the property during search.
+        &quot;schemaSources&quot;: [ # The mapping information between this property to another schema source.
+          { # The schema source information.
+            &quot;name&quot;: &quot;A String&quot;, # The schema name in the source.
+            &quot;processorType&quot;: &quot;A String&quot;, # The Doc AI processor type name.
+          },
+        ],
         &quot;textTypeOptions&quot;: { # Configurations for a text property. # Text/string property.
         },
         &quot;timestampTypeOptions&quot;: { # Configurations for a timestamp property. # Timestamp property. It is not supported by CMEK compliant deployment.
@@ -425,7 +460,7 @@ Returns:
     { # A document schema used to define document structure.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the document schema is created.
   &quot;description&quot;: &quot;A String&quot;, # Schema description.
-  &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per customer.
+  &quot;displayName&quot;: &quot;A String&quot;, # Required. Name of the schema given by the user. Must be unique per project.
   &quot;documentIsFolder&quot;: True or False, # Document Type, true refers the document is a folder, otherwise it is a typical document.
   &quot;name&quot;: &quot;A String&quot;, # The resource name of the document schema. Format: projects/{project_number}/locations/{location}/documentSchemas/{document_schema_id}. The name is ignored when creating a document schema.
   &quot;propertyDefinitions&quot;: [ # Document details.
@@ -444,7 +479,7 @@ Returns:
       &quot;integerTypeOptions&quot;: { # Configurations for an integer property. # Integer property.
       },
       &quot;isFilterable&quot;: True or False, # Whether the property can be filtered. If this is a sub-property, all the parent properties must be marked filterable.
-      &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata.
+      &quot;isMetadata&quot;: True or False, # Whether the property is user supplied metadata. This out-of-the box placeholder setting can be used to tag derived properties. Its value and interpretation logic should be implemented by API user.
       &quot;isRepeatable&quot;: True or False, # Whether the property can have multiple values.
       &quot;isRequired&quot;: True or False, # Whether the property is mandatory. Default is &#x27;false&#x27;, i.e. populating property value can be skipped. If &#x27;true&#x27; then user must populate the value for this property.
       &quot;isSearchable&quot;: True or False, # Indicates that the property should be included in a global search.
@@ -456,6 +491,13 @@ Returns:
           # Object with schema name: GoogleCloudContentwarehouseV1PropertyDefinition
         ],
       },
+      &quot;retrievalImportance&quot;: &quot;A String&quot;, # The retrieval importance of the property during search.
+      &quot;schemaSources&quot;: [ # The mapping information between this property to another schema source.
+        { # The schema source information.
+          &quot;name&quot;: &quot;A String&quot;, # The schema name in the source.
+          &quot;processorType&quot;: &quot;A String&quot;, # The Doc AI processor type name.
+        },
+      ],
       &quot;textTypeOptions&quot;: { # Configurations for a text property. # Text/string property.
       },
       &quot;timestampTypeOptions&quot;: { # Configurations for a timestamp property. # Timestamp property. It is not supported by CMEK compliant deployment.

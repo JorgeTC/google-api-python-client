@@ -95,7 +95,7 @@ h1, h2, h3 {
 
 Args:
   parent: string, Required. The buyer to list the finalized deals for, in the format: `buyers/{accountId}`. When used to list finalized deals for a bidder, its buyers and clients, in the format `bidders/{accountId}`. (required)
-  filter: string, Optional query string using the [Cloud API list filtering syntax](https://developers.google.com/authorized-buyers/apis/guides/v2/list-filters) Supported columns for filtering are: * deal.displayName * deal.dealType * deal.createTime * deal.updateTime * deal.flightStartTime * deal.flightEndTime * dealServingStatus
+  filter: string, Optional query string using the [Cloud API list filtering syntax](https://developers.google.com/authorized-buyers/apis/guides/list-filters) Supported columns for filtering are: * deal.displayName * deal.dealType * deal.createTime * deal.updateTime * deal.flightStartTime * deal.flightEndTime * dealServingStatus
   orderBy: string, An optional query string to sort finalized deals using the [Cloud API sorting syntax](https://cloud.google.com/apis/design/design_patterns#sorting_order). If no sort order is specified, results will be returned in an arbitrary order. Supported columns for sorting are: * deal.displayName * deal.createTime * deal.updateTime * deal.flightStartTime * deal.flightEndTime * rtbMetrics.bidRequests7Days * rtbMetrics.bids7Days * rtbMetrics.adImpressions7Days * rtbMetrics.bidRate7Days * rtbMetrics.filteredBidRate7Days * rtbMetrics.mustBidRateCurrentMonth Example: &#x27;deal.displayName, deal.updateTime desc&#x27;
   pageSize: integer, Requested page size. The server may return fewer results than requested. If requested more than 500, the server will return 500 results per page. If unspecified, the server will pick a default page size of 100.
   pageToken: string, The page token as returned from ListFinalizedDealsResponse.
@@ -177,9 +177,9 @@ Returns:
             },
             &quot;type&quot;: &quot;A String&quot;, # The pricing type for the deal.
           },
-          &quot;guaranteedLooks&quot;: &quot;A String&quot;, # Count of guaranteed looks.
+          &quot;guaranteedLooks&quot;: &quot;A String&quot;, # Count of guaranteed looks. For CPD deals, buyer changes to guaranteed_looks will be ignored.
           &quot;impressionCap&quot;: &quot;A String&quot;, # The lifetime impression cap for CPM Sponsorship deals. Deal will stop serving when cap is reached.
-          &quot;minimumDailyLooks&quot;: &quot;A String&quot;, # Daily minimum looks for CPD deal types.
+          &quot;minimumDailyLooks&quot;: &quot;A String&quot;, # Daily minimum looks for CPD deal types. For CPD deals, buyer should negotiate on this field instead of guaranteed_looks.
           &quot;percentShareOfVoice&quot;: &quot;A String&quot;, # For sponsorship deals, this is the percentage of the seller&#x27;s eligible impressions that the deal will serve until the cap is reached. Valid value is within range 0~100.
           &quot;reservationType&quot;: &quot;A String&quot;, # The reservation type for a Programmatic Guaranteed deal. This indicates whether the number of impressions is fixed, or a percent of available impressions. If not specified, the default reservation type is STANDARD.
         },
@@ -320,7 +320,7 @@ Returns:
         &quot;pausingConsented&quot;: True or False, # Whether pausing is consented between buyer and seller for the deal.
       },
       &quot;dealServingStatus&quot;: &quot;A String&quot;, # Serving status of the deal.
-      &quot;name&quot;: &quot;A String&quot;, # The resource name of the finalized deal. Format: `buyers/{accountId}/finalizeddeals/{finalizedDealId}`
+      &quot;name&quot;: &quot;A String&quot;, # The resource name of the finalized deal. Format: `buyers/{accountId}/finalizedDeals/{finalizedDealId}`
       &quot;readyToServe&quot;: True or False, # Whether the Programmatic Guaranteed deal is ready for serving.
       &quot;rtbMetrics&quot;: { # Real-time bidding metrics. For what each metric means refer to [Report metrics](https://support.google.com/adxbuyer/answer/6115195#report-metrics) # Real-time bidding metrics for this deal.
         &quot;adImpressions7Days&quot;: &quot;A String&quot;, # Ad impressions in last 7 days.

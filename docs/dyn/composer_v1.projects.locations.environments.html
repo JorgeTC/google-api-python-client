@@ -81,8 +81,17 @@ h1, h2, h3 {
   <code><a href="#create">create(parent, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Create a new environment.</p>
 <p class="toc_element">
+  <code><a href="#databaseFailover">databaseFailover(environment, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Triggers database failover (only for highly resilient environments).</p>
+<p class="toc_element">
   <code><a href="#delete">delete(name, x__xgafv=None)</a></code></p>
 <p class="firstline">Delete an environment.</p>
+<p class="toc_element">
+  <code><a href="#executeAirflowCommand">executeAirflowCommand(environment, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Executes Airflow CLI command.</p>
+<p class="toc_element">
+  <code><a href="#fetchDatabaseProperties">fetchDatabaseProperties(environment, x__xgafv=None)</a></code></p>
+<p class="firstline">Fetches database properties.</p>
 <p class="toc_element">
   <code><a href="#get">get(name, x__xgafv=None)</a></code></p>
 <p class="firstline">Get an existing environment.</p>
@@ -93,8 +102,20 @@ h1, h2, h3 {
   <code><a href="#list_next">list_next()</a></code></p>
 <p class="firstline">Retrieves the next page of results.</p>
 <p class="toc_element">
+  <code><a href="#loadSnapshot">loadSnapshot(environment, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Loads a snapshot of a Cloud Composer environment. As a result of this operation, a snapshot of environment's specified in LoadSnapshotRequest is loaded into the environment.</p>
+<p class="toc_element">
   <code><a href="#patch">patch(name, body=None, updateMask=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Update an environment.</p>
+<p class="toc_element">
+  <code><a href="#pollAirflowCommand">pollAirflowCommand(environment, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Polls Airflow CLI command execution and fetches logs.</p>
+<p class="toc_element">
+  <code><a href="#saveSnapshot">saveSnapshot(environment, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Creates a snapshots of a Cloud Composer environment. As a result of this operation, snapshot of environment's state is stored in a location specified in the SaveSnapshotRequest.</p>
+<p class="toc_element">
+  <code><a href="#stopAirflowCommand">stopAirflowCommand(environment, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Stops Airflow CLI command execution.</p>
 <h3>Method Details</h3>
 <div class="method">
     <code class="details" id="close">close()</code>
@@ -112,10 +133,12 @@ Args:
 
 { # An environment for running orchestration tasks.
   &quot;config&quot;: { # Configuration information for an environment. # Configuration parameters for this environment.
+    &quot;airflowByoidUri&quot;: &quot;A String&quot;, # Output only. The &#x27;bring your own identity&#x27; variant of the URI of the Apache Airflow Web UI hosted within this environment, to be accessed with external identities using workforce identity federation (see [Access environments with workforce identity federation](/composer/docs/composer-2/access-environments-with-workforce-identity-federation)).
     &quot;airflowUri&quot;: &quot;A String&quot;, # Output only. The URI of the Apache Airflow Web UI hosted within this environment (see [Airflow web interface](/composer/docs/how-to/accessing/airflow-web-interface)).
     &quot;dagGcsPrefix&quot;: &quot;A String&quot;, # Output only. The Cloud Storage prefix of the DAGs for this environment. Although Cloud Storage objects reside in a flat namespace, a hierarchical file tree can be simulated using &quot;/&quot;-delimited object name prefixes. DAG objects for this environment reside in a simulated directory with the given prefix.
     &quot;databaseConfig&quot;: { # The configuration of Cloud SQL instance that is used by the Apache Airflow software. # Optional. The configuration settings for Cloud SQL instance used internally by Apache Airflow software.
       &quot;machineType&quot;: &quot;A String&quot;, # Optional. Cloud SQL machine type used by Airflow database. It has to be one of: db-n1-standard-2, db-n1-standard-4, db-n1-standard-8 or db-n1-standard-16. If not specified, db-n1-standard-2 will be used. Supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
+      &quot;zone&quot;: &quot;A String&quot;, # Optional. The Compute Engine zone where the Airflow database is created. If zone is provided, it must be in the region selected for the environment. If zone is not provided, a zone is automatically selected. The zone can only be set during environment creation. Supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.*.
     },
     &quot;encryptionConfig&quot;: { # The encryption options for the Cloud Composer environment and its dependencies.Supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*. # Optional. The encryption options for the Cloud Composer environment and its dependencies. Cannot be updated.
       &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Customer-managed Encryption Key available through Google&#x27;s Key Management Service. Cannot be updated. If not specified, Google-managed key will be used.
@@ -154,7 +177,7 @@ Args:
       ],
       &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. The Google Cloud Platform Service Account to be used by the node VMs. If a service account is not specified, the &quot;default&quot; Compute Engine service account is used. Cannot be updated.
       &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The Compute Engine subnetwork to be used for machine communications, specified as a [relative resource name](/apis/design/resource_names#relative_resource_name). For example: &quot;projects/{projectId}/regions/{regionId}/subnetworks/{subnetworkId}&quot; If a subnetwork is provided, `nodeConfig.network` must also be provided, and the subnetwork must belong to the enclosing environment&#x27;s project and location.
-      &quot;tags&quot;: [ # Optional. The list of instance tags applied to all node VMs. Tags are used to identify valid sources or targets for network firewalls. Each tag within the list must comply with [RFC1035](https://www.ietf.org/rfc/rfc1035.txt). Cannot be updated. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
+      &quot;tags&quot;: [ # Optional. The list of instance tags applied to all node VMs. Tags are used to identify valid sources or targets for network firewalls. Each tag within the list must comply with [RFC1035](https://www.ietf.org/rfc/rfc1035.txt). Cannot be updated.
         &quot;A String&quot;,
       ],
     },
@@ -177,6 +200,15 @@ Args:
       &quot;webServerIpv4CidrBlock&quot;: &quot;A String&quot;, # Optional. The CIDR block from which IP range for web server will be reserved. Needs to be disjoint from `private_cluster_config.master_ipv4_cidr_block` and `cloud_sql_ipv4_cidr_block`. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
       &quot;webServerIpv4ReservedRange&quot;: &quot;A String&quot;, # Output only. The IP range reserved for the tenant project&#x27;s App Engine VMs. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
     },
+    &quot;recoveryConfig&quot;: { # The Recovery settings of an environment. # Optional. The Recovery settings configuration of an environment. This field is supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.* and newer.
+      &quot;scheduledSnapshotsConfig&quot;: { # The configuration for scheduled snapshot creation mechanism. # Optional. The configuration for scheduled snapshot creation mechanism.
+        &quot;enabled&quot;: True or False, # Optional. Whether scheduled snapshots creation is enabled.
+        &quot;snapshotCreationSchedule&quot;: &quot;A String&quot;, # Optional. The cron expression representing the time when snapshots creation mechanism runs. This field is subject to additional validation around frequency of execution.
+        &quot;snapshotLocation&quot;: &quot;A String&quot;, # Optional. The Cloud Storage location for storing automatically created snapshots.
+        &quot;timeZone&quot;: &quot;A String&quot;, # Optional. Time zone that sets the context to interpret snapshot_creation_schedule.
+      },
+    },
+    &quot;resilienceMode&quot;: &quot;A String&quot;, # Optional. Resilience mode of the Cloud Composer Environment. This field is supported for Cloud Composer environments in versions composer-2.2.0-airflow-*.*.* and newer.
     &quot;softwareConfig&quot;: { # Specifies the selection and configuration of software inside the environment. # The configuration settings for software inside the environment.
       &quot;airflowConfigOverrides&quot;: { # Optional. Apache Airflow configuration properties to override. Property keys contain the section and property names, separated by a hyphen, for example &quot;core-dags_are_paused_at_creation&quot;. Section names must not contain hyphens (&quot;-&quot;), opening square brackets (&quot;[&quot;), or closing square brackets (&quot;]&quot;). The property name must not be empty and must not contain an equals sign (&quot;=&quot;) or semicolon (&quot;;&quot;). Section and property names must not contain a period (&quot;.&quot;). Apache Airflow configuration property names must be written in [snake_case](https://en.wikipedia.org/wiki/Snake_case). Property values can contain any character, and can be written in any lower/upper case format. Certain Apache Airflow configuration property values are [blocked](/composer/docs/concepts/airflow-configurations), and cannot be overridden.
         &quot;a_key&quot;: &quot;A String&quot;,
@@ -209,6 +241,11 @@ Args:
         &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for a single Airflow scheduler replica.
         &quot;storageGb&quot;: 3.14, # Optional. Storage (GB) request and limit for a single Airflow scheduler replica.
       },
+      &quot;triggerer&quot;: { # Configuration for resources used by Airflow triggerers. # Optional. Resources used by Airflow triggerers.
+        &quot;count&quot;: 42, # Optional. The number of triggerers.
+        &quot;cpu&quot;: 3.14, # Optional. CPU request and limit for a single Airflow triggerer replica.
+        &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for a single Airflow triggerer replica.
+      },
       &quot;webServer&quot;: { # Configuration for resources used by Airflow web server. # Optional. Resources used by Airflow web server.
         &quot;cpu&quot;: 3.14, # Optional. CPU request and limit for Airflow web server.
         &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for Airflow web server.
@@ -228,7 +265,11 @@ Args:
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;name&quot;: &quot;A String&quot;, # The resource name of the environment, in the form: &quot;projects/{projectId}/locations/{locationId}/environments/{environmentId}&quot; EnvironmentId must start with a lowercase letter followed by up to 63 lowercase letters, numbers, or hyphens, and cannot end with a hyphen.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;state&quot;: &quot;A String&quot;, # The current state of the environment.
+  &quot;storageConfig&quot;: { # The configuration for data storage in the environment. # Optional. Storage configuration for this environment.
+    &quot;bucket&quot;: &quot;A String&quot;, # Optional. The name of the Cloud Storage bucket used by the environment. No `gs://` prefix.
+  },
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time at which this environment was last modified.
   &quot;uuid&quot;: &quot;A String&quot;, # Output only. The UUID (Universally Unique IDentifier) associated with this environment. This value is generated when the environment is created.
 }
@@ -256,7 +297,48 @@ Returns:
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
   &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
-  &quot;response&quot;: { # The normal response of the operation in case of success. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="databaseFailover">databaseFailover(environment, body=None, x__xgafv=None)</code>
+  <pre>Triggers database failover (only for highly resilient environments).
+
+Args:
+  environment: string, Target environment: &quot;projects/{projectId}/locations/{locationId}/environments/{environmentId}&quot; (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # Request to trigger database failover (only for highly resilient environments).
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # This resource represents a long-running operation that is the result of a network API call.
+  &quot;done&quot;: True or False, # If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.
+  &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The error result of the operation in case of failure or cancellation.
+    &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+    &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+      {
+        &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+      },
+    ],
+    &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;metadata&quot;: { # Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+  &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
 }</pre>
@@ -291,9 +373,63 @@ Returns:
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
   &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
-  &quot;response&quot;: { # The normal response of the operation in case of success. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="executeAirflowCommand">executeAirflowCommand(environment, body=None, x__xgafv=None)</code>
+  <pre>Executes Airflow CLI command.
+
+Args:
+  environment: string, The resource name of the environment in the form: &quot;projects/{projectId}/locations/{locationId}/environments/{environmentId}&quot;. (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # Execute Airflow Command request.
+  &quot;command&quot;: &quot;A String&quot;, # Airflow command.
+  &quot;parameters&quot;: [ # Parameters for the Airflow command/subcommand as an array of arguments. It may contain positional arguments like `[&quot;my-dag-id&quot;]`, key-value parameters like `[&quot;--foo=bar&quot;]` or `[&quot;--foo&quot;,&quot;bar&quot;]`, or other flags like `[&quot;-f&quot;]`.
+    &quot;A String&quot;,
+  ],
+  &quot;subcommand&quot;: &quot;A String&quot;, # Airflow subcommand.
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # Response to ExecuteAirflowCommandRequest.
+  &quot;error&quot;: &quot;A String&quot;, # Error message. Empty if there was no error.
+  &quot;executionId&quot;: &quot;A String&quot;, # The unique ID of the command execution for polling.
+  &quot;pod&quot;: &quot;A String&quot;, # The name of the pod where the command is executed.
+  &quot;podNamespace&quot;: &quot;A String&quot;, # The namespace of the pod where the command is executed.
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="fetchDatabaseProperties">fetchDatabaseProperties(environment, x__xgafv=None)</code>
+  <pre>Fetches database properties.
+
+Args:
+  environment: string, Required. The resource name of the environment, in the form: &quot;projects/{projectId}/locations/{locationId}/environments/{environmentId}&quot; (required)
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # Response for FetchDatabasePropertiesRequest.
+  &quot;isFailoverReplicaAvailable&quot;: True or False, # The availability status of the failover replica. A false status indicates that the failover replica is out of sync. The primary instance can only fail over to the failover replica when the status is true.
+  &quot;primaryGceZone&quot;: &quot;A String&quot;, # The Compute Engine zone that the instance is currently serving from.
+  &quot;secondaryGceZone&quot;: &quot;A String&quot;, # The Compute Engine zone that the failover instance is currently serving from for a regional Cloud SQL instance.
 }</pre>
 </div>
 
@@ -313,10 +449,12 @@ Returns:
 
     { # An environment for running orchestration tasks.
   &quot;config&quot;: { # Configuration information for an environment. # Configuration parameters for this environment.
+    &quot;airflowByoidUri&quot;: &quot;A String&quot;, # Output only. The &#x27;bring your own identity&#x27; variant of the URI of the Apache Airflow Web UI hosted within this environment, to be accessed with external identities using workforce identity federation (see [Access environments with workforce identity federation](/composer/docs/composer-2/access-environments-with-workforce-identity-federation)).
     &quot;airflowUri&quot;: &quot;A String&quot;, # Output only. The URI of the Apache Airflow Web UI hosted within this environment (see [Airflow web interface](/composer/docs/how-to/accessing/airflow-web-interface)).
     &quot;dagGcsPrefix&quot;: &quot;A String&quot;, # Output only. The Cloud Storage prefix of the DAGs for this environment. Although Cloud Storage objects reside in a flat namespace, a hierarchical file tree can be simulated using &quot;/&quot;-delimited object name prefixes. DAG objects for this environment reside in a simulated directory with the given prefix.
     &quot;databaseConfig&quot;: { # The configuration of Cloud SQL instance that is used by the Apache Airflow software. # Optional. The configuration settings for Cloud SQL instance used internally by Apache Airflow software.
       &quot;machineType&quot;: &quot;A String&quot;, # Optional. Cloud SQL machine type used by Airflow database. It has to be one of: db-n1-standard-2, db-n1-standard-4, db-n1-standard-8 or db-n1-standard-16. If not specified, db-n1-standard-2 will be used. Supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
+      &quot;zone&quot;: &quot;A String&quot;, # Optional. The Compute Engine zone where the Airflow database is created. If zone is provided, it must be in the region selected for the environment. If zone is not provided, a zone is automatically selected. The zone can only be set during environment creation. Supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.*.
     },
     &quot;encryptionConfig&quot;: { # The encryption options for the Cloud Composer environment and its dependencies.Supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*. # Optional. The encryption options for the Cloud Composer environment and its dependencies. Cannot be updated.
       &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Customer-managed Encryption Key available through Google&#x27;s Key Management Service. Cannot be updated. If not specified, Google-managed key will be used.
@@ -355,7 +493,7 @@ Returns:
       ],
       &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. The Google Cloud Platform Service Account to be used by the node VMs. If a service account is not specified, the &quot;default&quot; Compute Engine service account is used. Cannot be updated.
       &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The Compute Engine subnetwork to be used for machine communications, specified as a [relative resource name](/apis/design/resource_names#relative_resource_name). For example: &quot;projects/{projectId}/regions/{regionId}/subnetworks/{subnetworkId}&quot; If a subnetwork is provided, `nodeConfig.network` must also be provided, and the subnetwork must belong to the enclosing environment&#x27;s project and location.
-      &quot;tags&quot;: [ # Optional. The list of instance tags applied to all node VMs. Tags are used to identify valid sources or targets for network firewalls. Each tag within the list must comply with [RFC1035](https://www.ietf.org/rfc/rfc1035.txt). Cannot be updated. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
+      &quot;tags&quot;: [ # Optional. The list of instance tags applied to all node VMs. Tags are used to identify valid sources or targets for network firewalls. Each tag within the list must comply with [RFC1035](https://www.ietf.org/rfc/rfc1035.txt). Cannot be updated.
         &quot;A String&quot;,
       ],
     },
@@ -378,6 +516,15 @@ Returns:
       &quot;webServerIpv4CidrBlock&quot;: &quot;A String&quot;, # Optional. The CIDR block from which IP range for web server will be reserved. Needs to be disjoint from `private_cluster_config.master_ipv4_cidr_block` and `cloud_sql_ipv4_cidr_block`. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
       &quot;webServerIpv4ReservedRange&quot;: &quot;A String&quot;, # Output only. The IP range reserved for the tenant project&#x27;s App Engine VMs. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
     },
+    &quot;recoveryConfig&quot;: { # The Recovery settings of an environment. # Optional. The Recovery settings configuration of an environment. This field is supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.* and newer.
+      &quot;scheduledSnapshotsConfig&quot;: { # The configuration for scheduled snapshot creation mechanism. # Optional. The configuration for scheduled snapshot creation mechanism.
+        &quot;enabled&quot;: True or False, # Optional. Whether scheduled snapshots creation is enabled.
+        &quot;snapshotCreationSchedule&quot;: &quot;A String&quot;, # Optional. The cron expression representing the time when snapshots creation mechanism runs. This field is subject to additional validation around frequency of execution.
+        &quot;snapshotLocation&quot;: &quot;A String&quot;, # Optional. The Cloud Storage location for storing automatically created snapshots.
+        &quot;timeZone&quot;: &quot;A String&quot;, # Optional. Time zone that sets the context to interpret snapshot_creation_schedule.
+      },
+    },
+    &quot;resilienceMode&quot;: &quot;A String&quot;, # Optional. Resilience mode of the Cloud Composer Environment. This field is supported for Cloud Composer environments in versions composer-2.2.0-airflow-*.*.* and newer.
     &quot;softwareConfig&quot;: { # Specifies the selection and configuration of software inside the environment. # The configuration settings for software inside the environment.
       &quot;airflowConfigOverrides&quot;: { # Optional. Apache Airflow configuration properties to override. Property keys contain the section and property names, separated by a hyphen, for example &quot;core-dags_are_paused_at_creation&quot;. Section names must not contain hyphens (&quot;-&quot;), opening square brackets (&quot;[&quot;), or closing square brackets (&quot;]&quot;). The property name must not be empty and must not contain an equals sign (&quot;=&quot;) or semicolon (&quot;;&quot;). Section and property names must not contain a period (&quot;.&quot;). Apache Airflow configuration property names must be written in [snake_case](https://en.wikipedia.org/wiki/Snake_case). Property values can contain any character, and can be written in any lower/upper case format. Certain Apache Airflow configuration property values are [blocked](/composer/docs/concepts/airflow-configurations), and cannot be overridden.
         &quot;a_key&quot;: &quot;A String&quot;,
@@ -410,6 +557,11 @@ Returns:
         &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for a single Airflow scheduler replica.
         &quot;storageGb&quot;: 3.14, # Optional. Storage (GB) request and limit for a single Airflow scheduler replica.
       },
+      &quot;triggerer&quot;: { # Configuration for resources used by Airflow triggerers. # Optional. Resources used by Airflow triggerers.
+        &quot;count&quot;: 42, # Optional. The number of triggerers.
+        &quot;cpu&quot;: 3.14, # Optional. CPU request and limit for a single Airflow triggerer replica.
+        &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for a single Airflow triggerer replica.
+      },
       &quot;webServer&quot;: { # Configuration for resources used by Airflow web server. # Optional. Resources used by Airflow web server.
         &quot;cpu&quot;: 3.14, # Optional. CPU request and limit for Airflow web server.
         &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for Airflow web server.
@@ -429,7 +581,11 @@ Returns:
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;name&quot;: &quot;A String&quot;, # The resource name of the environment, in the form: &quot;projects/{projectId}/locations/{locationId}/environments/{environmentId}&quot; EnvironmentId must start with a lowercase letter followed by up to 63 lowercase letters, numbers, or hyphens, and cannot end with a hyphen.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;state&quot;: &quot;A String&quot;, # The current state of the environment.
+  &quot;storageConfig&quot;: { # The configuration for data storage in the environment. # Optional. Storage configuration for this environment.
+    &quot;bucket&quot;: &quot;A String&quot;, # Optional. The name of the Cloud Storage bucket used by the environment. No `gs://` prefix.
+  },
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time at which this environment was last modified.
   &quot;uuid&quot;: &quot;A String&quot;, # Output only. The UUID (Universally Unique IDentifier) associated with this environment. This value is generated when the environment is created.
 }</pre>
@@ -455,10 +611,12 @@ Returns:
   &quot;environments&quot;: [ # The list of environments returned by a ListEnvironmentsRequest.
     { # An environment for running orchestration tasks.
       &quot;config&quot;: { # Configuration information for an environment. # Configuration parameters for this environment.
+        &quot;airflowByoidUri&quot;: &quot;A String&quot;, # Output only. The &#x27;bring your own identity&#x27; variant of the URI of the Apache Airflow Web UI hosted within this environment, to be accessed with external identities using workforce identity federation (see [Access environments with workforce identity federation](/composer/docs/composer-2/access-environments-with-workforce-identity-federation)).
         &quot;airflowUri&quot;: &quot;A String&quot;, # Output only. The URI of the Apache Airflow Web UI hosted within this environment (see [Airflow web interface](/composer/docs/how-to/accessing/airflow-web-interface)).
         &quot;dagGcsPrefix&quot;: &quot;A String&quot;, # Output only. The Cloud Storage prefix of the DAGs for this environment. Although Cloud Storage objects reside in a flat namespace, a hierarchical file tree can be simulated using &quot;/&quot;-delimited object name prefixes. DAG objects for this environment reside in a simulated directory with the given prefix.
         &quot;databaseConfig&quot;: { # The configuration of Cloud SQL instance that is used by the Apache Airflow software. # Optional. The configuration settings for Cloud SQL instance used internally by Apache Airflow software.
           &quot;machineType&quot;: &quot;A String&quot;, # Optional. Cloud SQL machine type used by Airflow database. It has to be one of: db-n1-standard-2, db-n1-standard-4, db-n1-standard-8 or db-n1-standard-16. If not specified, db-n1-standard-2 will be used. Supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
+          &quot;zone&quot;: &quot;A String&quot;, # Optional. The Compute Engine zone where the Airflow database is created. If zone is provided, it must be in the region selected for the environment. If zone is not provided, a zone is automatically selected. The zone can only be set during environment creation. Supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.*.
         },
         &quot;encryptionConfig&quot;: { # The encryption options for the Cloud Composer environment and its dependencies.Supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*. # Optional. The encryption options for the Cloud Composer environment and its dependencies. Cannot be updated.
           &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Customer-managed Encryption Key available through Google&#x27;s Key Management Service. Cannot be updated. If not specified, Google-managed key will be used.
@@ -497,7 +655,7 @@ Returns:
           ],
           &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. The Google Cloud Platform Service Account to be used by the node VMs. If a service account is not specified, the &quot;default&quot; Compute Engine service account is used. Cannot be updated.
           &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The Compute Engine subnetwork to be used for machine communications, specified as a [relative resource name](/apis/design/resource_names#relative_resource_name). For example: &quot;projects/{projectId}/regions/{regionId}/subnetworks/{subnetworkId}&quot; If a subnetwork is provided, `nodeConfig.network` must also be provided, and the subnetwork must belong to the enclosing environment&#x27;s project and location.
-          &quot;tags&quot;: [ # Optional. The list of instance tags applied to all node VMs. Tags are used to identify valid sources or targets for network firewalls. Each tag within the list must comply with [RFC1035](https://www.ietf.org/rfc/rfc1035.txt). Cannot be updated. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
+          &quot;tags&quot;: [ # Optional. The list of instance tags applied to all node VMs. Tags are used to identify valid sources or targets for network firewalls. Each tag within the list must comply with [RFC1035](https://www.ietf.org/rfc/rfc1035.txt). Cannot be updated.
             &quot;A String&quot;,
           ],
         },
@@ -520,6 +678,15 @@ Returns:
           &quot;webServerIpv4CidrBlock&quot;: &quot;A String&quot;, # Optional. The CIDR block from which IP range for web server will be reserved. Needs to be disjoint from `private_cluster_config.master_ipv4_cidr_block` and `cloud_sql_ipv4_cidr_block`. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
           &quot;webServerIpv4ReservedRange&quot;: &quot;A String&quot;, # Output only. The IP range reserved for the tenant project&#x27;s App Engine VMs. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
         },
+        &quot;recoveryConfig&quot;: { # The Recovery settings of an environment. # Optional. The Recovery settings configuration of an environment. This field is supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.* and newer.
+          &quot;scheduledSnapshotsConfig&quot;: { # The configuration for scheduled snapshot creation mechanism. # Optional. The configuration for scheduled snapshot creation mechanism.
+            &quot;enabled&quot;: True or False, # Optional. Whether scheduled snapshots creation is enabled.
+            &quot;snapshotCreationSchedule&quot;: &quot;A String&quot;, # Optional. The cron expression representing the time when snapshots creation mechanism runs. This field is subject to additional validation around frequency of execution.
+            &quot;snapshotLocation&quot;: &quot;A String&quot;, # Optional. The Cloud Storage location for storing automatically created snapshots.
+            &quot;timeZone&quot;: &quot;A String&quot;, # Optional. Time zone that sets the context to interpret snapshot_creation_schedule.
+          },
+        },
+        &quot;resilienceMode&quot;: &quot;A String&quot;, # Optional. Resilience mode of the Cloud Composer Environment. This field is supported for Cloud Composer environments in versions composer-2.2.0-airflow-*.*.* and newer.
         &quot;softwareConfig&quot;: { # Specifies the selection and configuration of software inside the environment. # The configuration settings for software inside the environment.
           &quot;airflowConfigOverrides&quot;: { # Optional. Apache Airflow configuration properties to override. Property keys contain the section and property names, separated by a hyphen, for example &quot;core-dags_are_paused_at_creation&quot;. Section names must not contain hyphens (&quot;-&quot;), opening square brackets (&quot;[&quot;), or closing square brackets (&quot;]&quot;). The property name must not be empty and must not contain an equals sign (&quot;=&quot;) or semicolon (&quot;;&quot;). Section and property names must not contain a period (&quot;.&quot;). Apache Airflow configuration property names must be written in [snake_case](https://en.wikipedia.org/wiki/Snake_case). Property values can contain any character, and can be written in any lower/upper case format. Certain Apache Airflow configuration property values are [blocked](/composer/docs/concepts/airflow-configurations), and cannot be overridden.
             &quot;a_key&quot;: &quot;A String&quot;,
@@ -552,6 +719,11 @@ Returns:
             &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for a single Airflow scheduler replica.
             &quot;storageGb&quot;: 3.14, # Optional. Storage (GB) request and limit for a single Airflow scheduler replica.
           },
+          &quot;triggerer&quot;: { # Configuration for resources used by Airflow triggerers. # Optional. Resources used by Airflow triggerers.
+            &quot;count&quot;: 42, # Optional. The number of triggerers.
+            &quot;cpu&quot;: 3.14, # Optional. CPU request and limit for a single Airflow triggerer replica.
+            &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for a single Airflow triggerer replica.
+          },
           &quot;webServer&quot;: { # Configuration for resources used by Airflow web server. # Optional. Resources used by Airflow web server.
             &quot;cpu&quot;: 3.14, # Optional. CPU request and limit for Airflow web server.
             &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for Airflow web server.
@@ -571,7 +743,11 @@ Returns:
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;name&quot;: &quot;A String&quot;, # The resource name of the environment, in the form: &quot;projects/{projectId}/locations/{locationId}/environments/{environmentId}&quot; EnvironmentId must start with a lowercase letter followed by up to 63 lowercase letters, numbers, or hyphens, and cannot end with a hyphen.
+      &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
       &quot;state&quot;: &quot;A String&quot;, # The current state of the environment.
+      &quot;storageConfig&quot;: { # The configuration for data storage in the environment. # Optional. Storage configuration for this environment.
+        &quot;bucket&quot;: &quot;A String&quot;, # Optional. The name of the Cloud Storage bucket used by the environment. No `gs://` prefix.
+      },
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time at which this environment was last modified.
       &quot;uuid&quot;: &quot;A String&quot;, # Output only. The UUID (Universally Unique IDentifier) associated with this environment. This value is generated when the environment is created.
     },
@@ -595,6 +771,52 @@ Returns:
 </div>
 
 <div class="method">
+    <code class="details" id="loadSnapshot">loadSnapshot(environment, body=None, x__xgafv=None)</code>
+  <pre>Loads a snapshot of a Cloud Composer environment. As a result of this operation, a snapshot of environment&#x27;s specified in LoadSnapshotRequest is loaded into the environment.
+
+Args:
+  environment: string, The resource name of the target environment in the form: &quot;projects/{projectId}/locations/{locationId}/environments/{environmentId}&quot; (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # Request to load a snapshot into a Cloud Composer environment.
+  &quot;skipAirflowOverridesSetting&quot;: True or False, # Whether or not to skip setting Airflow overrides when loading the environment&#x27;s state.
+  &quot;skipEnvironmentVariablesSetting&quot;: True or False, # Whether or not to skip setting environment variables when loading the environment&#x27;s state.
+  &quot;skipGcsDataCopying&quot;: True or False, # Whether or not to skip copying Cloud Storage data when loading the environment&#x27;s state.
+  &quot;skipPypiPackagesInstallation&quot;: True or False, # Whether or not to skip installing Pypi packages when loading the environment&#x27;s state.
+  &quot;snapshotPath&quot;: &quot;A String&quot;, # A Cloud Storage path to a snapshot to load, e.g.: &quot;gs://my-bucket/snapshots/project_location_environment_timestamp&quot;.
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # This resource represents a long-running operation that is the result of a network API call.
+  &quot;done&quot;: True or False, # If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.
+  &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The error result of the operation in case of failure or cancellation.
+    &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+    &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+      {
+        &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+      },
+    ],
+    &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;metadata&quot;: { # Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+  &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+}</pre>
+</div>
+
+<div class="method">
     <code class="details" id="patch">patch(name, body=None, updateMask=None, x__xgafv=None)</code>
   <pre>Update an environment.
 
@@ -605,10 +827,12 @@ Args:
 
 { # An environment for running orchestration tasks.
   &quot;config&quot;: { # Configuration information for an environment. # Configuration parameters for this environment.
+    &quot;airflowByoidUri&quot;: &quot;A String&quot;, # Output only. The &#x27;bring your own identity&#x27; variant of the URI of the Apache Airflow Web UI hosted within this environment, to be accessed with external identities using workforce identity federation (see [Access environments with workforce identity federation](/composer/docs/composer-2/access-environments-with-workforce-identity-federation)).
     &quot;airflowUri&quot;: &quot;A String&quot;, # Output only. The URI of the Apache Airflow Web UI hosted within this environment (see [Airflow web interface](/composer/docs/how-to/accessing/airflow-web-interface)).
     &quot;dagGcsPrefix&quot;: &quot;A String&quot;, # Output only. The Cloud Storage prefix of the DAGs for this environment. Although Cloud Storage objects reside in a flat namespace, a hierarchical file tree can be simulated using &quot;/&quot;-delimited object name prefixes. DAG objects for this environment reside in a simulated directory with the given prefix.
     &quot;databaseConfig&quot;: { # The configuration of Cloud SQL instance that is used by the Apache Airflow software. # Optional. The configuration settings for Cloud SQL instance used internally by Apache Airflow software.
       &quot;machineType&quot;: &quot;A String&quot;, # Optional. Cloud SQL machine type used by Airflow database. It has to be one of: db-n1-standard-2, db-n1-standard-4, db-n1-standard-8 or db-n1-standard-16. If not specified, db-n1-standard-2 will be used. Supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
+      &quot;zone&quot;: &quot;A String&quot;, # Optional. The Compute Engine zone where the Airflow database is created. If zone is provided, it must be in the region selected for the environment. If zone is not provided, a zone is automatically selected. The zone can only be set during environment creation. Supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.*.
     },
     &quot;encryptionConfig&quot;: { # The encryption options for the Cloud Composer environment and its dependencies.Supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*. # Optional. The encryption options for the Cloud Composer environment and its dependencies. Cannot be updated.
       &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Customer-managed Encryption Key available through Google&#x27;s Key Management Service. Cannot be updated. If not specified, Google-managed key will be used.
@@ -647,7 +871,7 @@ Args:
       ],
       &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. The Google Cloud Platform Service Account to be used by the node VMs. If a service account is not specified, the &quot;default&quot; Compute Engine service account is used. Cannot be updated.
       &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The Compute Engine subnetwork to be used for machine communications, specified as a [relative resource name](/apis/design/resource_names#relative_resource_name). For example: &quot;projects/{projectId}/regions/{regionId}/subnetworks/{subnetworkId}&quot; If a subnetwork is provided, `nodeConfig.network` must also be provided, and the subnetwork must belong to the enclosing environment&#x27;s project and location.
-      &quot;tags&quot;: [ # Optional. The list of instance tags applied to all node VMs. Tags are used to identify valid sources or targets for network firewalls. Each tag within the list must comply with [RFC1035](https://www.ietf.org/rfc/rfc1035.txt). Cannot be updated. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
+      &quot;tags&quot;: [ # Optional. The list of instance tags applied to all node VMs. Tags are used to identify valid sources or targets for network firewalls. Each tag within the list must comply with [RFC1035](https://www.ietf.org/rfc/rfc1035.txt). Cannot be updated.
         &quot;A String&quot;,
       ],
     },
@@ -670,6 +894,15 @@ Args:
       &quot;webServerIpv4CidrBlock&quot;: &quot;A String&quot;, # Optional. The CIDR block from which IP range for web server will be reserved. Needs to be disjoint from `private_cluster_config.master_ipv4_cidr_block` and `cloud_sql_ipv4_cidr_block`. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
       &quot;webServerIpv4ReservedRange&quot;: &quot;A String&quot;, # Output only. The IP range reserved for the tenant project&#x27;s App Engine VMs. This field is supported for Cloud Composer environments in versions composer-1.*.*-airflow-*.*.*.
     },
+    &quot;recoveryConfig&quot;: { # The Recovery settings of an environment. # Optional. The Recovery settings configuration of an environment. This field is supported for Cloud Composer environments in versions composer-2.*.*-airflow-*.*.* and newer.
+      &quot;scheduledSnapshotsConfig&quot;: { # The configuration for scheduled snapshot creation mechanism. # Optional. The configuration for scheduled snapshot creation mechanism.
+        &quot;enabled&quot;: True or False, # Optional. Whether scheduled snapshots creation is enabled.
+        &quot;snapshotCreationSchedule&quot;: &quot;A String&quot;, # Optional. The cron expression representing the time when snapshots creation mechanism runs. This field is subject to additional validation around frequency of execution.
+        &quot;snapshotLocation&quot;: &quot;A String&quot;, # Optional. The Cloud Storage location for storing automatically created snapshots.
+        &quot;timeZone&quot;: &quot;A String&quot;, # Optional. Time zone that sets the context to interpret snapshot_creation_schedule.
+      },
+    },
+    &quot;resilienceMode&quot;: &quot;A String&quot;, # Optional. Resilience mode of the Cloud Composer Environment. This field is supported for Cloud Composer environments in versions composer-2.2.0-airflow-*.*.* and newer.
     &quot;softwareConfig&quot;: { # Specifies the selection and configuration of software inside the environment. # The configuration settings for software inside the environment.
       &quot;airflowConfigOverrides&quot;: { # Optional. Apache Airflow configuration properties to override. Property keys contain the section and property names, separated by a hyphen, for example &quot;core-dags_are_paused_at_creation&quot;. Section names must not contain hyphens (&quot;-&quot;), opening square brackets (&quot;[&quot;), or closing square brackets (&quot;]&quot;). The property name must not be empty and must not contain an equals sign (&quot;=&quot;) or semicolon (&quot;;&quot;). Section and property names must not contain a period (&quot;.&quot;). Apache Airflow configuration property names must be written in [snake_case](https://en.wikipedia.org/wiki/Snake_case). Property values can contain any character, and can be written in any lower/upper case format. Certain Apache Airflow configuration property values are [blocked](/composer/docs/concepts/airflow-configurations), and cannot be overridden.
         &quot;a_key&quot;: &quot;A String&quot;,
@@ -702,6 +935,11 @@ Args:
         &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for a single Airflow scheduler replica.
         &quot;storageGb&quot;: 3.14, # Optional. Storage (GB) request and limit for a single Airflow scheduler replica.
       },
+      &quot;triggerer&quot;: { # Configuration for resources used by Airflow triggerers. # Optional. Resources used by Airflow triggerers.
+        &quot;count&quot;: 42, # Optional. The number of triggerers.
+        &quot;cpu&quot;: 3.14, # Optional. CPU request and limit for a single Airflow triggerer replica.
+        &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for a single Airflow triggerer replica.
+      },
       &quot;webServer&quot;: { # Configuration for resources used by Airflow web server. # Optional. Resources used by Airflow web server.
         &quot;cpu&quot;: 3.14, # Optional. CPU request and limit for Airflow web server.
         &quot;memoryGb&quot;: 3.14, # Optional. Memory (GB) request and limit for Airflow web server.
@@ -721,7 +959,11 @@ Args:
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;name&quot;: &quot;A String&quot;, # The resource name of the environment, in the form: &quot;projects/{projectId}/locations/{locationId}/environments/{environmentId}&quot; EnvironmentId must start with a lowercase letter followed by up to 63 lowercase letters, numbers, or hyphens, and cannot end with a hyphen.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;state&quot;: &quot;A String&quot;, # The current state of the environment.
+  &quot;storageConfig&quot;: { # The configuration for data storage in the environment. # Optional. Storage configuration for this environment.
+    &quot;bucket&quot;: &quot;A String&quot;, # Optional. The name of the Cloud Storage bucket used by the environment. No `gs://` prefix.
+  },
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time at which this environment was last modified.
   &quot;uuid&quot;: &quot;A String&quot;, # Output only. The UUID (Universally Unique IDentifier) associated with this environment. This value is generated when the environment is created.
 }
@@ -750,9 +992,122 @@ Returns:
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
   &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
-  &quot;response&quot;: { # The normal response of the operation in case of success. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="pollAirflowCommand">pollAirflowCommand(environment, body=None, x__xgafv=None)</code>
+  <pre>Polls Airflow CLI command execution and fetches logs.
+
+Args:
+  environment: string, The resource name of the environment in the form: &quot;projects/{projectId}/locations/{locationId}/environments/{environmentId}&quot; (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # Poll Airflow Command request.
+  &quot;executionId&quot;: &quot;A String&quot;, # The unique ID of the command execution.
+  &quot;nextLineNumber&quot;: 42, # Line number from which new logs should be fetched.
+  &quot;pod&quot;: &quot;A String&quot;, # The name of the pod where the command is executed.
+  &quot;podNamespace&quot;: &quot;A String&quot;, # The namespace of the pod where the command is executed.
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # Response to PollAirflowCommandRequest.
+  &quot;exitInfo&quot;: { # Information about how a command ended. # The result exit status of the command.
+    &quot;error&quot;: &quot;A String&quot;, # Error message. Empty if there was no error.
+    &quot;exitCode&quot;: 42, # The exit code from the command execution.
+  },
+  &quot;output&quot;: [ # Output from the command execution. It may not contain the full output and the caller may need to poll for more lines.
+    { # Contains information about a single line from logs.
+      &quot;content&quot;: &quot;A String&quot;, # Text content of the log line.
+      &quot;lineNumber&quot;: 42, # Number of the line.
+    },
+  ],
+  &quot;outputEnd&quot;: True or False, # Whether the command execution has finished and there is no more output.
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="saveSnapshot">saveSnapshot(environment, body=None, x__xgafv=None)</code>
+  <pre>Creates a snapshots of a Cloud Composer environment. As a result of this operation, snapshot of environment&#x27;s state is stored in a location specified in the SaveSnapshotRequest.
+
+Args:
+  environment: string, The resource name of the source environment in the form: &quot;projects/{projectId}/locations/{locationId}/environments/{environmentId}&quot; (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # Request to create a snapshot of a Cloud Composer environment.
+  &quot;snapshotLocation&quot;: &quot;A String&quot;, # Location in a Cloud Storage where the snapshot is going to be stored, e.g.: &quot;gs://my-bucket/snapshots&quot;.
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # This resource represents a long-running operation that is the result of a network API call.
+  &quot;done&quot;: True or False, # If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.
+  &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The error result of the operation in case of failure or cancellation.
+    &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+    &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+      {
+        &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+      },
+    ],
+    &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;metadata&quot;: { # Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+  &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="stopAirflowCommand">stopAirflowCommand(environment, body=None, x__xgafv=None)</code>
+  <pre>Stops Airflow CLI command execution.
+
+Args:
+  environment: string, The resource name of the environment in the form: &quot;projects/{projectId}/locations/{locationId}/environments/{environmentId}&quot;. (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # Stop Airflow Command request.
+  &quot;executionId&quot;: &quot;A String&quot;, # The unique ID of the command execution.
+  &quot;force&quot;: True or False, # If true, the execution is terminated forcefully (SIGKILL). If false, the execution is stopped gracefully, giving it time for cleanup.
+  &quot;pod&quot;: &quot;A String&quot;, # The name of the pod where the command is executed.
+  &quot;podNamespace&quot;: &quot;A String&quot;, # The namespace of the pod where the command is executed.
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # Response to StopAirflowCommandRequest.
+  &quot;isDone&quot;: True or False, # Whether the execution is still running.
+  &quot;output&quot;: [ # Output message from stopping execution request.
+    &quot;A String&quot;,
+  ],
 }</pre>
 </div>
 
