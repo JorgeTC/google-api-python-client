@@ -108,7 +108,8 @@ Args:
     The object takes the form of:
 
 { # Represents a membership relation in Google Chat, such as whether a user or Chat app is invited to, part of, or absent from a space.
-  &quot;createTime&quot;: &quot;A String&quot;, # Optional. Immutable. The creation time of the membership, such as when a member joined or was invited to join a space. [Developer Preview](https://developers.google.com/workspace/preview): This field is output only, except when used to import historical memberships in import mode spaces.
+  &quot;createTime&quot;: &quot;A String&quot;, # Optional. Immutable. The creation time of the membership, such as when a member joined or was invited to join a space. This field is output only, except when used to import historical memberships in import mode spaces.
+  &quot;deleteTime&quot;: &quot;A String&quot;, # Optional. Immutable. The deletion time of the membership, such as when a member left or was removed from a space. This field is output only, except when used to import historical memberships in import mode spaces.
   &quot;groupMember&quot;: { # A Google Group in Google Chat. # The Google Group the membership corresponds to. Only supports read operations. Other operations, like creating or updating a membership, aren&#x27;t currently supported.
     &quot;name&quot;: &quot;A String&quot;, # Resource name for a Google Group. Represents a [group](https://cloud.google.com/identity/docs/reference/rest/v1/groups) in Cloud Identity Groups API. Format: groups/{group}
   },
@@ -133,7 +134,8 @@ Returns:
   An object of the form:
 
     { # Represents a membership relation in Google Chat, such as whether a user or Chat app is invited to, part of, or absent from a space.
-  &quot;createTime&quot;: &quot;A String&quot;, # Optional. Immutable. The creation time of the membership, such as when a member joined or was invited to join a space. [Developer Preview](https://developers.google.com/workspace/preview): This field is output only, except when used to import historical memberships in import mode spaces.
+  &quot;createTime&quot;: &quot;A String&quot;, # Optional. Immutable. The creation time of the membership, such as when a member joined or was invited to join a space. This field is output only, except when used to import historical memberships in import mode spaces.
+  &quot;deleteTime&quot;: &quot;A String&quot;, # Optional. Immutable. The deletion time of the membership, such as when a member left or was removed from a space. This field is output only, except when used to import historical memberships in import mode spaces.
   &quot;groupMember&quot;: { # A Google Group in Google Chat. # The Google Group the membership corresponds to. Only supports read operations. Other operations, like creating or updating a membership, aren&#x27;t currently supported.
     &quot;name&quot;: &quot;A String&quot;, # Resource name for a Google Group. Represents a [group](https://cloud.google.com/identity/docs/reference/rest/v1/groups) in Cloud Identity Groups API. Format: groups/{group}
   },
@@ -165,7 +167,8 @@ Returns:
   An object of the form:
 
     { # Represents a membership relation in Google Chat, such as whether a user or Chat app is invited to, part of, or absent from a space.
-  &quot;createTime&quot;: &quot;A String&quot;, # Optional. Immutable. The creation time of the membership, such as when a member joined or was invited to join a space. [Developer Preview](https://developers.google.com/workspace/preview): This field is output only, except when used to import historical memberships in import mode spaces.
+  &quot;createTime&quot;: &quot;A String&quot;, # Optional. Immutable. The creation time of the membership, such as when a member joined or was invited to join a space. This field is output only, except when used to import historical memberships in import mode spaces.
+  &quot;deleteTime&quot;: &quot;A String&quot;, # Optional. Immutable. The deletion time of the membership, such as when a member left or was removed from a space. This field is output only, except when used to import historical memberships in import mode spaces.
   &quot;groupMember&quot;: { # A Google Group in Google Chat. # The Google Group the membership corresponds to. Only supports read operations. Other operations, like creating or updating a membership, aren&#x27;t currently supported.
     &quot;name&quot;: &quot;A String&quot;, # Resource name for a Google Group. Represents a [group](https://cloud.google.com/identity/docs/reference/rest/v1/groups) in Cloud Identity Groups API. Format: groups/{group}
   },
@@ -197,7 +200,8 @@ Returns:
   An object of the form:
 
     { # Represents a membership relation in Google Chat, such as whether a user or Chat app is invited to, part of, or absent from a space.
-  &quot;createTime&quot;: &quot;A String&quot;, # Optional. Immutable. The creation time of the membership, such as when a member joined or was invited to join a space. [Developer Preview](https://developers.google.com/workspace/preview): This field is output only, except when used to import historical memberships in import mode spaces.
+  &quot;createTime&quot;: &quot;A String&quot;, # Optional. Immutable. The creation time of the membership, such as when a member joined or was invited to join a space. This field is output only, except when used to import historical memberships in import mode spaces.
+  &quot;deleteTime&quot;: &quot;A String&quot;, # Optional. Immutable. The deletion time of the membership, such as when a member left or was removed from a space. This field is output only, except when used to import historical memberships in import mode spaces.
   &quot;groupMember&quot;: { # A Google Group in Google Chat. # The Google Group the membership corresponds to. Only supports read operations. Other operations, like creating or updating a membership, aren&#x27;t currently supported.
     &quot;name&quot;: &quot;A String&quot;, # Resource name for a Google Group. Represents a [group](https://cloud.google.com/identity/docs/reference/rest/v1/groups) in Cloud Identity Groups API. Format: groups/{group}
   },
@@ -221,7 +225,7 @@ Returns:
 Args:
   parent: string, Required. The resource name of the space for which to fetch a membership list. Format: spaces/{space} (required)
   filter: string, Optional. A query filter. You can filter memberships by a member&#x27;s role ([`role`](https://developers.google.com/chat/api/reference/rest/v1/spaces.members#membershiprole)) and type ([`member.type`](https://developers.google.com/chat/api/reference/rest/v1/User#type)). To filter by role, set `role` to `ROLE_MEMBER` or `ROLE_MANAGER`. To filter by type, set `member.type` to `HUMAN` or `BOT`. To filter by both role and type, use the `AND` operator. To filter by either role or type, use the `OR` operator. For example, the following queries are valid: ``` role = &quot;ROLE_MANAGER&quot; OR role = &quot;ROLE_MEMBER&quot; member.type = &quot;HUMAN&quot; AND role = &quot;ROLE_MANAGER&quot; ``` The following queries are invalid: ``` member.type = &quot;HUMAN&quot; AND member.type = &quot;BOT&quot; role = &quot;ROLE_MANAGER&quot; AND role = &quot;ROLE_MEMBER&quot; ``` Invalid queries are rejected by the server with an `INVALID_ARGUMENT` error.
-  pageSize: integer, Optional. The maximum number of memberships to return. The service might return fewer than this value. If unspecified, at most 100 memberships are returned. The maximum value is 1,000. If you use a value more than 1,000, it&#x27;s automatically changed to 1,000. Negative values return an `INVALID_ARGUMENT` error.
+  pageSize: integer, Optional. The maximum number of memberships to return. The service might return fewer than this value. If unspecified, at most 100 memberships are returned. The maximum value is 1000. If you use a value more than 1000, it&#x27;s automatically changed to 1000. Negative values return an `INVALID_ARGUMENT` error.
   pageToken: string, Optional. A page token, received from a previous call to list memberships. Provide this parameter to retrieve the subsequent page. When paginating, all other parameters provided should match the call that provided the page token. Passing different values to the other parameters might lead to unexpected results.
   showGroups: boolean, Optional. When `true`, also returns memberships associated with a Google Group, in addition to other types of memberships. If a filter is set, Google Group memberships that don&#x27;t match the filter criteria aren&#x27;t returned.
   showInvited: boolean, Optional. When `true`, also returns memberships associated with invited members, in addition to other types of memberships. If a filter is set, invited memberships that don&#x27;t match the filter criteria aren&#x27;t returned. Currently requires [user authentication](https://developers.google.com/chat/api/guides/auth/users).
@@ -236,7 +240,8 @@ Returns:
     {
   &quot;memberships&quot;: [ # Unordered list. List of memberships in the requested (or first) page.
     { # Represents a membership relation in Google Chat, such as whether a user or Chat app is invited to, part of, or absent from a space.
-      &quot;createTime&quot;: &quot;A String&quot;, # Optional. Immutable. The creation time of the membership, such as when a member joined or was invited to join a space. [Developer Preview](https://developers.google.com/workspace/preview): This field is output only, except when used to import historical memberships in import mode spaces.
+      &quot;createTime&quot;: &quot;A String&quot;, # Optional. Immutable. The creation time of the membership, such as when a member joined or was invited to join a space. This field is output only, except when used to import historical memberships in import mode spaces.
+      &quot;deleteTime&quot;: &quot;A String&quot;, # Optional. Immutable. The deletion time of the membership, such as when a member left or was removed from a space. This field is output only, except when used to import historical memberships in import mode spaces.
       &quot;groupMember&quot;: { # A Google Group in Google Chat. # The Google Group the membership corresponds to. Only supports read operations. Other operations, like creating or updating a membership, aren&#x27;t currently supported.
         &quot;name&quot;: &quot;A String&quot;, # Resource name for a Google Group. Represents a [group](https://cloud.google.com/identity/docs/reference/rest/v1/groups) in Cloud Identity Groups API. Format: groups/{group}
       },

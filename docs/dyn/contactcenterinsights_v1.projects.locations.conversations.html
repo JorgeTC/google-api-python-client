@@ -104,7 +104,7 @@ h1, h2, h3 {
   <code><a href="#ingest">ingest(parent, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Imports conversations and processes them according to the user's configuration.</p>
 <p class="toc_element">
-  <code><a href="#list">list(parent, filter=None, pageSize=None, pageToken=None, view=None, x__xgafv=None)</a></code></p>
+  <code><a href="#list">list(parent, filter=None, orderBy=None, pageSize=None, pageToken=None, view=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Lists conversations.</p>
 <p class="toc_element">
   <code><a href="#list_next">list_next()</a></code></p>
@@ -449,6 +449,19 @@ Args:
   &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
   &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
+  &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
+    &quot;agentInfo&quot;: [ # Information about agents involved in the call.
+      { # Information about an agent involved in the conversation.
+        &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+        &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
+        &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
+        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+      },
+    ],
+    &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
+    &quot;menuPath&quot;: &quot;A String&quot;, # An arbitrary string value specifying the menu path the customer took.
+    &quot;waitDuration&quot;: &quot;A String&quot;, # The amount of time the customer waited to connect with an agent.
+  },
   &quot;runtimeAnnotations&quot;: [ # Output only. The annotations that were generated during the customer and agent interaction.
     { # An annotation that was generated during the customer and agent interaction.
       &quot;annotationId&quot;: &quot;A String&quot;, # The unique identifier of the annotation. Format: projects/{project}/locations/{location}/conversationDatasets/{dataset}/conversationDataItems/{data_item}/conversationAnnotations/{annotation}
@@ -731,6 +744,19 @@ Returns:
   &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
   &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
+  &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
+    &quot;agentInfo&quot;: [ # Information about agents involved in the call.
+      { # Information about an agent involved in the conversation.
+        &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+        &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
+        &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
+        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+      },
+    ],
+    &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
+    &quot;menuPath&quot;: &quot;A String&quot;, # An arbitrary string value specifying the menu path the customer took.
+    &quot;waitDuration&quot;: &quot;A String&quot;, # The amount of time the customer waited to connect with an agent.
+  },
   &quot;runtimeAnnotations&quot;: [ # Output only. The annotations that were generated during the customer and agent interaction.
     { # An annotation that was generated during the customer and agent interaction.
       &quot;annotationId&quot;: &quot;A String&quot;, # The unique identifier of the annotation. Format: projects/{project}/locations/{location}/conversationDatasets/{dataset}/conversationDataItems/{data_item}/conversationAnnotations/{annotation}
@@ -1043,6 +1069,19 @@ Returns:
   &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
   &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
+  &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
+    &quot;agentInfo&quot;: [ # Information about agents involved in the call.
+      { # Information about an agent involved in the conversation.
+        &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+        &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
+        &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
+        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+      },
+    ],
+    &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
+    &quot;menuPath&quot;: &quot;A String&quot;, # An arbitrary string value specifying the menu path the customer took.
+    &quot;waitDuration&quot;: &quot;A String&quot;, # The amount of time the customer waited to connect with an agent.
+  },
   &quot;runtimeAnnotations&quot;: [ # Output only. The annotations that were generated during the customer and agent interaction.
     { # An annotation that was generated during the customer and agent interaction.
       &quot;annotationId&quot;: &quot;A String&quot;, # The unique identifier of the annotation. Format: projects/{project}/locations/{location}/conversationDatasets/{dataset}/conversationDataItems/{data_item}/conversationAnnotations/{annotation}
@@ -1165,13 +1204,17 @@ Args:
 
 { # The request to ingest conversations.
   &quot;conversationConfig&quot;: { # Configuration that applies to all conversations. # Configuration that applies to all conversations.
-    &quot;agentChannel&quot;: 42, # Optional. For audio conversations, this field indicates which of the channels, 1 or 2, contains the agent. Note that this must be set for audio conversations to be properly displayed and analyzed.
+    &quot;agentChannel&quot;: 42, # Optional. Indicates which of the channels, 1 or 2, contains the agent. Note that this must be set for conversations to be properly displayed and analyzed.
     &quot;agentId&quot;: &quot;A String&quot;, # An opaque, user-specified string representing the human agent who handled the conversations.
-    &quot;customerChannel&quot;: 42, # Optional. For audio conversations, this field indicates which of the channels, 1 or 2, contains the customer. Note that this must be set for audio conversations to be properly displayed and analyzed.
+    &quot;customerChannel&quot;: 42, # Optional. Indicates which of the channels, 1 or 2, contains the agent. Note that this must be set for conversations to be properly displayed and analyzed.
   },
   &quot;gcsSource&quot;: { # Configuration for Cloud Storage bucket sources. # A cloud storage bucket source. Note that any previously ingested objects from the source will be skipped to avoid duplication.
     &quot;bucketObjectType&quot;: &quot;A String&quot;, # Optional. Specifies the type of the objects in `bucket_uri`.
     &quot;bucketUri&quot;: &quot;A String&quot;, # Required. The Cloud Storage bucket containing source objects.
+    &quot;customMetadataKeys&quot;: [ # Optional. Custom keys to extract as conversation labels from metadata files in `metadata_bucket_uri`. Keys not included in this field will be ignored. Note that there is a limit of 20 labels per conversation.
+      &quot;A String&quot;,
+    ],
+    &quot;metadataBucketUri&quot;: &quot;A String&quot;, # Optional. The Cloud Storage path to the source object metadata. Note that: [1] metadata files are expected to be in JSON format [2] metadata and source objects must be in separate buckets [3] a source object&#x27;s metadata object must share the same name to be properly ingested
   },
   &quot;parent&quot;: &quot;A String&quot;, # Required. The parent resource for new conversations.
   &quot;redactionConfig&quot;: { # DLP resources used for redaction while ingesting conversations. # Optional. DLP settings for transcript redaction. Optional, will default to the config specified in Settings.
@@ -1216,12 +1259,13 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="list">list(parent, filter=None, pageSize=None, pageToken=None, view=None, x__xgafv=None)</code>
+    <code class="details" id="list">list(parent, filter=None, orderBy=None, pageSize=None, pageToken=None, view=None, x__xgafv=None)</code>
   <pre>Lists conversations.
 
 Args:
   parent: string, Required. The parent resource of the conversation. (required)
   filter: string, A filter to reduce results to a specific subset. Useful for querying conversations with specific properties.
+  orderBy: string, Optional. The attribute by which to order conversations in the response. If empty, conversations will be ordered by descending creation time. Supported values are one of the following: * create_time * customer_satisfaction_rating * duration * latest_analysis * start_time * turn_count The default sort order is ascending. To specify order, append `asc` or `desc`, i.e. `create_time desc`. See https://google.aip.dev/132#ordering for more details.
   pageSize: integer, The maximum number of conversations to return in the response. A valid page size ranges from 0 to 1,000 inclusive. If the page size is zero or unspecified, a default page size of 100 will be chosen. Note that a call might return fewer results than the requested page size.
   pageToken: string, The value returned by the last `ListConversationsResponse`. This value indicates that this is a continuation of a prior `ListConversations` call and that the system should return the next page of data.
   view: string, The level of details of the conversation. Default is `BASIC`.
@@ -1402,6 +1446,19 @@ Returns:
       &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
       &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
       &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
+      &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
+        &quot;agentInfo&quot;: [ # Information about agents involved in the call.
+          { # Information about an agent involved in the conversation.
+            &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+            &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
+            &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
+            &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+          },
+        ],
+        &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
+        &quot;menuPath&quot;: &quot;A String&quot;, # An arbitrary string value specifying the menu path the customer took.
+        &quot;waitDuration&quot;: &quot;A String&quot;, # The amount of time the customer waited to connect with an agent.
+      },
       &quot;runtimeAnnotations&quot;: [ # Output only. The annotations that were generated during the customer and agent interaction.
         { # An annotation that was generated during the customer and agent interaction.
           &quot;annotationId&quot;: &quot;A String&quot;, # The unique identifier of the annotation. Format: projects/{project}/locations/{location}/conversationDatasets/{dataset}/conversationDataItems/{data_item}/conversationAnnotations/{annotation}
@@ -1702,6 +1759,19 @@ Args:
   &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
   &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
+  &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
+    &quot;agentInfo&quot;: [ # Information about agents involved in the call.
+      { # Information about an agent involved in the conversation.
+        &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+        &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
+        &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
+        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+      },
+    ],
+    &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
+    &quot;menuPath&quot;: &quot;A String&quot;, # An arbitrary string value specifying the menu path the customer took.
+    &quot;waitDuration&quot;: &quot;A String&quot;, # The amount of time the customer waited to connect with an agent.
+  },
   &quot;runtimeAnnotations&quot;: [ # Output only. The annotations that were generated during the customer and agent interaction.
     { # An annotation that was generated during the customer and agent interaction.
       &quot;annotationId&quot;: &quot;A String&quot;, # The unique identifier of the annotation. Format: projects/{project}/locations/{location}/conversationDatasets/{dataset}/conversationDataItems/{data_item}/conversationAnnotations/{annotation}
@@ -1984,6 +2054,19 @@ Returns:
   &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
   &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
+  &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
+    &quot;agentInfo&quot;: [ # Information about agents involved in the call.
+      { # Information about an agent involved in the conversation.
+        &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+        &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
+        &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
+        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+      },
+    ],
+    &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
+    &quot;menuPath&quot;: &quot;A String&quot;, # An arbitrary string value specifying the menu path the customer took.
+    &quot;waitDuration&quot;: &quot;A String&quot;, # The amount of time the customer waited to connect with an agent.
+  },
   &quot;runtimeAnnotations&quot;: [ # Output only. The annotations that were generated during the customer and agent interaction.
     { # An annotation that was generated during the customer and agent interaction.
       &quot;annotationId&quot;: &quot;A String&quot;, # The unique identifier of the annotation. Format: projects/{project}/locations/{location}/conversationDatasets/{dataset}/conversationDataItems/{data_item}/conversationAnnotations/{annotation}
@@ -2268,6 +2351,19 @@ Args:
     &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
     &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
     &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
+    &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
+      &quot;agentInfo&quot;: [ # Information about agents involved in the call.
+        { # Information about an agent involved in the conversation.
+          &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+          &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
+          &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
+          &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+        },
+      ],
+      &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
+      &quot;menuPath&quot;: &quot;A String&quot;, # An arbitrary string value specifying the menu path the customer took.
+      &quot;waitDuration&quot;: &quot;A String&quot;, # The amount of time the customer waited to connect with an agent.
+    },
     &quot;runtimeAnnotations&quot;: [ # Output only. The annotations that were generated during the customer and agent interaction.
       { # An annotation that was generated during the customer and agent interaction.
         &quot;annotationId&quot;: &quot;A String&quot;, # The unique identifier of the annotation. Format: projects/{project}/locations/{location}/conversationDatasets/{dataset}/conversationDataItems/{data_item}/conversationAnnotations/{annotation}

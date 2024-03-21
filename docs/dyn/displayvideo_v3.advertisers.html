@@ -142,7 +142,7 @@ h1, h2, h3 {
 <p class="firstline">Close httplib2 connections.</p>
 <p class="toc_element">
   <code><a href="#create">create(body=None, x__xgafv=None)</a></code></p>
-<p class="firstline">Creates a new advertiser. Returns the newly created advertiser if successful. This method can take up to 180 seconds to complete.</p>
+<p class="firstline">Creates a new advertiser. Returns the newly created advertiser if successful. **This method regularly experiences high latency.** We recommend [increasing your default timeout](/display-video/api/guides/best-practices/timeouts#client_library_timeout) to avoid errors.</p>
 <p class="toc_element">
   <code><a href="#delete">delete(advertiserId, x__xgafv=None)</a></code></p>
 <p class="firstline">Deletes an advertiser. Deleting an advertiser will delete all of its child resources, for example, campaigns, insertion orders and line items. A deleted advertiser cannot be recovered.</p>
@@ -202,7 +202,7 @@ Returns:
 
 <div class="method">
     <code class="details" id="create">create(body=None, x__xgafv=None)</code>
-  <pre>Creates a new advertiser. Returns the newly created advertiser if successful. This method can take up to 180 seconds to complete.
+  <pre>Creates a new advertiser. Returns the newly created advertiser if successful. **This method regularly experiences high latency.** We recommend [increasing your default timeout](/display-video/api/guides/best-practices/timeouts#client_library_timeout) to avoid errors.
 
 Args:
   body: object, The request body.
@@ -212,6 +212,9 @@ Args:
   &quot;adServerConfig&quot;: { # Ad server related settings of an advertiser. # Required. Immutable. Ad server related settings of the advertiser.
     &quot;cmHybridConfig&quot;: { # Settings for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers. # The configuration for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers.
       &quot;cmAccountId&quot;: &quot;A String&quot;, # Required. Immutable. Account ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
+      &quot;cmAdvertiserIds&quot;: [ # Output only. The set of CM360 Advertiser IDs sharing the CM360 Floodlight configuration.
+        &quot;A String&quot;,
+      ],
       &quot;cmFloodlightConfigId&quot;: &quot;A String&quot;, # Required. Immutable. ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
       &quot;cmFloodlightLinkingAuthorized&quot;: True or False, # Required. Immutable. By setting this field to `true`, you, on behalf of your company, authorize the sharing of information from the given Floodlight configuration to this Display &amp; Video 360 advertiser.
       &quot;cmSyncableSiteIds&quot;: [ # A list of CM360 sites whose placements will be synced to DV360 as creatives. If absent or empty in CreateAdvertiser method, the system will automatically create a CM360 site. Removing sites from this list may cause DV360 creatives synced from CM360 to be deleted. At least one site must be specified.
@@ -225,13 +228,13 @@ Args:
     },
   },
   &quot;advertiserId&quot;: &quot;A String&quot;, # Output only. The unique ID of the advertiser. Assigned by the system.
-  &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Required. Billing related settings of the advertiser.
-    &quot;billingProfileId&quot;: &quot;A String&quot;, # The ID of a billing profile assigned to the advertiser.
+  &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Optional. Required. Billing related settings of the advertiser.
+    &quot;billingProfileId&quot;: &quot;A String&quot;, # Optional. The ID of a billing profile assigned to the advertiser.
   },
   &quot;creativeConfig&quot;: { # Creatives related settings of an advertiser. # Required. Creative related settings of the advertiser.
     &quot;dynamicCreativeEnabled&quot;: True or False, # Whether or not the advertiser is enabled for dynamic creatives.
     &quot;iasClientId&quot;: &quot;A String&quot;, # An ID for configuring campaign monitoring provided by Integral Ad Service (IAS). The DV360 system will append an IAS &quot;Campaign Monitor&quot; tag containing this ID to the creative tag.
-    &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to use DV360&#x27;s Online Behavioral Advertising (OBA) compliance. Warning: Changing OBA settings may cause the audit status of your creatives to be reset by some ad exchanges, making them ineligible to serve until they are re-approved.
+    &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to disable Google&#x27;s About this Ad feature that adds badging (to identify the content as an ad) and transparency information (on interaction with About this Ad) to your ads for Online Behavioral Advertising (OBA) and regulatory requirements. About this Ad gives users greater control over the ads they see and helps you explain why they&#x27;re seeing your ad. [Learn more](//support.google.com/displayvideo/answer/14315795). If you choose to set this field to `true`, note that ads served through Display &amp; Video 360 must comply to the following: * Be Online Behavioral Advertising (OBA) compliant, as per your contract with Google Marketing Platform. * In the European Economic Area (EEA), include transparency information and a mechanism for users to report illegal content in ads. If using an alternative ad badging, transparency, and reporting solution, you must ensure it includes the required transparency information and illegal content flagging mechanism and that you notify Google of any illegal content reports using the appropriate [form](//support.google.com/legal/troubleshooter/1114905?sjid=6787484030557261960-EU#ts=2981967%2C2982031%2C12980091).
     &quot;videoCreativeDataSharingAuthorized&quot;: True or False, # By setting this field to `true`, you, on behalf of your company, authorize Google to use video creatives associated with this Display &amp; Video 360 advertiser to provide reporting and features related to the advertiser&#x27;s television campaigns. Applicable only when the advertiser has a CM360 hybrid ad server configuration.
   },
   &quot;dataAccessConfig&quot;: { # Settings that control how advertiser related data may be accessed. # Settings that control how advertiser data may be accessed.
@@ -275,6 +278,9 @@ Returns:
   &quot;adServerConfig&quot;: { # Ad server related settings of an advertiser. # Required. Immutable. Ad server related settings of the advertiser.
     &quot;cmHybridConfig&quot;: { # Settings for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers. # The configuration for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers.
       &quot;cmAccountId&quot;: &quot;A String&quot;, # Required. Immutable. Account ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
+      &quot;cmAdvertiserIds&quot;: [ # Output only. The set of CM360 Advertiser IDs sharing the CM360 Floodlight configuration.
+        &quot;A String&quot;,
+      ],
       &quot;cmFloodlightConfigId&quot;: &quot;A String&quot;, # Required. Immutable. ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
       &quot;cmFloodlightLinkingAuthorized&quot;: True or False, # Required. Immutable. By setting this field to `true`, you, on behalf of your company, authorize the sharing of information from the given Floodlight configuration to this Display &amp; Video 360 advertiser.
       &quot;cmSyncableSiteIds&quot;: [ # A list of CM360 sites whose placements will be synced to DV360 as creatives. If absent or empty in CreateAdvertiser method, the system will automatically create a CM360 site. Removing sites from this list may cause DV360 creatives synced from CM360 to be deleted. At least one site must be specified.
@@ -288,13 +294,13 @@ Returns:
     },
   },
   &quot;advertiserId&quot;: &quot;A String&quot;, # Output only. The unique ID of the advertiser. Assigned by the system.
-  &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Required. Billing related settings of the advertiser.
-    &quot;billingProfileId&quot;: &quot;A String&quot;, # The ID of a billing profile assigned to the advertiser.
+  &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Optional. Required. Billing related settings of the advertiser.
+    &quot;billingProfileId&quot;: &quot;A String&quot;, # Optional. The ID of a billing profile assigned to the advertiser.
   },
   &quot;creativeConfig&quot;: { # Creatives related settings of an advertiser. # Required. Creative related settings of the advertiser.
     &quot;dynamicCreativeEnabled&quot;: True or False, # Whether or not the advertiser is enabled for dynamic creatives.
     &quot;iasClientId&quot;: &quot;A String&quot;, # An ID for configuring campaign monitoring provided by Integral Ad Service (IAS). The DV360 system will append an IAS &quot;Campaign Monitor&quot; tag containing this ID to the creative tag.
-    &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to use DV360&#x27;s Online Behavioral Advertising (OBA) compliance. Warning: Changing OBA settings may cause the audit status of your creatives to be reset by some ad exchanges, making them ineligible to serve until they are re-approved.
+    &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to disable Google&#x27;s About this Ad feature that adds badging (to identify the content as an ad) and transparency information (on interaction with About this Ad) to your ads for Online Behavioral Advertising (OBA) and regulatory requirements. About this Ad gives users greater control over the ads they see and helps you explain why they&#x27;re seeing your ad. [Learn more](//support.google.com/displayvideo/answer/14315795). If you choose to set this field to `true`, note that ads served through Display &amp; Video 360 must comply to the following: * Be Online Behavioral Advertising (OBA) compliant, as per your contract with Google Marketing Platform. * In the European Economic Area (EEA), include transparency information and a mechanism for users to report illegal content in ads. If using an alternative ad badging, transparency, and reporting solution, you must ensure it includes the required transparency information and illegal content flagging mechanism and that you notify Google of any illegal content reports using the appropriate [form](//support.google.com/legal/troubleshooter/1114905?sjid=6787484030557261960-EU#ts=2981967%2C2982031%2C12980091).
     &quot;videoCreativeDataSharingAuthorized&quot;: True or False, # By setting this field to `true`, you, on behalf of your company, authorize Google to use video creatives associated with this Display &amp; Video 360 advertiser to provide reporting and features related to the advertiser&#x27;s television campaigns. Applicable only when the advertiser has a CM360 hybrid ad server configuration.
   },
   &quot;dataAccessConfig&quot;: { # Settings that control how advertiser related data may be accessed. # Settings that control how advertiser data may be accessed.
@@ -557,7 +563,7 @@ Args:
             &quot;longitude&quot;: 3.14, # Output only. Longitude of the POI rounding to 6th decimal place.
             &quot;proximityRadiusAmount&quot;: 3.14, # Required. The radius of the area around the POI that will be targeted. The units of the radius are specified by proximity_radius_unit. Must be 1 to 800 if unit is `DISTANCE_UNIT_KILOMETERS` and 1 to 500 if unit is `DISTANCE_UNIT_MILES`.
             &quot;proximityRadiusUnit&quot;: &quot;A String&quot;, # Required. The unit of distance by which the targeting radius is measured.
-            &quot;targetingOptionId&quot;: &quot;A String&quot;, # Required. The targeting_option_id of a TargetingOption of type `TARGETING_TYPE_POI`. Accepted POI targeting option IDs can be retrieved using SearchTargetingOptions. If targeting a specific latitude/longitude coordinate removed from an address or POI name, you can generate the necessary targeting option ID by rounding the desired coordinate values to the 6th decimal place, removing the decimals, and concatenating the string values separated by a semicolon. For example, you can target the latitude/longitude pair of 40.7414691, -74.003387 using the targeting option ID &quot;40741469;-74003387&quot;.
+            &quot;targetingOptionId&quot;: &quot;A String&quot;, # Required. The targeting_option_id of a TargetingOption of type `TARGETING_TYPE_POI`. Accepted POI targeting option IDs can be retrieved using `targetingTypes.targetingOptions.search`. If targeting a specific latitude/longitude coordinate removed from an address or POI name, you can generate the necessary targeting option ID by rounding the desired coordinate values to the 6th decimal place, removing the decimals, and concatenating the string values separated by a semicolon. For example, you can target the latitude/longitude pair of 40.7414691, -74.003387 using the targeting option ID &quot;40741469;-74003387&quot;. **Upon** **creation, this field value will be updated to append a semicolon and** **alphanumerical hash value if only latitude/longitude coordinates are** **provided.**
           },
           &quot;proximityLocationListDetails&quot;: { # Targeting details for proximity location list. This will be populated in the details field of an AssignedTargetingOption when targeting_type is `TARGETING_TYPE_PROXIMITY_LOCATION_LIST`. # Proximity location list details. This field will be populated when the targeting_type is `TARGETING_TYPE_PROXIMITY_LOCATION_LIST`.
             &quot;proximityLocationListId&quot;: &quot;A String&quot;, # Required. ID of the proximity location list. Should refer to the location_list_id field of a LocationList resource whose type is `TARGETING_LOCATION_TYPE_PROXIMITY`.
@@ -881,7 +887,7 @@ Returns:
         &quot;longitude&quot;: 3.14, # Output only. Longitude of the POI rounding to 6th decimal place.
         &quot;proximityRadiusAmount&quot;: 3.14, # Required. The radius of the area around the POI that will be targeted. The units of the radius are specified by proximity_radius_unit. Must be 1 to 800 if unit is `DISTANCE_UNIT_KILOMETERS` and 1 to 500 if unit is `DISTANCE_UNIT_MILES`.
         &quot;proximityRadiusUnit&quot;: &quot;A String&quot;, # Required. The unit of distance by which the targeting radius is measured.
-        &quot;targetingOptionId&quot;: &quot;A String&quot;, # Required. The targeting_option_id of a TargetingOption of type `TARGETING_TYPE_POI`. Accepted POI targeting option IDs can be retrieved using SearchTargetingOptions. If targeting a specific latitude/longitude coordinate removed from an address or POI name, you can generate the necessary targeting option ID by rounding the desired coordinate values to the 6th decimal place, removing the decimals, and concatenating the string values separated by a semicolon. For example, you can target the latitude/longitude pair of 40.7414691, -74.003387 using the targeting option ID &quot;40741469;-74003387&quot;.
+        &quot;targetingOptionId&quot;: &quot;A String&quot;, # Required. The targeting_option_id of a TargetingOption of type `TARGETING_TYPE_POI`. Accepted POI targeting option IDs can be retrieved using `targetingTypes.targetingOptions.search`. If targeting a specific latitude/longitude coordinate removed from an address or POI name, you can generate the necessary targeting option ID by rounding the desired coordinate values to the 6th decimal place, removing the decimals, and concatenating the string values separated by a semicolon. For example, you can target the latitude/longitude pair of 40.7414691, -74.003387 using the targeting option ID &quot;40741469;-74003387&quot;. **Upon** **creation, this field value will be updated to append a semicolon and** **alphanumerical hash value if only latitude/longitude coordinates are** **provided.**
       },
       &quot;proximityLocationListDetails&quot;: { # Targeting details for proximity location list. This will be populated in the details field of an AssignedTargetingOption when targeting_type is `TARGETING_TYPE_PROXIMITY_LOCATION_LIST`. # Proximity location list details. This field will be populated when the targeting_type is `TARGETING_TYPE_PROXIMITY_LOCATION_LIST`.
         &quot;proximityLocationListId&quot;: &quot;A String&quot;, # Required. ID of the proximity location list. Should refer to the location_list_id field of a LocationList resource whose type is `TARGETING_LOCATION_TYPE_PROXIMITY`.
@@ -1004,6 +1010,9 @@ Returns:
   &quot;adServerConfig&quot;: { # Ad server related settings of an advertiser. # Required. Immutable. Ad server related settings of the advertiser.
     &quot;cmHybridConfig&quot;: { # Settings for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers. # The configuration for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers.
       &quot;cmAccountId&quot;: &quot;A String&quot;, # Required. Immutable. Account ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
+      &quot;cmAdvertiserIds&quot;: [ # Output only. The set of CM360 Advertiser IDs sharing the CM360 Floodlight configuration.
+        &quot;A String&quot;,
+      ],
       &quot;cmFloodlightConfigId&quot;: &quot;A String&quot;, # Required. Immutable. ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
       &quot;cmFloodlightLinkingAuthorized&quot;: True or False, # Required. Immutable. By setting this field to `true`, you, on behalf of your company, authorize the sharing of information from the given Floodlight configuration to this Display &amp; Video 360 advertiser.
       &quot;cmSyncableSiteIds&quot;: [ # A list of CM360 sites whose placements will be synced to DV360 as creatives. If absent or empty in CreateAdvertiser method, the system will automatically create a CM360 site. Removing sites from this list may cause DV360 creatives synced from CM360 to be deleted. At least one site must be specified.
@@ -1017,13 +1026,13 @@ Returns:
     },
   },
   &quot;advertiserId&quot;: &quot;A String&quot;, # Output only. The unique ID of the advertiser. Assigned by the system.
-  &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Required. Billing related settings of the advertiser.
-    &quot;billingProfileId&quot;: &quot;A String&quot;, # The ID of a billing profile assigned to the advertiser.
+  &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Optional. Required. Billing related settings of the advertiser.
+    &quot;billingProfileId&quot;: &quot;A String&quot;, # Optional. The ID of a billing profile assigned to the advertiser.
   },
   &quot;creativeConfig&quot;: { # Creatives related settings of an advertiser. # Required. Creative related settings of the advertiser.
     &quot;dynamicCreativeEnabled&quot;: True or False, # Whether or not the advertiser is enabled for dynamic creatives.
     &quot;iasClientId&quot;: &quot;A String&quot;, # An ID for configuring campaign monitoring provided by Integral Ad Service (IAS). The DV360 system will append an IAS &quot;Campaign Monitor&quot; tag containing this ID to the creative tag.
-    &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to use DV360&#x27;s Online Behavioral Advertising (OBA) compliance. Warning: Changing OBA settings may cause the audit status of your creatives to be reset by some ad exchanges, making them ineligible to serve until they are re-approved.
+    &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to disable Google&#x27;s About this Ad feature that adds badging (to identify the content as an ad) and transparency information (on interaction with About this Ad) to your ads for Online Behavioral Advertising (OBA) and regulatory requirements. About this Ad gives users greater control over the ads they see and helps you explain why they&#x27;re seeing your ad. [Learn more](//support.google.com/displayvideo/answer/14315795). If you choose to set this field to `true`, note that ads served through Display &amp; Video 360 must comply to the following: * Be Online Behavioral Advertising (OBA) compliant, as per your contract with Google Marketing Platform. * In the European Economic Area (EEA), include transparency information and a mechanism for users to report illegal content in ads. If using an alternative ad badging, transparency, and reporting solution, you must ensure it includes the required transparency information and illegal content flagging mechanism and that you notify Google of any illegal content reports using the appropriate [form](//support.google.com/legal/troubleshooter/1114905?sjid=6787484030557261960-EU#ts=2981967%2C2982031%2C12980091).
     &quot;videoCreativeDataSharingAuthorized&quot;: True or False, # By setting this field to `true`, you, on behalf of your company, authorize Google to use video creatives associated with this Display &amp; Video 360 advertiser to provide reporting and features related to the advertiser&#x27;s television campaigns. Applicable only when the advertiser has a CM360 hybrid ad server configuration.
   },
   &quot;dataAccessConfig&quot;: { # Settings that control how advertiser related data may be accessed. # Settings that control how advertiser data may be accessed.
@@ -1080,6 +1089,9 @@ Returns:
       &quot;adServerConfig&quot;: { # Ad server related settings of an advertiser. # Required. Immutable. Ad server related settings of the advertiser.
         &quot;cmHybridConfig&quot;: { # Settings for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers. # The configuration for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers.
           &quot;cmAccountId&quot;: &quot;A String&quot;, # Required. Immutable. Account ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
+          &quot;cmAdvertiserIds&quot;: [ # Output only. The set of CM360 Advertiser IDs sharing the CM360 Floodlight configuration.
+            &quot;A String&quot;,
+          ],
           &quot;cmFloodlightConfigId&quot;: &quot;A String&quot;, # Required. Immutable. ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
           &quot;cmFloodlightLinkingAuthorized&quot;: True or False, # Required. Immutable. By setting this field to `true`, you, on behalf of your company, authorize the sharing of information from the given Floodlight configuration to this Display &amp; Video 360 advertiser.
           &quot;cmSyncableSiteIds&quot;: [ # A list of CM360 sites whose placements will be synced to DV360 as creatives. If absent or empty in CreateAdvertiser method, the system will automatically create a CM360 site. Removing sites from this list may cause DV360 creatives synced from CM360 to be deleted. At least one site must be specified.
@@ -1093,13 +1105,13 @@ Returns:
         },
       },
       &quot;advertiserId&quot;: &quot;A String&quot;, # Output only. The unique ID of the advertiser. Assigned by the system.
-      &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Required. Billing related settings of the advertiser.
-        &quot;billingProfileId&quot;: &quot;A String&quot;, # The ID of a billing profile assigned to the advertiser.
+      &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Optional. Required. Billing related settings of the advertiser.
+        &quot;billingProfileId&quot;: &quot;A String&quot;, # Optional. The ID of a billing profile assigned to the advertiser.
       },
       &quot;creativeConfig&quot;: { # Creatives related settings of an advertiser. # Required. Creative related settings of the advertiser.
         &quot;dynamicCreativeEnabled&quot;: True or False, # Whether or not the advertiser is enabled for dynamic creatives.
         &quot;iasClientId&quot;: &quot;A String&quot;, # An ID for configuring campaign monitoring provided by Integral Ad Service (IAS). The DV360 system will append an IAS &quot;Campaign Monitor&quot; tag containing this ID to the creative tag.
-        &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to use DV360&#x27;s Online Behavioral Advertising (OBA) compliance. Warning: Changing OBA settings may cause the audit status of your creatives to be reset by some ad exchanges, making them ineligible to serve until they are re-approved.
+        &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to disable Google&#x27;s About this Ad feature that adds badging (to identify the content as an ad) and transparency information (on interaction with About this Ad) to your ads for Online Behavioral Advertising (OBA) and regulatory requirements. About this Ad gives users greater control over the ads they see and helps you explain why they&#x27;re seeing your ad. [Learn more](//support.google.com/displayvideo/answer/14315795). If you choose to set this field to `true`, note that ads served through Display &amp; Video 360 must comply to the following: * Be Online Behavioral Advertising (OBA) compliant, as per your contract with Google Marketing Platform. * In the European Economic Area (EEA), include transparency information and a mechanism for users to report illegal content in ads. If using an alternative ad badging, transparency, and reporting solution, you must ensure it includes the required transparency information and illegal content flagging mechanism and that you notify Google of any illegal content reports using the appropriate [form](//support.google.com/legal/troubleshooter/1114905?sjid=6787484030557261960-EU#ts=2981967%2C2982031%2C12980091).
         &quot;videoCreativeDataSharingAuthorized&quot;: True or False, # By setting this field to `true`, you, on behalf of your company, authorize Google to use video creatives associated with this Display &amp; Video 360 advertiser to provide reporting and features related to the advertiser&#x27;s television campaigns. Applicable only when the advertiser has a CM360 hybrid ad server configuration.
       },
       &quot;dataAccessConfig&quot;: { # Settings that control how advertiser related data may be accessed. # Settings that control how advertiser data may be accessed.
@@ -1354,7 +1366,7 @@ Returns:
         &quot;longitude&quot;: 3.14, # Output only. Longitude of the POI rounding to 6th decimal place.
         &quot;proximityRadiusAmount&quot;: 3.14, # Required. The radius of the area around the POI that will be targeted. The units of the radius are specified by proximity_radius_unit. Must be 1 to 800 if unit is `DISTANCE_UNIT_KILOMETERS` and 1 to 500 if unit is `DISTANCE_UNIT_MILES`.
         &quot;proximityRadiusUnit&quot;: &quot;A String&quot;, # Required. The unit of distance by which the targeting radius is measured.
-        &quot;targetingOptionId&quot;: &quot;A String&quot;, # Required. The targeting_option_id of a TargetingOption of type `TARGETING_TYPE_POI`. Accepted POI targeting option IDs can be retrieved using SearchTargetingOptions. If targeting a specific latitude/longitude coordinate removed from an address or POI name, you can generate the necessary targeting option ID by rounding the desired coordinate values to the 6th decimal place, removing the decimals, and concatenating the string values separated by a semicolon. For example, you can target the latitude/longitude pair of 40.7414691, -74.003387 using the targeting option ID &quot;40741469;-74003387&quot;.
+        &quot;targetingOptionId&quot;: &quot;A String&quot;, # Required. The targeting_option_id of a TargetingOption of type `TARGETING_TYPE_POI`. Accepted POI targeting option IDs can be retrieved using `targetingTypes.targetingOptions.search`. If targeting a specific latitude/longitude coordinate removed from an address or POI name, you can generate the necessary targeting option ID by rounding the desired coordinate values to the 6th decimal place, removing the decimals, and concatenating the string values separated by a semicolon. For example, you can target the latitude/longitude pair of 40.7414691, -74.003387 using the targeting option ID &quot;40741469;-74003387&quot;. **Upon** **creation, this field value will be updated to append a semicolon and** **alphanumerical hash value if only latitude/longitude coordinates are** **provided.**
       },
       &quot;proximityLocationListDetails&quot;: { # Targeting details for proximity location list. This will be populated in the details field of an AssignedTargetingOption when targeting_type is `TARGETING_TYPE_PROXIMITY_LOCATION_LIST`. # Proximity location list details. This field will be populated when the targeting_type is `TARGETING_TYPE_PROXIMITY_LOCATION_LIST`.
         &quot;proximityLocationListId&quot;: &quot;A String&quot;, # Required. ID of the proximity location list. Should refer to the location_list_id field of a LocationList resource whose type is `TARGETING_LOCATION_TYPE_PROXIMITY`.
@@ -1501,6 +1513,9 @@ Args:
   &quot;adServerConfig&quot;: { # Ad server related settings of an advertiser. # Required. Immutable. Ad server related settings of the advertiser.
     &quot;cmHybridConfig&quot;: { # Settings for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers. # The configuration for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers.
       &quot;cmAccountId&quot;: &quot;A String&quot;, # Required. Immutable. Account ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
+      &quot;cmAdvertiserIds&quot;: [ # Output only. The set of CM360 Advertiser IDs sharing the CM360 Floodlight configuration.
+        &quot;A String&quot;,
+      ],
       &quot;cmFloodlightConfigId&quot;: &quot;A String&quot;, # Required. Immutable. ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
       &quot;cmFloodlightLinkingAuthorized&quot;: True or False, # Required. Immutable. By setting this field to `true`, you, on behalf of your company, authorize the sharing of information from the given Floodlight configuration to this Display &amp; Video 360 advertiser.
       &quot;cmSyncableSiteIds&quot;: [ # A list of CM360 sites whose placements will be synced to DV360 as creatives. If absent or empty in CreateAdvertiser method, the system will automatically create a CM360 site. Removing sites from this list may cause DV360 creatives synced from CM360 to be deleted. At least one site must be specified.
@@ -1514,13 +1529,13 @@ Args:
     },
   },
   &quot;advertiserId&quot;: &quot;A String&quot;, # Output only. The unique ID of the advertiser. Assigned by the system.
-  &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Required. Billing related settings of the advertiser.
-    &quot;billingProfileId&quot;: &quot;A String&quot;, # The ID of a billing profile assigned to the advertiser.
+  &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Optional. Required. Billing related settings of the advertiser.
+    &quot;billingProfileId&quot;: &quot;A String&quot;, # Optional. The ID of a billing profile assigned to the advertiser.
   },
   &quot;creativeConfig&quot;: { # Creatives related settings of an advertiser. # Required. Creative related settings of the advertiser.
     &quot;dynamicCreativeEnabled&quot;: True or False, # Whether or not the advertiser is enabled for dynamic creatives.
     &quot;iasClientId&quot;: &quot;A String&quot;, # An ID for configuring campaign monitoring provided by Integral Ad Service (IAS). The DV360 system will append an IAS &quot;Campaign Monitor&quot; tag containing this ID to the creative tag.
-    &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to use DV360&#x27;s Online Behavioral Advertising (OBA) compliance. Warning: Changing OBA settings may cause the audit status of your creatives to be reset by some ad exchanges, making them ineligible to serve until they are re-approved.
+    &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to disable Google&#x27;s About this Ad feature that adds badging (to identify the content as an ad) and transparency information (on interaction with About this Ad) to your ads for Online Behavioral Advertising (OBA) and regulatory requirements. About this Ad gives users greater control over the ads they see and helps you explain why they&#x27;re seeing your ad. [Learn more](//support.google.com/displayvideo/answer/14315795). If you choose to set this field to `true`, note that ads served through Display &amp; Video 360 must comply to the following: * Be Online Behavioral Advertising (OBA) compliant, as per your contract with Google Marketing Platform. * In the European Economic Area (EEA), include transparency information and a mechanism for users to report illegal content in ads. If using an alternative ad badging, transparency, and reporting solution, you must ensure it includes the required transparency information and illegal content flagging mechanism and that you notify Google of any illegal content reports using the appropriate [form](//support.google.com/legal/troubleshooter/1114905?sjid=6787484030557261960-EU#ts=2981967%2C2982031%2C12980091).
     &quot;videoCreativeDataSharingAuthorized&quot;: True or False, # By setting this field to `true`, you, on behalf of your company, authorize Google to use video creatives associated with this Display &amp; Video 360 advertiser to provide reporting and features related to the advertiser&#x27;s television campaigns. Applicable only when the advertiser has a CM360 hybrid ad server configuration.
   },
   &quot;dataAccessConfig&quot;: { # Settings that control how advertiser related data may be accessed. # Settings that control how advertiser data may be accessed.
@@ -1565,6 +1580,9 @@ Returns:
   &quot;adServerConfig&quot;: { # Ad server related settings of an advertiser. # Required. Immutable. Ad server related settings of the advertiser.
     &quot;cmHybridConfig&quot;: { # Settings for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers. # The configuration for advertisers that use both Campaign Manager 360 (CM360) and third-party ad servers.
       &quot;cmAccountId&quot;: &quot;A String&quot;, # Required. Immutable. Account ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
+      &quot;cmAdvertiserIds&quot;: [ # Output only. The set of CM360 Advertiser IDs sharing the CM360 Floodlight configuration.
+        &quot;A String&quot;,
+      ],
       &quot;cmFloodlightConfigId&quot;: &quot;A String&quot;, # Required. Immutable. ID of the CM360 Floodlight configuration linked with the DV360 advertiser.
       &quot;cmFloodlightLinkingAuthorized&quot;: True or False, # Required. Immutable. By setting this field to `true`, you, on behalf of your company, authorize the sharing of information from the given Floodlight configuration to this Display &amp; Video 360 advertiser.
       &quot;cmSyncableSiteIds&quot;: [ # A list of CM360 sites whose placements will be synced to DV360 as creatives. If absent or empty in CreateAdvertiser method, the system will automatically create a CM360 site. Removing sites from this list may cause DV360 creatives synced from CM360 to be deleted. At least one site must be specified.
@@ -1578,13 +1596,13 @@ Returns:
     },
   },
   &quot;advertiserId&quot;: &quot;A String&quot;, # Output only. The unique ID of the advertiser. Assigned by the system.
-  &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Required. Billing related settings of the advertiser.
-    &quot;billingProfileId&quot;: &quot;A String&quot;, # The ID of a billing profile assigned to the advertiser.
+  &quot;billingConfig&quot;: { # Billing related settings of an advertiser. # Optional. Required. Billing related settings of the advertiser.
+    &quot;billingProfileId&quot;: &quot;A String&quot;, # Optional. The ID of a billing profile assigned to the advertiser.
   },
   &quot;creativeConfig&quot;: { # Creatives related settings of an advertiser. # Required. Creative related settings of the advertiser.
     &quot;dynamicCreativeEnabled&quot;: True or False, # Whether or not the advertiser is enabled for dynamic creatives.
     &quot;iasClientId&quot;: &quot;A String&quot;, # An ID for configuring campaign monitoring provided by Integral Ad Service (IAS). The DV360 system will append an IAS &quot;Campaign Monitor&quot; tag containing this ID to the creative tag.
-    &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to use DV360&#x27;s Online Behavioral Advertising (OBA) compliance. Warning: Changing OBA settings may cause the audit status of your creatives to be reset by some ad exchanges, making them ineligible to serve until they are re-approved.
+    &quot;obaComplianceDisabled&quot;: True or False, # Whether or not to disable Google&#x27;s About this Ad feature that adds badging (to identify the content as an ad) and transparency information (on interaction with About this Ad) to your ads for Online Behavioral Advertising (OBA) and regulatory requirements. About this Ad gives users greater control over the ads they see and helps you explain why they&#x27;re seeing your ad. [Learn more](//support.google.com/displayvideo/answer/14315795). If you choose to set this field to `true`, note that ads served through Display &amp; Video 360 must comply to the following: * Be Online Behavioral Advertising (OBA) compliant, as per your contract with Google Marketing Platform. * In the European Economic Area (EEA), include transparency information and a mechanism for users to report illegal content in ads. If using an alternative ad badging, transparency, and reporting solution, you must ensure it includes the required transparency information and illegal content flagging mechanism and that you notify Google of any illegal content reports using the appropriate [form](//support.google.com/legal/troubleshooter/1114905?sjid=6787484030557261960-EU#ts=2981967%2C2982031%2C12980091).
     &quot;videoCreativeDataSharingAuthorized&quot;: True or False, # By setting this field to `true`, you, on behalf of your company, authorize Google to use video creatives associated with this Display &amp; Video 360 advertiser to provide reporting and features related to the advertiser&#x27;s television campaigns. Applicable only when the advertiser has a CM360 hybrid ad server configuration.
   },
   &quot;dataAccessConfig&quot;: { # Settings that control how advertiser related data may be accessed. # Settings that control how advertiser data may be accessed.

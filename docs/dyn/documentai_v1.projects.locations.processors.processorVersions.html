@@ -146,6 +146,9 @@ Args:
       &quot;gcsUriPrefix&quot;: &quot;A String&quot;, # The URI prefix.
     },
   },
+  &quot;labels&quot;: { # Optional. The labels with user-defined metadata for the request. Label keys and values can be no longer than 63 characters (Unicode codepoints) and can only contain lowercase letters, numeric characters, underscores, and dashes. International characters are allowed. Label values are optional. Label keys must start with a letter.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
   &quot;processOptions&quot;: { # Options for Process API # Inference-time options for the process API
     &quot;fromEnd&quot;: 42, # Only process certain pages from the end, same as above.
     &quot;fromStart&quot;: 42, # Only process certain pages from the start. Process all if the document has fewer pages.
@@ -154,7 +157,7 @@ Args:
         42,
       ],
     },
-    &quot;ocrConfig&quot;: { # Config for Document OCR. # Only applicable to `OCR_PROCESSOR`. Returns error if set on other processor types.
+    &quot;ocrConfig&quot;: { # Config for Document OCR. # Only applicable to `OCR_PROCESSOR` and `FORM_PARSER_PROCESSOR`. Returns error if set on other processor types.
       &quot;advancedOcrOptions&quot;: [ # A list of advanced OCR options to further fine-tune OCR behavior. Current valid values are: - `legacy_layout`: a heuristics layout detection algorithm, which serves as an alternative to the current ML-based layout detection algorithm. Customers can choose the best suitable layout algorithm based on their situation.
         &quot;A String&quot;,
       ],
@@ -172,6 +175,38 @@ Args:
         &quot;computeStyleInfo&quot;: True or False, # Turn on font identification model and return font style information.
         &quot;enableMathOcr&quot;: True or False, # Turn on the model that can extract LaTeX math formulas.
         &quot;enableSelectionMarkDetection&quot;: True or False, # Turn on selection mark detector in OCR engine. Only available in OCR 2.0 (and later) processors.
+      },
+    },
+    &quot;schemaOverride&quot;: { # The schema defines the output of the processed document by a processor. # Optional. Override the schema of the ProcessorVersion. Will return an Invalid Argument error if this field is set when the underlying ProcessorVersion doesn&#x27;t support schema override.
+      &quot;description&quot;: &quot;A String&quot;, # Description of the schema.
+      &quot;displayName&quot;: &quot;A String&quot;, # Display name to show to users.
+      &quot;entityTypes&quot;: [ # Entity types of the schema.
+        { # EntityType is the wrapper of a label of the corresponding model with detailed attributes and limitations for entity-based processors. Multiple types can also compose a dependency tree to represent nested types.
+          &quot;baseTypes&quot;: [ # The entity type that this type is derived from. For now, one and only one should be set.
+            &quot;A String&quot;,
+          ],
+          &quot;displayName&quot;: &quot;A String&quot;, # User defined name for the type.
+          &quot;enumValues&quot;: { # Defines the a list of enum values. # If specified, lists all the possible values for this entity. This should not be more than a handful of values. If the number of values is &gt;10 or could change frequently use the `EntityType.value_ontology` field and specify a list of all possible values in a value ontology file.
+            &quot;values&quot;: [ # The individual values that this enum values type can include.
+              &quot;A String&quot;,
+            ],
+          },
+          &quot;name&quot;: &quot;A String&quot;, # Name of the type. It must be unique within the schema file and cannot be a &quot;Common Type&quot;. The following naming conventions are used: - Use `snake_casing`. - Name matching is case-sensitive. - Maximum 64 characters. - Must start with a letter. - Allowed characters: ASCII letters `[a-z0-9_-]`. (For backward compatibility internal infrastructure and tooling can handle any ascii character.) - The `/` is sometimes used to denote a property of a type. For example `line_item/amount`. This convention is deprecated, but will still be honored for backward compatibility.
+          &quot;properties&quot;: [ # Description the nested structure, or composition of an entity.
+            { # Defines properties that can be part of the entity type.
+              &quot;displayName&quot;: &quot;A String&quot;, # User defined name for the property.
+              &quot;name&quot;: &quot;A String&quot;, # The name of the property. Follows the same guidelines as the EntityType name.
+              &quot;occurrenceType&quot;: &quot;A String&quot;, # Occurrence type limits the number of instances an entity type appears in the document.
+              &quot;valueType&quot;: &quot;A String&quot;, # A reference to the value type of the property. This type is subject to the same conventions as the `Entity.base_types` field.
+            },
+          ],
+        },
+      ],
+      &quot;metadata&quot;: { # Metadata for global schema behavior. # Metadata of the schema.
+        &quot;documentAllowMultipleLabels&quot;: True or False, # If true, on a given page, there can be multiple `document` annotations covering it.
+        &quot;documentSplitter&quot;: True or False, # If true, a `document` entity type can be applied to subdocument (splitting). Otherwise, it can only be applied to the entire document (classification).
+        &quot;prefixedNamingOnProperties&quot;: True or False, # If set, all the nested entities must be prefixed with the parents.
+        &quot;skipNamingValidation&quot;: True or False, # If set, we will skip the naming format validation in the schema. So the string values in `DocumentSchema.EntityType.name` and `DocumentSchema.EntityType.Property.name` will not be checked.
       },
     },
   },
@@ -380,6 +415,7 @@ Returns:
         &quot;name&quot;: &quot;A String&quot;, # Name of the type. It must be unique within the schema file and cannot be a &quot;Common Type&quot;. The following naming conventions are used: - Use `snake_casing`. - Name matching is case-sensitive. - Maximum 64 characters. - Must start with a letter. - Allowed characters: ASCII letters `[a-z0-9_-]`. (For backward compatibility internal infrastructure and tooling can handle any ascii character.) - The `/` is sometimes used to denote a property of a type. For example `line_item/amount`. This convention is deprecated, but will still be honored for backward compatibility.
         &quot;properties&quot;: [ # Description the nested structure, or composition of an entity.
           { # Defines properties that can be part of the entity type.
+            &quot;displayName&quot;: &quot;A String&quot;, # User defined name for the property.
             &quot;name&quot;: &quot;A String&quot;, # The name of the property. Follows the same guidelines as the EntityType name.
             &quot;occurrenceType&quot;: &quot;A String&quot;, # Occurrence type limits the number of instances an entity type appears in the document.
             &quot;valueType&quot;: &quot;A String&quot;, # A reference to the value type of the property. This type is subject to the same conventions as the `Entity.base_types` field.
@@ -427,6 +463,7 @@ Returns:
     &quot;evaluation&quot;: &quot;A String&quot;, # The resource name of the evaluation.
     &quot;operation&quot;: &quot;A String&quot;, # The resource name of the Long Running Operation for the evaluation.
   },
+  &quot;modelType&quot;: &quot;A String&quot;, # Output only. The model type of this processor version.
   &quot;name&quot;: &quot;A String&quot;, # The resource name of the processor version. Format: `projects/{project}/locations/{location}/processors/{processor}/processorVersions/{processor_version}`
   &quot;state&quot;: &quot;A String&quot;, # The state of the processor version.
 }</pre>
@@ -475,6 +512,7 @@ Returns:
             &quot;name&quot;: &quot;A String&quot;, # Name of the type. It must be unique within the schema file and cannot be a &quot;Common Type&quot;. The following naming conventions are used: - Use `snake_casing`. - Name matching is case-sensitive. - Maximum 64 characters. - Must start with a letter. - Allowed characters: ASCII letters `[a-z0-9_-]`. (For backward compatibility internal infrastructure and tooling can handle any ascii character.) - The `/` is sometimes used to denote a property of a type. For example `line_item/amount`. This convention is deprecated, but will still be honored for backward compatibility.
             &quot;properties&quot;: [ # Description the nested structure, or composition of an entity.
               { # Defines properties that can be part of the entity type.
+                &quot;displayName&quot;: &quot;A String&quot;, # User defined name for the property.
                 &quot;name&quot;: &quot;A String&quot;, # The name of the property. Follows the same guidelines as the EntityType name.
                 &quot;occurrenceType&quot;: &quot;A String&quot;, # Occurrence type limits the number of instances an entity type appears in the document.
                 &quot;valueType&quot;: &quot;A String&quot;, # A reference to the value type of the property. This type is subject to the same conventions as the `Entity.base_types` field.
@@ -522,6 +560,7 @@ Returns:
         &quot;evaluation&quot;: &quot;A String&quot;, # The resource name of the evaluation.
         &quot;operation&quot;: &quot;A String&quot;, # The resource name of the Long Running Operation for the evaluation.
       },
+      &quot;modelType&quot;: &quot;A String&quot;, # Output only. The model type of this processor version.
       &quot;name&quot;: &quot;A String&quot;, # The resource name of the processor version. Format: `projects/{project}/locations/{location}/processors/{processor}/processorVersions/{processor_version}`
       &quot;state&quot;: &quot;A String&quot;, # The state of the processor version.
     },
@@ -616,7 +655,7 @@ Args:
         &quot;pageAnchor&quot;: { # Referencing the visual context of the entity in the Document.pages. Page anchors can be cross-page, consist of multiple bounding polygons and optionally reference specific layout element types. # Optional. Represents the provenance of this entity wrt. the location on the page where it was found.
           &quot;pageRefs&quot;: [ # One or more references to visual page elements
             { # Represents a weak reference to a page element within a document.
-              &quot;boundingPoly&quot;: { # A bounding polygon for the detected image annotation. # Optional. Identifies the bounding polygon of a layout element on the page.
+              &quot;boundingPoly&quot;: { # A bounding polygon for the detected image annotation. # Optional. Identifies the bounding polygon of a layout element on the page. If `layout_type` is set, the bounding polygon must be exactly the same to the layout element it&#x27;s referring to.
                 &quot;normalizedVertices&quot;: [ # The bounding polygon normalized vertices.
                   { # A vertex represents a 2D point in the image. NOTE: the normalized vertex coordinates are relative to the original image and range from 0 to 1.
                     &quot;x&quot;: 3.14, # X coordinate.
@@ -1404,6 +1443,9 @@ Args:
     ],
     &quot;uri&quot;: &quot;A String&quot;, # Optional. Currently supports Google Cloud Storage URI of the form `gs://bucket_name/object_name`. Object versioning is not supported. For more information, refer to [Google Cloud Storage Request URIs](https://cloud.google.com/storage/docs/reference-uris).
   },
+  &quot;labels&quot;: { # Optional. The labels with user-defined metadata for the request. Label keys and values can be no longer than 63 characters (Unicode codepoints) and can only contain lowercase letters, numeric characters, underscores, and dashes. International characters are allowed. Label values are optional. Label keys must start with a letter.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
   &quot;processOptions&quot;: { # Options for Process API # Inference-time options for the process API
     &quot;fromEnd&quot;: 42, # Only process certain pages from the end, same as above.
     &quot;fromStart&quot;: 42, # Only process certain pages from the start. Process all if the document has fewer pages.
@@ -1412,7 +1454,7 @@ Args:
         42,
       ],
     },
-    &quot;ocrConfig&quot;: { # Config for Document OCR. # Only applicable to `OCR_PROCESSOR`. Returns error if set on other processor types.
+    &quot;ocrConfig&quot;: { # Config for Document OCR. # Only applicable to `OCR_PROCESSOR` and `FORM_PARSER_PROCESSOR`. Returns error if set on other processor types.
       &quot;advancedOcrOptions&quot;: [ # A list of advanced OCR options to further fine-tune OCR behavior. Current valid values are: - `legacy_layout`: a heuristics layout detection algorithm, which serves as an alternative to the current ML-based layout detection algorithm. Customers can choose the best suitable layout algorithm based on their situation.
         &quot;A String&quot;,
       ],
@@ -1430,6 +1472,38 @@ Args:
         &quot;computeStyleInfo&quot;: True or False, # Turn on font identification model and return font style information.
         &quot;enableMathOcr&quot;: True or False, # Turn on the model that can extract LaTeX math formulas.
         &quot;enableSelectionMarkDetection&quot;: True or False, # Turn on selection mark detector in OCR engine. Only available in OCR 2.0 (and later) processors.
+      },
+    },
+    &quot;schemaOverride&quot;: { # The schema defines the output of the processed document by a processor. # Optional. Override the schema of the ProcessorVersion. Will return an Invalid Argument error if this field is set when the underlying ProcessorVersion doesn&#x27;t support schema override.
+      &quot;description&quot;: &quot;A String&quot;, # Description of the schema.
+      &quot;displayName&quot;: &quot;A String&quot;, # Display name to show to users.
+      &quot;entityTypes&quot;: [ # Entity types of the schema.
+        { # EntityType is the wrapper of a label of the corresponding model with detailed attributes and limitations for entity-based processors. Multiple types can also compose a dependency tree to represent nested types.
+          &quot;baseTypes&quot;: [ # The entity type that this type is derived from. For now, one and only one should be set.
+            &quot;A String&quot;,
+          ],
+          &quot;displayName&quot;: &quot;A String&quot;, # User defined name for the type.
+          &quot;enumValues&quot;: { # Defines the a list of enum values. # If specified, lists all the possible values for this entity. This should not be more than a handful of values. If the number of values is &gt;10 or could change frequently use the `EntityType.value_ontology` field and specify a list of all possible values in a value ontology file.
+            &quot;values&quot;: [ # The individual values that this enum values type can include.
+              &quot;A String&quot;,
+            ],
+          },
+          &quot;name&quot;: &quot;A String&quot;, # Name of the type. It must be unique within the schema file and cannot be a &quot;Common Type&quot;. The following naming conventions are used: - Use `snake_casing`. - Name matching is case-sensitive. - Maximum 64 characters. - Must start with a letter. - Allowed characters: ASCII letters `[a-z0-9_-]`. (For backward compatibility internal infrastructure and tooling can handle any ascii character.) - The `/` is sometimes used to denote a property of a type. For example `line_item/amount`. This convention is deprecated, but will still be honored for backward compatibility.
+          &quot;properties&quot;: [ # Description the nested structure, or composition of an entity.
+            { # Defines properties that can be part of the entity type.
+              &quot;displayName&quot;: &quot;A String&quot;, # User defined name for the property.
+              &quot;name&quot;: &quot;A String&quot;, # The name of the property. Follows the same guidelines as the EntityType name.
+              &quot;occurrenceType&quot;: &quot;A String&quot;, # Occurrence type limits the number of instances an entity type appears in the document.
+              &quot;valueType&quot;: &quot;A String&quot;, # A reference to the value type of the property. This type is subject to the same conventions as the `Entity.base_types` field.
+            },
+          ],
+        },
+      ],
+      &quot;metadata&quot;: { # Metadata for global schema behavior. # Metadata of the schema.
+        &quot;documentAllowMultipleLabels&quot;: True or False, # If true, on a given page, there can be multiple `document` annotations covering it.
+        &quot;documentSplitter&quot;: True or False, # If true, a `document` entity type can be applied to subdocument (splitting). Otherwise, it can only be applied to the entire document (classification).
+        &quot;prefixedNamingOnProperties&quot;: True or False, # If set, all the nested entities must be prefixed with the parents.
+        &quot;skipNamingValidation&quot;: True or False, # If set, we will skip the naming format validation in the schema. So the string values in `DocumentSchema.EntityType.name` and `DocumentSchema.EntityType.Property.name` will not be checked.
       },
     },
   },
@@ -1508,7 +1582,7 @@ Returns:
         &quot;pageAnchor&quot;: { # Referencing the visual context of the entity in the Document.pages. Page anchors can be cross-page, consist of multiple bounding polygons and optionally reference specific layout element types. # Optional. Represents the provenance of this entity wrt. the location on the page where it was found.
           &quot;pageRefs&quot;: [ # One or more references to visual page elements
             { # Represents a weak reference to a page element within a document.
-              &quot;boundingPoly&quot;: { # A bounding polygon for the detected image annotation. # Optional. Identifies the bounding polygon of a layout element on the page.
+              &quot;boundingPoly&quot;: { # A bounding polygon for the detected image annotation. # Optional. Identifies the bounding polygon of a layout element on the page. If `layout_type` is set, the bounding polygon must be exactly the same to the layout element it&#x27;s referring to.
                 &quot;normalizedVertices&quot;: [ # The bounding polygon normalized vertices.
                   { # A vertex represents a 2D point in the image. NOTE: the normalized vertex coordinates are relative to the original image and range from 0 to 1.
                     &quot;x&quot;: 3.14, # X coordinate.
@@ -2335,6 +2409,7 @@ Args:
         &quot;name&quot;: &quot;A String&quot;, # Name of the type. It must be unique within the schema file and cannot be a &quot;Common Type&quot;. The following naming conventions are used: - Use `snake_casing`. - Name matching is case-sensitive. - Maximum 64 characters. - Must start with a letter. - Allowed characters: ASCII letters `[a-z0-9_-]`. (For backward compatibility internal infrastructure and tooling can handle any ascii character.) - The `/` is sometimes used to denote a property of a type. For example `line_item/amount`. This convention is deprecated, but will still be honored for backward compatibility.
         &quot;properties&quot;: [ # Description the nested structure, or composition of an entity.
           { # Defines properties that can be part of the entity type.
+            &quot;displayName&quot;: &quot;A String&quot;, # User defined name for the property.
             &quot;name&quot;: &quot;A String&quot;, # The name of the property. Follows the same guidelines as the EntityType name.
             &quot;occurrenceType&quot;: &quot;A String&quot;, # Occurrence type limits the number of instances an entity type appears in the document.
             &quot;valueType&quot;: &quot;A String&quot;, # A reference to the value type of the property. This type is subject to the same conventions as the `Entity.base_types` field.
@@ -2348,6 +2423,10 @@ Args:
       &quot;prefixedNamingOnProperties&quot;: True or False, # If set, all the nested entities must be prefixed with the parents.
       &quot;skipNamingValidation&quot;: True or False, # If set, we will skip the naming format validation in the schema. So the string values in `DocumentSchema.EntityType.name` and `DocumentSchema.EntityType.Property.name` will not be checked.
     },
+  },
+  &quot;foundationModelTuningOptions&quot;: { # Options to control foundation model tuning of the processor. # Options to control foundation model tuning of a processor.
+    &quot;learningRateMultiplier&quot;: 3.14, # Optional. The multiplier to apply to the recommended learning rate. Valid values are between 0.1 and 10. If not provided, recommended learning rate will be used.
+    &quot;trainSteps&quot;: 42, # Optional. The number of steps to run for model tuning. Valid values are between 1 and 400. If not provided, recommended steps will be used.
   },
   &quot;inputData&quot;: { # The input data used to train a new ProcessorVersion. # Optional. The input data used to train the ProcessorVersion.
     &quot;testDocuments&quot;: { # The common config to specify a set of documents used as input. # The documents used for testing the trained version.
@@ -2401,6 +2480,7 @@ Args:
           &quot;name&quot;: &quot;A String&quot;, # Name of the type. It must be unique within the schema file and cannot be a &quot;Common Type&quot;. The following naming conventions are used: - Use `snake_casing`. - Name matching is case-sensitive. - Maximum 64 characters. - Must start with a letter. - Allowed characters: ASCII letters `[a-z0-9_-]`. (For backward compatibility internal infrastructure and tooling can handle any ascii character.) - The `/` is sometimes used to denote a property of a type. For example `line_item/amount`. This convention is deprecated, but will still be honored for backward compatibility.
           &quot;properties&quot;: [ # Description the nested structure, or composition of an entity.
             { # Defines properties that can be part of the entity type.
+              &quot;displayName&quot;: &quot;A String&quot;, # User defined name for the property.
               &quot;name&quot;: &quot;A String&quot;, # The name of the property. Follows the same guidelines as the EntityType name.
               &quot;occurrenceType&quot;: &quot;A String&quot;, # Occurrence type limits the number of instances an entity type appears in the document.
               &quot;valueType&quot;: &quot;A String&quot;, # A reference to the value type of the property. This type is subject to the same conventions as the `Entity.base_types` field.
@@ -2448,6 +2528,7 @@ Args:
       &quot;evaluation&quot;: &quot;A String&quot;, # The resource name of the evaluation.
       &quot;operation&quot;: &quot;A String&quot;, # The resource name of the Long Running Operation for the evaluation.
     },
+    &quot;modelType&quot;: &quot;A String&quot;, # Output only. The model type of this processor version.
     &quot;name&quot;: &quot;A String&quot;, # The resource name of the processor version. Format: `projects/{project}/locations/{location}/processors/{processor}/processorVersions/{processor_version}`
     &quot;state&quot;: &quot;A String&quot;, # The state of the processor version.
   },

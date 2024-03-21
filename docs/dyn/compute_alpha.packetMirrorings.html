@@ -76,7 +76,7 @@ h1, h2, h3 {
 <h2>Instance Methods</h2>
 <p class="toc_element">
   <code><a href="#aggregatedList">aggregatedList(project, filter=None, includeAllScopes=None, maxResults=None, orderBy=None, pageToken=None, returnPartialSuccess=None, serviceProjectNumber=None, x__xgafv=None)</a></code></p>
-<p class="firstline">Retrieves an aggregated list of packetMirrorings.</p>
+<p class="firstline">Retrieves an aggregated list of packetMirrorings. To prevent failure, Google recommends that you set the `returnPartialSuccess` parameter to `true`.</p>
 <p class="toc_element">
   <code><a href="#aggregatedList_next">aggregatedList_next()</a></code></p>
 <p class="firstline">Retrieves the next page of results.</p>
@@ -107,7 +107,7 @@ h1, h2, h3 {
 <h3>Method Details</h3>
 <div class="method">
     <code class="details" id="aggregatedList">aggregatedList(project, filter=None, includeAllScopes=None, maxResults=None, orderBy=None, pageToken=None, returnPartialSuccess=None, serviceProjectNumber=None, x__xgafv=None)</code>
-  <pre>Retrieves an aggregated list of packetMirrorings.
+  <pre>Retrieves an aggregated list of packetMirrorings. To prevent failure, Google recommends that you set the `returnPartialSuccess` parameter to `true`.
 
 Args:
   project: string, Project ID for this request. (required)
@@ -116,8 +116,8 @@ Args:
   maxResults: integer, The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)
   orderBy: string, Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name. You can also sort results in descending order based on the creation timestamp using `orderBy=&quot;creationTimestamp desc&quot;`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first. Currently, only sorting by `name` or `creationTimestamp desc` is supported.
   pageToken: string, Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.
-  returnPartialSuccess: boolean, Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.
-  serviceProjectNumber: string, A parameter
+  returnPartialSuccess: boolean, Opt-in for partial success behavior which provides partial results in case of failure. The default value is false. For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.
+  serviceProjectNumber: string, The Shared VPC service project id or service project number for which aggregated list request is invoked for subnetworks list-usable api.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -140,10 +140,10 @@ Returns:
           &quot;description&quot;: &quot;A String&quot;, # An optional description of this resource. Provide this property when you create the resource.
           &quot;enable&quot;: &quot;A String&quot;, # Indicates whether or not this packet mirroring takes effect. If set to FALSE, this packet mirroring policy will not be enforced on the network. The default is TRUE.
           &quot;filter&quot;: { # Filter for mirrored traffic. If unspecified, all traffic is mirrored.
-            &quot;IPProtocols&quot;: [ # Protocols that apply as filter on mirrored traffic. If no protocols are specified, all traffic that matches the specified CIDR ranges is mirrored. If neither cidrRanges nor IPProtocols is specified, all traffic is mirrored.
+            &quot;IPProtocols&quot;: [ # Protocols that apply as filter on mirrored traffic. If no protocols are specified, all traffic that matches the specified CIDR ranges is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored.
               &quot;A String&quot;,
             ],
-            &quot;cidrRanges&quot;: [ # IP CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. Only IPv4 is supported. If no ranges are specified, all traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all traffic is mirrored.
+            &quot;cidrRanges&quot;: [ # One or more IPv4 or IPv6 CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. If no ranges are specified, all IPv4 traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored. To mirror all IPv4 and IPv6 traffic, use &quot;0.0.0.0/0,::/0&quot;. Note: Support for IPv6 traffic is in preview.
               &quot;A String&quot;,
             ],
             &quot;direction&quot;: &quot;A String&quot;, # Direction of traffic to mirror, either INGRESS, EGRESS, or BOTH. The default is BOTH.
@@ -245,7 +245,7 @@ Args:
 Returns:
   An object of the form:
 
-    { # Represents an Operation resource. Google Compute Engine has three Operation resources: * [Global](/compute/docs/reference/rest/alpha/globalOperations) * [Regional](/compute/docs/reference/rest/alpha/regionOperations) * [Zonal](/compute/docs/reference/rest/alpha/zoneOperations) You can use an operation resource to manage asynchronous API requests. For more information, read Handling API responses. Operations can be global, regional or zonal. - For global operations, use the `globalOperations` resource. - For regional operations, use the `regionOperations` resource. - For zonal operations, use the `zoneOperations` resource. For more information, read Global, Regional, and Zonal Resources.
+    { # Represents an Operation resource. Google Compute Engine has three Operation resources: * [Global](/compute/docs/reference/rest/alpha/globalOperations) * [Regional](/compute/docs/reference/rest/alpha/regionOperations) * [Zonal](/compute/docs/reference/rest/alpha/zoneOperations) You can use an operation resource to manage asynchronous API requests. For more information, read Handling API responses. Operations can be global, regional or zonal. - For global operations, use the `globalOperations` resource. - For regional operations, use the `regionOperations` resource. - For zonal operations, use the `zoneOperations` resource. For more information, read Global, Regional, and Zonal Resources. Note that completed Operation resources have a limited retention period.
   &quot;clientOperationId&quot;: &quot;A String&quot;, # [Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.
   &quot;creationTimestamp&quot;: &quot;A String&quot;, # [Deprecated] This field is deprecated.
   &quot;description&quot;: &quot;A String&quot;, # [Output Only] A textual description of the operation, which is set when the operation is created.
@@ -379,10 +379,10 @@ Returns:
   &quot;description&quot;: &quot;A String&quot;, # An optional description of this resource. Provide this property when you create the resource.
   &quot;enable&quot;: &quot;A String&quot;, # Indicates whether or not this packet mirroring takes effect. If set to FALSE, this packet mirroring policy will not be enforced on the network. The default is TRUE.
   &quot;filter&quot;: { # Filter for mirrored traffic. If unspecified, all traffic is mirrored.
-    &quot;IPProtocols&quot;: [ # Protocols that apply as filter on mirrored traffic. If no protocols are specified, all traffic that matches the specified CIDR ranges is mirrored. If neither cidrRanges nor IPProtocols is specified, all traffic is mirrored.
+    &quot;IPProtocols&quot;: [ # Protocols that apply as filter on mirrored traffic. If no protocols are specified, all traffic that matches the specified CIDR ranges is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored.
       &quot;A String&quot;,
     ],
-    &quot;cidrRanges&quot;: [ # IP CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. Only IPv4 is supported. If no ranges are specified, all traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all traffic is mirrored.
+    &quot;cidrRanges&quot;: [ # One or more IPv4 or IPv6 CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. If no ranges are specified, all IPv4 traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored. To mirror all IPv4 and IPv6 traffic, use &quot;0.0.0.0/0,::/0&quot;. Note: Support for IPv6 traffic is in preview.
       &quot;A String&quot;,
     ],
     &quot;direction&quot;: &quot;A String&quot;, # Direction of traffic to mirror, either INGRESS, EGRESS, or BOTH. The default is BOTH.
@@ -437,10 +437,10 @@ Args:
   &quot;description&quot;: &quot;A String&quot;, # An optional description of this resource. Provide this property when you create the resource.
   &quot;enable&quot;: &quot;A String&quot;, # Indicates whether or not this packet mirroring takes effect. If set to FALSE, this packet mirroring policy will not be enforced on the network. The default is TRUE.
   &quot;filter&quot;: { # Filter for mirrored traffic. If unspecified, all traffic is mirrored.
-    &quot;IPProtocols&quot;: [ # Protocols that apply as filter on mirrored traffic. If no protocols are specified, all traffic that matches the specified CIDR ranges is mirrored. If neither cidrRanges nor IPProtocols is specified, all traffic is mirrored.
+    &quot;IPProtocols&quot;: [ # Protocols that apply as filter on mirrored traffic. If no protocols are specified, all traffic that matches the specified CIDR ranges is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored.
       &quot;A String&quot;,
     ],
-    &quot;cidrRanges&quot;: [ # IP CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. Only IPv4 is supported. If no ranges are specified, all traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all traffic is mirrored.
+    &quot;cidrRanges&quot;: [ # One or more IPv4 or IPv6 CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. If no ranges are specified, all IPv4 traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored. To mirror all IPv4 and IPv6 traffic, use &quot;0.0.0.0/0,::/0&quot;. Note: Support for IPv6 traffic is in preview.
       &quot;A String&quot;,
     ],
     &quot;direction&quot;: &quot;A String&quot;, # Direction of traffic to mirror, either INGRESS, EGRESS, or BOTH. The default is BOTH.
@@ -484,7 +484,7 @@ Args:
 Returns:
   An object of the form:
 
-    { # Represents an Operation resource. Google Compute Engine has three Operation resources: * [Global](/compute/docs/reference/rest/alpha/globalOperations) * [Regional](/compute/docs/reference/rest/alpha/regionOperations) * [Zonal](/compute/docs/reference/rest/alpha/zoneOperations) You can use an operation resource to manage asynchronous API requests. For more information, read Handling API responses. Operations can be global, regional or zonal. - For global operations, use the `globalOperations` resource. - For regional operations, use the `regionOperations` resource. - For zonal operations, use the `zoneOperations` resource. For more information, read Global, Regional, and Zonal Resources.
+    { # Represents an Operation resource. Google Compute Engine has three Operation resources: * [Global](/compute/docs/reference/rest/alpha/globalOperations) * [Regional](/compute/docs/reference/rest/alpha/regionOperations) * [Zonal](/compute/docs/reference/rest/alpha/zoneOperations) You can use an operation resource to manage asynchronous API requests. For more information, read Handling API responses. Operations can be global, regional or zonal. - For global operations, use the `globalOperations` resource. - For regional operations, use the `regionOperations` resource. - For zonal operations, use the `zoneOperations` resource. For more information, read Global, Regional, and Zonal Resources. Note that completed Operation resources have a limited retention period.
   &quot;clientOperationId&quot;: &quot;A String&quot;, # [Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.
   &quot;creationTimestamp&quot;: &quot;A String&quot;, # [Deprecated] This field is deprecated.
   &quot;description&quot;: &quot;A String&quot;, # [Output Only] A textual description of the operation, which is set when the operation is created.
@@ -604,7 +604,7 @@ Args:
   maxResults: integer, The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)
   orderBy: string, Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name. You can also sort results in descending order based on the creation timestamp using `orderBy=&quot;creationTimestamp desc&quot;`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first. Currently, only sorting by `name` or `creationTimestamp desc` is supported.
   pageToken: string, Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.
-  returnPartialSuccess: boolean, Opt-in for partial success behavior which provides partial results in case of failure. The default value is false.
+  returnPartialSuccess: boolean, Opt-in for partial success behavior which provides partial results in case of failure. The default value is false. For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -625,10 +625,10 @@ Returns:
       &quot;description&quot;: &quot;A String&quot;, # An optional description of this resource. Provide this property when you create the resource.
       &quot;enable&quot;: &quot;A String&quot;, # Indicates whether or not this packet mirroring takes effect. If set to FALSE, this packet mirroring policy will not be enforced on the network. The default is TRUE.
       &quot;filter&quot;: { # Filter for mirrored traffic. If unspecified, all traffic is mirrored.
-        &quot;IPProtocols&quot;: [ # Protocols that apply as filter on mirrored traffic. If no protocols are specified, all traffic that matches the specified CIDR ranges is mirrored. If neither cidrRanges nor IPProtocols is specified, all traffic is mirrored.
+        &quot;IPProtocols&quot;: [ # Protocols that apply as filter on mirrored traffic. If no protocols are specified, all traffic that matches the specified CIDR ranges is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored.
           &quot;A String&quot;,
         ],
-        &quot;cidrRanges&quot;: [ # IP CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. Only IPv4 is supported. If no ranges are specified, all traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all traffic is mirrored.
+        &quot;cidrRanges&quot;: [ # One or more IPv4 or IPv6 CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. If no ranges are specified, all IPv4 traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored. To mirror all IPv4 and IPv6 traffic, use &quot;0.0.0.0/0,::/0&quot;. Note: Support for IPv6 traffic is in preview.
           &quot;A String&quot;,
         ],
         &quot;direction&quot;: &quot;A String&quot;, # Direction of traffic to mirror, either INGRESS, EGRESS, or BOTH. The default is BOTH.
@@ -713,10 +713,10 @@ Args:
   &quot;description&quot;: &quot;A String&quot;, # An optional description of this resource. Provide this property when you create the resource.
   &quot;enable&quot;: &quot;A String&quot;, # Indicates whether or not this packet mirroring takes effect. If set to FALSE, this packet mirroring policy will not be enforced on the network. The default is TRUE.
   &quot;filter&quot;: { # Filter for mirrored traffic. If unspecified, all traffic is mirrored.
-    &quot;IPProtocols&quot;: [ # Protocols that apply as filter on mirrored traffic. If no protocols are specified, all traffic that matches the specified CIDR ranges is mirrored. If neither cidrRanges nor IPProtocols is specified, all traffic is mirrored.
+    &quot;IPProtocols&quot;: [ # Protocols that apply as filter on mirrored traffic. If no protocols are specified, all traffic that matches the specified CIDR ranges is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored.
       &quot;A String&quot;,
     ],
-    &quot;cidrRanges&quot;: [ # IP CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. Only IPv4 is supported. If no ranges are specified, all traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all traffic is mirrored.
+    &quot;cidrRanges&quot;: [ # One or more IPv4 or IPv6 CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. If no ranges are specified, all IPv4 traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored. To mirror all IPv4 and IPv6 traffic, use &quot;0.0.0.0/0,::/0&quot;. Note: Support for IPv6 traffic is in preview.
       &quot;A String&quot;,
     ],
     &quot;direction&quot;: &quot;A String&quot;, # Direction of traffic to mirror, either INGRESS, EGRESS, or BOTH. The default is BOTH.
@@ -760,7 +760,7 @@ Args:
 Returns:
   An object of the form:
 
-    { # Represents an Operation resource. Google Compute Engine has three Operation resources: * [Global](/compute/docs/reference/rest/alpha/globalOperations) * [Regional](/compute/docs/reference/rest/alpha/regionOperations) * [Zonal](/compute/docs/reference/rest/alpha/zoneOperations) You can use an operation resource to manage asynchronous API requests. For more information, read Handling API responses. Operations can be global, regional or zonal. - For global operations, use the `globalOperations` resource. - For regional operations, use the `regionOperations` resource. - For zonal operations, use the `zoneOperations` resource. For more information, read Global, Regional, and Zonal Resources.
+    { # Represents an Operation resource. Google Compute Engine has three Operation resources: * [Global](/compute/docs/reference/rest/alpha/globalOperations) * [Regional](/compute/docs/reference/rest/alpha/regionOperations) * [Zonal](/compute/docs/reference/rest/alpha/zoneOperations) You can use an operation resource to manage asynchronous API requests. For more information, read Handling API responses. Operations can be global, regional or zonal. - For global operations, use the `globalOperations` resource. - For regional operations, use the `regionOperations` resource. - For zonal operations, use the `zoneOperations` resource. For more information, read Global, Regional, and Zonal Resources. Note that completed Operation resources have a limited retention period.
   &quot;clientOperationId&quot;: &quot;A String&quot;, # [Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.
   &quot;creationTimestamp&quot;: &quot;A String&quot;, # [Deprecated] This field is deprecated.
   &quot;description&quot;: &quot;A String&quot;, # [Output Only] A textual description of the operation, which is set when the operation is created.

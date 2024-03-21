@@ -175,6 +175,7 @@
 
 
 ## bigqueryconnection
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/bigqueryconnection_v1.html)
 * [v1beta1](http://googleapis.github.io/google-api-python-client/docs/dyn/bigqueryconnection_v1beta1.html)
 
 
@@ -431,6 +432,11 @@
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/dataplex_v1.html)
 
 
+## dataportability
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/dataportability_v1.html)
+* [v1beta](http://googleapis.github.io/google-api-python-client/docs/dyn/dataportability_v1beta.html)
+
+
 ## dataproc
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/dataproc_v1.html)
 
@@ -478,7 +484,6 @@
 
 
 ## displayvideo
-* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/displayvideo_v1.html)
 * [v2](http://googleapis.github.io/google-api-python-client/docs/dyn/displayvideo_v2.html)
 * [v3](http://googleapis.github.io/google-api-python-client/docs/dyn/displayvideo_v3.html)
 
@@ -633,7 +638,6 @@
 ## gkehub
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/gkehub_v1.html)
 * [v1alpha](http://googleapis.github.io/google-api-python-client/docs/dyn/gkehub_v1alpha.html)
-* [v1alpha2](http://googleapis.github.io/google-api-python-client/docs/dyn/gkehub_v1alpha2.html)
 * [v1beta](http://googleapis.github.io/google-api-python-client/docs/dyn/gkehub_v1beta.html)
 * [v1beta1](http://googleapis.github.io/google-api-python-client/docs/dyn/gkehub_v1beta1.html)
 * [v2alpha](http://googleapis.github.io/google-api-python-client/docs/dyn/gkehub_v2alpha.html)
@@ -758,6 +762,10 @@
 
 ## manufacturers
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/manufacturers_v1.html)
+
+
+## marketingplatformadmin
+* [v1alpha](http://googleapis.github.io/google-api-python-client/docs/dyn/marketingplatformadmin_v1alpha.html)
 
 
 ## memcache
@@ -1020,6 +1028,7 @@
 ## secretmanager
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/secretmanager_v1.html)
 * [v1beta1](http://googleapis.github.io/google-api-python-client/docs/dyn/secretmanager_v1beta1.html)
+* [v1beta2](http://googleapis.github.io/google-api-python-client/docs/dyn/secretmanager_v1beta2.html)
 
 
 ## securitycenter
@@ -1227,6 +1236,10 @@
 
 ## workloadmanager
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/workloadmanager_v1.html)
+
+
+## workspaceevents
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/workspaceevents_v1.html)
 
 
 ## workstations

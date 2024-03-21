@@ -122,7 +122,7 @@ Args:
         &quot;forceAttach&quot;: True or False, # [Input Only] Whether to force attach the regional disk even if it&#x27;s currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.
         &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.
           { # Guest OS features.
-            &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE - SEV_SNP_CAPABLE For more information, see Enabling guest operating system features.
+            &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
           },
         ],
         &quot;index&quot;: 42, # [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.
@@ -141,7 +141,7 @@ Args:
           ],
           &quot;onUpdateAction&quot;: &quot;A String&quot;, # Specifies which action to take on instance update with this disk. Default is to use the existing disk.
           &quot;provisionedIops&quot;: &quot;A String&quot;, # Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. Values must be between 10,000 and 120,000. For more details, see the Extreme persistent disk documentation.
-          &quot;provisionedThroughput&quot;: &quot;A String&quot;, # Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be between 1 and 7,124.
+          &quot;provisionedThroughput&quot;: &quot;A String&quot;, # Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must greater than or equal to 1.
           &quot;replicaZones&quot;: [ # Required for each regional disk associated with the instance. Specify the URLs of the zones where the disk should be replicated to. You must provide exactly two replica zones, and one zone must be the same as the instance zone.
             &quot;A String&quot;,
           ],
@@ -167,6 +167,7 @@ Args:
             &quot;rsaEncryptedKey&quot;: &quot;A String&quot;, # Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or the rsaEncryptedKey. For example: &quot;rsaEncryptedKey&quot;: &quot;ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe==&quot; The key must meet the following requirements before you can provide it to Compute Engine: 1. The key is wrapped using a RSA public key certificate provided by Google. 2. After being wrapped, the key must be encoded in RFC 4648 base64 encoding. Gets the RSA public key certificate provided by Google at: https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem
             &quot;sha256&quot;: &quot;A String&quot;, # [Output only] The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.
           },
+          &quot;storagePool&quot;: &quot;A String&quot;, # The storage pool in which the new disk is created. You can provide this as a partial or full URL to the resource. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project/zones/zone /storagePools/storagePool - projects/project/zones/zone/storagePools/storagePool - zones/zone/storagePools/storagePool
         },
         &quot;interface&quot;: &quot;A String&quot;, # Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. For most machine types, the default is SCSI. Local SSDs can use either NVME or SCSI. In certain configurations, persistent disks can use NVMe. For more information, see About persistent disks.
         &quot;kind&quot;: &quot;compute#attachedDisk&quot;, # [Output Only] Type of the resource. Always compute#attachedDisk for attached disks.
@@ -366,7 +367,7 @@ Args:
 Returns:
   An object of the form:
 
-    { # Represents an Operation resource. Google Compute Engine has three Operation resources: * [Global](/compute/docs/reference/rest/v1/globalOperations) * [Regional](/compute/docs/reference/rest/v1/regionOperations) * [Zonal](/compute/docs/reference/rest/v1/zoneOperations) You can use an operation resource to manage asynchronous API requests. For more information, read Handling API responses. Operations can be global, regional or zonal. - For global operations, use the `globalOperations` resource. - For regional operations, use the `regionOperations` resource. - For zonal operations, use the `zoneOperations` resource. For more information, read Global, Regional, and Zonal Resources.
+    { # Represents an Operation resource. Google Compute Engine has three Operation resources: * [Global](/compute/docs/reference/rest/v1/globalOperations) * [Regional](/compute/docs/reference/rest/v1/regionOperations) * [Zonal](/compute/docs/reference/rest/v1/zoneOperations) You can use an operation resource to manage asynchronous API requests. For more information, read Handling API responses. Operations can be global, regional or zonal. - For global operations, use the `globalOperations` resource. - For regional operations, use the `regionOperations` resource. - For zonal operations, use the `zoneOperations` resource. For more information, read Global, Regional, and Zonal Resources. Note that completed Operation resources have a limited retention period.
   &quot;clientOperationId&quot;: &quot;A String&quot;, # [Output Only] The value of `requestId` if you provided it in the request. Not present otherwise.
   &quot;creationTimestamp&quot;: &quot;A String&quot;, # [Deprecated] This field is deprecated.
   &quot;description&quot;: &quot;A String&quot;, # [Output Only] A textual description of the operation, which is set when the operation is created.

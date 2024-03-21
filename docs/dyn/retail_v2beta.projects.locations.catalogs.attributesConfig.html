@@ -72,7 +72,7 @@ h1, h2, h3 {
 
 </style>
 
-<h1><a href="retail_v2beta.html">Retail API</a> . <a href="retail_v2beta.projects.html">projects</a> . <a href="retail_v2beta.projects.locations.html">locations</a> . <a href="retail_v2beta.projects.locations.catalogs.html">catalogs</a> . <a href="retail_v2beta.projects.locations.catalogs.attributesConfig.html">attributesConfig</a></h1>
+<h1><a href="retail_v2beta.html">Vertex AI Search for Retail API</a> . <a href="retail_v2beta.projects.html">projects</a> . <a href="retail_v2beta.projects.locations.html">locations</a> . <a href="retail_v2beta.projects.locations.catalogs.html">catalogs</a> . <a href="retail_v2beta.projects.locations.catalogs.attributesConfig.html">attributesConfig</a></h1>
 <h2>Instance Methods</h2>
 <p class="toc_element">
   <code><a href="#addCatalogAttribute">addCatalogAttribute(attributesConfig, body=None, x__xgafv=None)</a></code></p>
@@ -121,6 +121,17 @@ Args:
           ],
         },
       ],
+      &quot;mergedFacet&quot;: { # The current facet key (i.e. attribute config) maps into the merged_facet_key. A facet key can have at most one child. The current facet key and the merged facet key need both to be textual custom attributes or both numerical custom attributes (same type). # Use this field only if you want to merge a facet key into another facet key.
+        &quot;mergedFacetKey&quot;: &quot;A String&quot;, # The merged facet key should be a valid facet key that is different than the facet key of the current catalog attribute. We refer this is merged facet key as the child of the current catalog attribute. This merged facet key can&#x27;t be a parent of another facet key (i.e. no directed path of length 2). This merged facet key needs to be either a textual custom attribute or a numerical custom attribute.
+        &quot;mergedFacetValues&quot;: [ # Each instance is a list of facet values that map into the same (possibly different) merged facet value. For the current attribute config, each facet value should map to at most one merged facet value.
+          { # Replaces a set of textual facet values by the same (possibly different) merged facet value. Each facet value should appear at most once as a value per CatalogAttribute. This feature is available only for textual custom attributes.
+            &quot;mergedValue&quot;: &quot;A String&quot;, # All the previous values are replaced by this merged facet value. This merged_value must be non-empty and can have up to 128 characters.
+            &quot;values&quot;: [ # All the facet values that are replaces by the same merged_value that follows. The maximum number of values per MergedFacetValue is 25. Each value can have up to 128 characters.
+              &quot;A String&quot;,
+            ],
+          },
+        ],
+      },
       &quot;mergedFacetValues&quot;: [ # Each instance replaces a list of facet values by a merged facet value. If a facet value is not in any list, then it will stay the same. To avoid conflicts, only paths of length 1 are accepted. In other words, if &quot;dark_blue&quot; merged into &quot;BLUE&quot;, then the latter can&#x27;t merge into &quot;blues&quot; because this would create a path of length 2. The maximum number of instances of MergedFacetValue per CatalogAttribute is 100. This feature is available only for textual custom attributes.
         { # Replaces a set of textual facet values by the same (possibly different) merged facet value. Each facet value should appear at most once as a value per CatalogAttribute. This feature is available only for textual custom attributes.
           &quot;mergedValue&quot;: &quot;A String&quot;, # All the previous values are replaced by this merged facet value. This merged_value must be non-empty and can have up to 128 characters.
@@ -129,6 +140,12 @@ Args:
           ],
         },
       ],
+      &quot;rerankConfig&quot;: { # Options to rerank based on facet values engaged by the user for the current key. That key needs to be a custom textual key and facetable. To use this control, you also need to pass all the facet keys engaged by the user in the request using the field [SearchRequest.FacetSpec]. In particular, if you don&#x27;t pass the facet keys engaged that you want to rerank on, this control won&#x27;t be effective. Moreover, to obtain better results, the facet values that you want to rerank on should be close to English (ideally made of words, underscores, and spaces). # Set this field only if you want to rerank based on facet values engaged by the user for the current key. This option is only possible for custom facetable textual keys.
+        &quot;facetValues&quot;: [ # If empty, rerank on all facet values for the current key. Otherwise, will rerank on the facet values from this list only.
+          &quot;A String&quot;,
+        ],
+        &quot;rerankFacet&quot;: True or False, # If set to true, then we also rerank the dynamic facets based on the facet values engaged by the user for the current attribute key during serving.
+      },
     },
     &quot;inUse&quot;: True or False, # Output only. Indicates whether this attribute has been used by any products. `True` if at least one Product is using this attribute in Product.attributes. Otherwise, this field is `False`. CatalogAttribute can be pre-loaded by using CatalogService.AddCatalogAttribute, CatalogService.ImportCatalogAttributes, or CatalogService.UpdateAttributesConfig APIs. This field is `False` for pre-loaded CatalogAttributes. Only pre-loaded catalog attributes that are neither in use by products nor predefined can be deleted. Catalog attributes that are either in use by products or are predefined attributes cannot be deleted; however, their configuration properties will reset to default values upon removal request. After catalog changes, it takes about 10 minutes for this field to update.
     &quot;indexableOption&quot;: &quot;A String&quot;, # When AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, if INDEXABLE_ENABLED attribute values are indexed so that it can be filtered, faceted, or boosted in SearchService.Search. Must be specified when AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, otherwise throws INVALID_FORMAT error.
@@ -172,6 +189,17 @@ Returns:
             ],
           },
         ],
+        &quot;mergedFacet&quot;: { # The current facet key (i.e. attribute config) maps into the merged_facet_key. A facet key can have at most one child. The current facet key and the merged facet key need both to be textual custom attributes or both numerical custom attributes (same type). # Use this field only if you want to merge a facet key into another facet key.
+          &quot;mergedFacetKey&quot;: &quot;A String&quot;, # The merged facet key should be a valid facet key that is different than the facet key of the current catalog attribute. We refer this is merged facet key as the child of the current catalog attribute. This merged facet key can&#x27;t be a parent of another facet key (i.e. no directed path of length 2). This merged facet key needs to be either a textual custom attribute or a numerical custom attribute.
+          &quot;mergedFacetValues&quot;: [ # Each instance is a list of facet values that map into the same (possibly different) merged facet value. For the current attribute config, each facet value should map to at most one merged facet value.
+            { # Replaces a set of textual facet values by the same (possibly different) merged facet value. Each facet value should appear at most once as a value per CatalogAttribute. This feature is available only for textual custom attributes.
+              &quot;mergedValue&quot;: &quot;A String&quot;, # All the previous values are replaced by this merged facet value. This merged_value must be non-empty and can have up to 128 characters.
+              &quot;values&quot;: [ # All the facet values that are replaces by the same merged_value that follows. The maximum number of values per MergedFacetValue is 25. Each value can have up to 128 characters.
+                &quot;A String&quot;,
+              ],
+            },
+          ],
+        },
         &quot;mergedFacetValues&quot;: [ # Each instance replaces a list of facet values by a merged facet value. If a facet value is not in any list, then it will stay the same. To avoid conflicts, only paths of length 1 are accepted. In other words, if &quot;dark_blue&quot; merged into &quot;BLUE&quot;, then the latter can&#x27;t merge into &quot;blues&quot; because this would create a path of length 2. The maximum number of instances of MergedFacetValue per CatalogAttribute is 100. This feature is available only for textual custom attributes.
           { # Replaces a set of textual facet values by the same (possibly different) merged facet value. Each facet value should appear at most once as a value per CatalogAttribute. This feature is available only for textual custom attributes.
             &quot;mergedValue&quot;: &quot;A String&quot;, # All the previous values are replaced by this merged facet value. This merged_value must be non-empty and can have up to 128 characters.
@@ -180,6 +208,12 @@ Returns:
             ],
           },
         ],
+        &quot;rerankConfig&quot;: { # Options to rerank based on facet values engaged by the user for the current key. That key needs to be a custom textual key and facetable. To use this control, you also need to pass all the facet keys engaged by the user in the request using the field [SearchRequest.FacetSpec]. In particular, if you don&#x27;t pass the facet keys engaged that you want to rerank on, this control won&#x27;t be effective. Moreover, to obtain better results, the facet values that you want to rerank on should be close to English (ideally made of words, underscores, and spaces). # Set this field only if you want to rerank based on facet values engaged by the user for the current key. This option is only possible for custom facetable textual keys.
+          &quot;facetValues&quot;: [ # If empty, rerank on all facet values for the current key. Otherwise, will rerank on the facet values from this list only.
+            &quot;A String&quot;,
+          ],
+          &quot;rerankFacet&quot;: True or False, # If set to true, then we also rerank the dynamic facets based on the facet values engaged by the user for the current attribute key during serving.
+        },
       },
       &quot;inUse&quot;: True or False, # Output only. Indicates whether this attribute has been used by any products. `True` if at least one Product is using this attribute in Product.attributes. Otherwise, this field is `False`. CatalogAttribute can be pre-loaded by using CatalogService.AddCatalogAttribute, CatalogService.ImportCatalogAttributes, or CatalogService.UpdateAttributesConfig APIs. This field is `False` for pre-loaded CatalogAttributes. Only pre-loaded catalog attributes that are neither in use by products nor predefined can be deleted. Catalog attributes that are either in use by products or are predefined attributes cannot be deleted; however, their configuration properties will reset to default values upon removal request. After catalog changes, it takes about 10 minutes for this field to update.
       &quot;indexableOption&quot;: &quot;A String&quot;, # When AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, if INDEXABLE_ENABLED attribute values are indexed so that it can be filtered, faceted, or boosted in SearchService.Search. Must be specified when AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, otherwise throws INVALID_FORMAT error.
@@ -277,6 +311,17 @@ Returns:
             ],
           },
         ],
+        &quot;mergedFacet&quot;: { # The current facet key (i.e. attribute config) maps into the merged_facet_key. A facet key can have at most one child. The current facet key and the merged facet key need both to be textual custom attributes or both numerical custom attributes (same type). # Use this field only if you want to merge a facet key into another facet key.
+          &quot;mergedFacetKey&quot;: &quot;A String&quot;, # The merged facet key should be a valid facet key that is different than the facet key of the current catalog attribute. We refer this is merged facet key as the child of the current catalog attribute. This merged facet key can&#x27;t be a parent of another facet key (i.e. no directed path of length 2). This merged facet key needs to be either a textual custom attribute or a numerical custom attribute.
+          &quot;mergedFacetValues&quot;: [ # Each instance is a list of facet values that map into the same (possibly different) merged facet value. For the current attribute config, each facet value should map to at most one merged facet value.
+            { # Replaces a set of textual facet values by the same (possibly different) merged facet value. Each facet value should appear at most once as a value per CatalogAttribute. This feature is available only for textual custom attributes.
+              &quot;mergedValue&quot;: &quot;A String&quot;, # All the previous values are replaced by this merged facet value. This merged_value must be non-empty and can have up to 128 characters.
+              &quot;values&quot;: [ # All the facet values that are replaces by the same merged_value that follows. The maximum number of values per MergedFacetValue is 25. Each value can have up to 128 characters.
+                &quot;A String&quot;,
+              ],
+            },
+          ],
+        },
         &quot;mergedFacetValues&quot;: [ # Each instance replaces a list of facet values by a merged facet value. If a facet value is not in any list, then it will stay the same. To avoid conflicts, only paths of length 1 are accepted. In other words, if &quot;dark_blue&quot; merged into &quot;BLUE&quot;, then the latter can&#x27;t merge into &quot;blues&quot; because this would create a path of length 2. The maximum number of instances of MergedFacetValue per CatalogAttribute is 100. This feature is available only for textual custom attributes.
           { # Replaces a set of textual facet values by the same (possibly different) merged facet value. Each facet value should appear at most once as a value per CatalogAttribute. This feature is available only for textual custom attributes.
             &quot;mergedValue&quot;: &quot;A String&quot;, # All the previous values are replaced by this merged facet value. This merged_value must be non-empty and can have up to 128 characters.
@@ -285,6 +330,12 @@ Returns:
             ],
           },
         ],
+        &quot;rerankConfig&quot;: { # Options to rerank based on facet values engaged by the user for the current key. That key needs to be a custom textual key and facetable. To use this control, you also need to pass all the facet keys engaged by the user in the request using the field [SearchRequest.FacetSpec]. In particular, if you don&#x27;t pass the facet keys engaged that you want to rerank on, this control won&#x27;t be effective. Moreover, to obtain better results, the facet values that you want to rerank on should be close to English (ideally made of words, underscores, and spaces). # Set this field only if you want to rerank based on facet values engaged by the user for the current key. This option is only possible for custom facetable textual keys.
+          &quot;facetValues&quot;: [ # If empty, rerank on all facet values for the current key. Otherwise, will rerank on the facet values from this list only.
+            &quot;A String&quot;,
+          ],
+          &quot;rerankFacet&quot;: True or False, # If set to true, then we also rerank the dynamic facets based on the facet values engaged by the user for the current attribute key during serving.
+        },
       },
       &quot;inUse&quot;: True or False, # Output only. Indicates whether this attribute has been used by any products. `True` if at least one Product is using this attribute in Product.attributes. Otherwise, this field is `False`. CatalogAttribute can be pre-loaded by using CatalogService.AddCatalogAttribute, CatalogService.ImportCatalogAttributes, or CatalogService.UpdateAttributesConfig APIs. This field is `False` for pre-loaded CatalogAttributes. Only pre-loaded catalog attributes that are neither in use by products nor predefined can be deleted. Catalog attributes that are either in use by products or are predefined attributes cannot be deleted; however, their configuration properties will reset to default values upon removal request. After catalog changes, it takes about 10 minutes for this field to update.
       &quot;indexableOption&quot;: &quot;A String&quot;, # When AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, if INDEXABLE_ENABLED attribute values are indexed so that it can be filtered, faceted, or boosted in SearchService.Search. Must be specified when AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, otherwise throws INVALID_FORMAT error.
@@ -330,6 +381,17 @@ Args:
           ],
         },
       ],
+      &quot;mergedFacet&quot;: { # The current facet key (i.e. attribute config) maps into the merged_facet_key. A facet key can have at most one child. The current facet key and the merged facet key need both to be textual custom attributes or both numerical custom attributes (same type). # Use this field only if you want to merge a facet key into another facet key.
+        &quot;mergedFacetKey&quot;: &quot;A String&quot;, # The merged facet key should be a valid facet key that is different than the facet key of the current catalog attribute. We refer this is merged facet key as the child of the current catalog attribute. This merged facet key can&#x27;t be a parent of another facet key (i.e. no directed path of length 2). This merged facet key needs to be either a textual custom attribute or a numerical custom attribute.
+        &quot;mergedFacetValues&quot;: [ # Each instance is a list of facet values that map into the same (possibly different) merged facet value. For the current attribute config, each facet value should map to at most one merged facet value.
+          { # Replaces a set of textual facet values by the same (possibly different) merged facet value. Each facet value should appear at most once as a value per CatalogAttribute. This feature is available only for textual custom attributes.
+            &quot;mergedValue&quot;: &quot;A String&quot;, # All the previous values are replaced by this merged facet value. This merged_value must be non-empty and can have up to 128 characters.
+            &quot;values&quot;: [ # All the facet values that are replaces by the same merged_value that follows. The maximum number of values per MergedFacetValue is 25. Each value can have up to 128 characters.
+              &quot;A String&quot;,
+            ],
+          },
+        ],
+      },
       &quot;mergedFacetValues&quot;: [ # Each instance replaces a list of facet values by a merged facet value. If a facet value is not in any list, then it will stay the same. To avoid conflicts, only paths of length 1 are accepted. In other words, if &quot;dark_blue&quot; merged into &quot;BLUE&quot;, then the latter can&#x27;t merge into &quot;blues&quot; because this would create a path of length 2. The maximum number of instances of MergedFacetValue per CatalogAttribute is 100. This feature is available only for textual custom attributes.
         { # Replaces a set of textual facet values by the same (possibly different) merged facet value. Each facet value should appear at most once as a value per CatalogAttribute. This feature is available only for textual custom attributes.
           &quot;mergedValue&quot;: &quot;A String&quot;, # All the previous values are replaced by this merged facet value. This merged_value must be non-empty and can have up to 128 characters.
@@ -338,6 +400,12 @@ Args:
           ],
         },
       ],
+      &quot;rerankConfig&quot;: { # Options to rerank based on facet values engaged by the user for the current key. That key needs to be a custom textual key and facetable. To use this control, you also need to pass all the facet keys engaged by the user in the request using the field [SearchRequest.FacetSpec]. In particular, if you don&#x27;t pass the facet keys engaged that you want to rerank on, this control won&#x27;t be effective. Moreover, to obtain better results, the facet values that you want to rerank on should be close to English (ideally made of words, underscores, and spaces). # Set this field only if you want to rerank based on facet values engaged by the user for the current key. This option is only possible for custom facetable textual keys.
+        &quot;facetValues&quot;: [ # If empty, rerank on all facet values for the current key. Otherwise, will rerank on the facet values from this list only.
+          &quot;A String&quot;,
+        ],
+        &quot;rerankFacet&quot;: True or False, # If set to true, then we also rerank the dynamic facets based on the facet values engaged by the user for the current attribute key during serving.
+      },
     },
     &quot;inUse&quot;: True or False, # Output only. Indicates whether this attribute has been used by any products. `True` if at least one Product is using this attribute in Product.attributes. Otherwise, this field is `False`. CatalogAttribute can be pre-loaded by using CatalogService.AddCatalogAttribute, CatalogService.ImportCatalogAttributes, or CatalogService.UpdateAttributesConfig APIs. This field is `False` for pre-loaded CatalogAttributes. Only pre-loaded catalog attributes that are neither in use by products nor predefined can be deleted. Catalog attributes that are either in use by products or are predefined attributes cannot be deleted; however, their configuration properties will reset to default values upon removal request. After catalog changes, it takes about 10 minutes for this field to update.
     &quot;indexableOption&quot;: &quot;A String&quot;, # When AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, if INDEXABLE_ENABLED attribute values are indexed so that it can be filtered, faceted, or boosted in SearchService.Search. Must be specified when AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, otherwise throws INVALID_FORMAT error.
@@ -382,6 +450,17 @@ Returns:
             ],
           },
         ],
+        &quot;mergedFacet&quot;: { # The current facet key (i.e. attribute config) maps into the merged_facet_key. A facet key can have at most one child. The current facet key and the merged facet key need both to be textual custom attributes or both numerical custom attributes (same type). # Use this field only if you want to merge a facet key into another facet key.
+          &quot;mergedFacetKey&quot;: &quot;A String&quot;, # The merged facet key should be a valid facet key that is different than the facet key of the current catalog attribute. We refer this is merged facet key as the child of the current catalog attribute. This merged facet key can&#x27;t be a parent of another facet key (i.e. no directed path of length 2). This merged facet key needs to be either a textual custom attribute or a numerical custom attribute.
+          &quot;mergedFacetValues&quot;: [ # Each instance is a list of facet values that map into the same (possibly different) merged facet value. For the current attribute config, each facet value should map to at most one merged facet value.
+            { # Replaces a set of textual facet values by the same (possibly different) merged facet value. Each facet value should appear at most once as a value per CatalogAttribute. This feature is available only for textual custom attributes.
+              &quot;mergedValue&quot;: &quot;A String&quot;, # All the previous values are replaced by this merged facet value. This merged_value must be non-empty and can have up to 128 characters.
+              &quot;values&quot;: [ # All the facet values that are replaces by the same merged_value that follows. The maximum number of values per MergedFacetValue is 25. Each value can have up to 128 characters.
+                &quot;A String&quot;,
+              ],
+            },
+          ],
+        },
         &quot;mergedFacetValues&quot;: [ # Each instance replaces a list of facet values by a merged facet value. If a facet value is not in any list, then it will stay the same. To avoid conflicts, only paths of length 1 are accepted. In other words, if &quot;dark_blue&quot; merged into &quot;BLUE&quot;, then the latter can&#x27;t merge into &quot;blues&quot; because this would create a path of length 2. The maximum number of instances of MergedFacetValue per CatalogAttribute is 100. This feature is available only for textual custom attributes.
           { # Replaces a set of textual facet values by the same (possibly different) merged facet value. Each facet value should appear at most once as a value per CatalogAttribute. This feature is available only for textual custom attributes.
             &quot;mergedValue&quot;: &quot;A String&quot;, # All the previous values are replaced by this merged facet value. This merged_value must be non-empty and can have up to 128 characters.
@@ -390,6 +469,12 @@ Returns:
             ],
           },
         ],
+        &quot;rerankConfig&quot;: { # Options to rerank based on facet values engaged by the user for the current key. That key needs to be a custom textual key and facetable. To use this control, you also need to pass all the facet keys engaged by the user in the request using the field [SearchRequest.FacetSpec]. In particular, if you don&#x27;t pass the facet keys engaged that you want to rerank on, this control won&#x27;t be effective. Moreover, to obtain better results, the facet values that you want to rerank on should be close to English (ideally made of words, underscores, and spaces). # Set this field only if you want to rerank based on facet values engaged by the user for the current key. This option is only possible for custom facetable textual keys.
+          &quot;facetValues&quot;: [ # If empty, rerank on all facet values for the current key. Otherwise, will rerank on the facet values from this list only.
+            &quot;A String&quot;,
+          ],
+          &quot;rerankFacet&quot;: True or False, # If set to true, then we also rerank the dynamic facets based on the facet values engaged by the user for the current attribute key during serving.
+        },
       },
       &quot;inUse&quot;: True or False, # Output only. Indicates whether this attribute has been used by any products. `True` if at least one Product is using this attribute in Product.attributes. Otherwise, this field is `False`. CatalogAttribute can be pre-loaded by using CatalogService.AddCatalogAttribute, CatalogService.ImportCatalogAttributes, or CatalogService.UpdateAttributesConfig APIs. This field is `False` for pre-loaded CatalogAttributes. Only pre-loaded catalog attributes that are neither in use by products nor predefined can be deleted. Catalog attributes that are either in use by products or are predefined attributes cannot be deleted; however, their configuration properties will reset to default values upon removal request. After catalog changes, it takes about 10 minutes for this field to update.
       &quot;indexableOption&quot;: &quot;A String&quot;, # When AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, if INDEXABLE_ENABLED attribute values are indexed so that it can be filtered, faceted, or boosted in SearchService.Search. Must be specified when AttributesConfig.attribute_config_level is CATALOG_LEVEL_ATTRIBUTE_CONFIG, otherwise throws INVALID_FORMAT error.

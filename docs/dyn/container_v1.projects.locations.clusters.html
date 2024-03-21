@@ -104,7 +104,7 @@ h1, h2, h3 {
 <p class="firstline">Gets the details of a specific cluster.</p>
 <p class="toc_element">
   <code><a href="#getJwks">getJwks(parent, x__xgafv=None)</a></code></p>
-<p class="firstline">Gets the public component of the cluster signing keys in JSON Web Key format. This API is not yet intended for general use, and is not available for all clusters.</p>
+<p class="firstline">Gets the public component of the cluster signing keys in JSON Web Key format.</p>
 <p class="toc_element">
   <code><a href="#list">list(parent, projectId=None, x__xgafv=None, zone=None)</a></code></p>
 <p class="firstline">Lists all clusters owned by a project in either the specified zone or all zones.</p>
@@ -303,6 +303,9 @@ Args:
       },
       &quot;networkPolicyConfig&quot;: { # Configuration for NetworkPolicy. This only tracks whether the addon is enabled or not on the Master, it does not track whether network policy is enabled for the nodes. # Configuration for NetworkPolicy. This only tracks whether the addon is enabled or not on the Master, it does not track whether network policy is enabled for the nodes.
         &quot;disabled&quot;: True or False, # Whether NetworkPolicy is enabled for this cluster.
+      },
+      &quot;statefulHaConfig&quot;: { # Configuration for the Stateful HA add-on. # Optional. Configuration for the StatefulHA add-on.
+        &quot;enabled&quot;: True or False, # Whether the Stateful HA add-on is enabled for this cluster.
       },
     },
     &quot;authenticatorGroupsConfig&quot;: { # Configuration for returning group information from authenticators. # Configuration controlling RBAC group membership information.
@@ -552,6 +555,7 @@ Args:
         &quot;clusterDnsDomain&quot;: &quot;A String&quot;, # cluster_dns_domain is the suffix used for all cluster service records.
         &quot;clusterDnsScope&quot;: &quot;A String&quot;, # cluster_dns_scope indicates the scope of access to cluster DNS records.
       },
+      &quot;enableCiliumClusterwideNetworkPolicy&quot;: True or False, # Whether CiliumClusterwideNetworkPolicy is enabled on this cluster.
       &quot;enableFqdnNetworkPolicy&quot;: True or False, # Whether FQDN Network Policy is enabled on this cluster.
       &quot;enableIntraNodeVisibility&quot;: True or False, # Whether Intra-node visibility is enabled for this cluster. This makes same node pod to pod traffic visible for VPC network.
       &quot;enableL4ilbSubsetting&quot;: True or False, # Whether L4ILB Subsetting is enabled for this cluster.
@@ -559,6 +563,7 @@ Args:
       &quot;gatewayApiConfig&quot;: { # GatewayAPIConfig contains the desired config of Gateway API on this cluster. # GatewayAPIConfig contains the desired config of Gateway API on this cluster.
         &quot;channel&quot;: &quot;A String&quot;, # The Gateway API release channel to use for Gateway API.
       },
+      &quot;inTransitEncryptionConfig&quot;: &quot;A String&quot;, # Specify the details of in-transit encryption.
       &quot;network&quot;: &quot;A String&quot;, # Output only. The relative name of the Google Compute Engine network(https://cloud.google.com/compute/docs/networks-and-firewalls#networks) to which the cluster is connected. Example: projects/my-project/global/networks/my-network
       &quot;networkPerformanceConfig&quot;: { # Configuration of network bandwidth tiers # Network bandwidth tier configuration.
         &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;, # Specifies the total network bandwidth tier for NodePools in the cluster.
@@ -597,6 +602,7 @@ Args:
       },
       &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
       &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
+      &quot;enableConfidentialStorage&quot;: True or False, # Optional. Reserved for future use.
       &quot;ephemeralStorageLocalSsdConfig&quot;: { # EphemeralStorageLocalSsdConfig contains configuration for the node ephemeral storage using Local SSDs. # Parameters for the node ephemeral storage using Local SSDs. If unspecified, ephemeral storage is backed by the boot disk.
         &quot;localSsdCount&quot;: 42, # Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. A zero (or unset) value has different meanings depending on machine type being used: 1. For pre-Gen3 machines, which support flexible numbers of local ssds, zero (or unset) means to disable using local SSDs as ephemeral storage. The limit for this value is dependent upon the maximum number of disk available on a machine per zone. See: https://cloud.google.com/compute/docs/disks/local-ssd for more information. 2. For Gen3 machines which dictate a specific number of local ssds, zero (or unset) means to use the default number of local ssds that goes with that machine type. For example, for a c3-standard-8-lssd machine, 2 local ssds would be provisioned. For c3-standard-8 (which doesn&#x27;t support local ssds), 0 will be provisioned. See https://cloud.google.com/compute/docs/disks/local-ssd#choose_number_local_ssds for more info.
       },
@@ -663,6 +669,12 @@ Args:
       &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
         &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
       },
+      &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
+        { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
+          &quot;diskImage&quot;: &quot;A String&quot;, # Fully-qualified resource ID for an existing disk image.
+          &quot;mode&quot;: &quot;A String&quot;, # Disk mode (container image cache, etc.)
+        },
+      ],
       &quot;serviceAccount&quot;: &quot;A String&quot;, # The Google Cloud Platform Service Account to be used by the node VMs. Specify the email address of the Service Account; otherwise, if no Service Account is specified, the &quot;default&quot; service account is used.
       &quot;shieldedInstanceConfig&quot;: { # A set of Shielded Instance options. # Shielded Instance options.
         &quot;enableIntegrityMonitoring&quot;: True or False, # Defines whether the instance has integrity monitoring enabled. Enables monitoring and attestation of the boot integrity of the instance. The attestation is performed against the integrity policy baseline. This baseline is initially derived from the implicitly trusted boot image when the instance is created.
@@ -768,6 +780,7 @@ Args:
           },
           &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
           &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
+          &quot;enableConfidentialStorage&quot;: True or False, # Optional. Reserved for future use.
           &quot;ephemeralStorageLocalSsdConfig&quot;: { # EphemeralStorageLocalSsdConfig contains configuration for the node ephemeral storage using Local SSDs. # Parameters for the node ephemeral storage using Local SSDs. If unspecified, ephemeral storage is backed by the boot disk.
             &quot;localSsdCount&quot;: 42, # Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. A zero (or unset) value has different meanings depending on machine type being used: 1. For pre-Gen3 machines, which support flexible numbers of local ssds, zero (or unset) means to disable using local SSDs as ephemeral storage. The limit for this value is dependent upon the maximum number of disk available on a machine per zone. See: https://cloud.google.com/compute/docs/disks/local-ssd for more information. 2. For Gen3 machines which dictate a specific number of local ssds, zero (or unset) means to use the default number of local ssds that goes with that machine type. For example, for a c3-standard-8-lssd machine, 2 local ssds would be provisioned. For c3-standard-8 (which doesn&#x27;t support local ssds), 0 will be provisioned. See https://cloud.google.com/compute/docs/disks/local-ssd#choose_number_local_ssds for more info.
           },
@@ -834,6 +847,12 @@ Args:
           &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
             &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
           },
+          &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
+            { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
+              &quot;diskImage&quot;: &quot;A String&quot;, # Fully-qualified resource ID for an existing disk image.
+              &quot;mode&quot;: &quot;A String&quot;, # Disk mode (container image cache, etc.)
+            },
+          ],
           &quot;serviceAccount&quot;: &quot;A String&quot;, # The Google Cloud Platform Service Account to be used by the node VMs. Specify the email address of the Service Account; otherwise, if no Service Account is specified, the &quot;default&quot; service account is used.
           &quot;shieldedInstanceConfig&quot;: { # A set of Shielded Instance options. # Shielded Instance options.
             &quot;enableIntegrityMonitoring&quot;: True or False, # Defines whether the instance has integrity monitoring enabled. Enables monitoring and attestation of the boot integrity of the instance. The attestation is performed against the integrity policy baseline. This baseline is initially derived from the implicitly trusted boot image when the instance is created.
@@ -1211,6 +1230,9 @@ Returns:
     &quot;networkPolicyConfig&quot;: { # Configuration for NetworkPolicy. This only tracks whether the addon is enabled or not on the Master, it does not track whether network policy is enabled for the nodes. # Configuration for NetworkPolicy. This only tracks whether the addon is enabled or not on the Master, it does not track whether network policy is enabled for the nodes.
       &quot;disabled&quot;: True or False, # Whether NetworkPolicy is enabled for this cluster.
     },
+    &quot;statefulHaConfig&quot;: { # Configuration for the Stateful HA add-on. # Optional. Configuration for the StatefulHA add-on.
+      &quot;enabled&quot;: True or False, # Whether the Stateful HA add-on is enabled for this cluster.
+    },
   },
   &quot;authenticatorGroupsConfig&quot;: { # Configuration for returning group information from authenticators. # Configuration controlling RBAC group membership information.
     &quot;enabled&quot;: True or False, # Whether this cluster should return group membership lookups during authentication using a group of security groups.
@@ -1459,6 +1481,7 @@ Returns:
       &quot;clusterDnsDomain&quot;: &quot;A String&quot;, # cluster_dns_domain is the suffix used for all cluster service records.
       &quot;clusterDnsScope&quot;: &quot;A String&quot;, # cluster_dns_scope indicates the scope of access to cluster DNS records.
     },
+    &quot;enableCiliumClusterwideNetworkPolicy&quot;: True or False, # Whether CiliumClusterwideNetworkPolicy is enabled on this cluster.
     &quot;enableFqdnNetworkPolicy&quot;: True or False, # Whether FQDN Network Policy is enabled on this cluster.
     &quot;enableIntraNodeVisibility&quot;: True or False, # Whether Intra-node visibility is enabled for this cluster. This makes same node pod to pod traffic visible for VPC network.
     &quot;enableL4ilbSubsetting&quot;: True or False, # Whether L4ILB Subsetting is enabled for this cluster.
@@ -1466,6 +1489,7 @@ Returns:
     &quot;gatewayApiConfig&quot;: { # GatewayAPIConfig contains the desired config of Gateway API on this cluster. # GatewayAPIConfig contains the desired config of Gateway API on this cluster.
       &quot;channel&quot;: &quot;A String&quot;, # The Gateway API release channel to use for Gateway API.
     },
+    &quot;inTransitEncryptionConfig&quot;: &quot;A String&quot;, # Specify the details of in-transit encryption.
     &quot;network&quot;: &quot;A String&quot;, # Output only. The relative name of the Google Compute Engine network(https://cloud.google.com/compute/docs/networks-and-firewalls#networks) to which the cluster is connected. Example: projects/my-project/global/networks/my-network
     &quot;networkPerformanceConfig&quot;: { # Configuration of network bandwidth tiers # Network bandwidth tier configuration.
       &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;, # Specifies the total network bandwidth tier for NodePools in the cluster.
@@ -1504,6 +1528,7 @@ Returns:
     },
     &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
     &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
+    &quot;enableConfidentialStorage&quot;: True or False, # Optional. Reserved for future use.
     &quot;ephemeralStorageLocalSsdConfig&quot;: { # EphemeralStorageLocalSsdConfig contains configuration for the node ephemeral storage using Local SSDs. # Parameters for the node ephemeral storage using Local SSDs. If unspecified, ephemeral storage is backed by the boot disk.
       &quot;localSsdCount&quot;: 42, # Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. A zero (or unset) value has different meanings depending on machine type being used: 1. For pre-Gen3 machines, which support flexible numbers of local ssds, zero (or unset) means to disable using local SSDs as ephemeral storage. The limit for this value is dependent upon the maximum number of disk available on a machine per zone. See: https://cloud.google.com/compute/docs/disks/local-ssd for more information. 2. For Gen3 machines which dictate a specific number of local ssds, zero (or unset) means to use the default number of local ssds that goes with that machine type. For example, for a c3-standard-8-lssd machine, 2 local ssds would be provisioned. For c3-standard-8 (which doesn&#x27;t support local ssds), 0 will be provisioned. See https://cloud.google.com/compute/docs/disks/local-ssd#choose_number_local_ssds for more info.
     },
@@ -1570,6 +1595,12 @@ Returns:
     &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
       &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
     },
+    &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
+      { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
+        &quot;diskImage&quot;: &quot;A String&quot;, # Fully-qualified resource ID for an existing disk image.
+        &quot;mode&quot;: &quot;A String&quot;, # Disk mode (container image cache, etc.)
+      },
+    ],
     &quot;serviceAccount&quot;: &quot;A String&quot;, # The Google Cloud Platform Service Account to be used by the node VMs. Specify the email address of the Service Account; otherwise, if no Service Account is specified, the &quot;default&quot; service account is used.
     &quot;shieldedInstanceConfig&quot;: { # A set of Shielded Instance options. # Shielded Instance options.
       &quot;enableIntegrityMonitoring&quot;: True or False, # Defines whether the instance has integrity monitoring enabled. Enables monitoring and attestation of the boot integrity of the instance. The attestation is performed against the integrity policy baseline. This baseline is initially derived from the implicitly trusted boot image when the instance is created.
@@ -1675,6 +1706,7 @@ Returns:
         },
         &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
         &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
+        &quot;enableConfidentialStorage&quot;: True or False, # Optional. Reserved for future use.
         &quot;ephemeralStorageLocalSsdConfig&quot;: { # EphemeralStorageLocalSsdConfig contains configuration for the node ephemeral storage using Local SSDs. # Parameters for the node ephemeral storage using Local SSDs. If unspecified, ephemeral storage is backed by the boot disk.
           &quot;localSsdCount&quot;: 42, # Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. A zero (or unset) value has different meanings depending on machine type being used: 1. For pre-Gen3 machines, which support flexible numbers of local ssds, zero (or unset) means to disable using local SSDs as ephemeral storage. The limit for this value is dependent upon the maximum number of disk available on a machine per zone. See: https://cloud.google.com/compute/docs/disks/local-ssd for more information. 2. For Gen3 machines which dictate a specific number of local ssds, zero (or unset) means to use the default number of local ssds that goes with that machine type. For example, for a c3-standard-8-lssd machine, 2 local ssds would be provisioned. For c3-standard-8 (which doesn&#x27;t support local ssds), 0 will be provisioned. See https://cloud.google.com/compute/docs/disks/local-ssd#choose_number_local_ssds for more info.
         },
@@ -1741,6 +1773,12 @@ Returns:
         &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
           &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
         },
+        &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
+          { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
+            &quot;diskImage&quot;: &quot;A String&quot;, # Fully-qualified resource ID for an existing disk image.
+            &quot;mode&quot;: &quot;A String&quot;, # Disk mode (container image cache, etc.)
+          },
+        ],
         &quot;serviceAccount&quot;: &quot;A String&quot;, # The Google Cloud Platform Service Account to be used by the node VMs. Specify the email address of the Service Account; otherwise, if no Service Account is specified, the &quot;default&quot; service account is used.
         &quot;shieldedInstanceConfig&quot;: { # A set of Shielded Instance options. # Shielded Instance options.
           &quot;enableIntegrityMonitoring&quot;: True or False, # Defines whether the instance has integrity monitoring enabled. Enables monitoring and attestation of the boot integrity of the instance. The attestation is performed against the integrity policy baseline. This baseline is initially derived from the implicitly trusted boot image when the instance is created.
@@ -1933,7 +1971,7 @@ Returns:
 
 <div class="method">
     <code class="details" id="getJwks">getJwks(parent, x__xgafv=None)</code>
-  <pre>Gets the public component of the cluster signing keys in JSON Web Key format. This API is not yet intended for general use, and is not available for all clusters.
+  <pre>Gets the public component of the cluster signing keys in JSON Web Key format.
 
 Args:
   parent: string, The cluster (project, location, cluster name) to get keys for. Specified in the format `projects/*/locations/*/clusters/*`. (required)
@@ -2020,6 +2058,9 @@ Returns:
         },
         &quot;networkPolicyConfig&quot;: { # Configuration for NetworkPolicy. This only tracks whether the addon is enabled or not on the Master, it does not track whether network policy is enabled for the nodes. # Configuration for NetworkPolicy. This only tracks whether the addon is enabled or not on the Master, it does not track whether network policy is enabled for the nodes.
           &quot;disabled&quot;: True or False, # Whether NetworkPolicy is enabled for this cluster.
+        },
+        &quot;statefulHaConfig&quot;: { # Configuration for the Stateful HA add-on. # Optional. Configuration for the StatefulHA add-on.
+          &quot;enabled&quot;: True or False, # Whether the Stateful HA add-on is enabled for this cluster.
         },
       },
       &quot;authenticatorGroupsConfig&quot;: { # Configuration for returning group information from authenticators. # Configuration controlling RBAC group membership information.
@@ -2269,6 +2310,7 @@ Returns:
           &quot;clusterDnsDomain&quot;: &quot;A String&quot;, # cluster_dns_domain is the suffix used for all cluster service records.
           &quot;clusterDnsScope&quot;: &quot;A String&quot;, # cluster_dns_scope indicates the scope of access to cluster DNS records.
         },
+        &quot;enableCiliumClusterwideNetworkPolicy&quot;: True or False, # Whether CiliumClusterwideNetworkPolicy is enabled on this cluster.
         &quot;enableFqdnNetworkPolicy&quot;: True or False, # Whether FQDN Network Policy is enabled on this cluster.
         &quot;enableIntraNodeVisibility&quot;: True or False, # Whether Intra-node visibility is enabled for this cluster. This makes same node pod to pod traffic visible for VPC network.
         &quot;enableL4ilbSubsetting&quot;: True or False, # Whether L4ILB Subsetting is enabled for this cluster.
@@ -2276,6 +2318,7 @@ Returns:
         &quot;gatewayApiConfig&quot;: { # GatewayAPIConfig contains the desired config of Gateway API on this cluster. # GatewayAPIConfig contains the desired config of Gateway API on this cluster.
           &quot;channel&quot;: &quot;A String&quot;, # The Gateway API release channel to use for Gateway API.
         },
+        &quot;inTransitEncryptionConfig&quot;: &quot;A String&quot;, # Specify the details of in-transit encryption.
         &quot;network&quot;: &quot;A String&quot;, # Output only. The relative name of the Google Compute Engine network(https://cloud.google.com/compute/docs/networks-and-firewalls#networks) to which the cluster is connected. Example: projects/my-project/global/networks/my-network
         &quot;networkPerformanceConfig&quot;: { # Configuration of network bandwidth tiers # Network bandwidth tier configuration.
           &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;, # Specifies the total network bandwidth tier for NodePools in the cluster.
@@ -2314,6 +2357,7 @@ Returns:
         },
         &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
         &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
+        &quot;enableConfidentialStorage&quot;: True or False, # Optional. Reserved for future use.
         &quot;ephemeralStorageLocalSsdConfig&quot;: { # EphemeralStorageLocalSsdConfig contains configuration for the node ephemeral storage using Local SSDs. # Parameters for the node ephemeral storage using Local SSDs. If unspecified, ephemeral storage is backed by the boot disk.
           &quot;localSsdCount&quot;: 42, # Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. A zero (or unset) value has different meanings depending on machine type being used: 1. For pre-Gen3 machines, which support flexible numbers of local ssds, zero (or unset) means to disable using local SSDs as ephemeral storage. The limit for this value is dependent upon the maximum number of disk available on a machine per zone. See: https://cloud.google.com/compute/docs/disks/local-ssd for more information. 2. For Gen3 machines which dictate a specific number of local ssds, zero (or unset) means to use the default number of local ssds that goes with that machine type. For example, for a c3-standard-8-lssd machine, 2 local ssds would be provisioned. For c3-standard-8 (which doesn&#x27;t support local ssds), 0 will be provisioned. See https://cloud.google.com/compute/docs/disks/local-ssd#choose_number_local_ssds for more info.
         },
@@ -2380,6 +2424,12 @@ Returns:
         &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
           &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
         },
+        &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
+          { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
+            &quot;diskImage&quot;: &quot;A String&quot;, # Fully-qualified resource ID for an existing disk image.
+            &quot;mode&quot;: &quot;A String&quot;, # Disk mode (container image cache, etc.)
+          },
+        ],
         &quot;serviceAccount&quot;: &quot;A String&quot;, # The Google Cloud Platform Service Account to be used by the node VMs. Specify the email address of the Service Account; otherwise, if no Service Account is specified, the &quot;default&quot; service account is used.
         &quot;shieldedInstanceConfig&quot;: { # A set of Shielded Instance options. # Shielded Instance options.
           &quot;enableIntegrityMonitoring&quot;: True or False, # Defines whether the instance has integrity monitoring enabled. Enables monitoring and attestation of the boot integrity of the instance. The attestation is performed against the integrity policy baseline. This baseline is initially derived from the implicitly trusted boot image when the instance is created.
@@ -2485,6 +2535,7 @@ Returns:
             },
             &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
             &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
+            &quot;enableConfidentialStorage&quot;: True or False, # Optional. Reserved for future use.
             &quot;ephemeralStorageLocalSsdConfig&quot;: { # EphemeralStorageLocalSsdConfig contains configuration for the node ephemeral storage using Local SSDs. # Parameters for the node ephemeral storage using Local SSDs. If unspecified, ephemeral storage is backed by the boot disk.
               &quot;localSsdCount&quot;: 42, # Number of local SSDs to use to back ephemeral storage. Uses NVMe interfaces. A zero (or unset) value has different meanings depending on machine type being used: 1. For pre-Gen3 machines, which support flexible numbers of local ssds, zero (or unset) means to disable using local SSDs as ephemeral storage. The limit for this value is dependent upon the maximum number of disk available on a machine per zone. See: https://cloud.google.com/compute/docs/disks/local-ssd for more information. 2. For Gen3 machines which dictate a specific number of local ssds, zero (or unset) means to use the default number of local ssds that goes with that machine type. For example, for a c3-standard-8-lssd machine, 2 local ssds would be provisioned. For c3-standard-8 (which doesn&#x27;t support local ssds), 0 will be provisioned. See https://cloud.google.com/compute/docs/disks/local-ssd#choose_number_local_ssds for more info.
             },
@@ -2551,6 +2602,12 @@ Returns:
             &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
               &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
             },
+            &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
+              { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
+                &quot;diskImage&quot;: &quot;A String&quot;, # Fully-qualified resource ID for an existing disk image.
+                &quot;mode&quot;: &quot;A String&quot;, # Disk mode (container image cache, etc.)
+              },
+            ],
             &quot;serviceAccount&quot;: &quot;A String&quot;, # The Google Cloud Platform Service Account to be used by the node VMs. Specify the email address of the Service Account; otherwise, if no Service Account is specified, the &quot;default&quot; service account is used.
             &quot;shieldedInstanceConfig&quot;: { # A set of Shielded Instance options. # Shielded Instance options.
               &quot;enableIntegrityMonitoring&quot;: True or False, # Defines whether the instance has integrity monitoring enabled. Enables monitoring and attestation of the boot integrity of the instance. The attestation is performed against the integrity policy baseline. This baseline is initially derived from the implicitly trusted boot image when the instance is created.
@@ -2790,6 +2847,9 @@ Args:
     },
     &quot;networkPolicyConfig&quot;: { # Configuration for NetworkPolicy. This only tracks whether the addon is enabled or not on the Master, it does not track whether network policy is enabled for the nodes. # Configuration for NetworkPolicy. This only tracks whether the addon is enabled or not on the Master, it does not track whether network policy is enabled for the nodes.
       &quot;disabled&quot;: True or False, # Whether NetworkPolicy is enabled for this cluster.
+    },
+    &quot;statefulHaConfig&quot;: { # Configuration for the Stateful HA add-on. # Optional. Configuration for the StatefulHA add-on.
+      &quot;enabled&quot;: True or False, # Whether the Stateful HA add-on is enabled for this cluster.
     },
   },
   &quot;clusterId&quot;: &quot;A String&quot;, # Deprecated. The name of the cluster to upgrade. This field has been deprecated and replaced by the name field.
@@ -3666,6 +3726,9 @@ Args:
       &quot;networkPolicyConfig&quot;: { # Configuration for NetworkPolicy. This only tracks whether the addon is enabled or not on the Master, it does not track whether network policy is enabled for the nodes. # Configuration for NetworkPolicy. This only tracks whether the addon is enabled or not on the Master, it does not track whether network policy is enabled for the nodes.
         &quot;disabled&quot;: True or False, # Whether NetworkPolicy is enabled for this cluster.
       },
+      &quot;statefulHaConfig&quot;: { # Configuration for the Stateful HA add-on. # Optional. Configuration for the StatefulHA add-on.
+        &quot;enabled&quot;: True or False, # Whether the Stateful HA add-on is enabled for this cluster.
+      },
     },
     &quot;desiredAuthenticatorGroupsConfig&quot;: { # Configuration for returning group information from authenticators. # The desired authenticator groups config for the cluster.
       &quot;enabled&quot;: True or False, # Whether this cluster should return group membership lookups during authentication using a group of security groups.
@@ -3745,6 +3808,7 @@ Args:
       &quot;clusterDnsDomain&quot;: &quot;A String&quot;, # cluster_dns_domain is the suffix used for all cluster service records.
       &quot;clusterDnsScope&quot;: &quot;A String&quot;, # cluster_dns_scope indicates the scope of access to cluster DNS records.
     },
+    &quot;desiredEnableCiliumClusterwideNetworkPolicy&quot;: True or False, # Enable/Disable Cilium Clusterwide Network Policy for the cluster.
     &quot;desiredEnableFqdnNetworkPolicy&quot;: True or False, # Enable/Disable FQDN Network Policy for the cluster.
     &quot;desiredEnablePrivateEndpoint&quot;: True or False, # Enable/Disable private endpoint for the cluster&#x27;s master.
     &quot;desiredFleet&quot;: { # Fleet is the fleet configuration for the cluster. # The desired fleet configuration for the cluster.
@@ -3762,6 +3826,7 @@ Args:
       &quot;enabled&quot;: True or False, # Whether to enable the Identity Service component
     },
     &quot;desiredImageType&quot;: &quot;A String&quot;, # The desired image type for the node pool. NOTE: Set the &quot;desired_node_pool&quot; field as well.
+    &quot;desiredInTransitEncryptionConfig&quot;: &quot;A String&quot;, # Specify the details of in-transit encryption.
     &quot;desiredIntraNodeVisibilityConfig&quot;: { # IntraNodeVisibilityConfig contains the desired config of the intra-node visibility on this cluster. # The desired config of Intra-node visibility.
       &quot;enabled&quot;: True or False, # Enables intra node visibility for this cluster.
     },

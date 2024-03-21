@@ -106,15 +106,15 @@ Args:
 
 { # Describes a query that has been saved by a user.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp when the saved query was created.
-  &quot;description&quot;: &quot;A String&quot;, # A human readable description of the saved query.
-  &quot;displayName&quot;: &quot;A String&quot;, # The user specified title for the SavedQuery.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. A human readable description of the saved query.
+  &quot;displayName&quot;: &quot;A String&quot;, # Required. The user specified title for the SavedQuery.
   &quot;loggingQuery&quot;: { # Describes a Cloud Logging query that can be run in Logs Explorer UI or via the logging API.In addition to the query itself, additional information may be stored to capture the display configuration and other UI state used in association with analysis of query results. # Logging query that can be executed in Logs Explorer or via Logging API.
-    &quot;filter&quot;: &quot;A String&quot;, # An advanced query using the Logging Query Language (https://cloud.google.com/logging/docs/view/logging-query-language). The maximum length of the filter is 20000 characters.
+    &quot;filter&quot;: &quot;A String&quot;, # Required. An advanced query using the Logging Query Language (https://cloud.google.com/logging/docs/view/logging-query-language). The maximum length of the filter is 20000 characters.
     &quot;summaryFieldEnd&quot;: 42, # Characters will be counted from the end of the string.
     &quot;summaryFieldStart&quot;: 42, # Characters will be counted from the start of the string.
-    &quot;summaryFields&quot;: [ # The set of summary fields to display for this saved query.
+    &quot;summaryFields&quot;: [ # Optional. The set of summary fields to display for this saved query.
       { # A field from the LogEntry that is added to the summary line (https://cloud.google.com/logging/docs/view/logs-explorer-interface#add-summary-fields) for a query in the Logs Explorer.
-        &quot;field&quot;: &quot;A String&quot;, # The field from the LogEntry to include in the summary line, for example resource.type or jsonPayload.name.
+        &quot;field&quot;: &quot;A String&quot;, # Optional. The field from the LogEntry to include in the summary line, for example resource.type or jsonPayload.name.
       },
     ],
   },
@@ -123,9 +123,10 @@ Args:
     &quot;sqlQueryText&quot;: &quot;A String&quot;, # Required. A logs analytics SQL query, which generally follows BigQuery format.This is the SQL query that appears in the Log Analytics UI&#x27;s query editor.
   },
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The timestamp when the saved query was last updated.
+  &quot;visibility&quot;: &quot;A String&quot;, # Required. The visibility status of this query, which determines its ownership.
 }
 
-  savedQueryId: string, Optional. The ID to use for the saved query, which will become the final component of the saved query&#x27;s resource name.If the saved_query_id is not provided, the system will generate an alphanumeric ID.The saved_query_id is limited to 100 characters and can include only the following characters: upper and lower-case alphanumeric characters, underscores, hyphens, and periods. First character has to be alphanumeric.
+  savedQueryId: string, Optional. The ID to use for the saved query, which will become the final component of the saved query&#x27;s resource name.If the saved_query_id is not provided, the system will generate an alphanumeric ID.The saved_query_id is limited to 100 characters and can include only the following characters: upper and lower-case alphanumeric characters, underscores, hyphens, periods.First character has to be alphanumeric.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -136,15 +137,15 @@ Returns:
 
     { # Describes a query that has been saved by a user.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp when the saved query was created.
-  &quot;description&quot;: &quot;A String&quot;, # A human readable description of the saved query.
-  &quot;displayName&quot;: &quot;A String&quot;, # The user specified title for the SavedQuery.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. A human readable description of the saved query.
+  &quot;displayName&quot;: &quot;A String&quot;, # Required. The user specified title for the SavedQuery.
   &quot;loggingQuery&quot;: { # Describes a Cloud Logging query that can be run in Logs Explorer UI or via the logging API.In addition to the query itself, additional information may be stored to capture the display configuration and other UI state used in association with analysis of query results. # Logging query that can be executed in Logs Explorer or via Logging API.
-    &quot;filter&quot;: &quot;A String&quot;, # An advanced query using the Logging Query Language (https://cloud.google.com/logging/docs/view/logging-query-language). The maximum length of the filter is 20000 characters.
+    &quot;filter&quot;: &quot;A String&quot;, # Required. An advanced query using the Logging Query Language (https://cloud.google.com/logging/docs/view/logging-query-language). The maximum length of the filter is 20000 characters.
     &quot;summaryFieldEnd&quot;: 42, # Characters will be counted from the end of the string.
     &quot;summaryFieldStart&quot;: 42, # Characters will be counted from the start of the string.
-    &quot;summaryFields&quot;: [ # The set of summary fields to display for this saved query.
+    &quot;summaryFields&quot;: [ # Optional. The set of summary fields to display for this saved query.
       { # A field from the LogEntry that is added to the summary line (https://cloud.google.com/logging/docs/view/logs-explorer-interface#add-summary-fields) for a query in the Logs Explorer.
-        &quot;field&quot;: &quot;A String&quot;, # The field from the LogEntry to include in the summary line, for example resource.type or jsonPayload.name.
+        &quot;field&quot;: &quot;A String&quot;, # Optional. The field from the LogEntry to include in the summary line, for example resource.type or jsonPayload.name.
       },
     ],
   },
@@ -153,6 +154,7 @@ Returns:
     &quot;sqlQueryText&quot;: &quot;A String&quot;, # Required. A logs analytics SQL query, which generally follows BigQuery format.This is the SQL query that appears in the Log Analytics UI&#x27;s query editor.
   },
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The timestamp when the saved query was last updated.
+  &quot;visibility&quot;: &quot;A String&quot;, # Required. The visibility status of this query, which determines its ownership.
 }</pre>
 </div>
 
@@ -195,15 +197,15 @@ Returns:
   &quot;savedQueries&quot;: [ # A list of saved queries.
     { # Describes a query that has been saved by a user.
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp when the saved query was created.
-      &quot;description&quot;: &quot;A String&quot;, # A human readable description of the saved query.
-      &quot;displayName&quot;: &quot;A String&quot;, # The user specified title for the SavedQuery.
+      &quot;description&quot;: &quot;A String&quot;, # Optional. A human readable description of the saved query.
+      &quot;displayName&quot;: &quot;A String&quot;, # Required. The user specified title for the SavedQuery.
       &quot;loggingQuery&quot;: { # Describes a Cloud Logging query that can be run in Logs Explorer UI or via the logging API.In addition to the query itself, additional information may be stored to capture the display configuration and other UI state used in association with analysis of query results. # Logging query that can be executed in Logs Explorer or via Logging API.
-        &quot;filter&quot;: &quot;A String&quot;, # An advanced query using the Logging Query Language (https://cloud.google.com/logging/docs/view/logging-query-language). The maximum length of the filter is 20000 characters.
+        &quot;filter&quot;: &quot;A String&quot;, # Required. An advanced query using the Logging Query Language (https://cloud.google.com/logging/docs/view/logging-query-language). The maximum length of the filter is 20000 characters.
         &quot;summaryFieldEnd&quot;: 42, # Characters will be counted from the end of the string.
         &quot;summaryFieldStart&quot;: 42, # Characters will be counted from the start of the string.
-        &quot;summaryFields&quot;: [ # The set of summary fields to display for this saved query.
+        &quot;summaryFields&quot;: [ # Optional. The set of summary fields to display for this saved query.
           { # A field from the LogEntry that is added to the summary line (https://cloud.google.com/logging/docs/view/logs-explorer-interface#add-summary-fields) for a query in the Logs Explorer.
-            &quot;field&quot;: &quot;A String&quot;, # The field from the LogEntry to include in the summary line, for example resource.type or jsonPayload.name.
+            &quot;field&quot;: &quot;A String&quot;, # Optional. The field from the LogEntry to include in the summary line, for example resource.type or jsonPayload.name.
           },
         ],
       },
@@ -212,6 +214,7 @@ Returns:
         &quot;sqlQueryText&quot;: &quot;A String&quot;, # Required. A logs analytics SQL query, which generally follows BigQuery format.This is the SQL query that appears in the Log Analytics UI&#x27;s query editor.
       },
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The timestamp when the saved query was last updated.
+      &quot;visibility&quot;: &quot;A String&quot;, # Required. The visibility status of this query, which determines its ownership.
     },
   ],
   &quot;unreachable&quot;: [ # The unreachable resources. It can be either 1) a saved query if a specific query is unreachable or 2) a location if a specific location is unreachabe. &quot;projects/[PROJECT_ID]/locations/[LOCATION_ID]/savedQueries/[QUERY_ID]&quot; &quot;projects/[PROJECT_ID]/locations/[LOCATION_ID]&quot; For example: &quot;projects/my-project/locations/global/savedQueries/12345678&quot; &quot;projects/my-project/locations/global&quot; If there are unreachable resources, the response will first return pages that contain saved queries, and then return pages that contain the unreachable resources.

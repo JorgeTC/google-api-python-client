@@ -84,7 +84,7 @@ h1, h2, h3 {
   <code><a href="#get">get(name, x__xgafv=None)</a></code></p>
 <p class="firstline">Fetches a single CompilationResult.</p>
 <p class="toc_element">
-  <code><a href="#list">list(parent, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
+  <code><a href="#list">list(parent, filter=None, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Lists CompilationResults in a given Repository.</p>
 <p class="toc_element">
   <code><a href="#list_next">list_next()</a></code></p>
@@ -138,7 +138,7 @@ Args:
   &quot;dataformCoreVersion&quot;: &quot;A String&quot;, # Output only. The version of `@dataform/core` that was used for compilation.
   &quot;gitCommitish&quot;: &quot;A String&quot;, # Immutable. Git commit/tag/branch name at which the repository should be compiled. Must exist in the remote repository. Examples: - a commit SHA: `12ade345` - a tag: `tag1` - a branch name: `branch1`
   &quot;name&quot;: &quot;A String&quot;, # Output only. The compilation result&#x27;s name.
-  &quot;releaseConfig&quot;: &quot;A String&quot;, # Immutable. The name of the release config to compile. The release config&#x27;s &#x27;current_compilation_result&#x27; field will be updated to this compilation result. Must be in the format `projects/*/locations/*/repositories/*/releaseConfigs/*`.
+  &quot;releaseConfig&quot;: &quot;A String&quot;, # Immutable. The name of the release config to compile. Must be in the format `projects/*/locations/*/repositories/*/releaseConfigs/*`.
   &quot;resolvedGitCommitSha&quot;: &quot;A String&quot;, # Output only. The fully resolved Git commit SHA of the code that was compiled. Not set for compilation results whose source is a workspace.
   &quot;workspace&quot;: &quot;A String&quot;, # Immutable. The name of the workspace to compile. Must be in the format `projects/*/locations/*/repositories/*/workspaces/*`.
 }
@@ -179,7 +179,7 @@ Returns:
   &quot;dataformCoreVersion&quot;: &quot;A String&quot;, # Output only. The version of `@dataform/core` that was used for compilation.
   &quot;gitCommitish&quot;: &quot;A String&quot;, # Immutable. Git commit/tag/branch name at which the repository should be compiled. Must exist in the remote repository. Examples: - a commit SHA: `12ade345` - a tag: `tag1` - a branch name: `branch1`
   &quot;name&quot;: &quot;A String&quot;, # Output only. The compilation result&#x27;s name.
-  &quot;releaseConfig&quot;: &quot;A String&quot;, # Immutable. The name of the release config to compile. The release config&#x27;s &#x27;current_compilation_result&#x27; field will be updated to this compilation result. Must be in the format `projects/*/locations/*/repositories/*/releaseConfigs/*`.
+  &quot;releaseConfig&quot;: &quot;A String&quot;, # Immutable. The name of the release config to compile. Must be in the format `projects/*/locations/*/repositories/*/releaseConfigs/*`.
   &quot;resolvedGitCommitSha&quot;: &quot;A String&quot;, # Output only. The fully resolved Git commit SHA of the code that was compiled. Not set for compilation results whose source is a workspace.
   &quot;workspace&quot;: &quot;A String&quot;, # Immutable. The name of the workspace to compile. Must be in the format `projects/*/locations/*/repositories/*/workspaces/*`.
 }</pre>
@@ -227,18 +227,19 @@ Returns:
   &quot;dataformCoreVersion&quot;: &quot;A String&quot;, # Output only. The version of `@dataform/core` that was used for compilation.
   &quot;gitCommitish&quot;: &quot;A String&quot;, # Immutable. Git commit/tag/branch name at which the repository should be compiled. Must exist in the remote repository. Examples: - a commit SHA: `12ade345` - a tag: `tag1` - a branch name: `branch1`
   &quot;name&quot;: &quot;A String&quot;, # Output only. The compilation result&#x27;s name.
-  &quot;releaseConfig&quot;: &quot;A String&quot;, # Immutable. The name of the release config to compile. The release config&#x27;s &#x27;current_compilation_result&#x27; field will be updated to this compilation result. Must be in the format `projects/*/locations/*/repositories/*/releaseConfigs/*`.
+  &quot;releaseConfig&quot;: &quot;A String&quot;, # Immutable. The name of the release config to compile. Must be in the format `projects/*/locations/*/repositories/*/releaseConfigs/*`.
   &quot;resolvedGitCommitSha&quot;: &quot;A String&quot;, # Output only. The fully resolved Git commit SHA of the code that was compiled. Not set for compilation results whose source is a workspace.
   &quot;workspace&quot;: &quot;A String&quot;, # Immutable. The name of the workspace to compile. Must be in the format `projects/*/locations/*/repositories/*/workspaces/*`.
 }</pre>
 </div>
 
 <div class="method">
-    <code class="details" id="list">list(parent, pageSize=None, pageToken=None, x__xgafv=None)</code>
+    <code class="details" id="list">list(parent, filter=None, pageSize=None, pageToken=None, x__xgafv=None)</code>
   <pre>Lists CompilationResults in a given Repository.
 
 Args:
   parent: string, Required. The repository in which to list compilation results. Must be in the format `projects/*/locations/*/repositories/*`. (required)
+  filter: string, Optional. Filter for the returned list.
   pageSize: integer, Optional. Maximum number of compilation results to return. The server may return fewer items than requested. If unspecified, the server will pick an appropriate default.
   pageToken: string, Optional. Page token received from a previous `ListCompilationResults` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListCompilationResults` must match the call that provided the page token.
   x__xgafv: string, V1 error format.
@@ -279,7 +280,7 @@ Returns:
       &quot;dataformCoreVersion&quot;: &quot;A String&quot;, # Output only. The version of `@dataform/core` that was used for compilation.
       &quot;gitCommitish&quot;: &quot;A String&quot;, # Immutable. Git commit/tag/branch name at which the repository should be compiled. Must exist in the remote repository. Examples: - a commit SHA: `12ade345` - a tag: `tag1` - a branch name: `branch1`
       &quot;name&quot;: &quot;A String&quot;, # Output only. The compilation result&#x27;s name.
-      &quot;releaseConfig&quot;: &quot;A String&quot;, # Immutable. The name of the release config to compile. The release config&#x27;s &#x27;current_compilation_result&#x27; field will be updated to this compilation result. Must be in the format `projects/*/locations/*/repositories/*/releaseConfigs/*`.
+      &quot;releaseConfig&quot;: &quot;A String&quot;, # Immutable. The name of the release config to compile. Must be in the format `projects/*/locations/*/repositories/*/releaseConfigs/*`.
       &quot;resolvedGitCommitSha&quot;: &quot;A String&quot;, # Output only. The fully resolved Git commit SHA of the code that was compiled. Not set for compilation results whose source is a workspace.
       &quot;workspace&quot;: &quot;A String&quot;, # Immutable. The name of the workspace to compile. Must be in the format `projects/*/locations/*/repositories/*/workspaces/*`.
     },
