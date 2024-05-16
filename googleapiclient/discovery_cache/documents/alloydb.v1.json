@@ -1461,9 +1461,20 @@
 }
 }
 },
-"revision": "20240306",
+"revision": "20240501",
 "rootUrl": "https://alloydb.googleapis.com/",
 "schemas": {
+"AuthorizedNetwork": {
+"description": "AuthorizedNetwork contains metadata for an authorized network.",
+"id": "AuthorizedNetwork",
+"properties": {
+"cidrRange": {
+"description": "CIDR range for one authorzied network of the instance.",
+"type": "string"
+}
+},
+"type": "object"
+},
 "AutomatedBackupPolicy": {
 "description": "Message describing the user-specified automated backup policy. All fields in the automated backup policy are optional. Defaults for each field are provided if they are not set.",
 "id": "AutomatedBackupPolicy",
@@ -1845,6 +1856,15 @@ false
 "description": "Labels as key value pairs",
 "type": "object"
 },
+"maintenanceSchedule": {
+"$ref": "MaintenanceSchedule",
+"description": "Output only. The maintenance schedule for the cluster, generated for a specific rollout if a maintenance window is set.",
+"readOnly": true
+},
+"maintenanceUpdatePolicy": {
+"$ref": "MaintenanceUpdatePolicy",
+"description": "Optional. The maintenance update policy determines when to allow or deny updates."
+},
 "migrationSource": {
 "$ref": "MigrationSource",
 "description": "Output only. Cluster created via DMS migration.",
@@ -1867,6 +1887,10 @@ false
 "$ref": "PrimaryConfig",
 "description": "Output only. Cross Region replication config specific to PRIMARY cluster.",
 "readOnly": true
+},
+"pscConfig": {
+"$ref": "PscConfig",
+"description": "Optional. The configuration for Private Service Connect (PSC) for the cluster."
 },
 "reconciling": {
 "description": "Output only. Reconciling (https://google.aip.dev/128#reconciliation). Set to true if the current state of Cluster does not match the user's intended state, and the service is actively updating the resource to reconcile them. This can happen due to user-triggered updates or system actions like failover or maintenance.",
@@ -1946,6 +1970,11 @@ false
 },
 "name": {
 "description": "The name of the ConnectionInfo singleton resource, e.g.: projects/{project}/locations/{location}/clusters/*/instances/*/connectionInfo This field currently has no semantic meaning.",
+"type": "string"
+},
+"publicIpAddress": {
+"description": "Output only. The public IP addresses for the Instance. This is available ONLY when enable_public_ip is set. This is the connection endpoint for an end-user application.",
+"readOnly": true,
 "type": "string"
 }
 },
@@ -2304,6 +2333,10 @@ false
 "readOnly": true,
 "type": "string"
 },
+"networkConfig": {
+"$ref": "InstanceNetworkConfig",
+"description": "Optional. Instance level network configuration."
+},
 "nodes": {
 "description": "Output only. List of available read-only VMs in this instance, including the standby for a PRIMARY instance.",
 "items": {
@@ -2311,6 +2344,15 @@ false
 },
 "readOnly": true,
 "type": "array"
+},
+"pscInstanceConfig": {
+"$ref": "PscInstanceConfig",
+"description": "Optional. The configuration for Private Service Connect (PSC) for the instance."
+},
+"publicIpAddress": {
+"description": "Output only. The public IP addresses for the Instance. This is available ONLY when enable_public_ip is set. This is the connection endpoint for an end-user application.",
+"readOnly": true,
+"type": "string"
 },
 "queryInsightsConfig": {
 "$ref": "QueryInsightsInstanceConfig",
@@ -2372,6 +2414,24 @@ false
 "$ref": "Node",
 "description": "Output only. This is set for the read-write VM of the PRIMARY instance only.",
 "readOnly": true
+}
+},
+"type": "object"
+},
+"InstanceNetworkConfig": {
+"description": "Metadata related to instance level network configuration.",
+"id": "InstanceNetworkConfig",
+"properties": {
+"authorizedExternalNetworks": {
+"description": "Optional. A list of external network authorized to access this instance.",
+"items": {
+"$ref": "AuthorizedNetwork"
+},
+"type": "array"
+},
+"enablePublicIp": {
+"description": "Optional. Enabling public ip for the instance.",
+"type": "boolean"
 }
 },
 "type": "object"
@@ -2537,6 +2597,68 @@ false
 "description": "The number of CPU's in the VM instance.",
 "format": "int32",
 "type": "integer"
+}
+},
+"type": "object"
+},
+"MaintenanceSchedule": {
+"description": "MaintenanceSchedule stores the maintenance schedule generated from the MaintenanceUpdatePolicy, once a maintenance rollout is triggered, if MaintenanceWindow is set, and if there is no conflicting DenyPeriod. The schedule is cleared once the update takes place. This field cannot be manually changed; modify the MaintenanceUpdatePolicy instead.",
+"id": "MaintenanceSchedule",
+"properties": {
+"startTime": {
+"description": "Output only. The scheduled start time for the maintenance.",
+"format": "google-datetime",
+"readOnly": true,
+"type": "string"
+}
+},
+"type": "object"
+},
+"MaintenanceUpdatePolicy": {
+"description": "MaintenanceUpdatePolicy defines the policy for system updates.",
+"id": "MaintenanceUpdatePolicy",
+"properties": {
+"maintenanceWindows": {
+"description": "Preferred windows to perform maintenance. Currently limited to 1.",
+"items": {
+"$ref": "MaintenanceWindow"
+},
+"type": "array"
+}
+},
+"type": "object"
+},
+"MaintenanceWindow": {
+"description": "MaintenanceWindow specifies a preferred day and time for maintenance.",
+"id": "MaintenanceWindow",
+"properties": {
+"day": {
+"description": "Preferred day of the week for maintenance, e.g. MONDAY, TUESDAY, etc.",
+"enum": [
+"DAY_OF_WEEK_UNSPECIFIED",
+"MONDAY",
+"TUESDAY",
+"WEDNESDAY",
+"THURSDAY",
+"FRIDAY",
+"SATURDAY",
+"SUNDAY"
+],
+"enumDescriptions": [
+"The day of the week is unspecified.",
+"Monday",
+"Tuesday",
+"Wednesday",
+"Thursday",
+"Friday",
+"Saturday",
+"Sunday"
+],
+"type": "string"
+},
+"startTime": {
+"$ref": "GoogleTypeTimeOfDay",
+"description": "Preferred time to start the maintenance operation on the specified day. Maintenance will start within 1 hour of this time."
 }
 },
 "type": "object"
@@ -2718,6 +2840,41 @@ false
 "validateOnly": {
 "description": "Optional. If set, performs request validation (e.g. permission checks and any other type of validation), but do not actually execute the delete.",
 "type": "boolean"
+}
+},
+"type": "object"
+},
+"PscConfig": {
+"description": "PscConfig contains PSC related configuration at a cluster level.",
+"id": "PscConfig",
+"properties": {
+"pscEnabled": {
+"description": "Optional. Create an instance that allows connections from Private Service Connect endpoints to the instance.",
+"type": "boolean"
+}
+},
+"type": "object"
+},
+"PscInstanceConfig": {
+"description": "PscInstanceConfig contains PSC related configuration at an instance level.",
+"id": "PscInstanceConfig",
+"properties": {
+"allowedConsumerProjects": {
+"description": "Optional. List of consumer projects that are allowed to create PSC endpoints to service-attachments to this instance.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+"pscDnsName": {
+"description": "Output only. The DNS name of the instance for PSC connectivity. Name convention: ...alloydb-psc.goog",
+"readOnly": true,
+"type": "string"
+},
+"serviceAttachmentLink": {
+"description": "Output only. The service attachment created when Private Service Connect (PSC) is enabled for the instance. The name of the resource will be in the format of `projects//regions//serviceAttachments/`",
+"readOnly": true,
+"type": "string"
 }
 },
 "type": "object"
@@ -2941,6 +3098,10 @@ false
 "For rest of the other category"
 ],
 "type": "string"
+},
+"crossRegionReplicaConfigured": {
+"description": "Checks for resources that are configured to have redundancy, and ongoing replication across regions",
+"type": "boolean"
 },
 "externalReplicaConfigured": {
 "type": "boolean"
@@ -3257,7 +3418,7 @@ false
 "SIGNAL_TYPE_DATABASE_AUDITING_DISABLED",
 "SIGNAL_TYPE_RESTRICT_AUTHORIZED_NETWORKS",
 "SIGNAL_TYPE_VIOLATE_POLICY_RESTRICT_PUBLIC_IP",
-"SIGNAL_TYPE_CLUSTER_QUOTA_LIMIT",
+"SIGNAL_TYPE_QUOTA_LIMIT",
 "SIGNAL_TYPE_NO_PASSWORD_POLICY",
 "SIGNAL_TYPE_CONNECTIONS_PERFORMANCE_IMPACT",
 "SIGNAL_TYPE_TMP_TABLES_PERFORMANCE_IMPACT",
@@ -3736,7 +3897,7 @@ false
 "SIGNAL_TYPE_DATABASE_AUDITING_DISABLED",
 "SIGNAL_TYPE_RESTRICT_AUTHORIZED_NETWORKS",
 "SIGNAL_TYPE_VIOLATE_POLICY_RESTRICT_PUBLIC_IP",
-"SIGNAL_TYPE_CLUSTER_QUOTA_LIMIT",
+"SIGNAL_TYPE_QUOTA_LIMIT",
 "SIGNAL_TYPE_NO_PASSWORD_POLICY",
 "SIGNAL_TYPE_CONNECTIONS_PERFORMANCE_IMPACT",
 "SIGNAL_TYPE_TMP_TABLES_PERFORMANCE_IMPACT",
@@ -3908,17 +4069,10 @@ false
 "description": "An enum that represents the type of this entitlement.",
 "enum": [
 "ENTITLEMENT_TYPE_UNSPECIFIED",
-"DUET_AI",
 "GEMINI"
-],
-"enumDeprecated": [
-false,
-true,
-false
 ],
 "enumDescriptions": [
 "",
-"The root entitlement representing Duet AI package ownership.",
 "The root entitlement representing Gemini package ownership."
 ],
 "type": "string"
@@ -4073,6 +4227,7 @@ false
 "PRODUCT_TYPE_ON_PREM",
 "ON_PREM",
 "PRODUCT_TYPE_MEMORYSTORE",
+"PRODUCT_TYPE_BIGTABLE",
 "PRODUCT_TYPE_OTHER"
 ],
 "enumDeprecated": [
@@ -4084,6 +4239,7 @@ true,
 false,
 false,
 true,
+false,
 false,
 false
 ],
@@ -4097,6 +4253,7 @@ false
 "On premises database product.",
 "On premises database product.",
 "Memorystore product area in GCP",
+"Bigtable product area in GCP",
 "Other refers to rest of other product type. This is to be when product type is known, but it is not present in this enum."
 ],
 "type": "string"

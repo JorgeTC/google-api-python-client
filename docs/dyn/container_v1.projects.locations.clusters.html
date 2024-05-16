@@ -392,7 +392,18 @@ Args:
     &quot;currentNodeCount&quot;: 42, # [Output only] The number of nodes currently in the cluster. Deprecated. Call Kubernetes API directly to retrieve node information.
     &quot;currentNodeVersion&quot;: &quot;A String&quot;, # [Output only] Deprecated, use [NodePools.version](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters.nodePools) instead. The current version of the node software components. If they are currently at multiple versions because they&#x27;re in the process of being upgraded, this reflects the minimum version of all nodes.
     &quot;databaseEncryption&quot;: { # Configuration of etcd encryption. # Configuration of etcd encryption.
+      &quot;currentState&quot;: &quot;A String&quot;, # Output only. The current state of etcd encryption.
+      &quot;decryptionKeys&quot;: [ # Output only. Keys in use by the cluster for decrypting existing objects, in addition to the key in `key_name`. Each item is a CloudKMS key resource.
+        &quot;A String&quot;,
+      ],
       &quot;keyName&quot;: &quot;A String&quot;, # Name of CloudKMS key to use for the encryption of secrets in etcd. Ex. projects/my-project/locations/global/keyRings/my-ring/cryptoKeys/my-key
+      &quot;lastOperationErrors&quot;: [ # Output only. Records errors seen during DatabaseEncryption update operations.
+        { # OperationError records errors seen from CloudKMS keys encountered during updates to DatabaseEncryption configuration.
+          &quot;errorMessage&quot;: &quot;A String&quot;, # Description of the error seen during the operation.
+          &quot;keyName&quot;: &quot;A String&quot;, # CloudKMS key resource that had the error.
+          &quot;timestamp&quot;: &quot;A String&quot;, # Time when the CloudKMS error was seen.
+        },
+      ],
       &quot;state&quot;: &quot;A String&quot;, # The desired state of etcd encryption.
     },
     &quot;defaultMaxPodsConstraint&quot;: { # Constraints applied to pods. # The default constraint on the maximum number of pods that can be run simultaneously on a node in the node pool of this cluster. Only honored if cluster created with IP Alias support.
@@ -551,6 +562,7 @@ Args:
         &quot;disabled&quot;: True or False, # Disables cluster default sNAT rules.
       },
       &quot;dnsConfig&quot;: { # DNSConfig contains the desired set of options for configuring clusterDNS. # DNSConfig contains clusterDNS config for this cluster.
+        &quot;additiveVpcScopeDnsDomain&quot;: &quot;A String&quot;, # Optional. The domain used in Additive VPC scope.
         &quot;clusterDns&quot;: &quot;A String&quot;, # cluster_dns indicates which in-cluster DNS provider should be used.
         &quot;clusterDnsDomain&quot;: &quot;A String&quot;, # cluster_dns_domain is the suffix used for all cluster service records.
         &quot;clusterDnsScope&quot;: &quot;A String&quot;, # cluster_dns_scope indicates the scope of access to cluster DNS records.
@@ -563,7 +575,7 @@ Args:
       &quot;gatewayApiConfig&quot;: { # GatewayAPIConfig contains the desired config of Gateway API on this cluster. # GatewayAPIConfig contains the desired config of Gateway API on this cluster.
         &quot;channel&quot;: &quot;A String&quot;, # The Gateway API release channel to use for Gateway API.
       },
-      &quot;inTransitEncryptionConfig&quot;: &quot;A String&quot;, # Specify the details of in-transit encryption.
+      &quot;inTransitEncryptionConfig&quot;: &quot;A String&quot;, # Specify the details of in-transit encryption. Now named inter-node transparent encryption.
       &quot;network&quot;: &quot;A String&quot;, # Output only. The relative name of the Google Compute Engine network(https://cloud.google.com/compute/docs/networks-and-firewalls#networks) to which the cluster is connected. Example: projects/my-project/global/networks/my-network
       &quot;networkPerformanceConfig&quot;: { # Configuration of network bandwidth tiers # Network bandwidth tier configuration.
         &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;, # Specifies the total network bandwidth tier for NodePools in the cluster.
@@ -594,11 +606,27 @@ Args:
         },
       ],
       &quot;advancedMachineFeatures&quot;: { # Specifies options for controlling advanced machine features. # Advanced features for the Compute Engine VM.
+        &quot;enableNestedVirtualization&quot;: True or False, # Whether or not to enable nested virtualization (defaults to false).
         &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
       },
       &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
       &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
         &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+      },
+      &quot;containerdConfig&quot;: { # ContainerdConfig contains configuration to customize containerd. # Parameters for containerd customization.
+        &quot;privateRegistryAccessConfig&quot;: { # PrivateRegistryAccessConfig contains access configuration for private container registries. # PrivateRegistryAccessConfig is used to configure access configuration for private container registries.
+          &quot;certificateAuthorityDomainConfig&quot;: [ # Private registry access configuration.
+            { # CertificateAuthorityDomainConfig configures one or more fully qualified domain names (FQDN) to a specific certificate.
+              &quot;fqdns&quot;: [ # List of fully qualified domain names (FQDN). Specifying port is supported. Wilcards are NOT supported. Examples: - my.customdomain.com - 10.0.1.2:5000
+                &quot;A String&quot;,
+              ],
+              &quot;gcpSecretManagerCertificateConfig&quot;: { # GCPSecretManagerCertificateConfig configures a secret from [Google Secret Manager](https://cloud.google.com/secret-manager). # Google Secret Manager (GCP) certificate configuration.
+                &quot;secretUri&quot;: &quot;A String&quot;, # Secret URI, in the form &quot;projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION&quot;. Version can be fixed (e.g. &quot;2&quot;) or &quot;latest&quot;
+              },
+            },
+          ],
+          &quot;enabled&quot;: True or False, # Private registry access is enabled.
+        },
       },
       &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
       &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
@@ -628,6 +656,10 @@ Args:
       },
       &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
         &quot;cgroupMode&quot;: &quot;A String&quot;, # cgroup_mode specifies the cgroup mode to be used on the node.
+        &quot;hugepages&quot;: { # Hugepages amount in both 2m and 1g size # Optional. Amounts for 2M and 1G hugepages
+          &quot;hugepageSize1g&quot;: 42, # Optional. Amount of 1G hugepages
+          &quot;hugepageSize2m&quot;: 42, # Optional. Amount of 2M hugepages
+        },
         &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
           &quot;a_key&quot;: &quot;A String&quot;,
         },
@@ -668,6 +700,8 @@ Args:
       },
       &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
         &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
+      },
+      &quot;secondaryBootDiskUpdateStrategy&quot;: { # SecondaryBootDiskUpdateStrategy is a placeholder which will be extended in the future to define different options for updating secondary boot disks. # Secondary boot disk update strategy.
       },
       &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
         { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
@@ -716,6 +750,13 @@ Args:
           &quot;A String&quot;,
         ],
       },
+      &quot;nodeKubeletConfig&quot;: { # Node kubelet configs. # NodeKubeletConfig controls the defaults for autoprovisioned node-pools. Currently only `insecure_kubelet_readonly_port_enabled` can be set here.
+        &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
+        &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
+        &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+        &quot;insecureKubeletReadonlyPortEnabled&quot;: True or False, # Enable or disable Kubelet read only port.
+        &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
+      },
       &quot;resourceManagerTags&quot;: { # A map of resource manager tag keys and values to be attached to the nodes for managing Compute Engine firewalls using Network Firewall Policies. Tags must be according to specifications in https://cloud.google.com/vpc/docs/tags-firewalls-overview#specifications. A maximum of 5 tag key-value pairs can be specified. Existing tags will be replaced with new values. # Resource manager tag keys and values to be attached to the nodes for managing Compute Engine firewalls using Network Firewall Policies.
         &quot;tags&quot;: { # TagKeyValue must be in one of the following formats ([KEY]=[VALUE]) 1. `tagKeys/{tag_key_id}=tagValues/{tag_value_id}` 2. `{org_id}/{tag_key_name}={tag_value_name}` 3. `{project_id}/{tag_key_name}={tag_value_name}`
           &quot;a_key&quot;: &quot;A String&quot;,
@@ -724,6 +765,21 @@ Args:
     },
     &quot;nodePoolDefaults&quot;: { # Subset of Nodepool message that has defaults. # Default NodePool settings for the entire cluster. These settings are overridden if specified on the specific NodePool object.
       &quot;nodeConfigDefaults&quot;: { # Subset of NodeConfig message that has defaults. # Subset of NodeConfig message that has defaults.
+        &quot;containerdConfig&quot;: { # ContainerdConfig contains configuration to customize containerd. # Parameters for containerd customization.
+          &quot;privateRegistryAccessConfig&quot;: { # PrivateRegistryAccessConfig contains access configuration for private container registries. # PrivateRegistryAccessConfig is used to configure access configuration for private container registries.
+            &quot;certificateAuthorityDomainConfig&quot;: [ # Private registry access configuration.
+              { # CertificateAuthorityDomainConfig configures one or more fully qualified domain names (FQDN) to a specific certificate.
+                &quot;fqdns&quot;: [ # List of fully qualified domain names (FQDN). Specifying port is supported. Wilcards are NOT supported. Examples: - my.customdomain.com - 10.0.1.2:5000
+                  &quot;A String&quot;,
+                ],
+                &quot;gcpSecretManagerCertificateConfig&quot;: { # GCPSecretManagerCertificateConfig configures a secret from [Google Secret Manager](https://cloud.google.com/secret-manager). # Google Secret Manager (GCP) certificate configuration.
+                  &quot;secretUri&quot;: &quot;A String&quot;, # Secret URI, in the form &quot;projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION&quot;. Version can be fixed (e.g. &quot;2&quot;) or &quot;latest&quot;
+                },
+              },
+            ],
+            &quot;enabled&quot;: True or False, # Private registry access is enabled.
+          },
+        },
         &quot;gcfsConfig&quot;: { # GcfsConfig contains configurations of Google Container File System (image streaming). # GCFS (Google Container File System, also known as Riptide) options.
           &quot;enabled&quot;: True or False, # Whether to use GCFS.
         },
@@ -731,6 +787,13 @@ Args:
           &quot;variantConfig&quot;: { # LoggingVariantConfig specifies the behaviour of the logging component. # Logging variant configuration.
             &quot;variant&quot;: &quot;A String&quot;, # Logging variant deployed on nodes.
           },
+        },
+        &quot;nodeKubeletConfig&quot;: { # Node kubelet configs. # NodeKubeletConfig controls the defaults for new node-pools. Currently only `insecure_kubelet_readonly_port_enabled` can be set here.
+          &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
+          &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
+          &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+          &quot;insecureKubeletReadonlyPortEnabled&quot;: True or False, # Enable or disable Kubelet read only port.
+          &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
         },
       },
     },
@@ -772,11 +835,27 @@ Args:
             },
           ],
           &quot;advancedMachineFeatures&quot;: { # Specifies options for controlling advanced machine features. # Advanced features for the Compute Engine VM.
+            &quot;enableNestedVirtualization&quot;: True or False, # Whether or not to enable nested virtualization (defaults to false).
             &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
           },
           &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
           &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
             &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+          },
+          &quot;containerdConfig&quot;: { # ContainerdConfig contains configuration to customize containerd. # Parameters for containerd customization.
+            &quot;privateRegistryAccessConfig&quot;: { # PrivateRegistryAccessConfig contains access configuration for private container registries. # PrivateRegistryAccessConfig is used to configure access configuration for private container registries.
+              &quot;certificateAuthorityDomainConfig&quot;: [ # Private registry access configuration.
+                { # CertificateAuthorityDomainConfig configures one or more fully qualified domain names (FQDN) to a specific certificate.
+                  &quot;fqdns&quot;: [ # List of fully qualified domain names (FQDN). Specifying port is supported. Wilcards are NOT supported. Examples: - my.customdomain.com - 10.0.1.2:5000
+                    &quot;A String&quot;,
+                  ],
+                  &quot;gcpSecretManagerCertificateConfig&quot;: { # GCPSecretManagerCertificateConfig configures a secret from [Google Secret Manager](https://cloud.google.com/secret-manager). # Google Secret Manager (GCP) certificate configuration.
+                    &quot;secretUri&quot;: &quot;A String&quot;, # Secret URI, in the form &quot;projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION&quot;. Version can be fixed (e.g. &quot;2&quot;) or &quot;latest&quot;
+                  },
+                },
+              ],
+              &quot;enabled&quot;: True or False, # Private registry access is enabled.
+            },
           },
           &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
           &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
@@ -806,6 +885,10 @@ Args:
           },
           &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
             &quot;cgroupMode&quot;: &quot;A String&quot;, # cgroup_mode specifies the cgroup mode to be used on the node.
+            &quot;hugepages&quot;: { # Hugepages amount in both 2m and 1g size # Optional. Amounts for 2M and 1G hugepages
+              &quot;hugepageSize1g&quot;: 42, # Optional. Amount of 1G hugepages
+              &quot;hugepageSize2m&quot;: 42, # Optional. Amount of 2M hugepages
+            },
             &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
               &quot;a_key&quot;: &quot;A String&quot;,
             },
@@ -846,6 +929,8 @@ Args:
           },
           &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
             &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
+          },
+          &quot;secondaryBootDiskUpdateStrategy&quot;: { # SecondaryBootDiskUpdateStrategy is a placeholder which will be extended in the future to define different options for updating secondary boot disks. # Secondary boot disk update strategy.
           },
           &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
             { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
@@ -1020,6 +1105,8 @@ Args:
       },
       &quot;enableNetworkEgressMetering&quot;: True or False, # Whether to enable network egress metering for this cluster. If enabled, a daemonset will be created in the cluster to meter network egress traffic.
     },
+    &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+    &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
     &quot;securityPostureConfig&quot;: { # SecurityPostureConfig defines the flags needed to enable/disable features for the Security Posture API. # Enable/Disable Security Posture API features for the cluster.
       &quot;mode&quot;: &quot;A String&quot;, # Sets which mode to use for Security Posture features.
       &quot;vulnerabilityMode&quot;: &quot;A String&quot;, # Sets which mode to use for vulnerability scanning.
@@ -1318,7 +1405,18 @@ Returns:
   &quot;currentNodeCount&quot;: 42, # [Output only] The number of nodes currently in the cluster. Deprecated. Call Kubernetes API directly to retrieve node information.
   &quot;currentNodeVersion&quot;: &quot;A String&quot;, # [Output only] Deprecated, use [NodePools.version](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters.nodePools) instead. The current version of the node software components. If they are currently at multiple versions because they&#x27;re in the process of being upgraded, this reflects the minimum version of all nodes.
   &quot;databaseEncryption&quot;: { # Configuration of etcd encryption. # Configuration of etcd encryption.
+    &quot;currentState&quot;: &quot;A String&quot;, # Output only. The current state of etcd encryption.
+    &quot;decryptionKeys&quot;: [ # Output only. Keys in use by the cluster for decrypting existing objects, in addition to the key in `key_name`. Each item is a CloudKMS key resource.
+      &quot;A String&quot;,
+    ],
     &quot;keyName&quot;: &quot;A String&quot;, # Name of CloudKMS key to use for the encryption of secrets in etcd. Ex. projects/my-project/locations/global/keyRings/my-ring/cryptoKeys/my-key
+    &quot;lastOperationErrors&quot;: [ # Output only. Records errors seen during DatabaseEncryption update operations.
+      { # OperationError records errors seen from CloudKMS keys encountered during updates to DatabaseEncryption configuration.
+        &quot;errorMessage&quot;: &quot;A String&quot;, # Description of the error seen during the operation.
+        &quot;keyName&quot;: &quot;A String&quot;, # CloudKMS key resource that had the error.
+        &quot;timestamp&quot;: &quot;A String&quot;, # Time when the CloudKMS error was seen.
+      },
+    ],
     &quot;state&quot;: &quot;A String&quot;, # The desired state of etcd encryption.
   },
   &quot;defaultMaxPodsConstraint&quot;: { # Constraints applied to pods. # The default constraint on the maximum number of pods that can be run simultaneously on a node in the node pool of this cluster. Only honored if cluster created with IP Alias support.
@@ -1477,6 +1575,7 @@ Returns:
       &quot;disabled&quot;: True or False, # Disables cluster default sNAT rules.
     },
     &quot;dnsConfig&quot;: { # DNSConfig contains the desired set of options for configuring clusterDNS. # DNSConfig contains clusterDNS config for this cluster.
+      &quot;additiveVpcScopeDnsDomain&quot;: &quot;A String&quot;, # Optional. The domain used in Additive VPC scope.
       &quot;clusterDns&quot;: &quot;A String&quot;, # cluster_dns indicates which in-cluster DNS provider should be used.
       &quot;clusterDnsDomain&quot;: &quot;A String&quot;, # cluster_dns_domain is the suffix used for all cluster service records.
       &quot;clusterDnsScope&quot;: &quot;A String&quot;, # cluster_dns_scope indicates the scope of access to cluster DNS records.
@@ -1489,7 +1588,7 @@ Returns:
     &quot;gatewayApiConfig&quot;: { # GatewayAPIConfig contains the desired config of Gateway API on this cluster. # GatewayAPIConfig contains the desired config of Gateway API on this cluster.
       &quot;channel&quot;: &quot;A String&quot;, # The Gateway API release channel to use for Gateway API.
     },
-    &quot;inTransitEncryptionConfig&quot;: &quot;A String&quot;, # Specify the details of in-transit encryption.
+    &quot;inTransitEncryptionConfig&quot;: &quot;A String&quot;, # Specify the details of in-transit encryption. Now named inter-node transparent encryption.
     &quot;network&quot;: &quot;A String&quot;, # Output only. The relative name of the Google Compute Engine network(https://cloud.google.com/compute/docs/networks-and-firewalls#networks) to which the cluster is connected. Example: projects/my-project/global/networks/my-network
     &quot;networkPerformanceConfig&quot;: { # Configuration of network bandwidth tiers # Network bandwidth tier configuration.
       &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;, # Specifies the total network bandwidth tier for NodePools in the cluster.
@@ -1520,11 +1619,27 @@ Returns:
       },
     ],
     &quot;advancedMachineFeatures&quot;: { # Specifies options for controlling advanced machine features. # Advanced features for the Compute Engine VM.
+      &quot;enableNestedVirtualization&quot;: True or False, # Whether or not to enable nested virtualization (defaults to false).
       &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
     },
     &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
     &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
       &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+    },
+    &quot;containerdConfig&quot;: { # ContainerdConfig contains configuration to customize containerd. # Parameters for containerd customization.
+      &quot;privateRegistryAccessConfig&quot;: { # PrivateRegistryAccessConfig contains access configuration for private container registries. # PrivateRegistryAccessConfig is used to configure access configuration for private container registries.
+        &quot;certificateAuthorityDomainConfig&quot;: [ # Private registry access configuration.
+          { # CertificateAuthorityDomainConfig configures one or more fully qualified domain names (FQDN) to a specific certificate.
+            &quot;fqdns&quot;: [ # List of fully qualified domain names (FQDN). Specifying port is supported. Wilcards are NOT supported. Examples: - my.customdomain.com - 10.0.1.2:5000
+              &quot;A String&quot;,
+            ],
+            &quot;gcpSecretManagerCertificateConfig&quot;: { # GCPSecretManagerCertificateConfig configures a secret from [Google Secret Manager](https://cloud.google.com/secret-manager). # Google Secret Manager (GCP) certificate configuration.
+              &quot;secretUri&quot;: &quot;A String&quot;, # Secret URI, in the form &quot;projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION&quot;. Version can be fixed (e.g. &quot;2&quot;) or &quot;latest&quot;
+            },
+          },
+        ],
+        &quot;enabled&quot;: True or False, # Private registry access is enabled.
+      },
     },
     &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
     &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
@@ -1554,6 +1669,10 @@ Returns:
     },
     &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
       &quot;cgroupMode&quot;: &quot;A String&quot;, # cgroup_mode specifies the cgroup mode to be used on the node.
+      &quot;hugepages&quot;: { # Hugepages amount in both 2m and 1g size # Optional. Amounts for 2M and 1G hugepages
+        &quot;hugepageSize1g&quot;: 42, # Optional. Amount of 1G hugepages
+        &quot;hugepageSize2m&quot;: 42, # Optional. Amount of 2M hugepages
+      },
       &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
         &quot;a_key&quot;: &quot;A String&quot;,
       },
@@ -1594,6 +1713,8 @@ Returns:
     },
     &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
       &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
+    },
+    &quot;secondaryBootDiskUpdateStrategy&quot;: { # SecondaryBootDiskUpdateStrategy is a placeholder which will be extended in the future to define different options for updating secondary boot disks. # Secondary boot disk update strategy.
     },
     &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
       { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
@@ -1642,6 +1763,13 @@ Returns:
         &quot;A String&quot;,
       ],
     },
+    &quot;nodeKubeletConfig&quot;: { # Node kubelet configs. # NodeKubeletConfig controls the defaults for autoprovisioned node-pools. Currently only `insecure_kubelet_readonly_port_enabled` can be set here.
+      &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
+      &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
+      &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+      &quot;insecureKubeletReadonlyPortEnabled&quot;: True or False, # Enable or disable Kubelet read only port.
+      &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
+    },
     &quot;resourceManagerTags&quot;: { # A map of resource manager tag keys and values to be attached to the nodes for managing Compute Engine firewalls using Network Firewall Policies. Tags must be according to specifications in https://cloud.google.com/vpc/docs/tags-firewalls-overview#specifications. A maximum of 5 tag key-value pairs can be specified. Existing tags will be replaced with new values. # Resource manager tag keys and values to be attached to the nodes for managing Compute Engine firewalls using Network Firewall Policies.
       &quot;tags&quot;: { # TagKeyValue must be in one of the following formats ([KEY]=[VALUE]) 1. `tagKeys/{tag_key_id}=tagValues/{tag_value_id}` 2. `{org_id}/{tag_key_name}={tag_value_name}` 3. `{project_id}/{tag_key_name}={tag_value_name}`
         &quot;a_key&quot;: &quot;A String&quot;,
@@ -1650,6 +1778,21 @@ Returns:
   },
   &quot;nodePoolDefaults&quot;: { # Subset of Nodepool message that has defaults. # Default NodePool settings for the entire cluster. These settings are overridden if specified on the specific NodePool object.
     &quot;nodeConfigDefaults&quot;: { # Subset of NodeConfig message that has defaults. # Subset of NodeConfig message that has defaults.
+      &quot;containerdConfig&quot;: { # ContainerdConfig contains configuration to customize containerd. # Parameters for containerd customization.
+        &quot;privateRegistryAccessConfig&quot;: { # PrivateRegistryAccessConfig contains access configuration for private container registries. # PrivateRegistryAccessConfig is used to configure access configuration for private container registries.
+          &quot;certificateAuthorityDomainConfig&quot;: [ # Private registry access configuration.
+            { # CertificateAuthorityDomainConfig configures one or more fully qualified domain names (FQDN) to a specific certificate.
+              &quot;fqdns&quot;: [ # List of fully qualified domain names (FQDN). Specifying port is supported. Wilcards are NOT supported. Examples: - my.customdomain.com - 10.0.1.2:5000
+                &quot;A String&quot;,
+              ],
+              &quot;gcpSecretManagerCertificateConfig&quot;: { # GCPSecretManagerCertificateConfig configures a secret from [Google Secret Manager](https://cloud.google.com/secret-manager). # Google Secret Manager (GCP) certificate configuration.
+                &quot;secretUri&quot;: &quot;A String&quot;, # Secret URI, in the form &quot;projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION&quot;. Version can be fixed (e.g. &quot;2&quot;) or &quot;latest&quot;
+              },
+            },
+          ],
+          &quot;enabled&quot;: True or False, # Private registry access is enabled.
+        },
+      },
       &quot;gcfsConfig&quot;: { # GcfsConfig contains configurations of Google Container File System (image streaming). # GCFS (Google Container File System, also known as Riptide) options.
         &quot;enabled&quot;: True or False, # Whether to use GCFS.
       },
@@ -1657,6 +1800,13 @@ Returns:
         &quot;variantConfig&quot;: { # LoggingVariantConfig specifies the behaviour of the logging component. # Logging variant configuration.
           &quot;variant&quot;: &quot;A String&quot;, # Logging variant deployed on nodes.
         },
+      },
+      &quot;nodeKubeletConfig&quot;: { # Node kubelet configs. # NodeKubeletConfig controls the defaults for new node-pools. Currently only `insecure_kubelet_readonly_port_enabled` can be set here.
+        &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
+        &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
+        &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+        &quot;insecureKubeletReadonlyPortEnabled&quot;: True or False, # Enable or disable Kubelet read only port.
+        &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
       },
     },
   },
@@ -1698,11 +1848,27 @@ Returns:
           },
         ],
         &quot;advancedMachineFeatures&quot;: { # Specifies options for controlling advanced machine features. # Advanced features for the Compute Engine VM.
+          &quot;enableNestedVirtualization&quot;: True or False, # Whether or not to enable nested virtualization (defaults to false).
           &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
         },
         &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
         &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
           &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+        },
+        &quot;containerdConfig&quot;: { # ContainerdConfig contains configuration to customize containerd. # Parameters for containerd customization.
+          &quot;privateRegistryAccessConfig&quot;: { # PrivateRegistryAccessConfig contains access configuration for private container registries. # PrivateRegistryAccessConfig is used to configure access configuration for private container registries.
+            &quot;certificateAuthorityDomainConfig&quot;: [ # Private registry access configuration.
+              { # CertificateAuthorityDomainConfig configures one or more fully qualified domain names (FQDN) to a specific certificate.
+                &quot;fqdns&quot;: [ # List of fully qualified domain names (FQDN). Specifying port is supported. Wilcards are NOT supported. Examples: - my.customdomain.com - 10.0.1.2:5000
+                  &quot;A String&quot;,
+                ],
+                &quot;gcpSecretManagerCertificateConfig&quot;: { # GCPSecretManagerCertificateConfig configures a secret from [Google Secret Manager](https://cloud.google.com/secret-manager). # Google Secret Manager (GCP) certificate configuration.
+                  &quot;secretUri&quot;: &quot;A String&quot;, # Secret URI, in the form &quot;projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION&quot;. Version can be fixed (e.g. &quot;2&quot;) or &quot;latest&quot;
+                },
+              },
+            ],
+            &quot;enabled&quot;: True or False, # Private registry access is enabled.
+          },
         },
         &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
         &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
@@ -1732,6 +1898,10 @@ Returns:
         },
         &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
           &quot;cgroupMode&quot;: &quot;A String&quot;, # cgroup_mode specifies the cgroup mode to be used on the node.
+          &quot;hugepages&quot;: { # Hugepages amount in both 2m and 1g size # Optional. Amounts for 2M and 1G hugepages
+            &quot;hugepageSize1g&quot;: 42, # Optional. Amount of 1G hugepages
+            &quot;hugepageSize2m&quot;: 42, # Optional. Amount of 2M hugepages
+          },
           &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
             &quot;a_key&quot;: &quot;A String&quot;,
           },
@@ -1772,6 +1942,8 @@ Returns:
         },
         &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
           &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
+        },
+        &quot;secondaryBootDiskUpdateStrategy&quot;: { # SecondaryBootDiskUpdateStrategy is a placeholder which will be extended in the future to define different options for updating secondary boot disks. # Secondary boot disk update strategy.
         },
         &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
           { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
@@ -1946,6 +2118,8 @@ Returns:
     },
     &quot;enableNetworkEgressMetering&quot;: True or False, # Whether to enable network egress metering for this cluster. If enabled, a daemonset will be created in the cluster to meter network egress traffic.
   },
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;securityPostureConfig&quot;: { # SecurityPostureConfig defines the flags needed to enable/disable features for the Security Posture API. # Enable/Disable Security Posture API features for the cluster.
     &quot;mode&quot;: &quot;A String&quot;, # Sets which mode to use for Security Posture features.
     &quot;vulnerabilityMode&quot;: &quot;A String&quot;, # Sets which mode to use for vulnerability scanning.
@@ -2147,7 +2321,18 @@ Returns:
       &quot;currentNodeCount&quot;: 42, # [Output only] The number of nodes currently in the cluster. Deprecated. Call Kubernetes API directly to retrieve node information.
       &quot;currentNodeVersion&quot;: &quot;A String&quot;, # [Output only] Deprecated, use [NodePools.version](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters.nodePools) instead. The current version of the node software components. If they are currently at multiple versions because they&#x27;re in the process of being upgraded, this reflects the minimum version of all nodes.
       &quot;databaseEncryption&quot;: { # Configuration of etcd encryption. # Configuration of etcd encryption.
+        &quot;currentState&quot;: &quot;A String&quot;, # Output only. The current state of etcd encryption.
+        &quot;decryptionKeys&quot;: [ # Output only. Keys in use by the cluster for decrypting existing objects, in addition to the key in `key_name`. Each item is a CloudKMS key resource.
+          &quot;A String&quot;,
+        ],
         &quot;keyName&quot;: &quot;A String&quot;, # Name of CloudKMS key to use for the encryption of secrets in etcd. Ex. projects/my-project/locations/global/keyRings/my-ring/cryptoKeys/my-key
+        &quot;lastOperationErrors&quot;: [ # Output only. Records errors seen during DatabaseEncryption update operations.
+          { # OperationError records errors seen from CloudKMS keys encountered during updates to DatabaseEncryption configuration.
+            &quot;errorMessage&quot;: &quot;A String&quot;, # Description of the error seen during the operation.
+            &quot;keyName&quot;: &quot;A String&quot;, # CloudKMS key resource that had the error.
+            &quot;timestamp&quot;: &quot;A String&quot;, # Time when the CloudKMS error was seen.
+          },
+        ],
         &quot;state&quot;: &quot;A String&quot;, # The desired state of etcd encryption.
       },
       &quot;defaultMaxPodsConstraint&quot;: { # Constraints applied to pods. # The default constraint on the maximum number of pods that can be run simultaneously on a node in the node pool of this cluster. Only honored if cluster created with IP Alias support.
@@ -2306,6 +2491,7 @@ Returns:
           &quot;disabled&quot;: True or False, # Disables cluster default sNAT rules.
         },
         &quot;dnsConfig&quot;: { # DNSConfig contains the desired set of options for configuring clusterDNS. # DNSConfig contains clusterDNS config for this cluster.
+          &quot;additiveVpcScopeDnsDomain&quot;: &quot;A String&quot;, # Optional. The domain used in Additive VPC scope.
           &quot;clusterDns&quot;: &quot;A String&quot;, # cluster_dns indicates which in-cluster DNS provider should be used.
           &quot;clusterDnsDomain&quot;: &quot;A String&quot;, # cluster_dns_domain is the suffix used for all cluster service records.
           &quot;clusterDnsScope&quot;: &quot;A String&quot;, # cluster_dns_scope indicates the scope of access to cluster DNS records.
@@ -2318,7 +2504,7 @@ Returns:
         &quot;gatewayApiConfig&quot;: { # GatewayAPIConfig contains the desired config of Gateway API on this cluster. # GatewayAPIConfig contains the desired config of Gateway API on this cluster.
           &quot;channel&quot;: &quot;A String&quot;, # The Gateway API release channel to use for Gateway API.
         },
-        &quot;inTransitEncryptionConfig&quot;: &quot;A String&quot;, # Specify the details of in-transit encryption.
+        &quot;inTransitEncryptionConfig&quot;: &quot;A String&quot;, # Specify the details of in-transit encryption. Now named inter-node transparent encryption.
         &quot;network&quot;: &quot;A String&quot;, # Output only. The relative name of the Google Compute Engine network(https://cloud.google.com/compute/docs/networks-and-firewalls#networks) to which the cluster is connected. Example: projects/my-project/global/networks/my-network
         &quot;networkPerformanceConfig&quot;: { # Configuration of network bandwidth tiers # Network bandwidth tier configuration.
           &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;, # Specifies the total network bandwidth tier for NodePools in the cluster.
@@ -2349,11 +2535,27 @@ Returns:
           },
         ],
         &quot;advancedMachineFeatures&quot;: { # Specifies options for controlling advanced machine features. # Advanced features for the Compute Engine VM.
+          &quot;enableNestedVirtualization&quot;: True or False, # Whether or not to enable nested virtualization (defaults to false).
           &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
         },
         &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
         &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
           &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+        },
+        &quot;containerdConfig&quot;: { # ContainerdConfig contains configuration to customize containerd. # Parameters for containerd customization.
+          &quot;privateRegistryAccessConfig&quot;: { # PrivateRegistryAccessConfig contains access configuration for private container registries. # PrivateRegistryAccessConfig is used to configure access configuration for private container registries.
+            &quot;certificateAuthorityDomainConfig&quot;: [ # Private registry access configuration.
+              { # CertificateAuthorityDomainConfig configures one or more fully qualified domain names (FQDN) to a specific certificate.
+                &quot;fqdns&quot;: [ # List of fully qualified domain names (FQDN). Specifying port is supported. Wilcards are NOT supported. Examples: - my.customdomain.com - 10.0.1.2:5000
+                  &quot;A String&quot;,
+                ],
+                &quot;gcpSecretManagerCertificateConfig&quot;: { # GCPSecretManagerCertificateConfig configures a secret from [Google Secret Manager](https://cloud.google.com/secret-manager). # Google Secret Manager (GCP) certificate configuration.
+                  &quot;secretUri&quot;: &quot;A String&quot;, # Secret URI, in the form &quot;projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION&quot;. Version can be fixed (e.g. &quot;2&quot;) or &quot;latest&quot;
+                },
+              },
+            ],
+            &quot;enabled&quot;: True or False, # Private registry access is enabled.
+          },
         },
         &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
         &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
@@ -2383,6 +2585,10 @@ Returns:
         },
         &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
           &quot;cgroupMode&quot;: &quot;A String&quot;, # cgroup_mode specifies the cgroup mode to be used on the node.
+          &quot;hugepages&quot;: { # Hugepages amount in both 2m and 1g size # Optional. Amounts for 2M and 1G hugepages
+            &quot;hugepageSize1g&quot;: 42, # Optional. Amount of 1G hugepages
+            &quot;hugepageSize2m&quot;: 42, # Optional. Amount of 2M hugepages
+          },
           &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
             &quot;a_key&quot;: &quot;A String&quot;,
           },
@@ -2423,6 +2629,8 @@ Returns:
         },
         &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
           &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
+        },
+        &quot;secondaryBootDiskUpdateStrategy&quot;: { # SecondaryBootDiskUpdateStrategy is a placeholder which will be extended in the future to define different options for updating secondary boot disks. # Secondary boot disk update strategy.
         },
         &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
           { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
@@ -2471,6 +2679,13 @@ Returns:
             &quot;A String&quot;,
           ],
         },
+        &quot;nodeKubeletConfig&quot;: { # Node kubelet configs. # NodeKubeletConfig controls the defaults for autoprovisioned node-pools. Currently only `insecure_kubelet_readonly_port_enabled` can be set here.
+          &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
+          &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
+          &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+          &quot;insecureKubeletReadonlyPortEnabled&quot;: True or False, # Enable or disable Kubelet read only port.
+          &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
+        },
         &quot;resourceManagerTags&quot;: { # A map of resource manager tag keys and values to be attached to the nodes for managing Compute Engine firewalls using Network Firewall Policies. Tags must be according to specifications in https://cloud.google.com/vpc/docs/tags-firewalls-overview#specifications. A maximum of 5 tag key-value pairs can be specified. Existing tags will be replaced with new values. # Resource manager tag keys and values to be attached to the nodes for managing Compute Engine firewalls using Network Firewall Policies.
           &quot;tags&quot;: { # TagKeyValue must be in one of the following formats ([KEY]=[VALUE]) 1. `tagKeys/{tag_key_id}=tagValues/{tag_value_id}` 2. `{org_id}/{tag_key_name}={tag_value_name}` 3. `{project_id}/{tag_key_name}={tag_value_name}`
             &quot;a_key&quot;: &quot;A String&quot;,
@@ -2479,6 +2694,21 @@ Returns:
       },
       &quot;nodePoolDefaults&quot;: { # Subset of Nodepool message that has defaults. # Default NodePool settings for the entire cluster. These settings are overridden if specified on the specific NodePool object.
         &quot;nodeConfigDefaults&quot;: { # Subset of NodeConfig message that has defaults. # Subset of NodeConfig message that has defaults.
+          &quot;containerdConfig&quot;: { # ContainerdConfig contains configuration to customize containerd. # Parameters for containerd customization.
+            &quot;privateRegistryAccessConfig&quot;: { # PrivateRegistryAccessConfig contains access configuration for private container registries. # PrivateRegistryAccessConfig is used to configure access configuration for private container registries.
+              &quot;certificateAuthorityDomainConfig&quot;: [ # Private registry access configuration.
+                { # CertificateAuthorityDomainConfig configures one or more fully qualified domain names (FQDN) to a specific certificate.
+                  &quot;fqdns&quot;: [ # List of fully qualified domain names (FQDN). Specifying port is supported. Wilcards are NOT supported. Examples: - my.customdomain.com - 10.0.1.2:5000
+                    &quot;A String&quot;,
+                  ],
+                  &quot;gcpSecretManagerCertificateConfig&quot;: { # GCPSecretManagerCertificateConfig configures a secret from [Google Secret Manager](https://cloud.google.com/secret-manager). # Google Secret Manager (GCP) certificate configuration.
+                    &quot;secretUri&quot;: &quot;A String&quot;, # Secret URI, in the form &quot;projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION&quot;. Version can be fixed (e.g. &quot;2&quot;) or &quot;latest&quot;
+                  },
+                },
+              ],
+              &quot;enabled&quot;: True or False, # Private registry access is enabled.
+            },
+          },
           &quot;gcfsConfig&quot;: { # GcfsConfig contains configurations of Google Container File System (image streaming). # GCFS (Google Container File System, also known as Riptide) options.
             &quot;enabled&quot;: True or False, # Whether to use GCFS.
           },
@@ -2486,6 +2716,13 @@ Returns:
             &quot;variantConfig&quot;: { # LoggingVariantConfig specifies the behaviour of the logging component. # Logging variant configuration.
               &quot;variant&quot;: &quot;A String&quot;, # Logging variant deployed on nodes.
             },
+          },
+          &quot;nodeKubeletConfig&quot;: { # Node kubelet configs. # NodeKubeletConfig controls the defaults for new node-pools. Currently only `insecure_kubelet_readonly_port_enabled` can be set here.
+            &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
+            &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
+            &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+            &quot;insecureKubeletReadonlyPortEnabled&quot;: True or False, # Enable or disable Kubelet read only port.
+            &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
           },
         },
       },
@@ -2527,11 +2764,27 @@ Returns:
               },
             ],
             &quot;advancedMachineFeatures&quot;: { # Specifies options for controlling advanced machine features. # Advanced features for the Compute Engine VM.
+              &quot;enableNestedVirtualization&quot;: True or False, # Whether or not to enable nested virtualization (defaults to false).
               &quot;threadsPerCore&quot;: &quot;A String&quot;, # The number of threads per physical core. To disable simultaneous multithreading (SMT) set this to 1. If unset, the maximum number of threads supported per core by the underlying processor is assumed.
             },
             &quot;bootDiskKmsKey&quot;: &quot;A String&quot;, #  The Customer Managed Encryption Key used to encrypt the boot disk attached to each node in the node pool. This should be of the form projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]. For more information about protecting resources with Cloud KMS Keys please see: https://cloud.google.com/compute/docs/disks/customer-managed-encryption
             &quot;confidentialNodes&quot;: { # ConfidentialNodes is configuration for the confidential nodes feature, which makes nodes run on confidential VMs. # Confidential nodes config. All the nodes in the node pool will be Confidential VM once enabled.
               &quot;enabled&quot;: True or False, # Whether Confidential Nodes feature is enabled.
+            },
+            &quot;containerdConfig&quot;: { # ContainerdConfig contains configuration to customize containerd. # Parameters for containerd customization.
+              &quot;privateRegistryAccessConfig&quot;: { # PrivateRegistryAccessConfig contains access configuration for private container registries. # PrivateRegistryAccessConfig is used to configure access configuration for private container registries.
+                &quot;certificateAuthorityDomainConfig&quot;: [ # Private registry access configuration.
+                  { # CertificateAuthorityDomainConfig configures one or more fully qualified domain names (FQDN) to a specific certificate.
+                    &quot;fqdns&quot;: [ # List of fully qualified domain names (FQDN). Specifying port is supported. Wilcards are NOT supported. Examples: - my.customdomain.com - 10.0.1.2:5000
+                      &quot;A String&quot;,
+                    ],
+                    &quot;gcpSecretManagerCertificateConfig&quot;: { # GCPSecretManagerCertificateConfig configures a secret from [Google Secret Manager](https://cloud.google.com/secret-manager). # Google Secret Manager (GCP) certificate configuration.
+                      &quot;secretUri&quot;: &quot;A String&quot;, # Secret URI, in the form &quot;projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION&quot;. Version can be fixed (e.g. &quot;2&quot;) or &quot;latest&quot;
+                    },
+                  },
+                ],
+                &quot;enabled&quot;: True or False, # Private registry access is enabled.
+              },
             },
             &quot;diskSizeGb&quot;: 42, # Size of the disk attached to each node, specified in GB. The smallest allowed disk size is 10GB. If unspecified, the default disk size is 100GB.
             &quot;diskType&quot;: &quot;A String&quot;, # Type of the disk attached to each node (e.g. &#x27;pd-standard&#x27;, &#x27;pd-ssd&#x27; or &#x27;pd-balanced&#x27;) If unspecified, the default disk type is &#x27;pd-standard&#x27;
@@ -2561,6 +2814,10 @@ Returns:
             },
             &quot;linuxNodeConfig&quot;: { # Parameters that can be configured on Linux nodes. # Parameters that can be configured on Linux nodes.
               &quot;cgroupMode&quot;: &quot;A String&quot;, # cgroup_mode specifies the cgroup mode to be used on the node.
+              &quot;hugepages&quot;: { # Hugepages amount in both 2m and 1g size # Optional. Amounts for 2M and 1G hugepages
+                &quot;hugepageSize1g&quot;: 42, # Optional. Amount of 1G hugepages
+                &quot;hugepageSize2m&quot;: 42, # Optional. Amount of 2M hugepages
+              },
               &quot;sysctls&quot;: { # The Linux kernel parameters to be applied to the nodes and all pods running on the nodes. The following parameters are supported. net.core.busy_poll net.core.busy_read net.core.netdev_max_backlog net.core.rmem_max net.core.wmem_default net.core.wmem_max net.core.optmem_max net.core.somaxconn net.ipv4.tcp_rmem net.ipv4.tcp_wmem net.ipv4.tcp_tw_reuse
                 &quot;a_key&quot;: &quot;A String&quot;,
               },
@@ -2601,6 +2858,8 @@ Returns:
             },
             &quot;sandboxConfig&quot;: { # SandboxConfig contains configurations of the sandbox to use for the node. # Sandbox configuration for this node.
               &quot;type&quot;: &quot;A String&quot;, # Type of the sandbox to use for the node.
+            },
+            &quot;secondaryBootDiskUpdateStrategy&quot;: { # SecondaryBootDiskUpdateStrategy is a placeholder which will be extended in the future to define different options for updating secondary boot disks. # Secondary boot disk update strategy.
             },
             &quot;secondaryBootDisks&quot;: [ # List of secondary boot disks attached to the nodes.
               { # SecondaryBootDisk represents a persistent disk attached to a node with special configurations based on its mode.
@@ -2775,6 +3034,8 @@ Returns:
         },
         &quot;enableNetworkEgressMetering&quot;: True or False, # Whether to enable network egress metering for this cluster. If enabled, a daemonset will be created in the cluster to meter network egress traffic.
       },
+      &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+      &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
       &quot;securityPostureConfig&quot;: { # SecurityPostureConfig defines the flags needed to enable/disable features for the Security Posture API. # Enable/Disable Security Posture API features for the cluster.
         &quot;mode&quot;: &quot;A String&quot;, # Sets which mode to use for Security Posture features.
         &quot;vulnerabilityMode&quot;: &quot;A String&quot;, # Sets which mode to use for vulnerability scanning.
@@ -3792,11 +4053,37 @@ Args:
         },
       ],
     },
+    &quot;desiredContainerdConfig&quot;: { # ContainerdConfig contains configuration to customize containerd. # The desired containerd config for the cluster.
+      &quot;privateRegistryAccessConfig&quot;: { # PrivateRegistryAccessConfig contains access configuration for private container registries. # PrivateRegistryAccessConfig is used to configure access configuration for private container registries.
+        &quot;certificateAuthorityDomainConfig&quot;: [ # Private registry access configuration.
+          { # CertificateAuthorityDomainConfig configures one or more fully qualified domain names (FQDN) to a specific certificate.
+            &quot;fqdns&quot;: [ # List of fully qualified domain names (FQDN). Specifying port is supported. Wilcards are NOT supported. Examples: - my.customdomain.com - 10.0.1.2:5000
+              &quot;A String&quot;,
+            ],
+            &quot;gcpSecretManagerCertificateConfig&quot;: { # GCPSecretManagerCertificateConfig configures a secret from [Google Secret Manager](https://cloud.google.com/secret-manager). # Google Secret Manager (GCP) certificate configuration.
+              &quot;secretUri&quot;: &quot;A String&quot;, # Secret URI, in the form &quot;projects/$PROJECT_ID/secrets/$SECRET_NAME/versions/$VERSION&quot;. Version can be fixed (e.g. &quot;2&quot;) or &quot;latest&quot;
+            },
+          },
+        ],
+        &quot;enabled&quot;: True or False, # Private registry access is enabled.
+      },
+    },
     &quot;desiredCostManagementConfig&quot;: { # Configuration for fine-grained cost management feature. # The desired configuration for the fine-grained cost management feature.
       &quot;enabled&quot;: True or False, # Whether the feature is enabled or not.
     },
     &quot;desiredDatabaseEncryption&quot;: { # Configuration of etcd encryption. # Configuration of etcd encryption.
+      &quot;currentState&quot;: &quot;A String&quot;, # Output only. The current state of etcd encryption.
+      &quot;decryptionKeys&quot;: [ # Output only. Keys in use by the cluster for decrypting existing objects, in addition to the key in `key_name`. Each item is a CloudKMS key resource.
+        &quot;A String&quot;,
+      ],
       &quot;keyName&quot;: &quot;A String&quot;, # Name of CloudKMS key to use for the encryption of secrets in etcd. Ex. projects/my-project/locations/global/keyRings/my-ring/cryptoKeys/my-key
+      &quot;lastOperationErrors&quot;: [ # Output only. Records errors seen during DatabaseEncryption update operations.
+        { # OperationError records errors seen from CloudKMS keys encountered during updates to DatabaseEncryption configuration.
+          &quot;errorMessage&quot;: &quot;A String&quot;, # Description of the error seen during the operation.
+          &quot;keyName&quot;: &quot;A String&quot;, # CloudKMS key resource that had the error.
+          &quot;timestamp&quot;: &quot;A String&quot;, # Time when the CloudKMS error was seen.
+        },
+      ],
       &quot;state&quot;: &quot;A String&quot;, # The desired state of etcd encryption.
     },
     &quot;desiredDatapathProvider&quot;: &quot;A String&quot;, # The desired datapath provider for the cluster.
@@ -3804,12 +4091,14 @@ Args:
       &quot;disabled&quot;: True or False, # Disables cluster default sNAT rules.
     },
     &quot;desiredDnsConfig&quot;: { # DNSConfig contains the desired set of options for configuring clusterDNS. # DNSConfig contains clusterDNS config for this cluster.
+      &quot;additiveVpcScopeDnsDomain&quot;: &quot;A String&quot;, # Optional. The domain used in Additive VPC scope.
       &quot;clusterDns&quot;: &quot;A String&quot;, # cluster_dns indicates which in-cluster DNS provider should be used.
       &quot;clusterDnsDomain&quot;: &quot;A String&quot;, # cluster_dns_domain is the suffix used for all cluster service records.
       &quot;clusterDnsScope&quot;: &quot;A String&quot;, # cluster_dns_scope indicates the scope of access to cluster DNS records.
     },
     &quot;desiredEnableCiliumClusterwideNetworkPolicy&quot;: True or False, # Enable/Disable Cilium Clusterwide Network Policy for the cluster.
     &quot;desiredEnableFqdnNetworkPolicy&quot;: True or False, # Enable/Disable FQDN Network Policy for the cluster.
+    &quot;desiredEnableMultiNetworking&quot;: True or False, # Enable/Disable Multi-Networking for the cluster
     &quot;desiredEnablePrivateEndpoint&quot;: True or False, # Enable/Disable private endpoint for the cluster&#x27;s master.
     &quot;desiredFleet&quot;: { # Fleet is the fleet configuration for the cluster. # The desired fleet configuration for the cluster.
       &quot;membership&quot;: &quot;A String&quot;, # [Output only] The full resource name of the registered fleet membership of the cluster, in the format `//gkehub.googleapis.com/projects/*/locations/*/memberships/*`.
@@ -3882,6 +4171,20 @@ Args:
     &quot;desiredNetworkPerformanceConfig&quot;: { # Configuration of network bandwidth tiers # The desired network performance config.
       &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;, # Specifies the total network bandwidth tier for NodePools in the cluster.
     },
+    &quot;desiredNodeKubeletConfig&quot;: { # Node kubelet configs. # The desired node kubelet config for the cluster.
+      &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
+      &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
+      &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+      &quot;insecureKubeletReadonlyPortEnabled&quot;: True or False, # Enable or disable Kubelet read only port.
+      &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
+    },
+    &quot;desiredNodePoolAutoConfigKubeletConfig&quot;: { # Node kubelet configs. # The desired node kubelet config for all auto-provisioned node pools in autopilot clusters and node auto-provisioning enabled clusters.
+      &quot;cpuCfsQuota&quot;: True or False, # Enable CPU CFS quota enforcement for containers that specify CPU limits. This option is enabled by default which makes kubelet use CFS quota (https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt) to enforce container CPU limits. Otherwise, CPU limits will not be enforced at all. Disable this option to mitigate CPU throttling problems while still having your pods to be in Guaranteed QoS class by specifying the CPU limits. The default value is &#x27;true&#x27; if unspecified.
+      &quot;cpuCfsQuotaPeriod&quot;: &quot;A String&quot;, # Set the CPU CFS quota period value &#x27;cpu.cfs_period_us&#x27;. The string must be a sequence of decimal numbers, each with optional fraction and a unit suffix, such as &quot;300ms&quot;. Valid time units are &quot;ns&quot;, &quot;us&quot; (or &quot;µs&quot;), &quot;ms&quot;, &quot;s&quot;, &quot;m&quot;, &quot;h&quot;. The value must be a positive duration.
+      &quot;cpuManagerPolicy&quot;: &quot;A String&quot;, # Control the CPU management policy on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/ The following values are allowed. * &quot;none&quot;: the default, which represents the existing scheduling behavior. * &quot;static&quot;: allows pods with certain resource characteristics to be granted increased CPU affinity and exclusivity on the node. The default value is &#x27;none&#x27; if unspecified.
+      &quot;insecureKubeletReadonlyPortEnabled&quot;: True or False, # Enable or disable Kubelet read only port.
+      &quot;podPidsLimit&quot;: &quot;A String&quot;, # Set the Pod PID limits. See https://kubernetes.io/docs/concepts/policy/pid-limiting/#pod-pid-limits Controls the maximum number of processes allowed to run in a pod. The value must be greater than or equal to 1024 and less than 4194304.
+    },
     &quot;desiredNodePoolAutoConfigNetworkTags&quot;: { # Collection of Compute Engine network tags that can be applied to a node&#x27;s underlying VM instance. # The desired network tags that apply to all auto-provisioned node pools in autopilot clusters and node auto-provisioning enabled clusters.
       &quot;tags&quot;: [ # List of network tags.
         &quot;A String&quot;,
@@ -3925,7 +4228,7 @@ Args:
       },
       &quot;productName&quot;: &quot;A String&quot;, # Name of the parent product associated with the cluster.
     },
-    &quot;desiredPrivateClusterConfig&quot;: { # Configuration options for private clusters. # The desired private cluster configuration.
+    &quot;desiredPrivateClusterConfig&quot;: { # Configuration options for private clusters. # The desired private cluster configuration. master_global_access_config is the only field that can be changed via this field. See also ClusterUpdate.desired_enable_private_endpoint for modifying other fields within PrivateClusterConfig.
       &quot;enablePrivateEndpoint&quot;: True or False, # Whether the master&#x27;s internal IP address is used as the cluster endpoint.
       &quot;enablePrivateNodes&quot;: True or False, # Whether nodes have internal IP addresses only. If enabled, all nodes are given only RFC 1918 private addresses and communicate with the master via private networking.
       &quot;masterGlobalAccessConfig&quot;: { # Configuration for controlling master global access settings. # Controls master global access settings.

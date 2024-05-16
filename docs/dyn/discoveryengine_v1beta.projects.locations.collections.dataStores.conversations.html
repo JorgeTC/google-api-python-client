@@ -118,6 +118,17 @@ Args:
     &quot;conditionBoostSpecs&quot;: [ # Condition boost specifications. If a document matches multiple conditions in the specifictions, boost scores from these specifications are all applied and combined in a non-linear way. Maximum number of specifications is 20.
       { # Boost applies to documents which match a condition.
         &quot;boost&quot;: 3.14, # Strength of the condition boost, which should be in [-1, 1]. Negative boost means demotion. Default is 0.0. Setting to 1.0 gives the document a big promotion. However, it does not necessarily mean that the boosted document will be the top result at all times, nor that other documents will be excluded. Results could still be shown even when none of them matches the condition. And results that are significantly more relevant to the search query can still trump your heavily favored but irrelevant documents. Setting to -1.0 gives the document a big demotion. However, results that are deeply relevant might still be shown. The document will have an upstream battle to get a fairly high ranking, but it is not blocked out completely. Setting to 0.0 means no boost applied. The boosting condition is ignored. Only one of the (condition, boost) combination or the boost_control_spec below are set. If both are set then the global boost is ignored and the more fine-grained boost_control_spec is applied.
+        &quot;boostControlSpec&quot;: { # Specification for custom ranking based on customer specified attribute value. It provides more controls for customized ranking than the simple (condition, boost) combination above. # Complex specification for custom ranking based on customer defined attribute value.
+          &quot;attributeType&quot;: &quot;A String&quot;, # The attribute type to be used to determine the boost amount. The attribute value can be derived from the field value of the specified field_name. In the case of numerical it is straightforward i.e. attribute_value = numerical_field_value. In the case of freshness however, attribute_value = (time.now() - datetime_field_value).
+          &quot;controlPoints&quot;: [ # The control points used to define the curve. The monotonic function (defined through the interpolation_type above) passes through the control points listed here.
+            { # The control points used to define the curve. The curve defined through these control points can only be monotonically increasing or decreasing(constant values are acceptable).
+              &quot;attributeValue&quot;: &quot;A String&quot;, # Can be one of: 1. The numerical field value. 2. The duration spec for freshness: The value must be formatted as an XSD `dayTimeDuration` value (a restricted subset of an ISO 8601 duration value). The pattern for this is: `nDnM]`.
+              &quot;boostAmount&quot;: 3.14, # The value between -1 to 1 by which to boost the score if the attribute_value evaluates to the value specified above.
+            },
+          ],
+          &quot;fieldName&quot;: &quot;A String&quot;, # The name of the field whose value will be used to determine the boost amount.
+          &quot;interpolationType&quot;: &quot;A String&quot;, # The interpolation type to be applied to connect the control points listed below.
+        },
         &quot;condition&quot;: &quot;A String&quot;, # An expression which specifies a boost condition. The syntax and supported fields are the same as a filter expression. See SearchRequest.filter for detail syntax and limitations. Examples: * To boost documents with document ID &quot;doc_1&quot; or &quot;doc_2&quot;, and color &quot;Red&quot; or &quot;Blue&quot;: `(document_id: ANY(&quot;doc_1&quot;, &quot;doc_2&quot;)) AND (color: ANY(&quot;Red&quot;, &quot;Blue&quot;))`
       },
     ],
@@ -166,6 +177,12 @@ Args:
               },
               &quot;references&quot;: [ # Document References.
                 { # Document reference.
+                  &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
+                    { # Chunk content.
+                      &quot;content&quot;: &quot;A String&quot;, # Chunk textual content.
+                      &quot;pageIdentifier&quot;: &quot;A String&quot;, # Page identifier.
+                    },
+                  ],
                   &quot;document&quot;: &quot;A String&quot;, # Required. Document.name of the document. Full resource name of the referenced document, in the format `projects/*/locations/*/collections/*/dataStores/*/branches/*/documents/*`.
                   &quot;title&quot;: &quot;A String&quot;, # Title of the document.
                   &quot;uri&quot;: &quot;A String&quot;, # Cloud Storage or HTTP uri for the document.
@@ -186,7 +203,7 @@ Args:
         },
       },
     ],
-    &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `project/*/locations/global/collections/{collection}/dataStore/*/conversations/*` or `project/*/locations/global/collections/{collection}/engines/*/conversations/*`.
+    &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `projects/{project}/locations/global/collections/{collection}/dataStore/*/conversations/*` or `projects/{project}/locations/global/collections/{collection}/engines/*/conversations/*`.
     &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time the conversation started.
     &quot;state&quot;: &quot;A String&quot;, # The state of the Conversation.
     &quot;userPseudoId&quot;: &quot;A String&quot;, # A unique identifier for tracking users.
@@ -214,8 +231,8 @@ Args:
     &quot;modelSpec&quot;: { # Specification of the model. # If specified, the spec will be used to modify the model specification provided to the LLM.
       &quot;version&quot;: &quot;A String&quot;, # The model version used to generate the summary. Supported values are: * `stable`: string. Default value when no value is specified. Uses a generally available, fine-tuned model. For more information, see [Answer generation model versions and lifecycle](https://cloud.google.com/generative-ai-app-builder/docs/answer-generation-models). * `preview`: string. (Public preview) Uses a preview model. For more information, see [Answer generation model versions and lifecycle](https://cloud.google.com/generative-ai-app-builder/docs/answer-generation-models).
     },
-    &quot;summaryResultCount&quot;: 42, # The number of top results to generate the summary from. If the number of results returned is less than `summaryResultCount`, the summary is generated from all of the results. At most 10 results can be used to generate a summary.
-    &quot;useSemanticChunks&quot;: True or False, # If true, answer will be generated from most relevant chunks from top search results. This feature will improve summary quality. Please note that with this feature enabled, not all top search results will be referenced and included in the reference list, so the citation source index only points to the search results listed in the reference list.
+    &quot;summaryResultCount&quot;: 42, # The number of top results to generate the summary from. If the number of results returned is less than `summaryResultCount`, the summary is generated from all of the results. At most 10 results for documents mode, or 50 for chunks mode, can be used to generate a summary. The chunks mode is used when SearchRequest.ContentSearchSpec.search_result_mode is set to CHUNKS.
+    &quot;useSemanticChunks&quot;: True or False, # If true, answer will be generated from most relevant chunks from top search results. This feature will improve summary quality. Note that with this feature enabled, not all top search results will be referenced and included in the reference list, so the citation source index only points to the search results listed in the reference list.
   },
   &quot;userLabels&quot;: { # The user labels applied to a resource must meet the following requirements: * Each resource can have multiple labels, up to a maximum of 64. * Each label must be a key-value pair. * Keys have a minimum length of 1 character and a maximum length of 63 characters and cannot be empty. Values can be empty and have a maximum length of 63 characters. * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. All characters must use UTF-8 encoding, and international characters are allowed. * The key portion of a label must be unique. However, you can use the same key with multiple resources. * Keys must start with a lowercase letter or international character. See [Google Cloud Document](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements) for more details.
     &quot;a_key&quot;: &quot;A String&quot;,
@@ -275,6 +292,12 @@ Returns:
               },
               &quot;references&quot;: [ # Document References.
                 { # Document reference.
+                  &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
+                    { # Chunk content.
+                      &quot;content&quot;: &quot;A String&quot;, # Chunk textual content.
+                      &quot;pageIdentifier&quot;: &quot;A String&quot;, # Page identifier.
+                    },
+                  ],
                   &quot;document&quot;: &quot;A String&quot;, # Required. Document.name of the document. Full resource name of the referenced document, in the format `projects/*/locations/*/collections/*/dataStores/*/branches/*/documents/*`.
                   &quot;title&quot;: &quot;A String&quot;, # Title of the document.
                   &quot;uri&quot;: &quot;A String&quot;, # Cloud Storage or HTTP uri for the document.
@@ -295,7 +318,7 @@ Returns:
         },
       },
     ],
-    &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `project/*/locations/global/collections/{collection}/dataStore/*/conversations/*` or `project/*/locations/global/collections/{collection}/engines/*/conversations/*`.
+    &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `projects/{project}/locations/global/collections/{collection}/dataStore/*/conversations/*` or `projects/{project}/locations/global/collections/{collection}/engines/*/conversations/*`.
     &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time the conversation started.
     &quot;state&quot;: &quot;A String&quot;, # The state of the Conversation.
     &quot;userPseudoId&quot;: &quot;A String&quot;, # A unique identifier for tracking users.
@@ -342,6 +365,12 @@ Returns:
         },
         &quot;references&quot;: [ # Document References.
           { # Document reference.
+            &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
+              { # Chunk content.
+                &quot;content&quot;: &quot;A String&quot;, # Chunk textual content.
+                &quot;pageIdentifier&quot;: &quot;A String&quot;, # Page identifier.
+              },
+            ],
             &quot;document&quot;: &quot;A String&quot;, # Required. Document.name of the document. Full resource name of the referenced document, in the format `projects/*/locations/*/collections/*/dataStores/*/branches/*/documents/*`.
             &quot;title&quot;: &quot;A String&quot;, # Title of the document.
             &quot;uri&quot;: &quot;A String&quot;, # Cloud Storage or HTTP uri for the document.
@@ -438,6 +467,12 @@ Args:
             },
             &quot;references&quot;: [ # Document References.
               { # Document reference.
+                &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
+                  { # Chunk content.
+                    &quot;content&quot;: &quot;A String&quot;, # Chunk textual content.
+                    &quot;pageIdentifier&quot;: &quot;A String&quot;, # Page identifier.
+                  },
+                ],
                 &quot;document&quot;: &quot;A String&quot;, # Required. Document.name of the document. Full resource name of the referenced document, in the format `projects/*/locations/*/collections/*/dataStores/*/branches/*/documents/*`.
                 &quot;title&quot;: &quot;A String&quot;, # Title of the document.
                 &quot;uri&quot;: &quot;A String&quot;, # Cloud Storage or HTTP uri for the document.
@@ -458,7 +493,7 @@ Args:
       },
     },
   ],
-  &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `project/*/locations/global/collections/{collection}/dataStore/*/conversations/*` or `project/*/locations/global/collections/{collection}/engines/*/conversations/*`.
+  &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `projects/{project}/locations/global/collections/{collection}/dataStore/*/conversations/*` or `projects/{project}/locations/global/collections/{collection}/engines/*/conversations/*`.
   &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time the conversation started.
   &quot;state&quot;: &quot;A String&quot;, # The state of the Conversation.
   &quot;userPseudoId&quot;: &quot;A String&quot;, # A unique identifier for tracking users.
@@ -516,6 +551,12 @@ Returns:
             },
             &quot;references&quot;: [ # Document References.
               { # Document reference.
+                &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
+                  { # Chunk content.
+                    &quot;content&quot;: &quot;A String&quot;, # Chunk textual content.
+                    &quot;pageIdentifier&quot;: &quot;A String&quot;, # Page identifier.
+                  },
+                ],
                 &quot;document&quot;: &quot;A String&quot;, # Required. Document.name of the document. Full resource name of the referenced document, in the format `projects/*/locations/*/collections/*/dataStores/*/branches/*/documents/*`.
                 &quot;title&quot;: &quot;A String&quot;, # Title of the document.
                 &quot;uri&quot;: &quot;A String&quot;, # Cloud Storage or HTTP uri for the document.
@@ -536,7 +577,7 @@ Returns:
       },
     },
   ],
-  &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `project/*/locations/global/collections/{collection}/dataStore/*/conversations/*` or `project/*/locations/global/collections/{collection}/engines/*/conversations/*`.
+  &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `projects/{project}/locations/global/collections/{collection}/dataStore/*/conversations/*` or `projects/{project}/locations/global/collections/{collection}/engines/*/conversations/*`.
   &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time the conversation started.
   &quot;state&quot;: &quot;A String&quot;, # The state of the Conversation.
   &quot;userPseudoId&quot;: &quot;A String&quot;, # A unique identifier for tracking users.
@@ -619,6 +660,12 @@ Returns:
             },
             &quot;references&quot;: [ # Document References.
               { # Document reference.
+                &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
+                  { # Chunk content.
+                    &quot;content&quot;: &quot;A String&quot;, # Chunk textual content.
+                    &quot;pageIdentifier&quot;: &quot;A String&quot;, # Page identifier.
+                  },
+                ],
                 &quot;document&quot;: &quot;A String&quot;, # Required. Document.name of the document. Full resource name of the referenced document, in the format `projects/*/locations/*/collections/*/dataStores/*/branches/*/documents/*`.
                 &quot;title&quot;: &quot;A String&quot;, # Title of the document.
                 &quot;uri&quot;: &quot;A String&quot;, # Cloud Storage or HTTP uri for the document.
@@ -639,7 +686,7 @@ Returns:
       },
     },
   ],
-  &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `project/*/locations/global/collections/{collection}/dataStore/*/conversations/*` or `project/*/locations/global/collections/{collection}/engines/*/conversations/*`.
+  &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `projects/{project}/locations/global/collections/{collection}/dataStore/*/conversations/*` or `projects/{project}/locations/global/collections/{collection}/engines/*/conversations/*`.
   &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time the conversation started.
   &quot;state&quot;: &quot;A String&quot;, # The state of the Conversation.
   &quot;userPseudoId&quot;: &quot;A String&quot;, # A unique identifier for tracking users.
@@ -710,6 +757,12 @@ Returns:
                 },
                 &quot;references&quot;: [ # Document References.
                   { # Document reference.
+                    &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
+                      { # Chunk content.
+                        &quot;content&quot;: &quot;A String&quot;, # Chunk textual content.
+                        &quot;pageIdentifier&quot;: &quot;A String&quot;, # Page identifier.
+                      },
+                    ],
                     &quot;document&quot;: &quot;A String&quot;, # Required. Document.name of the document. Full resource name of the referenced document, in the format `projects/*/locations/*/collections/*/dataStores/*/branches/*/documents/*`.
                     &quot;title&quot;: &quot;A String&quot;, # Title of the document.
                     &quot;uri&quot;: &quot;A String&quot;, # Cloud Storage or HTTP uri for the document.
@@ -730,7 +783,7 @@ Returns:
           },
         },
       ],
-      &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `project/*/locations/global/collections/{collection}/dataStore/*/conversations/*` or `project/*/locations/global/collections/{collection}/engines/*/conversations/*`.
+      &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `projects/{project}/locations/global/collections/{collection}/dataStore/*/conversations/*` or `projects/{project}/locations/global/collections/{collection}/engines/*/conversations/*`.
       &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time the conversation started.
       &quot;state&quot;: &quot;A String&quot;, # The state of the Conversation.
       &quot;userPseudoId&quot;: &quot;A String&quot;, # A unique identifier for tracking users.
@@ -759,7 +812,7 @@ Returns:
   <pre>Updates a Conversation. Conversation action type cannot be changed. If the Conversation to update does not exist, a NOT_FOUND error is returned.
 
 Args:
-  name: string, Immutable. Fully qualified name `project/*/locations/global/collections/{collection}/dataStore/*/conversations/*` or `project/*/locations/global/collections/{collection}/engines/*/conversations/*`. (required)
+  name: string, Immutable. Fully qualified name `projects/{project}/locations/global/collections/{collection}/dataStore/*/conversations/*` or `projects/{project}/locations/global/collections/{collection}/engines/*/conversations/*`. (required)
   body: object, The request body.
     The object takes the form of:
 
@@ -807,6 +860,12 @@ Args:
             },
             &quot;references&quot;: [ # Document References.
               { # Document reference.
+                &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
+                  { # Chunk content.
+                    &quot;content&quot;: &quot;A String&quot;, # Chunk textual content.
+                    &quot;pageIdentifier&quot;: &quot;A String&quot;, # Page identifier.
+                  },
+                ],
                 &quot;document&quot;: &quot;A String&quot;, # Required. Document.name of the document. Full resource name of the referenced document, in the format `projects/*/locations/*/collections/*/dataStores/*/branches/*/documents/*`.
                 &quot;title&quot;: &quot;A String&quot;, # Title of the document.
                 &quot;uri&quot;: &quot;A String&quot;, # Cloud Storage or HTTP uri for the document.
@@ -827,7 +886,7 @@ Args:
       },
     },
   ],
-  &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `project/*/locations/global/collections/{collection}/dataStore/*/conversations/*` or `project/*/locations/global/collections/{collection}/engines/*/conversations/*`.
+  &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `projects/{project}/locations/global/collections/{collection}/dataStore/*/conversations/*` or `projects/{project}/locations/global/collections/{collection}/engines/*/conversations/*`.
   &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time the conversation started.
   &quot;state&quot;: &quot;A String&quot;, # The state of the Conversation.
   &quot;userPseudoId&quot;: &quot;A String&quot;, # A unique identifier for tracking users.
@@ -886,6 +945,12 @@ Returns:
             },
             &quot;references&quot;: [ # Document References.
               { # Document reference.
+                &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
+                  { # Chunk content.
+                    &quot;content&quot;: &quot;A String&quot;, # Chunk textual content.
+                    &quot;pageIdentifier&quot;: &quot;A String&quot;, # Page identifier.
+                  },
+                ],
                 &quot;document&quot;: &quot;A String&quot;, # Required. Document.name of the document. Full resource name of the referenced document, in the format `projects/*/locations/*/collections/*/dataStores/*/branches/*/documents/*`.
                 &quot;title&quot;: &quot;A String&quot;, # Title of the document.
                 &quot;uri&quot;: &quot;A String&quot;, # Cloud Storage or HTTP uri for the document.
@@ -906,7 +971,7 @@ Returns:
       },
     },
   ],
-  &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `project/*/locations/global/collections/{collection}/dataStore/*/conversations/*` or `project/*/locations/global/collections/{collection}/engines/*/conversations/*`.
+  &quot;name&quot;: &quot;A String&quot;, # Immutable. Fully qualified name `projects/{project}/locations/global/collections/{collection}/dataStore/*/conversations/*` or `projects/{project}/locations/global/collections/{collection}/engines/*/conversations/*`.
   &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time the conversation started.
   &quot;state&quot;: &quot;A String&quot;, # The state of the Conversation.
   &quot;userPseudoId&quot;: &quot;A String&quot;, # A unique identifier for tracking users.

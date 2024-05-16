@@ -94,7 +94,7 @@ h1, h2, h3 {
 <p class="firstline">Updates the IAP settings on a particular IAP protected resource. It replaces all fields unless the `update_mask` is set.</p>
 <p class="toc_element">
   <code><a href="#validateAttributeExpression">validateAttributeExpression(name, expression=None, x__xgafv=None)</a></code></p>
-<p class="firstline">Validates a given CEL expression conforms to IAP restrictions.</p>
+<p class="firstline">Validates that a given CEL expression conforms to IAP restrictions.</p>
 <h3>Method Details</h3>
 <div class="method">
     <code class="details" id="close">close()</code>
@@ -175,6 +175,9 @@ Returns:
         &quot;A String&quot;,
       ],
     },
+    &quot;identitySources&quot;: [ # Optional. Identity sources that IAP can use to authenticate the end user. Only one identity source can be configured.
+      &quot;A String&quot;,
+    ],
     &quot;oauthSettings&quot;: { # Configuration for OAuth login&amp;consent flow behavior as well as for OAuth Credentials. # Settings to configure IAP&#x27;s OAuth behavior.
       &quot;loginHint&quot;: &quot;A String&quot;, # Domain hint to send as hd=? parameter in OAuth request flow. Enables redirect to primary IDP by skipping Google&#x27;s login screen. https://developers.google.com/identity/protocols/OpenIDConnect#hd-param Note: IAP does not verify that the id token&#x27;s hd claim matches this value since access behavior is managed by IAM policies.
       &quot;programmaticClients&quot;: [ # List of client ids allowed to use IAP programmatically.
@@ -196,15 +199,25 @@ Returns:
         &quot;labels&quot;: { # The service defined labels of the resource on which the conditions will be evaluated. The semantics - including the key names - are vague to IAM. If the effective condition has a reference to a `resource.labels[foo]` construct, IAM consults with this map to retrieve the values associated with `foo` key for Conditions evaluation. If the provided key is not found in the labels map, the condition would evaluate to false. This field is in limited use. If your intended use case is not expected to express resource.labels attribute in IAM Conditions, leave this field empty. Before planning on using this attribute please: * Read go/iam-conditions-labels-comm and ensure your service can meet the data availability and management requirements. * Talk to iam-conditions-eng@ about your use case.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
-        &quot;name&quot;: &quot;A String&quot;, # Name of the resource on which conditions will be evaluated. Must use the Relative Resource Name of the resource, which is the URI path of the resource without the leading &quot;/&quot;. Examples are &quot;projects/_/buckets/[BUCKET-ID]&quot; for storage buckets or &quot;projects/[PROJECT-ID]/global/firewalls/[FIREWALL-ID]&quot; for a firewall. This field is required for evaluating conditions with rules on resource names. For a `list` permission check, the resource.name value must be set to the parent resource. If the parent resource is a project, this field should be left unset.
-        &quot;service&quot;: &quot;A String&quot;, # The name of the service this resource belongs to. It is configured using the official_service_name of the Service as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_service_name of cloud resource manager service is set as &#x27;cloudresourcemanager.googleapis.com&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml
-        &quot;type&quot;: &quot;A String&quot;, # The public resource type name of the resource on which conditions will be evaluated. It is configured using the official_name of the ResourceType as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_name for GCP projects is set as &#x27;cloudresourcemanager.googleapis.com/Project&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml For details see go/iam-conditions-integration-guide.
+        &quot;name&quot;: &quot;A String&quot;, # The **relative** name of the resource, which is the URI path of the resource without the leading &quot;/&quot;. See https://cloud.google.com/iam/docs/conditions-resource-attributes#resource-name for examples used by other GCP Services. This field is **required** for services integrated with resource-attribute-based IAM conditions and/or CustomOrgPolicy. This field requires special handling for parents-only permissions such as `create` and `list`. See the document linked below for further details. See go/iam-conditions-sig-g3#populate-resource-attributes for specific details on populating this field.
+        &quot;service&quot;: &quot;A String&quot;, # The name of the service this resource belongs to. It is configured using the official_service_name of the Service as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_service_name of cloud resource manager service is set as &#x27;cloudresourcemanager.googleapis.com&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml This field is **required** for services integrated with resource-attribute-based IAM conditions and/or CustomOrgPolicy. This field requires special handling for parents-only permissions such as `create` and `list`. See the document linked below for further details. See go/iam-conditions-sig-g3#populate-resource-attributes for specific details on populating this field.
+        &quot;type&quot;: &quot;A String&quot;, # The public resource type name of the resource. It is configured using the official_name of the ResourceType as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_name for GCP projects is set as &#x27;cloudresourcemanager.googleapis.com/Project&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml This field is **required** for services integrated with resource-attribute-based IAM conditions and/or CustomOrgPolicy. This field requires special handling for parents-only permissions such as `create` and `list`. See the document linked below for further details. See go/iam-conditions-sig-g3#populate-resource-attributes for specific details on populating this field.
       },
     },
     &quot;reauthSettings&quot;: { # Configuration for IAP reauthentication policies. # Settings to configure reauthentication policies in IAP.
       &quot;maxAge&quot;: &quot;A String&quot;, # Reauth session lifetime, how long before a user has to reauthenticate again.
       &quot;method&quot;: &quot;A String&quot;, # Reauth method requested.
       &quot;policyType&quot;: &quot;A String&quot;, # How IAP determines the effective policy in cases of hierarchical policies. Policies are merged from higher in the hierarchy to lower in the hierarchy.
+    },
+    &quot;workforceIdentitySettings&quot;: { # WorkforceIdentitySettings allows customers to configure workforce pools and OAuth 2.0 settings to gate their applications using a third-party IdP with access control. # Optional. Settings to configure the workforce identity federation, including workforce pools and OAuth 2.0 settings.
+      &quot;oauth2&quot;: { # The OAuth 2.0 Settings # OAuth 2.0 settings for IAP to perform OIDC flow with workforce identity federation services.
+        &quot;clientId&quot;: &quot;A String&quot;, # The OAuth 2.0 client ID registered in the workforce identity federation OAuth 2.0 Server.
+        &quot;clientSecret&quot;: &quot;A String&quot;, # Input only. The OAuth 2.0 client secret created while registering the client ID.
+        &quot;clientSecretSha256&quot;: &quot;A String&quot;, # Output only. SHA256 hash value for the client secret. This field is returned by IAP when the settings are retrieved.
+      },
+      &quot;workforcePools&quot;: [ # The workforce pool resources. Only one workforce pool is accepted.
+        &quot;A String&quot;,
+      ],
     },
   },
   &quot;applicationSettings&quot;: { # Wrapper over application specific settings for IAP. # Top level wrapper for all application related settings in IAP
@@ -343,6 +356,9 @@ Args:
         &quot;A String&quot;,
       ],
     },
+    &quot;identitySources&quot;: [ # Optional. Identity sources that IAP can use to authenticate the end user. Only one identity source can be configured.
+      &quot;A String&quot;,
+    ],
     &quot;oauthSettings&quot;: { # Configuration for OAuth login&amp;consent flow behavior as well as for OAuth Credentials. # Settings to configure IAP&#x27;s OAuth behavior.
       &quot;loginHint&quot;: &quot;A String&quot;, # Domain hint to send as hd=? parameter in OAuth request flow. Enables redirect to primary IDP by skipping Google&#x27;s login screen. https://developers.google.com/identity/protocols/OpenIDConnect#hd-param Note: IAP does not verify that the id token&#x27;s hd claim matches this value since access behavior is managed by IAM policies.
       &quot;programmaticClients&quot;: [ # List of client ids allowed to use IAP programmatically.
@@ -364,15 +380,25 @@ Args:
         &quot;labels&quot;: { # The service defined labels of the resource on which the conditions will be evaluated. The semantics - including the key names - are vague to IAM. If the effective condition has a reference to a `resource.labels[foo]` construct, IAM consults with this map to retrieve the values associated with `foo` key for Conditions evaluation. If the provided key is not found in the labels map, the condition would evaluate to false. This field is in limited use. If your intended use case is not expected to express resource.labels attribute in IAM Conditions, leave this field empty. Before planning on using this attribute please: * Read go/iam-conditions-labels-comm and ensure your service can meet the data availability and management requirements. * Talk to iam-conditions-eng@ about your use case.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
-        &quot;name&quot;: &quot;A String&quot;, # Name of the resource on which conditions will be evaluated. Must use the Relative Resource Name of the resource, which is the URI path of the resource without the leading &quot;/&quot;. Examples are &quot;projects/_/buckets/[BUCKET-ID]&quot; for storage buckets or &quot;projects/[PROJECT-ID]/global/firewalls/[FIREWALL-ID]&quot; for a firewall. This field is required for evaluating conditions with rules on resource names. For a `list` permission check, the resource.name value must be set to the parent resource. If the parent resource is a project, this field should be left unset.
-        &quot;service&quot;: &quot;A String&quot;, # The name of the service this resource belongs to. It is configured using the official_service_name of the Service as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_service_name of cloud resource manager service is set as &#x27;cloudresourcemanager.googleapis.com&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml
-        &quot;type&quot;: &quot;A String&quot;, # The public resource type name of the resource on which conditions will be evaluated. It is configured using the official_name of the ResourceType as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_name for GCP projects is set as &#x27;cloudresourcemanager.googleapis.com/Project&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml For details see go/iam-conditions-integration-guide.
+        &quot;name&quot;: &quot;A String&quot;, # The **relative** name of the resource, which is the URI path of the resource without the leading &quot;/&quot;. See https://cloud.google.com/iam/docs/conditions-resource-attributes#resource-name for examples used by other GCP Services. This field is **required** for services integrated with resource-attribute-based IAM conditions and/or CustomOrgPolicy. This field requires special handling for parents-only permissions such as `create` and `list`. See the document linked below for further details. See go/iam-conditions-sig-g3#populate-resource-attributes for specific details on populating this field.
+        &quot;service&quot;: &quot;A String&quot;, # The name of the service this resource belongs to. It is configured using the official_service_name of the Service as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_service_name of cloud resource manager service is set as &#x27;cloudresourcemanager.googleapis.com&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml This field is **required** for services integrated with resource-attribute-based IAM conditions and/or CustomOrgPolicy. This field requires special handling for parents-only permissions such as `create` and `list`. See the document linked below for further details. See go/iam-conditions-sig-g3#populate-resource-attributes for specific details on populating this field.
+        &quot;type&quot;: &quot;A String&quot;, # The public resource type name of the resource. It is configured using the official_name of the ResourceType as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_name for GCP projects is set as &#x27;cloudresourcemanager.googleapis.com/Project&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml This field is **required** for services integrated with resource-attribute-based IAM conditions and/or CustomOrgPolicy. This field requires special handling for parents-only permissions such as `create` and `list`. See the document linked below for further details. See go/iam-conditions-sig-g3#populate-resource-attributes for specific details on populating this field.
       },
     },
     &quot;reauthSettings&quot;: { # Configuration for IAP reauthentication policies. # Settings to configure reauthentication policies in IAP.
       &quot;maxAge&quot;: &quot;A String&quot;, # Reauth session lifetime, how long before a user has to reauthenticate again.
       &quot;method&quot;: &quot;A String&quot;, # Reauth method requested.
       &quot;policyType&quot;: &quot;A String&quot;, # How IAP determines the effective policy in cases of hierarchical policies. Policies are merged from higher in the hierarchy to lower in the hierarchy.
+    },
+    &quot;workforceIdentitySettings&quot;: { # WorkforceIdentitySettings allows customers to configure workforce pools and OAuth 2.0 settings to gate their applications using a third-party IdP with access control. # Optional. Settings to configure the workforce identity federation, including workforce pools and OAuth 2.0 settings.
+      &quot;oauth2&quot;: { # The OAuth 2.0 Settings # OAuth 2.0 settings for IAP to perform OIDC flow with workforce identity federation services.
+        &quot;clientId&quot;: &quot;A String&quot;, # The OAuth 2.0 client ID registered in the workforce identity federation OAuth 2.0 Server.
+        &quot;clientSecret&quot;: &quot;A String&quot;, # Input only. The OAuth 2.0 client secret created while registering the client ID.
+        &quot;clientSecretSha256&quot;: &quot;A String&quot;, # Output only. SHA256 hash value for the client secret. This field is returned by IAP when the settings are retrieved.
+      },
+      &quot;workforcePools&quot;: [ # The workforce pool resources. Only one workforce pool is accepted.
+        &quot;A String&quot;,
+      ],
     },
   },
   &quot;applicationSettings&quot;: { # Wrapper over application specific settings for IAP. # Top level wrapper for all application related settings in IAP
@@ -422,6 +448,9 @@ Returns:
         &quot;A String&quot;,
       ],
     },
+    &quot;identitySources&quot;: [ # Optional. Identity sources that IAP can use to authenticate the end user. Only one identity source can be configured.
+      &quot;A String&quot;,
+    ],
     &quot;oauthSettings&quot;: { # Configuration for OAuth login&amp;consent flow behavior as well as for OAuth Credentials. # Settings to configure IAP&#x27;s OAuth behavior.
       &quot;loginHint&quot;: &quot;A String&quot;, # Domain hint to send as hd=? parameter in OAuth request flow. Enables redirect to primary IDP by skipping Google&#x27;s login screen. https://developers.google.com/identity/protocols/OpenIDConnect#hd-param Note: IAP does not verify that the id token&#x27;s hd claim matches this value since access behavior is managed by IAM policies.
       &quot;programmaticClients&quot;: [ # List of client ids allowed to use IAP programmatically.
@@ -443,15 +472,25 @@ Returns:
         &quot;labels&quot;: { # The service defined labels of the resource on which the conditions will be evaluated. The semantics - including the key names - are vague to IAM. If the effective condition has a reference to a `resource.labels[foo]` construct, IAM consults with this map to retrieve the values associated with `foo` key for Conditions evaluation. If the provided key is not found in the labels map, the condition would evaluate to false. This field is in limited use. If your intended use case is not expected to express resource.labels attribute in IAM Conditions, leave this field empty. Before planning on using this attribute please: * Read go/iam-conditions-labels-comm and ensure your service can meet the data availability and management requirements. * Talk to iam-conditions-eng@ about your use case.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
-        &quot;name&quot;: &quot;A String&quot;, # Name of the resource on which conditions will be evaluated. Must use the Relative Resource Name of the resource, which is the URI path of the resource without the leading &quot;/&quot;. Examples are &quot;projects/_/buckets/[BUCKET-ID]&quot; for storage buckets or &quot;projects/[PROJECT-ID]/global/firewalls/[FIREWALL-ID]&quot; for a firewall. This field is required for evaluating conditions with rules on resource names. For a `list` permission check, the resource.name value must be set to the parent resource. If the parent resource is a project, this field should be left unset.
-        &quot;service&quot;: &quot;A String&quot;, # The name of the service this resource belongs to. It is configured using the official_service_name of the Service as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_service_name of cloud resource manager service is set as &#x27;cloudresourcemanager.googleapis.com&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml
-        &quot;type&quot;: &quot;A String&quot;, # The public resource type name of the resource on which conditions will be evaluated. It is configured using the official_name of the ResourceType as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_name for GCP projects is set as &#x27;cloudresourcemanager.googleapis.com/Project&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml For details see go/iam-conditions-integration-guide.
+        &quot;name&quot;: &quot;A String&quot;, # The **relative** name of the resource, which is the URI path of the resource without the leading &quot;/&quot;. See https://cloud.google.com/iam/docs/conditions-resource-attributes#resource-name for examples used by other GCP Services. This field is **required** for services integrated with resource-attribute-based IAM conditions and/or CustomOrgPolicy. This field requires special handling for parents-only permissions such as `create` and `list`. See the document linked below for further details. See go/iam-conditions-sig-g3#populate-resource-attributes for specific details on populating this field.
+        &quot;service&quot;: &quot;A String&quot;, # The name of the service this resource belongs to. It is configured using the official_service_name of the Service as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_service_name of cloud resource manager service is set as &#x27;cloudresourcemanager.googleapis.com&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml This field is **required** for services integrated with resource-attribute-based IAM conditions and/or CustomOrgPolicy. This field requires special handling for parents-only permissions such as `create` and `list`. See the document linked below for further details. See go/iam-conditions-sig-g3#populate-resource-attributes for specific details on populating this field.
+        &quot;type&quot;: &quot;A String&quot;, # The public resource type name of the resource. It is configured using the official_name of the ResourceType as defined in service configurations under //configs/cloud/resourcetypes. For example, the official_name for GCP projects is set as &#x27;cloudresourcemanager.googleapis.com/Project&#x27; according to //configs/cloud/resourcetypes/google/cloud/resourcemanager/prod.yaml This field is **required** for services integrated with resource-attribute-based IAM conditions and/or CustomOrgPolicy. This field requires special handling for parents-only permissions such as `create` and `list`. See the document linked below for further details. See go/iam-conditions-sig-g3#populate-resource-attributes for specific details on populating this field.
       },
     },
     &quot;reauthSettings&quot;: { # Configuration for IAP reauthentication policies. # Settings to configure reauthentication policies in IAP.
       &quot;maxAge&quot;: &quot;A String&quot;, # Reauth session lifetime, how long before a user has to reauthenticate again.
       &quot;method&quot;: &quot;A String&quot;, # Reauth method requested.
       &quot;policyType&quot;: &quot;A String&quot;, # How IAP determines the effective policy in cases of hierarchical policies. Policies are merged from higher in the hierarchy to lower in the hierarchy.
+    },
+    &quot;workforceIdentitySettings&quot;: { # WorkforceIdentitySettings allows customers to configure workforce pools and OAuth 2.0 settings to gate their applications using a third-party IdP with access control. # Optional. Settings to configure the workforce identity federation, including workforce pools and OAuth 2.0 settings.
+      &quot;oauth2&quot;: { # The OAuth 2.0 Settings # OAuth 2.0 settings for IAP to perform OIDC flow with workforce identity federation services.
+        &quot;clientId&quot;: &quot;A String&quot;, # The OAuth 2.0 client ID registered in the workforce identity federation OAuth 2.0 Server.
+        &quot;clientSecret&quot;: &quot;A String&quot;, # Input only. The OAuth 2.0 client secret created while registering the client ID.
+        &quot;clientSecretSha256&quot;: &quot;A String&quot;, # Output only. SHA256 hash value for the client secret. This field is returned by IAP when the settings are retrieved.
+      },
+      &quot;workforcePools&quot;: [ # The workforce pool resources. Only one workforce pool is accepted.
+        &quot;A String&quot;,
+      ],
     },
   },
   &quot;applicationSettings&quot;: { # Wrapper over application specific settings for IAP. # Top level wrapper for all application related settings in IAP
@@ -478,11 +517,11 @@ Returns:
 
 <div class="method">
     <code class="details" id="validateAttributeExpression">validateAttributeExpression(name, expression=None, x__xgafv=None)</code>
-  <pre>Validates a given CEL expression conforms to IAP restrictions.
+  <pre>Validates that a given CEL expression conforms to IAP restrictions.
 
 Args:
   name: string, Required. The resource name of the IAP protected resource. (required)
-  expression: string, Required. User input string expression. Should be of the form &#x27;attributes.saml_attributes.filter(attribute, attribute.name in [&#x27;{attribute_name}&#x27;, &#x27;{attribute_name}&#x27;])&#x27;
+  expression: string, Required. User input string expression. Should be of the form `attributes.saml_attributes.filter(attribute, attribute.name in [&#x27;{attribute_name}&#x27;, &#x27;{attribute_name}&#x27;])`
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format

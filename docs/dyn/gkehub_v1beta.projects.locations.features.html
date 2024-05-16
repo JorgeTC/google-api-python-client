@@ -192,6 +192,31 @@ Args:
           &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
             &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
           },
+          &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+            &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+              &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+              &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+              &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+            },
+            &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+              &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+              &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+              &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+            },
+            &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+              &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+              },
+            },
+            &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+              &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+              &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+              &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+              &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+            },
+          },
           &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
           &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
             &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -226,6 +251,9 @@ Args:
           },
         },
       ],
+      &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+        &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+      },
     },
     &quot;mesh&quot;: { # **Service Mesh**: Spec for a single Membership for the servicemesh feature # Anthos Service Mesh-specific spec
       &quot;controlPlane&quot;: &quot;A String&quot;, # Deprecated: use `management` instead Enables automatic control plane management.
@@ -373,6 +401,31 @@ Args:
             &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
               &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
             },
+            &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+              &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+                &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+                &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+                &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+              },
+              &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+                &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+                &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+                &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+              },
+              &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+                &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                  &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                  &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                  &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+                },
+              },
+              &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+                &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+                &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+                &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+                &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+              },
+            },
             &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
             &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
               &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -407,6 +460,9 @@ Args:
             },
           },
         ],
+        &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+          &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+        },
       },
       &quot;mesh&quot;: { # **Service Mesh**: Spec for a single Membership for the servicemesh feature # Anthos Service Mesh-specific spec
         &quot;controlPlane&quot;: &quot;A String&quot;, # Deprecated: use `management` instead Enables automatic control plane management.
@@ -670,6 +726,31 @@ Args:
               &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
                 &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
               },
+              &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+                &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+                  &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+                  &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+                  &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+                },
+                &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+                  &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+                  &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+                  &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+                },
+                &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+                  &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                    &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                    &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                    &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+                  },
+                },
+                &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+                  &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+                  &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+                  &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+                  &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+                },
+              },
               &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
               &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
                 &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -704,6 +785,9 @@ Args:
               },
             },
           ],
+          &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+            &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+          },
         },
         &quot;state&quot;: &quot;A String&quot;, # Deployment state on this member
       },
@@ -737,6 +821,14 @@ Args:
         &quot;state&quot;: &quot;A String&quot;, # The overall Policy Controller lifecycle state observed by the Hub Feature controller.
       },
       &quot;servicemesh&quot;: { # **Service Mesh**: State for a single Membership, as analyzed by the Service Mesh Hub Controller. # Service Mesh-specific state.
+        &quot;conditions&quot;: [ # Output only. List of conditions reported for this membership.
+          { # Condition being reported.
+            &quot;code&quot;: &quot;A String&quot;, # Unique identifier of the condition which describes the condition recognizable to the user.
+            &quot;details&quot;: &quot;A String&quot;, # A short summary about the issue.
+            &quot;documentationLink&quot;: &quot;A String&quot;, # Links contains actionable information.
+            &quot;severity&quot;: &quot;A String&quot;, # Severity level of the condition.
+          },
+        ],
         &quot;controlPlaneManagement&quot;: { # Status of control plane management. # Output only. Status of control plane management
           &quot;details&quot;: [ # Explanation of state.
             { # Structured and human-readable details for a status.
@@ -744,6 +836,7 @@ Args:
               &quot;details&quot;: &quot;A String&quot;, # Human-readable explanation of code.
             },
           ],
+          &quot;implementation&quot;: &quot;A String&quot;, # Output only. Implementation of managed control plane.
           &quot;state&quot;: &quot;A String&quot;, # LifecycleState of control plane management.
         },
         &quot;dataPlaneManagement&quot;: { # Status of data plane management. Only reported per-member. # Output only. Status of data plane management.
@@ -1068,6 +1161,31 @@ Returns:
           &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
             &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
           },
+          &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+            &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+              &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+              &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+              &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+            },
+            &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+              &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+              &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+              &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+            },
+            &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+              &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+              },
+            },
+            &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+              &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+              &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+              &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+              &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+            },
+          },
           &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
           &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
             &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -1102,6 +1220,9 @@ Returns:
           },
         },
       ],
+      &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+        &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+      },
     },
     &quot;mesh&quot;: { # **Service Mesh**: Spec for a single Membership for the servicemesh feature # Anthos Service Mesh-specific spec
       &quot;controlPlane&quot;: &quot;A String&quot;, # Deprecated: use `management` instead Enables automatic control plane management.
@@ -1249,6 +1370,31 @@ Returns:
             &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
               &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
             },
+            &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+              &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+                &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+                &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+                &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+              },
+              &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+                &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+                &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+                &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+              },
+              &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+                &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                  &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                  &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                  &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+                },
+              },
+              &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+                &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+                &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+                &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+                &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+              },
+            },
             &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
             &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
               &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -1283,6 +1429,9 @@ Returns:
             },
           },
         ],
+        &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+          &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+        },
       },
       &quot;mesh&quot;: { # **Service Mesh**: Spec for a single Membership for the servicemesh feature # Anthos Service Mesh-specific spec
         &quot;controlPlane&quot;: &quot;A String&quot;, # Deprecated: use `management` instead Enables automatic control plane management.
@@ -1546,6 +1695,31 @@ Returns:
               &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
                 &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
               },
+              &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+                &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+                  &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+                  &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+                  &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+                },
+                &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+                  &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+                  &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+                  &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+                },
+                &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+                  &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                    &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                    &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                    &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+                  },
+                },
+                &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+                  &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+                  &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+                  &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+                  &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+                },
+              },
               &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
               &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
                 &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -1580,6 +1754,9 @@ Returns:
               },
             },
           ],
+          &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+            &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+          },
         },
         &quot;state&quot;: &quot;A String&quot;, # Deployment state on this member
       },
@@ -1613,6 +1790,14 @@ Returns:
         &quot;state&quot;: &quot;A String&quot;, # The overall Policy Controller lifecycle state observed by the Hub Feature controller.
       },
       &quot;servicemesh&quot;: { # **Service Mesh**: State for a single Membership, as analyzed by the Service Mesh Hub Controller. # Service Mesh-specific state.
+        &quot;conditions&quot;: [ # Output only. List of conditions reported for this membership.
+          { # Condition being reported.
+            &quot;code&quot;: &quot;A String&quot;, # Unique identifier of the condition which describes the condition recognizable to the user.
+            &quot;details&quot;: &quot;A String&quot;, # A short summary about the issue.
+            &quot;documentationLink&quot;: &quot;A String&quot;, # Links contains actionable information.
+            &quot;severity&quot;: &quot;A String&quot;, # Severity level of the condition.
+          },
+        ],
         &quot;controlPlaneManagement&quot;: { # Status of control plane management. # Output only. Status of control plane management
           &quot;details&quot;: [ # Explanation of state.
             { # Structured and human-readable details for a status.
@@ -1620,6 +1805,7 @@ Returns:
               &quot;details&quot;: &quot;A String&quot;, # Human-readable explanation of code.
             },
           ],
+          &quot;implementation&quot;: &quot;A String&quot;, # Output only. Implementation of managed control plane.
           &quot;state&quot;: &quot;A String&quot;, # LifecycleState of control plane management.
         },
         &quot;dataPlaneManagement&quot;: { # Status of data plane management. Only reported per-member. # Output only. Status of data plane management.
@@ -1932,6 +2118,31 @@ Returns:
               &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
                 &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
               },
+              &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+                &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+                  &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+                  &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+                  &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+                },
+                &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+                  &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+                  &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+                  &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+                },
+                &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+                  &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                    &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                    &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                    &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+                  },
+                },
+                &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+                  &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+                  &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+                  &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+                  &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+                },
+              },
               &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
               &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
                 &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -1966,6 +2177,9 @@ Returns:
               },
             },
           ],
+          &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+            &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+          },
         },
         &quot;mesh&quot;: { # **Service Mesh**: Spec for a single Membership for the servicemesh feature # Anthos Service Mesh-specific spec
           &quot;controlPlane&quot;: &quot;A String&quot;, # Deprecated: use `management` instead Enables automatic control plane management.
@@ -2113,6 +2327,31 @@ Returns:
                 &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
                   &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
                 },
+                &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+                  &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+                    &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+                    &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+                    &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+                  },
+                  &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+                    &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+                    &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+                    &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+                  },
+                  &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+                    &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                      &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                      &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                      &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+                    },
+                  },
+                  &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+                    &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+                    &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+                    &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+                    &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+                  },
+                },
                 &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
                 &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
                   &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -2147,6 +2386,9 @@ Returns:
                 },
               },
             ],
+            &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+              &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+            },
           },
           &quot;mesh&quot;: { # **Service Mesh**: Spec for a single Membership for the servicemesh feature # Anthos Service Mesh-specific spec
             &quot;controlPlane&quot;: &quot;A String&quot;, # Deprecated: use `management` instead Enables automatic control plane management.
@@ -2410,6 +2652,31 @@ Returns:
                   &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
                     &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
                   },
+                  &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+                    &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+                      &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+                      &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+                      &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+                    },
+                    &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+                      &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+                      &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+                      &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+                    },
+                    &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+                      &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                        &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                        &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                        &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+                      },
+                    },
+                    &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+                      &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+                      &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+                      &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+                      &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+                    },
+                  },
                   &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
                   &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
                     &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -2444,6 +2711,9 @@ Returns:
                   },
                 },
               ],
+              &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+                &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+              },
             },
             &quot;state&quot;: &quot;A String&quot;, # Deployment state on this member
           },
@@ -2477,6 +2747,14 @@ Returns:
             &quot;state&quot;: &quot;A String&quot;, # The overall Policy Controller lifecycle state observed by the Hub Feature controller.
           },
           &quot;servicemesh&quot;: { # **Service Mesh**: State for a single Membership, as analyzed by the Service Mesh Hub Controller. # Service Mesh-specific state.
+            &quot;conditions&quot;: [ # Output only. List of conditions reported for this membership.
+              { # Condition being reported.
+                &quot;code&quot;: &quot;A String&quot;, # Unique identifier of the condition which describes the condition recognizable to the user.
+                &quot;details&quot;: &quot;A String&quot;, # A short summary about the issue.
+                &quot;documentationLink&quot;: &quot;A String&quot;, # Links contains actionable information.
+                &quot;severity&quot;: &quot;A String&quot;, # Severity level of the condition.
+              },
+            ],
             &quot;controlPlaneManagement&quot;: { # Status of control plane management. # Output only. Status of control plane management
               &quot;details&quot;: [ # Explanation of state.
                 { # Structured and human-readable details for a status.
@@ -2484,6 +2762,7 @@ Returns:
                   &quot;details&quot;: &quot;A String&quot;, # Human-readable explanation of code.
                 },
               ],
+              &quot;implementation&quot;: &quot;A String&quot;, # Output only. Implementation of managed control plane.
               &quot;state&quot;: &quot;A String&quot;, # LifecycleState of control plane management.
             },
             &quot;dataPlaneManagement&quot;: { # Status of data plane management. Only reported per-member. # Output only. Status of data plane management.
@@ -2752,6 +3031,31 @@ Args:
           &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
             &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
           },
+          &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+            &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+              &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+              &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+              &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+            },
+            &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+              &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+              &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+              &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+            },
+            &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+              &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+              },
+            },
+            &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+              &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+              &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+              &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+              &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+            },
+          },
           &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
           &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
             &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -2786,6 +3090,9 @@ Args:
           },
         },
       ],
+      &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+        &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+      },
     },
     &quot;mesh&quot;: { # **Service Mesh**: Spec for a single Membership for the servicemesh feature # Anthos Service Mesh-specific spec
       &quot;controlPlane&quot;: &quot;A String&quot;, # Deprecated: use `management` instead Enables automatic control plane management.
@@ -2933,6 +3240,31 @@ Args:
             &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
               &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
             },
+            &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+              &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+                &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+                &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+                &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+              },
+              &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+                &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+                &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+                &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+              },
+              &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+                &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                  &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                  &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                  &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+                },
+              },
+              &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+                &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+                &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+                &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+                &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+              },
+            },
             &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
             &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
               &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -2967,6 +3299,9 @@ Args:
             },
           },
         ],
+        &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+          &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+        },
       },
       &quot;mesh&quot;: { # **Service Mesh**: Spec for a single Membership for the servicemesh feature # Anthos Service Mesh-specific spec
         &quot;controlPlane&quot;: &quot;A String&quot;, # Deprecated: use `management` instead Enables automatic control plane management.
@@ -3230,6 +3565,31 @@ Args:
               &quot;googleConfig&quot;: { # Configuration for the Google Plugin Auth flow. # GoogleConfig specific configuration.
                 &quot;disable&quot;: True or False, # Disable automatic configuration of Google Plugin on supported platforms.
               },
+              &quot;ldapConfig&quot;: { # Configuration for the LDAP Auth flow. # LDAP specific configuration.
+                &quot;group&quot;: { # Contains the properties for locating and authenticating groups in the directory. # Optional. Contains the properties for locating and authenticating groups in the directory.
+                  &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for group entries.
+                  &quot;filter&quot;: &quot;A String&quot;, # Optional. Optional filter to be used when searching for groups a user belongs to. This can be used to explicitly match only certain groups in order to reduce the amount of groups returned for each user. This defaults to &quot;(objectClass=Group)&quot;.
+                  &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. The identifying name of each group a user belongs to. For example, if this is set to &quot;distinguishedName&quot; then RBACs and other group expectations should be written as full DNs. This defaults to &quot;distinguishedName&quot;.
+                },
+                &quot;server&quot;: { # Server settings for the external LDAP server. # Required. Server settings for the external LDAP server.
+                  &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # Optional. Contains a Base64 encoded, PEM formatted certificate authority certificate for the LDAP server. This must be provided for the &quot;ldaps&quot; and &quot;startTLS&quot; connections.
+                  &quot;connectionType&quot;: &quot;A String&quot;, # Optional. Defines the connection type to communicate with the LDAP server. If `starttls` or `ldaps` is specified, the certificate_authority_data should not be empty.
+                  &quot;host&quot;: &quot;A String&quot;, # Required. Defines the hostname or IP of the LDAP server. Port is optional and will default to 389, if unspecified. For example, &quot;ldap.server.example&quot; or &quot;10.10.10.10:389&quot;.
+                },
+                &quot;serviceAccount&quot;: { # Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate. # Required. Contains the credentials of the service account which is authorized to perform the LDAP search in the directory. The credentials can be supplied by the combination of the DN and password or the client certificate.
+                  &quot;simpleBindCredentials&quot;: { # The structure holds the LDAP simple binding credential. # Credentials for basic auth.
+                    &quot;dn&quot;: &quot;A String&quot;, # Required. The distinguished name(DN) of the service account object/user.
+                    &quot;encryptedPassword&quot;: &quot;A String&quot;, # Output only. The encrypted password of the service account object/user.
+                    &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password of the service account object/user.
+                  },
+                },
+                &quot;user&quot;: { # Defines where users exist in the LDAP directory. # Required. Defines where users exist in the LDAP directory.
+                  &quot;baseDn&quot;: &quot;A String&quot;, # Required. The location of the subtree in the LDAP directory to search for user entries.
+                  &quot;filter&quot;: &quot;A String&quot;, # Optional. Filter to apply when searching for the user. This can be used to further restrict the user accounts which are allowed to login. This defaults to &quot;(objectClass=User)&quot;.
+                  &quot;idAttribute&quot;: &quot;A String&quot;, # Optional. Determines which attribute to use as the user&#x27;s identity after they are authenticated. This is distinct from the loginAttribute field to allow users to login with a username, but then have their actual identifier be an email address or full Distinguished Name (DN). For example, setting loginAttribute to &quot;sAMAccountName&quot; and identifierAttribute to &quot;userPrincipalName&quot; would allow a user to login as &quot;bsmith&quot;, but actual RBAC policies for the user would be written as &quot;bsmith@example.com&quot;. Using &quot;userPrincipalName&quot; is recommended since this will be unique for each user. This defaults to &quot;userPrincipalName&quot;.
+                  &quot;loginAttribute&quot;: &quot;A String&quot;, # Optional. The name of the attribute which matches against the input username. This is used to find the user in the LDAP database e.g. &quot;(=)&quot; and is combined with the optional filter field. This defaults to &quot;userPrincipalName&quot;.
+                },
+              },
               &quot;name&quot;: &quot;A String&quot;, # Identifier for auth config.
               &quot;oidcConfig&quot;: { # Configuration for OIDC Auth flow. # OIDC specific configuration.
                 &quot;certificateAuthorityData&quot;: &quot;A String&quot;, # PEM-encoded CA for OIDC provider.
@@ -3264,6 +3624,9 @@ Args:
               },
             },
           ],
+          &quot;identityServiceOptions&quot;: { # Holds non-protocol-related configuration options. # Optional. non-protocol-related configuration options.
+            &quot;sessionDuration&quot;: &quot;A String&quot;, # Optional. Determines the lifespan of STS tokens issued by Anthos Identity Service.
+          },
         },
         &quot;state&quot;: &quot;A String&quot;, # Deployment state on this member
       },
@@ -3297,6 +3660,14 @@ Args:
         &quot;state&quot;: &quot;A String&quot;, # The overall Policy Controller lifecycle state observed by the Hub Feature controller.
       },
       &quot;servicemesh&quot;: { # **Service Mesh**: State for a single Membership, as analyzed by the Service Mesh Hub Controller. # Service Mesh-specific state.
+        &quot;conditions&quot;: [ # Output only. List of conditions reported for this membership.
+          { # Condition being reported.
+            &quot;code&quot;: &quot;A String&quot;, # Unique identifier of the condition which describes the condition recognizable to the user.
+            &quot;details&quot;: &quot;A String&quot;, # A short summary about the issue.
+            &quot;documentationLink&quot;: &quot;A String&quot;, # Links contains actionable information.
+            &quot;severity&quot;: &quot;A String&quot;, # Severity level of the condition.
+          },
+        ],
         &quot;controlPlaneManagement&quot;: { # Status of control plane management. # Output only. Status of control plane management
           &quot;details&quot;: [ # Explanation of state.
             { # Structured and human-readable details for a status.
@@ -3304,6 +3675,7 @@ Args:
               &quot;details&quot;: &quot;A String&quot;, # Human-readable explanation of code.
             },
           ],
+          &quot;implementation&quot;: &quot;A String&quot;, # Output only. Implementation of managed control plane.
           &quot;state&quot;: &quot;A String&quot;, # LifecycleState of control plane management.
         },
         &quot;dataPlaneManagement&quot;: { # Status of data plane management. Only reported per-member. # Output only. Status of data plane management.

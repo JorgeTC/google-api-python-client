@@ -18,6 +18,10 @@
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/acmedns_v1.html)
 
 
+## addressvalidation
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/addressvalidation_v1.html)
+
+
 ## adexchangebuyer2
 * [v2beta1](http://googleapis.github.io/google-api-python-client/docs/dyn/adexchangebuyer2_v2beta1.html)
 
@@ -280,6 +284,11 @@
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/cloudchannel_v1.html)
 
 
+## cloudcontrolspartner
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/cloudcontrolspartner_v1.html)
+* [v1beta](http://googleapis.github.io/google-api-python-client/docs/dyn/cloudcontrolspartner_v1beta.html)
+
+
 ## clouddeploy
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/clouddeploy_v1.html)
 
@@ -355,6 +364,10 @@
 * [alpha](http://googleapis.github.io/google-api-python-client/docs/dyn/compute_alpha.html)
 * [beta](http://googleapis.github.io/google-api-python-client/docs/dyn/compute_beta.html)
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/compute_v1.html)
+
+
+## config
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/config_v1.html)
 
 
 ## connectors
@@ -479,6 +492,7 @@
 
 
 ## discoveryengine
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/discoveryengine_v1.html)
 * [v1alpha](http://googleapis.github.io/google-api-python-client/docs/dyn/discoveryengine_v1alpha.html)
 * [v1beta](http://googleapis.github.io/google-api-python-client/docs/dyn/discoveryengine_v1beta.html)
 
@@ -545,7 +559,6 @@
 
 ## eventarc
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/eventarc_v1.html)
-* [v1beta1](http://googleapis.github.io/google-api-python-client/docs/dyn/eventarc_v1beta1.html)
 
 
 ## factchecktools
@@ -595,6 +608,7 @@
 ## firebaseml
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/firebaseml_v1.html)
 * [v1beta2](http://googleapis.github.io/google-api-python-client/docs/dyn/firebaseml_v1beta2.html)
+* [v2beta](http://googleapis.github.io/google-api-python-client/docs/dyn/firebaseml_v2beta.html)
 
 
 ## firebaserules
@@ -703,7 +717,7 @@
 
 
 ## integrations
-* [v1alpha](http://googleapis.github.io/google-api-python-client/docs/dyn/integrations_v1alpha.html)
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/integrations_v1.html)
 
 
 ## jobs
@@ -1080,6 +1094,10 @@
 
 ## smartdevicemanagement
 * [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/smartdevicemanagement_v1.html)
+
+
+## solar
+* [v1](http://googleapis.github.io/google-api-python-client/docs/dyn/solar_v1.html)
 
 
 ## sourcerepo

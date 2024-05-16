@@ -167,6 +167,8 @@ Returns:
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
           },
         },
+        &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+        },
         &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
           &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -188,6 +190,8 @@ Returns:
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
             &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+          },
+          &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
           },
           &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -211,14 +215,22 @@ Returns:
   &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
     &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
     &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
       &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
       &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
   },
@@ -285,6 +297,8 @@ Returns:
                 &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
               },
             },
+            &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+            },
             &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
               &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -306,6 +320,8 @@ Returns:
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
                 &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
                 &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+              },
+              &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
               },
               &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -329,14 +345,22 @@ Returns:
       &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
         &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
           &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+            &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+            },
             &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+            &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+            },
           },
         },
         &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
           &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
           &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
           &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+            &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+            },
             &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+            &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+            },
           },
         },
       },
@@ -392,6 +416,8 @@ Args:
                   &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
                 },
               },
+              &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+              },
               &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
                 &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
                   &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -413,6 +439,8 @@ Args:
                   &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
                   &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
                   &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+                },
+                &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
                 },
                 &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
                   &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -436,14 +464,22 @@ Args:
         &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
           &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
             &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+              &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+              },
               &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+              &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+              },
             },
           },
           &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
             &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
             &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
             &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+              &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+              },
               &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+              &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+              },
             },
           },
         },
@@ -491,6 +527,8 @@ Returns:
                 &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
               },
             },
+            &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+            },
             &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
               &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -512,6 +550,8 @@ Returns:
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
                 &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
                 &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+              },
+              &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
               },
               &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -535,14 +575,22 @@ Returns:
       &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
         &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
           &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+            &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+            },
             &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+            &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+            },
           },
         },
         &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
           &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
           &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
           &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+            &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+            },
             &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+            &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+            },
           },
         },
       },
@@ -621,6 +669,8 @@ Returns:
                 &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
               },
             },
+            &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+            },
             &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
               &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -642,6 +692,8 @@ Returns:
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
                 &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
                 &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+              },
+              &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
               },
               &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -665,14 +717,22 @@ Returns:
       &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
         &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
           &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+            &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+            },
             &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+            &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+            },
           },
         },
         &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
           &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
           &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
           &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+            &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+            },
             &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+            &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+            },
           },
         },
       },
@@ -725,6 +785,8 @@ Args:
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
           },
         },
+        &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+        },
         &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
           &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -746,6 +808,8 @@ Args:
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
             &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+          },
+          &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
           },
           &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -769,14 +833,22 @@ Args:
   &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
     &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
     &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
       &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
       &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
   },
@@ -820,6 +892,8 @@ Returns:
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
           },
         },
+        &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+        },
         &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
           &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -841,6 +915,8 @@ Returns:
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
             &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+          },
+          &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
           },
           &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -864,14 +940,22 @@ Returns:
   &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
     &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
     &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
       &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
       &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
   },
@@ -934,6 +1018,8 @@ Returns:
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
           },
         },
+        &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+        },
         &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
           &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -955,6 +1041,8 @@ Returns:
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
             &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+          },
+          &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
           },
           &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -978,14 +1066,22 @@ Returns:
   &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
     &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
     &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
       &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
       &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
   },
@@ -1053,6 +1149,8 @@ Returns:
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
           },
         },
+        &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+        },
         &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
           &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -1074,6 +1172,8 @@ Returns:
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
             &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+          },
+          &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
           },
           &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -1097,14 +1197,22 @@ Returns:
   &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
     &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
     &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
       &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
       &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
   },
@@ -1160,6 +1268,8 @@ Returns:
                 &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
               },
             },
+            &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+            },
             &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
               &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -1181,6 +1291,8 @@ Returns:
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
                 &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
                 &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+              },
+              &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
               },
               &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
                 &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -1204,14 +1316,22 @@ Returns:
       &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
         &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
           &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+            &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+            },
             &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+            &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+            },
           },
         },
         &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
           &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
           &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
           &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+            &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+            },
             &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+            &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+            },
           },
         },
       },
@@ -1274,6 +1394,8 @@ Args:
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
           },
         },
+        &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+        },
         &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
           &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -1295,6 +1417,8 @@ Args:
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
             &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+          },
+          &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
           },
           &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -1318,14 +1442,22 @@ Args:
   &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
     &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
     &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
       &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
       &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
   },
@@ -1375,6 +1507,8 @@ Returns:
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
           },
         },
+        &quot;free&quot;: { # Represents the free price override configuration for any new locations Play may launch for a single offer phase. # Set to specify this offer is free to obtain.
+        },
         &quot;otherRegionsPrices&quot;: { # Pricing information for any new locations Play may launch in. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for any new locations Play may launch in.
           &quot;eurPrice&quot;: { # Represents an amount of money with its currency type. # Required. Price in EUR to use for any new locations Play may launch in.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -1396,6 +1530,8 @@ Returns:
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
             &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
             &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+          },
+          &quot;free&quot;: { # Represents the free price override configuration for a single phase of a subscription offer # Set to specify this offer is free to obtain.
           },
           &quot;price&quot;: { # Represents an amount of money with its currency type. # The absolute price the user pays for this offer phase. The price must not be smaller than the minimum price allowed for this region.
             &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
@@ -1419,14 +1555,22 @@ Returns:
   &quot;targeting&quot;: { # Defines the rule a user needs to satisfy to receive this offer. # The requirements that users need to fulfil to be eligible for this offer. Represents the requirements that Play will evaluate to decide whether an offer should be returned. Developers may further filter these offers themselves.
     &quot;acquisitionRule&quot;: { # Represents a targeting rule of the form: User never had {scope} before. # Offer targeting rule for new user acquisition.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;any subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
     &quot;upgradeRule&quot;: { # Represents a targeting rule of the form: User currently has {scope} [with billing period {billing_period}]. # Offer targeting rule for upgrading users&#x27; existing plans.
       &quot;billingPeriodDuration&quot;: &quot;A String&quot;, # The specific billing period duration, specified in ISO 8601 format, that a user must be currently subscribed to to be eligible for this rule. If not specified, users subscribed to any billing period are matched.
       &quot;oncePerUser&quot;: True or False, # Limit this offer to only once per user. If set to true, a user can never be eligible for this offer again if they ever subscribed to this offer.
       &quot;scope&quot;: { # Defines the scope of subscriptions which a targeting rule can match to target offers to users based on past or current entitlement. # Required. The scope of subscriptions this rule considers. Only allows &quot;this subscription&quot; and &quot;specific subscription in app&quot;.
+        &quot;anySubscriptionInApp&quot;: { # Represents the targeting rule scope corresponding to any subscription in the parent app. # The scope of the current targeting rule is any subscription in the parent app.
+        },
         &quot;specificSubscriptionInApp&quot;: &quot;A String&quot;, # The scope of the current targeting rule is the subscription with the specified subscription ID. Must be a subscription within the same parent app.
+        &quot;thisSubscription&quot;: { # Represents the targeting rule scope corresponding to the subscriptions in which this offer is defined. # The scope of the current targeting rule is the subscription in which this offer is defined.
+        },
       },
     },
   },

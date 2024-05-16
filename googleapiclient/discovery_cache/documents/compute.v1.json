@@ -9304,6 +9304,92 @@
 }
 }
 },
+"instanceSettings": {
+"methods": {
+"get": {
+"description": "Get Instance settings.",
+"flatPath": "projects/{project}/zones/{zone}/instanceSettings",
+"httpMethod": "GET",
+"id": "compute.instanceSettings.get",
+"parameterOrder": [
+"project",
+"zone"
+],
+"parameters": {
+"project": {
+"description": "Project ID for this request.",
+"location": "path",
+"pattern": "(?:(?:[-a-z0-9]{1,63}\\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))",
+"required": true,
+"type": "string"
+},
+"zone": {
+"description": "Name of the zone for this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?",
+"required": true,
+"type": "string"
+}
+},
+"path": "projects/{project}/zones/{zone}/instanceSettings",
+"response": {
+"$ref": "InstanceSettings"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute",
+"https://www.googleapis.com/auth/compute.readonly"
+]
+},
+"patch": {
+"description": "Patch Instance settings",
+"flatPath": "projects/{project}/zones/{zone}/instanceSettings",
+"httpMethod": "PATCH",
+"id": "compute.instanceSettings.patch",
+"parameterOrder": [
+"project",
+"zone"
+],
+"parameters": {
+"project": {
+"description": "Project ID for this request.",
+"location": "path",
+"pattern": "(?:(?:[-a-z0-9]{1,63}\\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))",
+"required": true,
+"type": "string"
+},
+"requestId": {
+"description": "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported ( 00000000-0000-0000-0000-000000000000).",
+"location": "query",
+"type": "string"
+},
+"updateMask": {
+"description": "update_mask indicates fields to be updated as part of this request.",
+"format": "google-fieldmask",
+"location": "query",
+"type": "string"
+},
+"zone": {
+"description": "The zone scoping this request. It should conform to RFC1035.",
+"location": "path",
+"required": true,
+"type": "string"
+}
+},
+"path": "projects/{project}/zones/{zone}/instanceSettings",
+"request": {
+"$ref": "InstanceSettings"
+},
+"response": {
+"$ref": "Operation"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute"
+]
+}
+}
+},
 "instanceTemplates": {
 "methods": {
 "aggregatedList": {
@@ -17217,6 +17303,56 @@
 "path": "projects/{project}/zones/{zone}/nodeGroups/{nodeGroup}",
 "request": {
 "$ref": "NodeGroup"
+},
+"response": {
+"$ref": "Operation"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute"
+]
+},
+"performMaintenance": {
+"description": "Perform maintenance on a subset of nodes in the node group.",
+"flatPath": "projects/{project}/zones/{zone}/nodeGroups/{nodeGroup}/performMaintenance",
+"httpMethod": "POST",
+"id": "compute.nodeGroups.performMaintenance",
+"parameterOrder": [
+"project",
+"zone",
+"nodeGroup"
+],
+"parameters": {
+"nodeGroup": {
+"description": "Name of the node group scoping this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?|[1-9][0-9]{0,19}",
+"required": true,
+"type": "string"
+},
+"project": {
+"description": "Project ID for this request.",
+"location": "path",
+"pattern": "(?:(?:[-a-z0-9]{1,63}\\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))",
+"required": true,
+"type": "string"
+},
+"requestId": {
+"description": "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported ( 00000000-0000-0000-0000-000000000000).",
+"location": "query",
+"type": "string"
+},
+"zone": {
+"description": "The name of the zone for this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?",
+"required": true,
+"type": "string"
+}
+},
+"path": "projects/{project}/zones/{zone}/nodeGroups/{nodeGroup}/performMaintenance",
+"request": {
+"$ref": "NodeGroupsPerformMaintenanceRequest"
 },
 "response": {
 "$ref": "Operation"
@@ -37285,7 +37421,7 @@
 }
 }
 },
-"revision": "20240305",
+"revision": "20240430",
 "rootUrl": "https://compute.googleapis.com/",
 "schemas": {
 "AWSV4Signature": {
@@ -37862,7 +37998,7 @@ false
 "type": "string"
 },
 "publicPtrDomainName": {
-"description": "The DNS domain name for the public PTR record. You can set this field only if the `setPublicPtr` field is enabled in accessConfig. If this field is unspecified in ipv6AccessConfig, a default PTR record will be createc for first IP in associated external IPv6 range.",
+"description": "The DNS domain name for the public PTR record. You can set this field only if the `setPublicPtr` field is enabled in accessConfig. If this field is unspecified in ipv6AccessConfig, a default PTR record will be created for first IP in associated external IPv6 range.",
 "type": "string"
 },
 "securityPolicy": {
@@ -38699,7 +38835,7 @@ false
 "type": "object"
 },
 "AllocationSpecificSKUReservation": {
-"description": "This reservation type allows to pre allocate specific instance configuration. Next ID: 6",
+"description": "This reservation type allows to pre allocate specific instance configuration.",
 "id": "AllocationSpecificSKUReservation",
 "properties": {
 "assuredCount": {
@@ -42108,6 +42244,7 @@ false
 "enum": [
 "ACCELERATOR_OPTIMIZED",
 "ACCELERATOR_OPTIMIZED_A3",
+"ACCELERATOR_OPTIMIZED_A3_MEGA",
 "COMPUTE_OPTIMIZED",
 "COMPUTE_OPTIMIZED_C2D",
 "COMPUTE_OPTIMIZED_C3",
@@ -42126,6 +42263,7 @@ false
 "TYPE_UNSPECIFIED"
 ],
 "enumDescriptions": [
+"",
 "",
 "",
 "",
@@ -44367,7 +44505,7 @@ false
 "additionalProperties": {
 "type": "string"
 },
-"description": "Additional structured details about this error. Keys should match /[a-zA-Z0-9-_]/ and be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than {\"instanceLimit\": \"100/request\"}, should be returned as, {\"instanceLimitPerRequest\": \"100\"}, if the client exceeds the number of instances that can be created in a single (batch) request.",
+"description": "Additional structured details about this error. Keys must match /a-z+/ but should ideally be lowerCamelCase. Also they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than {\"instanceLimit\": \"100/request\"}, should be returned as, {\"instanceLimitPerRequest\": \"100\"}, if the client exceeds the number of instances that can be created in a single (batch) request.",
 "type": "object"
 },
 "reason": {
@@ -45766,6 +45904,10 @@ false
 "format": "uint64",
 "type": "string"
 },
+"ipCollection": {
+"description": "Resource reference of a PublicDelegatedPrefix. The PDP must be a sub-PDP in EXTERNAL_IPV6_FORWARDING_RULE_CREATION mode. Use one of the following formats to specify a sub-PDP when creating an IPv6 NetLB forwarding rule using BYOIP: Full resource URL, as in https://www.googleapis.com/compute/v1/projects/project_id/regions/region /publicDelegatedPrefixes/sub-pdp-name Partial URL, as in: - projects/project_id/regions/region/publicDelegatedPrefixes/sub-pdp-name - regions/region/publicDelegatedPrefixes/sub-pdp-name ",
+"type": "string"
+},
 "ipVersion": {
 "description": "The IP Version that will be used by this forwarding rule. Valid options are IPV4 or IPV6.",
 "enum": [
@@ -46688,7 +46830,7 @@ false
 "type": "string"
 },
 "requestPath": {
-"description": "The request path of the HTTP/2 health check request. The default value is /.",
+"description": "The request path of the HTTP/2 health check request. The default value is /. Must comply with RFC3986.",
 "type": "string"
 },
 "response": {
@@ -46741,7 +46883,7 @@ false
 "type": "string"
 },
 "requestPath": {
-"description": "The request path of the HTTP health check request. The default value is /.",
+"description": "The request path of the HTTP health check request. The default value is /. Must comply with RFC3986.",
 "type": "string"
 },
 "response": {
@@ -46794,7 +46936,7 @@ false
 "type": "string"
 },
 "requestPath": {
-"description": "The request path of the HTTPS health check request. The default value is /.",
+"description": "The request path of the HTTPS health check request. The default value is /. Must comply with RFC3986.",
 "type": "string"
 },
 "response": {
@@ -50792,7 +50934,7 @@ false
 },
 "perInstanceConfigs": {
 "$ref": "InstanceGroupManagerStatusStatefulPerInstanceConfigs",
-"description": "[Output Only] Status of per-instance configurations on the instance."
+"description": "[Output Only] Status of per-instance configurations on the instances."
 }
 },
 "type": "object"
@@ -52326,6 +52468,49 @@ false
 },
 "type": "object"
 },
+"InstanceSettings": {
+"description": "Represents a Instance Settings resource. You can use instance settings to configure default settings for Compute Engine VM instances. For example, you can use it to configure default machine type of Compute Engine VM instances.",
+"id": "InstanceSettings",
+"properties": {
+"fingerprint": {
+"description": "Specifies a fingerprint for instance settings, which is essentially a hash of the instance settings resource's contents and used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update the instance settings resource. You must always provide an up-to-date fingerprint hash in order to update or change the resource, otherwise the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the resource.",
+"format": "byte",
+"type": "string"
+},
+"kind": {
+"default": "compute#instanceSettings",
+"description": "[Output Only] Type of the resource. Always compute#instance_settings for instance settings.",
+"type": "string"
+},
+"metadata": {
+"$ref": "InstanceSettingsMetadata",
+"description": "The metadata key/value pairs assigned to all the instances in the corresponding scope."
+},
+"zone": {
+"description": "[Output Only] URL of the zone where the resource resides You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"InstanceSettingsMetadata": {
+"id": "InstanceSettingsMetadata",
+"properties": {
+"items": {
+"additionalProperties": {
+"type": "string"
+},
+"description": "A metadata key/value items map. The total size of all keys and values must be less than 512KB.",
+"type": "object"
+},
+"kind": {
+"default": "compute#metadata",
+"description": "[Output Only] Type of the resource. Always compute#metadata for metadata.",
+"type": "string"
+}
+},
+"type": "object"
+},
 "InstanceTemplate": {
 "description": "Represents an Instance Template resource. Google Compute Engine has two Instance Template resources: * [Global](/compute/docs/reference/rest/v1/instanceTemplates) * [Regional](/compute/docs/reference/rest/v1/regionInstanceTemplates) You can reuse a global instance template in different regions whereas you can use a regional instance template in a specified region only. If you want to reduce cross-region dependency or achieve data residency, use a regional instance template. To create VMs, managed instance groups, and reservations, you can use either global or regional instance templates. For more information, read Instance Templates.",
 "id": "InstanceTemplate",
@@ -52935,7 +53120,7 @@ false
 "type": "string"
 },
 "type": {
-"description": "[Output Only] The type of the firewall policy. Can be one of HIERARCHY, NETWORK, NETWORK_REGIONAL.",
+"description": "[Output Only] The type of the firewall policy. Can be one of HIERARCHY, NETWORK, NETWORK_REGIONAL, SYSTEM_GLOBAL, SYSTEM_REGIONAL.",
 "enum": [
 "HIERARCHY",
 "NETWORK",
@@ -58806,7 +58991,7 @@ false
 "type": "string"
 },
 "networkEndpointType": {
-"description": "Type of network endpoints in this network endpoint group. Can be one of GCE_VM_IP, GCE_VM_IP_PORT, NON_GCP_PRIVATE_IP_PORT, INTERNET_FQDN_PORT, INTERNET_IP_PORT, SERVERLESS, PRIVATE_SERVICE_CONNECT.",
+"description": "Type of network endpoints in this network endpoint group. Can be one of GCE_VM_IP, GCE_VM_IP_PORT, NON_GCP_PRIVATE_IP_PORT, INTERNET_FQDN_PORT, INTERNET_IP_PORT, SERVERLESS, PRIVATE_SERVICE_CONNECT, GCE_VM_IP_PORTMAP.",
 "enum": [
 "GCE_VM_IP",
 "GCE_VM_IP_PORT",
@@ -60109,6 +60294,18 @@ false
 "description": "An opaque location hint used to place the Node close to other resources. This field is for use by internal tools that use the public API. The location hint here on the NodeGroup overrides any location_hint present in the NodeTemplate.",
 "type": "string"
 },
+"maintenanceInterval": {
+"description": "Specifies the frequency of planned maintenance events. The accepted values are: `AS_NEEDED` and `RECURRENT`.",
+"enum": [
+"AS_NEEDED",
+"RECURRENT"
+],
+"enumDescriptions": [
+"VMs are eligible to receive infrastructure and hypervisor updates as they become available. This may result in more maintenance operations (live migrations or terminations) for the VM than the PERIODIC and RECURRENT options.",
+"VMs receive infrastructure and hypervisor updates on a periodic basis, minimizing the number of maintenance operations (live migrations or terminations) on an individual VM. This may mean a VM will take longer to receive an update than if it was configured for AS_NEEDED. Security updates will still be applied as soon as they are available. RECURRENT is used for GEN3 and Slice of Hardware VMs."
+],
+"type": "string"
+},
 "maintenancePolicy": {
 "description": "Specifies how to handle instances when a node in the group undergoes maintenance. Set to one of: DEFAULT, RESTART_IN_PLACE, or MIGRATE_WITHIN_NODE_GROUP. The default value is DEFAULT. For more information, see Maintenance policies.",
 "enum": [
@@ -60618,6 +60815,10 @@ false
 "totalResources": {
 "$ref": "InstanceConsumptionInfo",
 "description": "Total amount of available resources on the node."
+},
+"upcomingMaintenance": {
+"$ref": "UpcomingMaintenance",
+"description": "[Output Only] The information about an upcoming maintenance event."
 }
 },
 "type": "object"
@@ -60793,6 +60994,23 @@ false
 }
 },
 "type": "object"
+}
+},
+"type": "object"
+},
+"NodeGroupsPerformMaintenanceRequest": {
+"id": "NodeGroupsPerformMaintenanceRequest",
+"properties": {
+"nodes": {
+"description": "[Required] List of nodes affected by the call.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+"startTime": {
+"description": "The start time of the schedule. The timestamp is an RFC3339 string.",
+"type": "string"
 }
 },
 "type": "object"
@@ -63126,7 +63344,7 @@ false
 },
 "filter": {
 "$ref": "PacketMirroringFilter",
-"description": "Filter for mirrored traffic. If unspecified, all traffic is mirrored."
+"description": "Filter for mirrored traffic. If unspecified, all IPv4 traffic is mirrored."
 },
 "id": {
 "description": "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
@@ -63348,7 +63566,7 @@ false
 "type": "array"
 },
 "cidrRanges": {
-"description": "One or more IPv4 or IPv6 CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. If no ranges are specified, all IPv4 traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored. To mirror all IPv4 and IPv6 traffic, use \"0.0.0.0/0,::/0\". Note: Support for IPv6 traffic is in preview.",
+"description": "One or more IPv4 or IPv6 CIDR ranges that apply as filters on the source (ingress) or destination (egress) IP in the IP header. If no ranges are specified, all IPv4 traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored. To mirror all IPv4 and IPv6 traffic, use \"0.0.0.0/0,::/0\".",
 "items": {
 "type": "string"
 },
@@ -63746,15 +63964,15 @@ false
 "properties": {
 "defaultRouteAction": {
 "$ref": "HttpRouteAction",
-"description": "defaultRouteAction takes effect when none of the pathRules or routeRules match. The load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend. If defaultRouteAction specifies any weightedBackendServices, defaultService must not be set. Conversely if defaultService is set, defaultRouteAction cannot contain any weightedBackendServices. Only one of defaultRouteAction or defaultUrlRedirect must be set. URL maps for classic Application Load Balancers only support the urlRewrite action within a path matcher's defaultRouteAction."
+"description": "defaultRouteAction takes effect when none of the pathRules or routeRules match. The load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend. If defaultRouteAction specifies any weightedBackendServices, defaultService must not be set. Conversely if defaultService is set, defaultRouteAction cannot contain any weightedBackendServices. If defaultRouteAction is specified, don't set defaultUrlRedirect. If defaultRouteAction.weightedBackendServices is specified, don't set defaultService. URL maps for classic Application Load Balancers only support the urlRewrite action within a path matcher's defaultRouteAction."
 },
 "defaultService": {
-"description": "The full or partial URL to the BackendService resource. This URL is used if none of the pathRules or routeRules defined by this PathMatcher are matched. For example, the following are all valid URLs to a BackendService resource: - https://www.googleapis.com/compute/v1/projects/project /global/backendServices/backendService - compute/v1/projects/project/global/backendServices/backendService - global/backendServices/backendService If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend. However, if defaultService is specified, defaultRouteAction cannot contain any weightedBackendServices. Conversely, if defaultRouteAction specifies any weightedBackendServices, defaultService must not be specified. Only one of defaultService, defaultUrlRedirect , or defaultRouteAction.weightedBackendService must be set. Authorization requires one or more of the following Google IAM permissions on the specified resource default_service: - compute.backendBuckets.use - compute.backendServices.use ",
+"description": "The full or partial URL to the BackendService resource. This URL is used if none of the pathRules or routeRules defined by this PathMatcher are matched. For example, the following are all valid URLs to a BackendService resource: - https://www.googleapis.com/compute/v1/projects/project /global/backendServices/backendService - compute/v1/projects/project/global/backendServices/backendService - global/backendServices/backendService If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend. However, if defaultService is specified, defaultRouteAction cannot contain any weightedBackendServices. Conversely, if defaultRouteAction specifies any weightedBackendServices, defaultService must not be specified. If defaultService is specified, then set either defaultUrlRedirect or defaultRouteAction.weightedBackendService. Don't set both. Authorization requires one or more of the following Google IAM permissions on the specified resource default_service: - compute.backendBuckets.use - compute.backendServices.use ",
 "type": "string"
 },
 "defaultUrlRedirect": {
 "$ref": "HttpRedirectAction",
-"description": "When none of the specified pathRules or routeRules match, the request is redirected to a URL specified by defaultUrlRedirect. If defaultUrlRedirect is specified, defaultService or defaultRouteAction must not be set. Not supported when the URL map is bound to a target gRPC proxy."
+"description": "When none of the specified pathRules or routeRules match, the request is redirected to a URL specified by defaultUrlRedirect. If defaultUrlRedirect is specified, then set either defaultService or defaultRouteAction. Don't set both. Not supported when the URL map is bound to a target gRPC proxy."
 },
 "description": {
 "description": "An optional description of this resource. Provide this property when you create the resource.",
@@ -64514,6 +64732,11 @@ false
 "description": "A PublicDelegatedPrefix resource represents an IP block within a PublicAdvertisedPrefix that is configured within a single cloud scope (global or region). IPs in the block can be allocated to resources within that scope. Public delegated prefixes may be further broken up into smaller IP blocks in the same scope as the parent block.",
 "id": "PublicDelegatedPrefix",
 "properties": {
+"allocatablePrefixLength": {
+"description": "The allocatable prefix length supported by this public delegated prefix. This field is optional and cannot be set for prefixes in DELEGATION mode. It cannot be set for IPv4 prefixes either, and it always defaults to 32.",
+"format": "int32",
+"type": "integer"
+},
 "byoipApiVersion": {
 "description": "[Output Only] The version of BYOIP API.",
 "enum": [
@@ -64555,6 +64778,18 @@ false
 "kind": {
 "default": "compute#publicDelegatedPrefix",
 "description": "[Output Only] Type of the resource. Always compute#publicDelegatedPrefix for public delegated prefixes.",
+"type": "string"
+},
+"mode": {
+"description": "The public delegated prefix mode for IPv6 only.",
+"enum": [
+"DELEGATION",
+"EXTERNAL_IPV6_FORWARDING_RULE_CREATION"
+],
+"enumDescriptions": [
+"The public delegated prefix is used for further sub-delegation only. Such prefixes cannot set allocatablePrefixLength.",
+"The public delegated prefix is used for creating forwarding rules only. Such prefixes cannot set publicDelegatedSubPrefixes."
+],
 "type": "string"
 },
 "name": {
@@ -64923,6 +65158,11 @@ false
 "description": "Represents a sub PublicDelegatedPrefix.",
 "id": "PublicDelegatedPrefixPublicDelegatedSubPrefix",
 "properties": {
+"allocatablePrefixLength": {
+"description": "The allocatable prefix length supported by this PublicDelegatedSubPrefix.",
+"format": "int32",
+"type": "integer"
+},
 "delegateeProject": {
 "description": "Name of the project scoping this PublicDelegatedSubPrefix.",
 "type": "string"
@@ -64938,6 +65178,18 @@ false
 "isAddress": {
 "description": "Whether the sub prefix is delegated to create Address resources in the delegatee project.",
 "type": "boolean"
+},
+"mode": {
+"description": "The PublicDelegatedSubPrefix mode for IPv6 only.",
+"enum": [
+"DELEGATION",
+"EXTERNAL_IPV6_FORWARDING_RULE_CREATION"
+],
+"enumDescriptions": [
+"The public delegated prefix is used for further sub-delegation only. Such prefixes cannot set allocatablePrefixLength.",
+"The public delegated prefix is used for creating forwarding rules only. Such prefixes cannot set publicDelegatedSubPrefixes."
+],
+"type": "string"
 },
 "name": {
 "description": "The name of the sub public delegated prefix.",
@@ -65250,6 +65502,7 @@ false
 "SNAPSHOTS",
 "SSD_TOTAL_GB",
 "SSL_CERTIFICATES",
+"SSL_POLICIES",
 "STATIC_ADDRESSES",
 "STATIC_BYOIP_ADDRESSES",
 "STATIC_EXTERNAL_IPV6_ADDRESS_RANGES",
@@ -65267,6 +65520,7 @@ false
 "TPU_LITE_PODSLICE_V5",
 "TPU_PODSLICE_V4",
 "URL_MAPS",
+"VARIABLE_IPV6_PUBLIC_DELEGATED_PREFIXES",
 "VPN_GATEWAYS",
 "VPN_TUNNELS",
 "XPN_SERVICE_PROJECTS"
@@ -65433,6 +65687,8 @@ false
 "",
 "",
 "",
+"",
+"",
 ""
 ],
 "type": "string"
@@ -65546,6 +65802,127 @@ false
 "name": {
 "description": "[Output Only] Name of the resource.",
 "type": "string"
+},
+"quotaStatusWarning": {
+"description": "[Output Only] Warning of fetching the `quotas` field for this region. This field is populated only if fetching of the `quotas` field fails.",
+"properties": {
+"code": {
+"description": "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response.",
+"enum": [
+"CLEANUP_FAILED",
+"DEPRECATED_RESOURCE_USED",
+"DEPRECATED_TYPE_USED",
+"DISK_SIZE_LARGER_THAN_IMAGE_SIZE",
+"EXPERIMENTAL_TYPE_USED",
+"EXTERNAL_API_WARNING",
+"FIELD_VALUE_OVERRIDEN",
+"INJECTED_KERNELS_DEPRECATED",
+"INVALID_HEALTH_CHECK_FOR_DYNAMIC_WIEGHTED_LB",
+"LARGE_DEPLOYMENT_WARNING",
+"LIST_OVERHEAD_QUOTA_EXCEED",
+"MISSING_TYPE_DEPENDENCY",
+"NEXT_HOP_ADDRESS_NOT_ASSIGNED",
+"NEXT_HOP_CANNOT_IP_FORWARD",
+"NEXT_HOP_INSTANCE_HAS_NO_IPV6_INTERFACE",
+"NEXT_HOP_INSTANCE_NOT_FOUND",
+"NEXT_HOP_INSTANCE_NOT_ON_NETWORK",
+"NEXT_HOP_NOT_RUNNING",
+"NOT_CRITICAL_ERROR",
+"NO_RESULTS_ON_PAGE",
+"PARTIAL_SUCCESS",
+"REQUIRED_TOS_AGREEMENT",
+"RESOURCE_IN_USE_BY_OTHER_RESOURCE_WARNING",
+"RESOURCE_NOT_DELETED",
+"SCHEMA_VALIDATION_IGNORED",
+"SINGLE_INSTANCE_PROPERTY_TEMPLATE",
+"UNDECLARED_PROPERTIES",
+"UNREACHABLE"
+],
+"enumDeprecated": [
+false,
+false,
+false,
+false,
+false,
+false,
+true,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false
+],
+"enumDescriptions": [
+"Warning about failed cleanup of transient changes made by a failed operation.",
+"A link to a deprecated resource was created.",
+"When deploying and at least one of the resources has a type marked as deprecated",
+"The user created a boot disk that is larger than image size.",
+"When deploying and at least one of the resources has a type marked as experimental",
+"Warning that is present in an external api call",
+"Warning that value of a field has been overridden. Deprecated unused field.",
+"The operation involved use of an injected kernel, which is deprecated.",
+"A WEIGHTED_MAGLEV backend service is associated with a health check that is not of type HTTP/HTTPS/HTTP2.",
+"When deploying a deployment with a exceedingly large number of resources",
+"Resource can't be retrieved due to list overhead quota exceed which captures the amount of resources filtered out by user-defined list filter.",
+"A resource depends on a missing type",
+"The route's nextHopIp address is not assigned to an instance on the network.",
+"The route's next hop instance cannot ip forward.",
+"The route's nextHopInstance URL refers to an instance that does not have an ipv6 interface on the same network as the route.",
+"The route's nextHopInstance URL refers to an instance that does not exist.",
+"The route's nextHopInstance URL refers to an instance that is not on the same network as the route.",
+"The route's next hop instance does not have a status of RUNNING.",
+"Error which is not critical. We decided to continue the process despite the mentioned error.",
+"No results are present on a particular list page.",
+"Success is reported, but some results may be missing due to errors",
+"The user attempted to use a resource that requires a TOS they have not accepted.",
+"Warning that a resource is in use.",
+"One or more of the resources set to auto-delete could not be deleted because they were in use.",
+"When a resource schema validation is ignored.",
+"Instance template used in instance group manager is valid as such, but its application does not make a lot of sense, because it allows only single instance in instance group.",
+"When undeclared properties in the schema are present",
+"A given scope cannot be reached."
+],
+"type": "string"
+},
+"data": {
+"description": "[Output Only] Metadata about this warning in key: value format. For example: \"data\": [ { \"key\": \"scope\", \"value\": \"zones/us-east1-d\" } ",
+"items": {
+"properties": {
+"key": {
+"description": "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+"type": "string"
+},
+"value": {
+"description": "[Output Only] A warning data value corresponding to the key.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"type": "array"
+},
+"message": {
+"description": "[Output Only] A human-readable description of the warning code.",
+"type": "string"
+}
+},
+"type": "object"
 },
 "quotas": {
 "description": "[Output Only] Quotas assigned to this region.",
@@ -68135,7 +68512,7 @@ false
 "type": "object"
 },
 "ResourcePolicyGroupPlacementPolicy": {
-"description": "A GroupPlacementPolicy specifies resource placement configuration. It specifies the failure bucket separation as well as network locality",
+"description": "A GroupPlacementPolicy specifies resource placement configuration. It specifies the failure bucket separation",
 "id": "ResourcePolicyGroupPlacementPolicy",
 "properties": {
 "availabilityDomainCount": {
@@ -69316,6 +69693,10 @@ false
 "format": "uint32",
 "type": "integer"
 },
+"identifierRange": {
+"description": "Explicitly specifies a range of valid BGP Identifiers for this Router. It is provided as a link-local IPv4 range (from 169.254.0.0/16), of size at least /30, even if the BGP sessions are over IPv6. It must not overlap with any IPv4 BGP session ranges. Other vendors commonly call this \"router ID\".",
+"type": "string"
+},
 "keepaliveInterval": {
 "description": "The interval in seconds between BGP keepalive messages that are sent to the peer. Hold time is three times the interval at which keepalive messages are sent, and the hold time is the maximum number of seconds allowed to elapse between successive keepalive messages that BGP receives from a peer. BGP will use the smaller of either the local hold time value or the peer's hold time value as the hold time for the BGP connection between the two peers. If set, this value must be between 20 and 60. The default is 20.",
 "format": "uint32",
@@ -69392,16 +69773,38 @@ false
 ],
 "type": "string"
 },
-"enableIpv6": {
-"description": "Enable IPv6 traffic over BGP Peer. If not specified, it is disabled by default.",
+"enableIpv4": {
+"description": "Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.",
 "type": "boolean"
+},
+"enableIpv6": {
+"description": "Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.",
+"type": "boolean"
+},
+"exportPolicies": {
+"description": "List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+"importPolicies": {
+"description": "List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.",
+"items": {
+"type": "string"
+},
+"type": "array"
 },
 "interfaceName": {
 "description": "Name of the interface the BGP peer is associated with.",
 "type": "string"
 },
 "ipAddress": {
-"description": "IP address of the interface inside Google Cloud Platform. Only IPv4 is supported.",
+"description": "IP address of the interface inside Google Cloud Platform.",
+"type": "string"
+},
+"ipv4NexthopAddress": {
+"description": "IPv4 address of the interface inside Google Cloud Platform.",
 "type": "string"
 },
 "ipv6NexthopAddress": {
@@ -69445,7 +69848,11 @@ false
 "type": "integer"
 },
 "peerIpAddress": {
-"description": "IP address of the BGP interface outside Google Cloud Platform. Only IPv4 is supported.",
+"description": "IP address of the BGP interface outside Google Cloud Platform.",
+"type": "string"
+},
+"peerIpv4NexthopAddress": {
+"description": "IPv4 address of the BGP interface outside Google Cloud Platform.",
 "type": "string"
 },
 "peerIpv6NexthopAddress": {
@@ -69508,7 +69915,19 @@ false
 "id": "RouterInterface",
 "properties": {
 "ipRange": {
-"description": "IP address and range of the interface. The IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example: 169.254.0.1/30. NOTE: Do not truncate the address as it represents the IP address of the interface.",
+"description": "IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fc00:0:1:1::1/112. Within the router's VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose. ",
+"type": "string"
+},
+"ipVersion": {
+"description": "IP version of this interface.",
+"enum": [
+"IPV4",
+"IPV6"
+],
+"enumDescriptions": [
+"",
+""
+],
 "type": "string"
 },
 "linkedInterconnectAttachment": {
@@ -70057,12 +70476,20 @@ false
 "bfdStatus": {
 "$ref": "BfdStatus"
 },
+"enableIpv4": {
+"description": "Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.",
+"type": "boolean"
+},
 "enableIpv6": {
-"description": "Enable IPv6 traffic over BGP Peer. If not specified, it is disabled by default.",
+"description": "Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.",
 "type": "boolean"
 },
 "ipAddress": {
 "description": "IP address of the local BGP interface.",
+"type": "string"
+},
+"ipv4NexthopAddress": {
+"description": "IPv4 address of the local BGP interface.",
 "type": "string"
 },
 "ipv6NexthopAddress": {
@@ -70088,6 +70515,10 @@ false
 },
 "peerIpAddress": {
 "description": "IP address of the remote BGP interface.",
+"type": "string"
+},
+"peerIpv4NexthopAddress": {
+"description": "IPv4 address of the remote BGP interface.",
 "type": "string"
 },
 "peerIpv6NexthopAddress": {
@@ -70119,10 +70550,14 @@ false
 "statusReason": {
 "description": "Indicates why particular status was returned.",
 "enum": [
+"IPV4_PEER_ON_IPV6_ONLY_CONNECTION",
+"IPV6_PEER_ON_IPV4_ONLY_CONNECTION",
 "MD5_AUTH_INTERNAL_PROBLEM",
 "STATUS_REASON_UNSPECIFIED"
 ],
 "enumDescriptions": [
+"BGP peer disabled because it requires IPv4 but the underlying connection is IPv6-only.",
+"BGP peer disabled because it requires IPv6 but the underlying connection is IPv4-only.",
 "Indicates internal problems with configuration of MD5 authentication. This particular reason can only be returned when md5AuthEnabled is true and status is DOWN.",
 ""
 ],
@@ -72156,14 +72591,14 @@ false
 "type": "string"
 },
 "consumerAcceptLists": {
-"description": "Projects that are allowed to connect to this service attachment.",
+"description": "Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks.",
 "items": {
 "$ref": "ServiceAttachmentConsumerProjectLimit"
 },
 "type": "array"
 },
 "consumerRejectLists": {
-"description": "Projects that are not allowed to connect to this service attachment. The project can be specified using its id or number.",
+"description": "Specifies a list of projects or networks that are not allowed to connect to this service attachment. The project can be specified using its project ID or project number and the network can be specified using its URL. A given service attachment can manage connections at either the project or network level. Therefore, both the reject and accept lists for a given service attachment must contain either only projects or only networks.",
 "items": {
 "type": "string"
 },
@@ -73312,7 +73747,7 @@ false
 "additionalProperties": {
 "$ref": "SnapshotSettingsStorageLocationSettingsStorageLocationPreference"
 },
-"description": "When the policy is SPECIFIC_LOCATIONS, snapshots will be stored in the locations listed in this field. Keys are GCS bucket locations.",
+"description": "When the policy is SPECIFIC_LOCATIONS, snapshots will be stored in the locations listed in this field. Keys are Cloud Storage bucket locations. Only one location can be specified.",
 "type": "object"
 },
 "policy": {
@@ -73325,7 +73760,7 @@ false
 ],
 "enumDescriptions": [
 "Store snapshot in the same region as with the originating disk. No additional parameters are needed.",
-"Store snapshot to the nearest multi region GCS bucket, relative to the originating disk. No additional parameters are needed.",
+"Store snapshot in the nearest multi region Cloud Storage bucket, relative to the originating disk. No additional parameters are needed.",
 "Store snapshot in the specific locations, as specified by the user. The list of regions to store must be defined under the `locations` field.",
 ""
 ],
@@ -73339,7 +73774,7 @@ false
 "id": "SnapshotSettingsStorageLocationSettingsStorageLocationPreference",
 "properties": {
 "name": {
-"description": "Name of the location. It should be one of the GCS buckets.",
+"description": "Name of the location. It should be one of the Cloud Storage buckets. Only one location can be specified.",
 "type": "string"
 }
 },
@@ -80823,7 +81258,7 @@ false
 "description": "defaultRouteAction takes effect when none of the hostRules match. The load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend. If defaultRouteAction specifies any weightedBackendServices, defaultService must not be set. Conversely if defaultService is set, defaultRouteAction cannot contain any weightedBackendServices. Only one of defaultRouteAction or defaultUrlRedirect must be set. URL maps for classic Application Load Balancers only support the urlRewrite action within defaultRouteAction. defaultRouteAction has no effect when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true."
 },
 "defaultService": {
-"description": "The full or partial URL of the defaultService resource to which traffic is directed if none of the hostRules match. If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend. However, if defaultService is specified, defaultRouteAction cannot contain any weightedBackendServices. Conversely, if routeAction specifies any weightedBackendServices, service must not be specified. Only one of defaultService, defaultUrlRedirect , or defaultRouteAction.weightedBackendService must be set. defaultService has no effect when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true.",
+"description": "The full or partial URL of the defaultService resource to which traffic is directed if none of the hostRules match. If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend. However, if defaultService is specified, defaultRouteAction cannot contain any weightedBackendServices. Conversely, if routeAction specifies any weightedBackendServices, service must not be specified. If defaultService is specified, then set either defaultUrlRedirect , or defaultRouteAction.weightedBackendService Don't set both. defaultService has no effect when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true.",
 "type": "string"
 },
 "defaultUrlRedirect": {

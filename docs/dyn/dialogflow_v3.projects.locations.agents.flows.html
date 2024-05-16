@@ -147,7 +147,9 @@ Args:
     },
     &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
       &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+      &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
       &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+      &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
       &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
     },
     &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -178,7 +180,9 @@ Args:
           },
           &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
             &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+            &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
             &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+            &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -336,7 +340,9 @@ Args:
         },
         &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
           &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+          &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
           &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+          &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
           &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
         },
         &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -476,6 +482,12 @@ Args:
       &quot;webhook&quot;: &quot;A String&quot;, # The webhook to call. Format: `projects//locations//agents//webhooks/`.
     },
   },
+  &quot;multiLanguageSettings&quot;: { # Settings for multi-lingual agents. # Optional. Multi-lingual agent settings for this flow.
+    &quot;enableMultiLanguageDetection&quot;: True or False, # Optional. Enable multi-language detection for this flow. This can be set only if agent level multi language setting is enabled.
+    &quot;supportedResponseLanguageCodes&quot;: [ # Optional. Agent will respond in the detected language if the detected language code is in the supported resolved languages for this flow. This will be used only if multi-language training is enabled in the agent and multi-language detection is enabled in the flow. The supported languages must be a subset of the languages supported by the agent.
+      &quot;A String&quot;,
+    ],
+  },
   &quot;name&quot;: &quot;A String&quot;, # The unique identifier of the flow. Format: `projects//locations//agents//flows/`.
   &quot;nluSettings&quot;: { # Settings related to NLU. # NLU related settings of the flow.
     &quot;classificationThreshold&quot;: 3.14, # To filter out false positive results and still get variety in matched natural language inputs for your agent, you can tune the machine learning classification threshold. If the returned score value is less than the threshold value, then a no-match event will be triggered. The score values range from 0.0 (completely uncertain) to 1.0 (completely certain). If set to 0.0, the default of 0.3 is used.
@@ -500,7 +512,9 @@ Args:
           },
           &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
             &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+            &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
             &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+            &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -659,7 +673,9 @@ Returns:
     },
     &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
       &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+      &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
       &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+      &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
       &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
     },
     &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -690,7 +706,9 @@ Returns:
           },
           &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
             &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+            &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
             &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+            &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -848,7 +866,9 @@ Returns:
         },
         &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
           &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+          &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
           &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+          &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
           &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
         },
         &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -988,6 +1008,12 @@ Returns:
       &quot;webhook&quot;: &quot;A String&quot;, # The webhook to call. Format: `projects//locations//agents//webhooks/`.
     },
   },
+  &quot;multiLanguageSettings&quot;: { # Settings for multi-lingual agents. # Optional. Multi-lingual agent settings for this flow.
+    &quot;enableMultiLanguageDetection&quot;: True or False, # Optional. Enable multi-language detection for this flow. This can be set only if agent level multi language setting is enabled.
+    &quot;supportedResponseLanguageCodes&quot;: [ # Optional. Agent will respond in the detected language if the detected language code is in the supported resolved languages for this flow. This will be used only if multi-language training is enabled in the agent and multi-language detection is enabled in the flow. The supported languages must be a subset of the languages supported by the agent.
+      &quot;A String&quot;,
+    ],
+  },
   &quot;name&quot;: &quot;A String&quot;, # The unique identifier of the flow. Format: `projects//locations//agents//flows/`.
   &quot;nluSettings&quot;: { # Settings related to NLU. # NLU related settings of the flow.
     &quot;classificationThreshold&quot;: 3.14, # To filter out false positive results and still get variety in matched natural language inputs for your agent, you can tune the machine learning classification threshold. If the returned score value is less than the threshold value, then a no-match event will be triggered. The score values range from 0.0 (completely uncertain) to 1.0 (completely certain). If set to 0.0, the default of 0.3 is used.
@@ -1012,7 +1038,9 @@ Returns:
           },
           &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
             &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+            &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
             &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+            &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -1240,7 +1268,9 @@ Returns:
     },
     &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
       &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+      &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
       &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+      &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
       &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
     },
     &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -1271,7 +1301,9 @@ Returns:
           },
           &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
             &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+            &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
             &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+            &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -1429,7 +1461,9 @@ Returns:
         },
         &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
           &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+          &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
           &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+          &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
           &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
         },
         &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -1569,6 +1603,12 @@ Returns:
       &quot;webhook&quot;: &quot;A String&quot;, # The webhook to call. Format: `projects//locations//agents//webhooks/`.
     },
   },
+  &quot;multiLanguageSettings&quot;: { # Settings for multi-lingual agents. # Optional. Multi-lingual agent settings for this flow.
+    &quot;enableMultiLanguageDetection&quot;: True or False, # Optional. Enable multi-language detection for this flow. This can be set only if agent level multi language setting is enabled.
+    &quot;supportedResponseLanguageCodes&quot;: [ # Optional. Agent will respond in the detected language if the detected language code is in the supported resolved languages for this flow. This will be used only if multi-language training is enabled in the agent and multi-language detection is enabled in the flow. The supported languages must be a subset of the languages supported by the agent.
+      &quot;A String&quot;,
+    ],
+  },
   &quot;name&quot;: &quot;A String&quot;, # The unique identifier of the flow. Format: `projects//locations//agents//flows/`.
   &quot;nluSettings&quot;: { # Settings related to NLU. # NLU related settings of the flow.
     &quot;classificationThreshold&quot;: 3.14, # To filter out false positive results and still get variety in matched natural language inputs for your agent, you can tune the machine learning classification threshold. If the returned score value is less than the threshold value, then a no-match event will be triggered. The score values range from 0.0 (completely uncertain) to 1.0 (completely certain). If set to 0.0, the default of 0.3 is used.
@@ -1593,7 +1633,9 @@ Returns:
           },
           &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
             &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+            &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
             &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+            &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -1847,7 +1889,9 @@ Returns:
         },
         &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
           &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+          &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
           &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+          &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
           &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
         },
         &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -1878,7 +1922,9 @@ Returns:
               },
               &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
                 &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+                &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
                 &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+                &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
                 &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
               },
               &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -2036,7 +2082,9 @@ Returns:
             },
             &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
               &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+              &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
               &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+              &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
               &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
             },
             &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -2176,6 +2224,12 @@ Returns:
           &quot;webhook&quot;: &quot;A String&quot;, # The webhook to call. Format: `projects//locations//agents//webhooks/`.
         },
       },
+      &quot;multiLanguageSettings&quot;: { # Settings for multi-lingual agents. # Optional. Multi-lingual agent settings for this flow.
+        &quot;enableMultiLanguageDetection&quot;: True or False, # Optional. Enable multi-language detection for this flow. This can be set only if agent level multi language setting is enabled.
+        &quot;supportedResponseLanguageCodes&quot;: [ # Optional. Agent will respond in the detected language if the detected language code is in the supported resolved languages for this flow. This will be used only if multi-language training is enabled in the agent and multi-language detection is enabled in the flow. The supported languages must be a subset of the languages supported by the agent.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;name&quot;: &quot;A String&quot;, # The unique identifier of the flow. Format: `projects//locations//agents//flows/`.
       &quot;nluSettings&quot;: { # Settings related to NLU. # NLU related settings of the flow.
         &quot;classificationThreshold&quot;: 3.14, # To filter out false positive results and still get variety in matched natural language inputs for your agent, you can tune the machine learning classification threshold. If the returned score value is less than the threshold value, then a no-match event will be triggered. The score values range from 0.0 (completely uncertain) to 1.0 (completely certain). If set to 0.0, the default of 0.3 is used.
@@ -2200,7 +2254,9 @@ Returns:
               },
               &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
                 &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+                &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
                 &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+                &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
                 &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
               },
               &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -2377,7 +2433,9 @@ Args:
     },
     &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
       &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+      &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
       &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+      &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
       &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
     },
     &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -2408,7 +2466,9 @@ Args:
           },
           &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
             &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+            &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
             &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+            &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -2566,7 +2626,9 @@ Args:
         },
         &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
           &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+          &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
           &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+          &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
           &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
         },
         &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -2706,6 +2768,12 @@ Args:
       &quot;webhook&quot;: &quot;A String&quot;, # The webhook to call. Format: `projects//locations//agents//webhooks/`.
     },
   },
+  &quot;multiLanguageSettings&quot;: { # Settings for multi-lingual agents. # Optional. Multi-lingual agent settings for this flow.
+    &quot;enableMultiLanguageDetection&quot;: True or False, # Optional. Enable multi-language detection for this flow. This can be set only if agent level multi language setting is enabled.
+    &quot;supportedResponseLanguageCodes&quot;: [ # Optional. Agent will respond in the detected language if the detected language code is in the supported resolved languages for this flow. This will be used only if multi-language training is enabled in the agent and multi-language detection is enabled in the flow. The supported languages must be a subset of the languages supported by the agent.
+      &quot;A String&quot;,
+    ],
+  },
   &quot;name&quot;: &quot;A String&quot;, # The unique identifier of the flow. Format: `projects//locations//agents//flows/`.
   &quot;nluSettings&quot;: { # Settings related to NLU. # NLU related settings of the flow.
     &quot;classificationThreshold&quot;: 3.14, # To filter out false positive results and still get variety in matched natural language inputs for your agent, you can tune the machine learning classification threshold. If the returned score value is less than the threshold value, then a no-match event will be triggered. The score values range from 0.0 (completely uncertain) to 1.0 (completely certain). If set to 0.0, the default of 0.3 is used.
@@ -2730,7 +2798,9 @@ Args:
           },
           &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
             &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+            &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
             &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+            &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -2890,7 +2960,9 @@ Returns:
     },
     &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
       &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+      &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
       &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+      &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
       &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
     },
     &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -2921,7 +2993,9 @@ Returns:
           },
           &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
             &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+            &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
             &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+            &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -3079,7 +3153,9 @@ Returns:
         },
         &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
           &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+          &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
           &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+          &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
           &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
         },
         &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
@@ -3219,6 +3295,12 @@ Returns:
       &quot;webhook&quot;: &quot;A String&quot;, # The webhook to call. Format: `projects//locations//agents//webhooks/`.
     },
   },
+  &quot;multiLanguageSettings&quot;: { # Settings for multi-lingual agents. # Optional. Multi-lingual agent settings for this flow.
+    &quot;enableMultiLanguageDetection&quot;: True or False, # Optional. Enable multi-language detection for this flow. This can be set only if agent level multi language setting is enabled.
+    &quot;supportedResponseLanguageCodes&quot;: [ # Optional. Agent will respond in the detected language if the detected language code is in the supported resolved languages for this flow. This will be used only if multi-language training is enabled in the agent and multi-language detection is enabled in the flow. The supported languages must be a subset of the languages supported by the agent.
+      &quot;A String&quot;,
+    ],
+  },
   &quot;name&quot;: &quot;A String&quot;, # The unique identifier of the flow. Format: `projects//locations//agents//flows/`.
   &quot;nluSettings&quot;: { # Settings related to NLU. # NLU related settings of the flow.
     &quot;classificationThreshold&quot;: 3.14, # To filter out false positive results and still get variety in matched natural language inputs for your agent, you can tune the machine learning classification threshold. If the returned score value is less than the threshold value, then a no-match event will be triggered. The score values range from 0.0 (completely uncertain) to 1.0 (completely certain). If set to 0.0, the default of 0.3 is used.
@@ -3243,7 +3325,9 @@ Returns:
           },
           &quot;dtmfSettings&quot;: { # Define behaviors for DTMF (dual tone multi frequency). # Settings for DTMF. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level.
             &quot;enabled&quot;: True or False, # If true, incoming audio is processed for DTMF (dual tone multi frequency) events. For example, if the caller presses a button on their telephone keypad and DTMF processing is enabled, Dialogflow will detect the event (e.g. a &quot;3&quot; was pressed) in the incoming audio and pass the event to the bot to drive business logic (e.g. when 3 is pressed, return the account balance).
+            &quot;endpointingTimeoutDuration&quot;: &quot;A String&quot;, # Endpoint timeout setting for matching dtmf input to regex.
             &quot;finishDigit&quot;: &quot;A String&quot;, # The digit that terminates a DTMF digit sequence.
+            &quot;interdigitTimeoutDuration&quot;: &quot;A String&quot;, # Interdigit timeout setting for matching dtmf input to regex.
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.

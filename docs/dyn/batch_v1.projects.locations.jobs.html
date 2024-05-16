@@ -158,7 +158,7 @@ Args:
       &quot;a_key&quot;: &quot;A String&quot;,
     },
     &quot;location&quot;: { # Location where compute resources should be allocated for the Job.
-      &quot;allowedLocations&quot;: [ # A list of allowed location names represented by internal URLs. Each location can be a region or a zone. Only one region or multiple zones in one region is supported now. For example, [&quot;regions/us-central1&quot;] allow VMs in any zones in region us-central1. [&quot;zones/us-central1-a&quot;, &quot;zones/us-central1-c&quot;] only allow VMs in zones us-central1-a and us-central1-c. All locations end up in different regions would cause errors. For example, [&quot;regions/us-central1&quot;, &quot;zones/us-central1-a&quot;, &quot;zones/us-central1-b&quot;, &quot;zones/us-west1-a&quot;] contains 2 regions &quot;us-central1&quot; and &quot;us-west1&quot;. An error is expected in this case.
+      &quot;allowedLocations&quot;: [ # A list of allowed location names represented by internal URLs. Each location can be a region or a zone. Only one region or multiple zones in one region is supported now. For example, [&quot;regions/us-central1&quot;] allow VMs in any zones in region us-central1. [&quot;zones/us-central1-a&quot;, &quot;zones/us-central1-c&quot;] only allow VMs in zones us-central1-a and us-central1-c. Mixing locations from different regions would cause errors. For example, [&quot;regions/us-central1&quot;, &quot;zones/us-central1-a&quot;, &quot;zones/us-central1-b&quot;, &quot;zones/us-west1-a&quot;] contains locations from two distinct regions: us-central1 and us-west1. This combination will trigger an error.
         &quot;A String&quot;,
       ],
     },
@@ -175,9 +175,9 @@ Args:
       &quot;collocation&quot;: &quot;A String&quot;, # UNSPECIFIED vs. COLLOCATED (default UNSPECIFIED). Use COLLOCATED when you want VMs to be located close to each other for low network latency between the VMs. No placement policy will be generated when collocation is UNSPECIFIED.
       &quot;maxDistance&quot;: &quot;A String&quot;, # When specified, causes the job to fail if more than max_distance logical switches are required between VMs. Batch uses the most compact possible placement of VMs even when max_distance is not specified. An explicit max_distance makes that level of compactness a strict requirement. Not yet implemented
     },
-    &quot;serviceAccount&quot;: { # Carries information about a Google Cloud service account. # Service account that VMs will run as.
-      &quot;email&quot;: &quot;A String&quot;, # Email address of the service account. If not specified, the default Compute Engine service account for the project will be used. If instance template is being used, the service account has to be specified in the instance template and it has to match the email field here.
-      &quot;scopes&quot;: [ # List of scopes to be enabled for this service account on the VM, in addition to the cloud-platform API scope that will be added by default.
+    &quot;serviceAccount&quot;: { # Carries information about a Google Cloud service account. # Defines the service account for Batch-created VMs. If omitted, the [default Compute Engine service account](https://cloud.google.com/compute/docs/access/service-accounts#default_service_account) is used. Must match the service account specified in any used instance template configured in the Batch job. Includes the following fields: * email: The service account&#x27;s email address. If not set, the default Compute Engine service account is used. * scopes: Additional OAuth scopes to grant the service account, beyond the default cloud-platform scope. (list of strings)
+      &quot;email&quot;: &quot;A String&quot;, # Email address of the service account.
+      &quot;scopes&quot;: [ # List of scopes to be enabled for this service account.
         &quot;A String&quot;,
       ],
     },
@@ -216,7 +216,7 @@ Args:
         &quot;description&quot;: &quot;A String&quot;, # Description of the event.
         &quot;eventTime&quot;: &quot;A String&quot;, # The time this event occurred.
         &quot;taskExecution&quot;: { # This Task Execution field includes detail information for task execution procedures, based on StatusEvent types. # Task Execution
-          &quot;exitCode&quot;: 42, # When task is completed as the status of FAILED or SUCCEEDED, exit code is for one task execution result, default is 0 as success.
+          &quot;exitCode&quot;: 42, # The exit code of a finished task. If the task succeeded, the exit code will be 0. If the task failed but not due to the following reasons, the exit code will be 50000. Otherwise, it can be from different sources: - Batch known failures as https://cloud.google.com/batch/docs/troubleshooting#reserved-exit-codes. - Batch runnable execution failures: You can rely on Batch logs for further diagnose: https://cloud.google.com/batch/docs/analyze-job-using-logs. If there are multiple runnables failures, Batch only exposes the first error caught for now.
         },
         &quot;taskState&quot;: &quot;A String&quot;, # Task State
         &quot;type&quot;: &quot;A String&quot;, # Type of the event.
@@ -300,7 +300,7 @@ Args:
           },
         ],
         &quot;maxRetryCount&quot;: 42, # Maximum number of retries on failures. The default, 0, which means never retry. The valid value range is [0, 10].
-        &quot;maxRunDuration&quot;: &quot;A String&quot;, # Maximum duration the task should run. The task will be killed and marked as FAILED if over this limit.
+        &quot;maxRunDuration&quot;: &quot;A String&quot;, # Maximum duration the task should run. The task will be killed and marked as FAILED if over this limit. The valid value range for max_run_duration in seconds is [0, 315576000000.999999999],
         &quot;runnables&quot;: [ # The sequence of scripts or containers to run for this Task. Each Task using this TaskSpec executes its list of runnables in order. The Task succeeds if all of its runnables either exit with a zero status or any that exit with a non-zero status have the ignore_exit_status flag. Background runnables are killed automatically (if they have not already exited) a short time after all foreground runnables have completed. Even though this is likely to result in a non-zero exit status for the background runnable, these automatic kills are not treated as Task failures.
           { # Runnable describes instructions for executing a specific script or container as part of a Task.
             &quot;alwaysRun&quot;: True or False, # By default, after a Runnable fails, no further Runnable are executed. This flag indicates that this Runnable must be run even if the Task has already failed. This is useful for Runnables that copy output files off of the VM or for debugging. The always_run flag does not override the Task&#x27;s overall max_run_duration. If the max_run_duration has expired then no further Runnables will execute, not even always_run Runnables.
@@ -426,7 +426,7 @@ Returns:
       &quot;a_key&quot;: &quot;A String&quot;,
     },
     &quot;location&quot;: { # Location where compute resources should be allocated for the Job.
-      &quot;allowedLocations&quot;: [ # A list of allowed location names represented by internal URLs. Each location can be a region or a zone. Only one region or multiple zones in one region is supported now. For example, [&quot;regions/us-central1&quot;] allow VMs in any zones in region us-central1. [&quot;zones/us-central1-a&quot;, &quot;zones/us-central1-c&quot;] only allow VMs in zones us-central1-a and us-central1-c. All locations end up in different regions would cause errors. For example, [&quot;regions/us-central1&quot;, &quot;zones/us-central1-a&quot;, &quot;zones/us-central1-b&quot;, &quot;zones/us-west1-a&quot;] contains 2 regions &quot;us-central1&quot; and &quot;us-west1&quot;. An error is expected in this case.
+      &quot;allowedLocations&quot;: [ # A list of allowed location names represented by internal URLs. Each location can be a region or a zone. Only one region or multiple zones in one region is supported now. For example, [&quot;regions/us-central1&quot;] allow VMs in any zones in region us-central1. [&quot;zones/us-central1-a&quot;, &quot;zones/us-central1-c&quot;] only allow VMs in zones us-central1-a and us-central1-c. Mixing locations from different regions would cause errors. For example, [&quot;regions/us-central1&quot;, &quot;zones/us-central1-a&quot;, &quot;zones/us-central1-b&quot;, &quot;zones/us-west1-a&quot;] contains locations from two distinct regions: us-central1 and us-west1. This combination will trigger an error.
         &quot;A String&quot;,
       ],
     },
@@ -443,9 +443,9 @@ Returns:
       &quot;collocation&quot;: &quot;A String&quot;, # UNSPECIFIED vs. COLLOCATED (default UNSPECIFIED). Use COLLOCATED when you want VMs to be located close to each other for low network latency between the VMs. No placement policy will be generated when collocation is UNSPECIFIED.
       &quot;maxDistance&quot;: &quot;A String&quot;, # When specified, causes the job to fail if more than max_distance logical switches are required between VMs. Batch uses the most compact possible placement of VMs even when max_distance is not specified. An explicit max_distance makes that level of compactness a strict requirement. Not yet implemented
     },
-    &quot;serviceAccount&quot;: { # Carries information about a Google Cloud service account. # Service account that VMs will run as.
-      &quot;email&quot;: &quot;A String&quot;, # Email address of the service account. If not specified, the default Compute Engine service account for the project will be used. If instance template is being used, the service account has to be specified in the instance template and it has to match the email field here.
-      &quot;scopes&quot;: [ # List of scopes to be enabled for this service account on the VM, in addition to the cloud-platform API scope that will be added by default.
+    &quot;serviceAccount&quot;: { # Carries information about a Google Cloud service account. # Defines the service account for Batch-created VMs. If omitted, the [default Compute Engine service account](https://cloud.google.com/compute/docs/access/service-accounts#default_service_account) is used. Must match the service account specified in any used instance template configured in the Batch job. Includes the following fields: * email: The service account&#x27;s email address. If not set, the default Compute Engine service account is used. * scopes: Additional OAuth scopes to grant the service account, beyond the default cloud-platform scope. (list of strings)
+      &quot;email&quot;: &quot;A String&quot;, # Email address of the service account.
+      &quot;scopes&quot;: [ # List of scopes to be enabled for this service account.
         &quot;A String&quot;,
       ],
     },
@@ -484,7 +484,7 @@ Returns:
         &quot;description&quot;: &quot;A String&quot;, # Description of the event.
         &quot;eventTime&quot;: &quot;A String&quot;, # The time this event occurred.
         &quot;taskExecution&quot;: { # This Task Execution field includes detail information for task execution procedures, based on StatusEvent types. # Task Execution
-          &quot;exitCode&quot;: 42, # When task is completed as the status of FAILED or SUCCEEDED, exit code is for one task execution result, default is 0 as success.
+          &quot;exitCode&quot;: 42, # The exit code of a finished task. If the task succeeded, the exit code will be 0. If the task failed but not due to the following reasons, the exit code will be 50000. Otherwise, it can be from different sources: - Batch known failures as https://cloud.google.com/batch/docs/troubleshooting#reserved-exit-codes. - Batch runnable execution failures: You can rely on Batch logs for further diagnose: https://cloud.google.com/batch/docs/analyze-job-using-logs. If there are multiple runnables failures, Batch only exposes the first error caught for now.
         },
         &quot;taskState&quot;: &quot;A String&quot;, # Task State
         &quot;type&quot;: &quot;A String&quot;, # Type of the event.
@@ -568,7 +568,7 @@ Returns:
           },
         ],
         &quot;maxRetryCount&quot;: 42, # Maximum number of retries on failures. The default, 0, which means never retry. The valid value range is [0, 10].
-        &quot;maxRunDuration&quot;: &quot;A String&quot;, # Maximum duration the task should run. The task will be killed and marked as FAILED if over this limit.
+        &quot;maxRunDuration&quot;: &quot;A String&quot;, # Maximum duration the task should run. The task will be killed and marked as FAILED if over this limit. The valid value range for max_run_duration in seconds is [0, 315576000000.999999999],
         &quot;runnables&quot;: [ # The sequence of scripts or containers to run for this Task. Each Task using this TaskSpec executes its list of runnables in order. The Task succeeds if all of its runnables either exit with a zero status or any that exit with a non-zero status have the ignore_exit_status flag. Background runnables are killed automatically (if they have not already exited) a short time after all foreground runnables have completed. Even though this is likely to result in a non-zero exit status for the background runnable, these automatic kills are not treated as Task failures.
           { # Runnable describes instructions for executing a specific script or container as part of a Task.
             &quot;alwaysRun&quot;: True or False, # By default, after a Runnable fails, no further Runnable are executed. This flag indicates that this Runnable must be run even if the Task has already failed. This is useful for Runnables that copy output files off of the VM or for debugging. The always_run flag does not override the Task&#x27;s overall max_run_duration. If the max_run_duration has expired then no further Runnables will execute, not even always_run Runnables.
@@ -736,7 +736,7 @@ Returns:
       &quot;a_key&quot;: &quot;A String&quot;,
     },
     &quot;location&quot;: { # Location where compute resources should be allocated for the Job.
-      &quot;allowedLocations&quot;: [ # A list of allowed location names represented by internal URLs. Each location can be a region or a zone. Only one region or multiple zones in one region is supported now. For example, [&quot;regions/us-central1&quot;] allow VMs in any zones in region us-central1. [&quot;zones/us-central1-a&quot;, &quot;zones/us-central1-c&quot;] only allow VMs in zones us-central1-a and us-central1-c. All locations end up in different regions would cause errors. For example, [&quot;regions/us-central1&quot;, &quot;zones/us-central1-a&quot;, &quot;zones/us-central1-b&quot;, &quot;zones/us-west1-a&quot;] contains 2 regions &quot;us-central1&quot; and &quot;us-west1&quot;. An error is expected in this case.
+      &quot;allowedLocations&quot;: [ # A list of allowed location names represented by internal URLs. Each location can be a region or a zone. Only one region or multiple zones in one region is supported now. For example, [&quot;regions/us-central1&quot;] allow VMs in any zones in region us-central1. [&quot;zones/us-central1-a&quot;, &quot;zones/us-central1-c&quot;] only allow VMs in zones us-central1-a and us-central1-c. Mixing locations from different regions would cause errors. For example, [&quot;regions/us-central1&quot;, &quot;zones/us-central1-a&quot;, &quot;zones/us-central1-b&quot;, &quot;zones/us-west1-a&quot;] contains locations from two distinct regions: us-central1 and us-west1. This combination will trigger an error.
         &quot;A String&quot;,
       ],
     },
@@ -753,9 +753,9 @@ Returns:
       &quot;collocation&quot;: &quot;A String&quot;, # UNSPECIFIED vs. COLLOCATED (default UNSPECIFIED). Use COLLOCATED when you want VMs to be located close to each other for low network latency between the VMs. No placement policy will be generated when collocation is UNSPECIFIED.
       &quot;maxDistance&quot;: &quot;A String&quot;, # When specified, causes the job to fail if more than max_distance logical switches are required between VMs. Batch uses the most compact possible placement of VMs even when max_distance is not specified. An explicit max_distance makes that level of compactness a strict requirement. Not yet implemented
     },
-    &quot;serviceAccount&quot;: { # Carries information about a Google Cloud service account. # Service account that VMs will run as.
-      &quot;email&quot;: &quot;A String&quot;, # Email address of the service account. If not specified, the default Compute Engine service account for the project will be used. If instance template is being used, the service account has to be specified in the instance template and it has to match the email field here.
-      &quot;scopes&quot;: [ # List of scopes to be enabled for this service account on the VM, in addition to the cloud-platform API scope that will be added by default.
+    &quot;serviceAccount&quot;: { # Carries information about a Google Cloud service account. # Defines the service account for Batch-created VMs. If omitted, the [default Compute Engine service account](https://cloud.google.com/compute/docs/access/service-accounts#default_service_account) is used. Must match the service account specified in any used instance template configured in the Batch job. Includes the following fields: * email: The service account&#x27;s email address. If not set, the default Compute Engine service account is used. * scopes: Additional OAuth scopes to grant the service account, beyond the default cloud-platform scope. (list of strings)
+      &quot;email&quot;: &quot;A String&quot;, # Email address of the service account.
+      &quot;scopes&quot;: [ # List of scopes to be enabled for this service account.
         &quot;A String&quot;,
       ],
     },
@@ -794,7 +794,7 @@ Returns:
         &quot;description&quot;: &quot;A String&quot;, # Description of the event.
         &quot;eventTime&quot;: &quot;A String&quot;, # The time this event occurred.
         &quot;taskExecution&quot;: { # This Task Execution field includes detail information for task execution procedures, based on StatusEvent types. # Task Execution
-          &quot;exitCode&quot;: 42, # When task is completed as the status of FAILED or SUCCEEDED, exit code is for one task execution result, default is 0 as success.
+          &quot;exitCode&quot;: 42, # The exit code of a finished task. If the task succeeded, the exit code will be 0. If the task failed but not due to the following reasons, the exit code will be 50000. Otherwise, it can be from different sources: - Batch known failures as https://cloud.google.com/batch/docs/troubleshooting#reserved-exit-codes. - Batch runnable execution failures: You can rely on Batch logs for further diagnose: https://cloud.google.com/batch/docs/analyze-job-using-logs. If there are multiple runnables failures, Batch only exposes the first error caught for now.
         },
         &quot;taskState&quot;: &quot;A String&quot;, # Task State
         &quot;type&quot;: &quot;A String&quot;, # Type of the event.
@@ -878,7 +878,7 @@ Returns:
           },
         ],
         &quot;maxRetryCount&quot;: 42, # Maximum number of retries on failures. The default, 0, which means never retry. The valid value range is [0, 10].
-        &quot;maxRunDuration&quot;: &quot;A String&quot;, # Maximum duration the task should run. The task will be killed and marked as FAILED if over this limit.
+        &quot;maxRunDuration&quot;: &quot;A String&quot;, # Maximum duration the task should run. The task will be killed and marked as FAILED if over this limit. The valid value range for max_run_duration in seconds is [0, 315576000000.999999999],
         &quot;runnables&quot;: [ # The sequence of scripts or containers to run for this Task. Each Task using this TaskSpec executes its list of runnables in order. The Task succeeds if all of its runnables either exit with a zero status or any that exit with a non-zero status have the ignore_exit_status flag. Background runnables are killed automatically (if they have not already exited) a short time after all foreground runnables have completed. Even though this is likely to result in a non-zero exit status for the background runnable, these automatic kills are not treated as Task failures.
           { # Runnable describes instructions for executing a specific script or container as part of a Task.
             &quot;alwaysRun&quot;: True or False, # By default, after a Runnable fails, no further Runnable are executed. This flag indicates that this Runnable must be run even if the Task has already failed. This is useful for Runnables that copy output files off of the VM or for debugging. The always_run flag does not override the Task&#x27;s overall max_run_duration. If the max_run_duration has expired then no further Runnables will execute, not even always_run Runnables.
@@ -1015,7 +1015,7 @@ Returns:
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;location&quot;: { # Location where compute resources should be allocated for the Job.
-          &quot;allowedLocations&quot;: [ # A list of allowed location names represented by internal URLs. Each location can be a region or a zone. Only one region or multiple zones in one region is supported now. For example, [&quot;regions/us-central1&quot;] allow VMs in any zones in region us-central1. [&quot;zones/us-central1-a&quot;, &quot;zones/us-central1-c&quot;] only allow VMs in zones us-central1-a and us-central1-c. All locations end up in different regions would cause errors. For example, [&quot;regions/us-central1&quot;, &quot;zones/us-central1-a&quot;, &quot;zones/us-central1-b&quot;, &quot;zones/us-west1-a&quot;] contains 2 regions &quot;us-central1&quot; and &quot;us-west1&quot;. An error is expected in this case.
+          &quot;allowedLocations&quot;: [ # A list of allowed location names represented by internal URLs. Each location can be a region or a zone. Only one region or multiple zones in one region is supported now. For example, [&quot;regions/us-central1&quot;] allow VMs in any zones in region us-central1. [&quot;zones/us-central1-a&quot;, &quot;zones/us-central1-c&quot;] only allow VMs in zones us-central1-a and us-central1-c. Mixing locations from different regions would cause errors. For example, [&quot;regions/us-central1&quot;, &quot;zones/us-central1-a&quot;, &quot;zones/us-central1-b&quot;, &quot;zones/us-west1-a&quot;] contains locations from two distinct regions: us-central1 and us-west1. This combination will trigger an error.
             &quot;A String&quot;,
           ],
         },
@@ -1032,9 +1032,9 @@ Returns:
           &quot;collocation&quot;: &quot;A String&quot;, # UNSPECIFIED vs. COLLOCATED (default UNSPECIFIED). Use COLLOCATED when you want VMs to be located close to each other for low network latency between the VMs. No placement policy will be generated when collocation is UNSPECIFIED.
           &quot;maxDistance&quot;: &quot;A String&quot;, # When specified, causes the job to fail if more than max_distance logical switches are required between VMs. Batch uses the most compact possible placement of VMs even when max_distance is not specified. An explicit max_distance makes that level of compactness a strict requirement. Not yet implemented
         },
-        &quot;serviceAccount&quot;: { # Carries information about a Google Cloud service account. # Service account that VMs will run as.
-          &quot;email&quot;: &quot;A String&quot;, # Email address of the service account. If not specified, the default Compute Engine service account for the project will be used. If instance template is being used, the service account has to be specified in the instance template and it has to match the email field here.
-          &quot;scopes&quot;: [ # List of scopes to be enabled for this service account on the VM, in addition to the cloud-platform API scope that will be added by default.
+        &quot;serviceAccount&quot;: { # Carries information about a Google Cloud service account. # Defines the service account for Batch-created VMs. If omitted, the [default Compute Engine service account](https://cloud.google.com/compute/docs/access/service-accounts#default_service_account) is used. Must match the service account specified in any used instance template configured in the Batch job. Includes the following fields: * email: The service account&#x27;s email address. If not set, the default Compute Engine service account is used. * scopes: Additional OAuth scopes to grant the service account, beyond the default cloud-platform scope. (list of strings)
+          &quot;email&quot;: &quot;A String&quot;, # Email address of the service account.
+          &quot;scopes&quot;: [ # List of scopes to be enabled for this service account.
             &quot;A String&quot;,
           ],
         },
@@ -1073,7 +1073,7 @@ Returns:
             &quot;description&quot;: &quot;A String&quot;, # Description of the event.
             &quot;eventTime&quot;: &quot;A String&quot;, # The time this event occurred.
             &quot;taskExecution&quot;: { # This Task Execution field includes detail information for task execution procedures, based on StatusEvent types. # Task Execution
-              &quot;exitCode&quot;: 42, # When task is completed as the status of FAILED or SUCCEEDED, exit code is for one task execution result, default is 0 as success.
+              &quot;exitCode&quot;: 42, # The exit code of a finished task. If the task succeeded, the exit code will be 0. If the task failed but not due to the following reasons, the exit code will be 50000. Otherwise, it can be from different sources: - Batch known failures as https://cloud.google.com/batch/docs/troubleshooting#reserved-exit-codes. - Batch runnable execution failures: You can rely on Batch logs for further diagnose: https://cloud.google.com/batch/docs/analyze-job-using-logs. If there are multiple runnables failures, Batch only exposes the first error caught for now.
             },
             &quot;taskState&quot;: &quot;A String&quot;, # Task State
             &quot;type&quot;: &quot;A String&quot;, # Type of the event.
@@ -1157,7 +1157,7 @@ Returns:
               },
             ],
             &quot;maxRetryCount&quot;: 42, # Maximum number of retries on failures. The default, 0, which means never retry. The valid value range is [0, 10].
-            &quot;maxRunDuration&quot;: &quot;A String&quot;, # Maximum duration the task should run. The task will be killed and marked as FAILED if over this limit.
+            &quot;maxRunDuration&quot;: &quot;A String&quot;, # Maximum duration the task should run. The task will be killed and marked as FAILED if over this limit. The valid value range for max_run_duration in seconds is [0, 315576000000.999999999],
             &quot;runnables&quot;: [ # The sequence of scripts or containers to run for this Task. Each Task using this TaskSpec executes its list of runnables in order. The Task succeeds if all of its runnables either exit with a zero status or any that exit with a non-zero status have the ignore_exit_status flag. Background runnables are killed automatically (if they have not already exited) a short time after all foreground runnables have completed. Even though this is likely to result in a non-zero exit status for the background runnable, these automatic kills are not treated as Task failures.
               { # Runnable describes instructions for executing a specific script or container as part of a Task.
                 &quot;alwaysRun&quot;: True or False, # By default, after a Runnable fails, no further Runnable are executed. This flag indicates that this Runnable must be run even if the Task has already failed. This is useful for Runnables that copy output files off of the VM or for debugging. The always_run flag does not override the Task&#x27;s overall max_run_duration. If the max_run_duration has expired then no further Runnables will execute, not even always_run Runnables.

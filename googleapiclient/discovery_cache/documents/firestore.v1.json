@@ -276,6 +276,11 @@
 "pattern": "^projects/[^/]+$",
 "required": true,
 "type": "string"
+},
+"showDeleted": {
+"description": "If true, also returns deleted resources.",
+"location": "query",
+"type": "boolean"
 }
 },
 "path": "v1/{+parent}/databases",
@@ -356,7 +361,7 @@
 "backupSchedules": {
 "methods": {
 "create": {
-"description": "Creates a backup schedule on a database. At most two backup schedules can be configured on a database, one daily backup schedule with retention up to 7 days and one weekly backup schedule with retention up to 14 weeks.",
+"description": "Creates a backup schedule on a database. At most two backup schedules can be configured on a database, one daily backup schedule and one weekly backup schedule.",
 "flatPath": "v1/projects/{projectsId}/databases/{databasesId}/backupSchedules",
 "httpMethod": "POST",
 "id": "firestore.projects.databases.backupSchedules.create",
@@ -394,7 +399,7 @@
 ],
 "parameters": {
 "name": {
-"description": "Required. The name of backup schedule. Format `projects/{project}/databases/{database}/backupSchedules/{backup_schedule}`",
+"description": "Required. The name of the backup schedule. Format `projects/{project}/databases/{database}/backupSchedules/{backup_schedule}`",
 "location": "path",
 "pattern": "^projects/[^/]+/databases/[^/]+/backupSchedules/[^/]+$",
 "required": true,
@@ -539,7 +544,7 @@
 ],
 "parameters": {
 "filter": {
-"description": "The filter to apply to list results. Currently, FirestoreAdmin.ListFields only supports listing fields that have been explicitly overridden. To issue this query, call FirestoreAdmin.ListFields with a filter that includes `indexConfig.usesAncestorConfig:false` .",
+"description": "The filter to apply to list results. Currently, FirestoreAdmin.ListFields only supports listing fields that have been explicitly overridden. To issue this query, call FirestoreAdmin.ListFields with a filter that includes `indexConfig.usesAncestorConfig:false` or `ttlConfig:*`.",
 "location": "query",
 "type": "string"
 },
@@ -1672,7 +1677,7 @@
 }
 }
 },
-"revision": "20240307",
+"revision": "20240430",
 "rootUrl": "https://firestore.googleapis.com/",
 "schemas": {
 "Aggregation": {
@@ -2032,7 +2037,7 @@
 "type": "object"
 },
 "DocumentChange": {
-"description": "A Document has changed. May be the result of multiple writes, including deletes, that ultimately resulted in a new value for the Document. Multiple DocumentChange messages may be returned for the same logical change, if multiple targets are affected.",
+"description": "A Document has changed. May be the result of multiple writes, including deletes, that ultimately resulted in a new value for the Document. Multiple DocumentChange messages may be returned for the same logical change, if multiple targets are affected. For PipelineQueryTargets, `document` will be in the new pipeline format, For a Listen stream with both QueryTargets and PipelineQueryTargets present, if a document matches both types of queries, then a separate DocumentChange messages will be sent out one for each set.",
 "id": "DocumentChange",
 "properties": {
 "document": {
@@ -2158,6 +2163,36 @@
 "properties": {},
 "type": "object"
 },
+"ExecutionStats": {
+"description": "Execution statistics for the query.",
+"id": "ExecutionStats",
+"properties": {
+"debugStats": {
+"additionalProperties": {
+"description": "Properties of the object.",
+"type": "any"
+},
+"description": "Debugging statistics from the execution of the query. Note that the debugging stats are subject to change as Firestore evolves. It could include: { \"indexes_entries_scanned\": \"1000\", \"documents_scanned\": \"20\", \"billing_details\" : { \"documents_billable\": \"20\", \"index_entries_billable\": \"1000\", \"min_query_cost\": \"0\" } }",
+"type": "object"
+},
+"executionDuration": {
+"description": "Total time to execute the query in the backend.",
+"format": "google-duration",
+"type": "string"
+},
+"readOperations": {
+"description": "Total billable read operations.",
+"format": "int64",
+"type": "string"
+},
+"resultsReturned": {
+"description": "Total number of results returned, including documents, projections, aggregation results, keys.",
+"format": "int64",
+"type": "string"
+}
+},
+"type": "object"
+},
 "ExistenceFilter": {
 "description": "A digest of all the documents that match a given target.",
 "id": "ExistenceFilter",
@@ -2175,6 +2210,32 @@
 "unchangedNames": {
 "$ref": "BloomFilter",
 "description": "A bloom filter that, despite its name, contains the UTF-8 byte encodings of the resource names of ALL the documents that match target_id, in the form `projects/{project_id}/databases/{database_id}/documents/{document_path}`. This bloom filter may be omitted at the server's discretion, such as if it is deemed that the client will not make use of it or if it is too computationally expensive to calculate or transmit. Clients must gracefully handle this field being absent by falling back to the logic used before this field existed; that is, re-add the target without a resume token to figure out which documents in the client's cache are out of sync."
+}
+},
+"type": "object"
+},
+"ExplainMetrics": {
+"description": "Explain metrics for the query.",
+"id": "ExplainMetrics",
+"properties": {
+"executionStats": {
+"$ref": "ExecutionStats",
+"description": "Aggregated stats from the execution of the query. Only present when ExplainOptions.analyze is set to true."
+},
+"planSummary": {
+"$ref": "PlanSummary",
+"description": "Planning phase information for the query."
+}
+},
+"type": "object"
+},
+"ExplainOptions": {
+"description": "Explain options for the query.",
+"id": "ExplainOptions",
+"properties": {
+"analyze": {
+"description": "Optional. Whether to execute this query. When false (the default), the query will be planned, returning only metrics from the planning stages. When true, the query will be planned and executed, returning the full query results along with both planning and execution stage metrics.",
+"type": "boolean"
 }
 },
 "type": "object"
@@ -2297,6 +2358,42 @@
 },
 "type": "object"
 },
+"FindNearest": {
+"description": "Nearest Neighbors search config.",
+"id": "FindNearest",
+"properties": {
+"distanceMeasure": {
+"description": "Required. The distance measure to use, required.",
+"enum": [
+"DISTANCE_MEASURE_UNSPECIFIED",
+"EUCLIDEAN",
+"COSINE",
+"DOT_PRODUCT"
+],
+"enumDescriptions": [
+"Should not be set.",
+"Measures the EUCLIDEAN distance between the vectors. See [Euclidean](https://en.wikipedia.org/wiki/Euclidean_distance) to learn more",
+"Compares vectors based on the angle between them, which allows you to measure similarity that isn't based on the vectors magnitude. We recommend using DOT_PRODUCT with unit normalized vectors instead of COSINE distance, which is mathematically equivalent with better performance. See [Cosine Similarity](https://en.wikipedia.org/wiki/Cosine_similarity) to learn more.",
+"Similar to cosine but is affected by the magnitude of the vectors. See [Dot Product](https://en.wikipedia.org/wiki/Dot_product) to learn more."
+],
+"type": "string"
+},
+"limit": {
+"description": "Required. The number of nearest neighbors to return. Must be a positive integer of no more than 1000.",
+"format": "int32",
+"type": "integer"
+},
+"queryVector": {
+"$ref": "Value",
+"description": "Required. The query vector that we are searching on. Must be a vector of no more than 2048 dimensions."
+},
+"vectorField": {
+"$ref": "FieldReference",
+"description": "Required. An indexed vector field to search upon. Only documents which contain vectors whose dimensionality match the query_vector can be returned."
+}
+},
+"type": "object"
+},
 "GoogleFirestoreAdminV1Backup": {
 "description": "A Backup of a Cloud Firestore Database. The backup contains all documents and index configurations for the given database at a specific point in time.",
 "id": "GoogleFirestoreAdminV1Backup",
@@ -2365,7 +2462,7 @@
 },
 "dailyRecurrence": {
 "$ref": "GoogleFirestoreAdminV1DailyRecurrence",
-"description": "For a schedule that runs daily at a specified time."
+"description": "For a schedule that runs daily."
 },
 "name": {
 "description": "Output only. The unique backup schedule identifier across all locations and databases for the given project. This will be auto-assigned. Format is `projects/{project}/databases/{database}/backupSchedules/{backup_schedule}`",
@@ -2385,7 +2482,7 @@
 },
 "weeklyRecurrence": {
 "$ref": "GoogleFirestoreAdminV1WeeklyRecurrence",
-"description": "For a schedule that runs weekly on a specific day and time."
+"description": "For a schedule that runs weekly on a specific day."
 }
 },
 "type": "object"
@@ -2416,7 +2513,7 @@
 "type": "object"
 },
 "GoogleFirestoreAdminV1DailyRecurrence": {
-"description": "Represent a recurring schedule that runs at a specific time every day. The time zone is UTC.",
+"description": "Represents a recurring schedule that runs every day. The time zone is UTC.",
 "id": "GoogleFirestoreAdminV1DailyRecurrence",
 "properties": {},
 "type": "object"
@@ -2477,6 +2574,12 @@
 "Delete protection is disabled",
 "Delete protection is enabled"
 ],
+"type": "string"
+},
+"deleteTime": {
+"description": "Output only. The timestamp at which this database was soft deleted. Only set if the database has been soft deleted.",
+"format": "google-datetime",
+"readOnly": true,
 "type": "string"
 },
 "earliestVersionTime": {
@@ -3015,7 +3118,7 @@
 },
 "vectorConfig": {
 "$ref": "GoogleFirestoreAdminV1VectorConfig",
-"description": "Indicates that this field supports nearest neighbors and distance operations on vector."
+"description": "Indicates that this field supports nearest neighbor and distance operations on vector."
 }
 },
 "type": "object"
@@ -3705,6 +3808,24 @@
 },
 "type": "object"
 },
+"PlanSummary": {
+"description": "Planning phase information for the query.",
+"id": "PlanSummary",
+"properties": {
+"indexesUsed": {
+"description": "The indexes selected for the query. For example: [ {\"query_scope\": \"Collection\", \"properties\": \"(foo ASC, __name__ ASC)\"}, {\"query_scope\": \"Collection\", \"properties\": \"(bar ASC, __name__ ASC)\"} ]",
+"items": {
+"additionalProperties": {
+"description": "Properties of the object.",
+"type": "any"
+},
+"type": "object"
+},
+"type": "array"
+}
+},
+"type": "object"
+},
 "Precondition": {
 "description": "A precondition on a document, used for conditional operations.",
 "id": "Precondition",
@@ -3790,6 +3911,10 @@
 "description": "The request for Firestore.RunAggregationQuery.",
 "id": "RunAggregationQueryRequest",
 "properties": {
+"explainOptions": {
+"$ref": "ExplainOptions",
+"description": "Optional. Explain options for the query. If set, additional query statistics will be returned. If not, only query results will be returned."
+},
 "newTransaction": {
 "$ref": "TransactionOptions",
 "description": "Starts a new transaction as part of the query, defaulting to read-only. The new transaction ID will be returned as the first response in the stream."
@@ -3815,6 +3940,10 @@
 "description": "The response for Firestore.RunAggregationQuery.",
 "id": "RunAggregationQueryResponse",
 "properties": {
+"explainMetrics": {
+"$ref": "ExplainMetrics",
+"description": "Query explain metrics. This is only present when the RunAggregationQueryRequest.explain_options is provided, and it is sent only once with the last response in the stream."
+},
 "readTime": {
 "description": "The time at which the aggregate result was computed. This is always monotonically increasing; in this case, the previous AggregationResult in the result stream are guaranteed not to have changed between their `read_time` and this one. If the query returns no results, a response with `read_time` and no `result` will be sent, and this represents the time at which the query was run.",
 "format": "google-datetime",
@@ -3836,6 +3965,10 @@
 "description": "The request for Firestore.RunQuery.",
 "id": "RunQueryRequest",
 "properties": {
+"explainOptions": {
+"$ref": "ExplainOptions",
+"description": "Optional. Explain options for the query. If set, additional query statistics will be returned. If not, only query results will be returned."
+},
 "newTransaction": {
 "$ref": "TransactionOptions",
 "description": "Starts a new transaction and reads the documents. Defaults to a read-only transaction. The new transaction ID will be returned as the first response in the stream."
@@ -3868,6 +4001,10 @@
 "done": {
 "description": "If present, Firestore has completely finished the request and no more documents will be returned.",
 "type": "boolean"
+},
+"explainMetrics": {
+"$ref": "ExplainMetrics",
+"description": "Query explain metrics. This is only present when the RunQueryRequest.explain_options is provided, and it is sent only once with the last response in the stream."
 },
 "readTime": {
 "description": "The time at which the document was read. This may be monotonically increasing; in this case, the previous documents in the result stream are guaranteed not to have changed between their `read_time` and this one. If the query returns no results, a response with `read_time` and no `document` will be sent, and this represents the time at which the query was run.",
@@ -3939,6 +4076,10 @@
 "endAt": {
 "$ref": "Cursor",
 "description": "A potential prefix of a position in the result set to end the query at. This is similar to `START_AT` but with it controlling the end position rather than the start position. Requires: * The number of values cannot be greater than the number of fields specified in the `ORDER BY` clause."
+},
+"findNearest": {
+"$ref": "FindNearest",
+"description": "Optional. A potential nearest neighbors search. Applies after all other filters and ordering. Finds the closest vector embeddings to the given query vector."
 },
 "from": {
 "description": "The collections to query.",
@@ -4126,7 +4267,7 @@
 "properties": {
 "arrayValue": {
 "$ref": "ArrayValue",
-"description": "An array value. Cannot directly contain another array value, though can contain an map which contains another array."
+"description": "An array value. Cannot directly contain another array value, though can contain a map which contains another array."
 },
 "booleanValue": {
 "description": "A boolean value.",

@@ -136,16 +136,6 @@ Args:
     &quot;entity&quot;: &quot;A String&quot;, # Immutable. The Dataplex entity that represents the data source (e.g. BigQuery table) for DataScan, of the form: projects/{project_number}/locations/{location_id}/lakes/{lake_id}/zones/{zone_id}/entities/{entity_id}.
     &quot;resource&quot;: &quot;A String&quot;, # Immutable. The service-qualified full resource name of the cloud resource for a DataScan job to scan against. The field could be: BigQuery table of type &quot;TABLE&quot; for DataProfileScan/DataQualityScan Format: //bigquery.googleapis.com/projects/PROJECT_ID/datasets/DATASET_ID/tables/TABLE_ID
   },
-  &quot;dataDocumentationResult&quot;: { # The output of a DataDocumentation scan. # Output only. The result of the data documentation scan.
-    &quot;queries&quot;: [ # Output only. The list of generated queries.
-      { # A query in data documentation
-        &quot;description&quot;: &quot;A String&quot;, # Output only. The description for the query.
-        &quot;sql&quot;: &quot;A String&quot;, # Output only. The SQL query string which can be executed.
-      },
-    ],
-  },
-  &quot;dataDocumentationSpec&quot;: { # DataDocumentation scan related spec. # DataDocumentationScan related setting.
-  },
   &quot;dataProfileResult&quot;: { # DataProfileResult defines the output of DataProfileScan. Each field of the table will have field type specific profile result. # Output only. The result of the data profile scan.
     &quot;postScanActionsResult&quot;: { # The result of post scan actions of DataProfileScan job. # Output only. The result of post scan actions.
       &quot;bigqueryExportResult&quot;: { # The result of BigQuery export post scan action. # Output only. The result of BigQuery export post scan action.
@@ -250,6 +240,7 @@ Args:
     &quot;rowCount&quot;: &quot;A String&quot;, # The count of rows processed.
     &quot;rules&quot;: [ # A list of all the rules in a job, and their results.
       { # DataQualityRuleResult provides a more detailed, per-rule view of the results.
+        &quot;assertionRowCount&quot;: &quot;A String&quot;, # Output only. The number of rows returned by the sql statement in the SqlAssertion rule.This field is only valid for SqlAssertion rules.
         &quot;evaluatedCount&quot;: &quot;A String&quot;, # The number of rows a rule was evaluated against.This field is only valid for row-level type rules.Evaluated count can be configured to either include all rows (default) - with null rows automatically failing rule evaluation, or exclude null rows from the evaluated_count, by setting ignore_nulls = true.
         &quot;failingRowsQuery&quot;: &quot;A String&quot;, # The query to find rows that did not pass this rule.This field is only valid for row-level type rules.
         &quot;nullCount&quot;: &quot;A String&quot;, # The number of rows with null values in the specified column.
@@ -280,6 +271,9 @@ Args:
             &quot;values&quot;: [ # Optional. Expected values for the column value.
               &quot;A String&quot;,
             ],
+          },
+          &quot;sqlAssertion&quot;: { # Queries for rows returned by the provided SQL statement. If any rows are are returned, this rule fails.The SQL statement needs to use BigQuery standard SQL syntax, and must not contain any semicolons.${data()} can be used to reference the rows being evaluated, i.e. the table after all additional filters (row filters, incremental data filters, sampling) are applied.Example: SELECT * FROM ${data()} WHERE price &lt; 0 # Aggregate rule which evaluates the number of rows returned for the provided statement.
+            &quot;sqlStatement&quot;: &quot;A String&quot;, # Optional. The SQL statement.
           },
           &quot;statisticRangeExpectation&quot;: { # Evaluates whether the column aggregate statistic lies between a specified range. # Aggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
             &quot;maxValue&quot;: &quot;A String&quot;, # Optional. The maximum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.
@@ -352,6 +346,9 @@ Args:
           &quot;values&quot;: [ # Optional. Expected values for the column value.
             &quot;A String&quot;,
           ],
+        },
+        &quot;sqlAssertion&quot;: { # Queries for rows returned by the provided SQL statement. If any rows are are returned, this rule fails.The SQL statement needs to use BigQuery standard SQL syntax, and must not contain any semicolons.${data()} can be used to reference the rows being evaluated, i.e. the table after all additional filters (row filters, incremental data filters, sampling) are applied.Example: SELECT * FROM ${data()} WHERE price &lt; 0 # Aggregate rule which evaluates the number of rows returned for the provided statement.
+          &quot;sqlStatement&quot;: &quot;A String&quot;, # Optional. The SQL statement.
         },
         &quot;statisticRangeExpectation&quot;: { # Evaluates whether the column aggregate statistic lies between a specified range. # Aggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
           &quot;maxValue&quot;: &quot;A String&quot;, # Optional. The maximum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.
@@ -509,6 +506,9 @@ Returns:
           &quot;A String&quot;,
         ],
       },
+      &quot;sqlAssertion&quot;: { # Queries for rows returned by the provided SQL statement. If any rows are are returned, this rule fails.The SQL statement needs to use BigQuery standard SQL syntax, and must not contain any semicolons.${data()} can be used to reference the rows being evaluated, i.e. the table after all additional filters (row filters, incremental data filters, sampling) are applied.Example: SELECT * FROM ${data()} WHERE price &lt; 0 # Aggregate rule which evaluates the number of rows returned for the provided statement.
+        &quot;sqlStatement&quot;: &quot;A String&quot;, # Optional. The SQL statement.
+      },
       &quot;statisticRangeExpectation&quot;: { # Evaluates whether the column aggregate statistic lies between a specified range. # Aggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
         &quot;maxValue&quot;: &quot;A String&quot;, # Optional. The maximum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.
         &quot;minValue&quot;: &quot;A String&quot;, # Optional. The minimum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.
@@ -551,16 +551,6 @@ Returns:
   &quot;data&quot;: { # The data source for DataScan. # Required. The data source for DataScan.
     &quot;entity&quot;: &quot;A String&quot;, # Immutable. The Dataplex entity that represents the data source (e.g. BigQuery table) for DataScan, of the form: projects/{project_number}/locations/{location_id}/lakes/{lake_id}/zones/{zone_id}/entities/{entity_id}.
     &quot;resource&quot;: &quot;A String&quot;, # Immutable. The service-qualified full resource name of the cloud resource for a DataScan job to scan against. The field could be: BigQuery table of type &quot;TABLE&quot; for DataProfileScan/DataQualityScan Format: //bigquery.googleapis.com/projects/PROJECT_ID/datasets/DATASET_ID/tables/TABLE_ID
-  },
-  &quot;dataDocumentationResult&quot;: { # The output of a DataDocumentation scan. # Output only. The result of the data documentation scan.
-    &quot;queries&quot;: [ # Output only. The list of generated queries.
-      { # A query in data documentation
-        &quot;description&quot;: &quot;A String&quot;, # Output only. The description for the query.
-        &quot;sql&quot;: &quot;A String&quot;, # Output only. The SQL query string which can be executed.
-      },
-    ],
-  },
-  &quot;dataDocumentationSpec&quot;: { # DataDocumentation scan related spec. # DataDocumentationScan related setting.
   },
   &quot;dataProfileResult&quot;: { # DataProfileResult defines the output of DataProfileScan. Each field of the table will have field type specific profile result. # Output only. The result of the data profile scan.
     &quot;postScanActionsResult&quot;: { # The result of post scan actions of DataProfileScan job. # Output only. The result of post scan actions.
@@ -666,6 +656,7 @@ Returns:
     &quot;rowCount&quot;: &quot;A String&quot;, # The count of rows processed.
     &quot;rules&quot;: [ # A list of all the rules in a job, and their results.
       { # DataQualityRuleResult provides a more detailed, per-rule view of the results.
+        &quot;assertionRowCount&quot;: &quot;A String&quot;, # Output only. The number of rows returned by the sql statement in the SqlAssertion rule.This field is only valid for SqlAssertion rules.
         &quot;evaluatedCount&quot;: &quot;A String&quot;, # The number of rows a rule was evaluated against.This field is only valid for row-level type rules.Evaluated count can be configured to either include all rows (default) - with null rows automatically failing rule evaluation, or exclude null rows from the evaluated_count, by setting ignore_nulls = true.
         &quot;failingRowsQuery&quot;: &quot;A String&quot;, # The query to find rows that did not pass this rule.This field is only valid for row-level type rules.
         &quot;nullCount&quot;: &quot;A String&quot;, # The number of rows with null values in the specified column.
@@ -696,6 +687,9 @@ Returns:
             &quot;values&quot;: [ # Optional. Expected values for the column value.
               &quot;A String&quot;,
             ],
+          },
+          &quot;sqlAssertion&quot;: { # Queries for rows returned by the provided SQL statement. If any rows are are returned, this rule fails.The SQL statement needs to use BigQuery standard SQL syntax, and must not contain any semicolons.${data()} can be used to reference the rows being evaluated, i.e. the table after all additional filters (row filters, incremental data filters, sampling) are applied.Example: SELECT * FROM ${data()} WHERE price &lt; 0 # Aggregate rule which evaluates the number of rows returned for the provided statement.
+            &quot;sqlStatement&quot;: &quot;A String&quot;, # Optional. The SQL statement.
           },
           &quot;statisticRangeExpectation&quot;: { # Evaluates whether the column aggregate statistic lies between a specified range. # Aggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
             &quot;maxValue&quot;: &quot;A String&quot;, # Optional. The maximum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.
@@ -768,6 +762,9 @@ Returns:
           &quot;values&quot;: [ # Optional. Expected values for the column value.
             &quot;A String&quot;,
           ],
+        },
+        &quot;sqlAssertion&quot;: { # Queries for rows returned by the provided SQL statement. If any rows are are returned, this rule fails.The SQL statement needs to use BigQuery standard SQL syntax, and must not contain any semicolons.${data()} can be used to reference the rows being evaluated, i.e. the table after all additional filters (row filters, incremental data filters, sampling) are applied.Example: SELECT * FROM ${data()} WHERE price &lt; 0 # Aggregate rule which evaluates the number of rows returned for the provided statement.
+          &quot;sqlStatement&quot;: &quot;A String&quot;, # Optional. The SQL statement.
         },
         &quot;statisticRangeExpectation&quot;: { # Evaluates whether the column aggregate statistic lies between a specified range. # Aggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
           &quot;maxValue&quot;: &quot;A String&quot;, # Optional. The maximum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.
@@ -887,16 +884,6 @@ Returns:
         &quot;entity&quot;: &quot;A String&quot;, # Immutable. The Dataplex entity that represents the data source (e.g. BigQuery table) for DataScan, of the form: projects/{project_number}/locations/{location_id}/lakes/{lake_id}/zones/{zone_id}/entities/{entity_id}.
         &quot;resource&quot;: &quot;A String&quot;, # Immutable. The service-qualified full resource name of the cloud resource for a DataScan job to scan against. The field could be: BigQuery table of type &quot;TABLE&quot; for DataProfileScan/DataQualityScan Format: //bigquery.googleapis.com/projects/PROJECT_ID/datasets/DATASET_ID/tables/TABLE_ID
       },
-      &quot;dataDocumentationResult&quot;: { # The output of a DataDocumentation scan. # Output only. The result of the data documentation scan.
-        &quot;queries&quot;: [ # Output only. The list of generated queries.
-          { # A query in data documentation
-            &quot;description&quot;: &quot;A String&quot;, # Output only. The description for the query.
-            &quot;sql&quot;: &quot;A String&quot;, # Output only. The SQL query string which can be executed.
-          },
-        ],
-      },
-      &quot;dataDocumentationSpec&quot;: { # DataDocumentation scan related spec. # DataDocumentationScan related setting.
-      },
       &quot;dataProfileResult&quot;: { # DataProfileResult defines the output of DataProfileScan. Each field of the table will have field type specific profile result. # Output only. The result of the data profile scan.
         &quot;postScanActionsResult&quot;: { # The result of post scan actions of DataProfileScan job. # Output only. The result of post scan actions.
           &quot;bigqueryExportResult&quot;: { # The result of BigQuery export post scan action. # Output only. The result of BigQuery export post scan action.
@@ -1001,6 +988,7 @@ Returns:
         &quot;rowCount&quot;: &quot;A String&quot;, # The count of rows processed.
         &quot;rules&quot;: [ # A list of all the rules in a job, and their results.
           { # DataQualityRuleResult provides a more detailed, per-rule view of the results.
+            &quot;assertionRowCount&quot;: &quot;A String&quot;, # Output only. The number of rows returned by the sql statement in the SqlAssertion rule.This field is only valid for SqlAssertion rules.
             &quot;evaluatedCount&quot;: &quot;A String&quot;, # The number of rows a rule was evaluated against.This field is only valid for row-level type rules.Evaluated count can be configured to either include all rows (default) - with null rows automatically failing rule evaluation, or exclude null rows from the evaluated_count, by setting ignore_nulls = true.
             &quot;failingRowsQuery&quot;: &quot;A String&quot;, # The query to find rows that did not pass this rule.This field is only valid for row-level type rules.
             &quot;nullCount&quot;: &quot;A String&quot;, # The number of rows with null values in the specified column.
@@ -1031,6 +1019,9 @@ Returns:
                 &quot;values&quot;: [ # Optional. Expected values for the column value.
                   &quot;A String&quot;,
                 ],
+              },
+              &quot;sqlAssertion&quot;: { # Queries for rows returned by the provided SQL statement. If any rows are are returned, this rule fails.The SQL statement needs to use BigQuery standard SQL syntax, and must not contain any semicolons.${data()} can be used to reference the rows being evaluated, i.e. the table after all additional filters (row filters, incremental data filters, sampling) are applied.Example: SELECT * FROM ${data()} WHERE price &lt; 0 # Aggregate rule which evaluates the number of rows returned for the provided statement.
+                &quot;sqlStatement&quot;: &quot;A String&quot;, # Optional. The SQL statement.
               },
               &quot;statisticRangeExpectation&quot;: { # Evaluates whether the column aggregate statistic lies between a specified range. # Aggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
                 &quot;maxValue&quot;: &quot;A String&quot;, # Optional. The maximum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.
@@ -1103,6 +1094,9 @@ Returns:
               &quot;values&quot;: [ # Optional. Expected values for the column value.
                 &quot;A String&quot;,
               ],
+            },
+            &quot;sqlAssertion&quot;: { # Queries for rows returned by the provided SQL statement. If any rows are are returned, this rule fails.The SQL statement needs to use BigQuery standard SQL syntax, and must not contain any semicolons.${data()} can be used to reference the rows being evaluated, i.e. the table after all additional filters (row filters, incremental data filters, sampling) are applied.Example: SELECT * FROM ${data()} WHERE price &lt; 0 # Aggregate rule which evaluates the number of rows returned for the provided statement.
+              &quot;sqlStatement&quot;: &quot;A String&quot;, # Optional. The SQL statement.
             },
             &quot;statisticRangeExpectation&quot;: { # Evaluates whether the column aggregate statistic lies between a specified range. # Aggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
               &quot;maxValue&quot;: &quot;A String&quot;, # Optional. The maximum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.
@@ -1182,16 +1176,6 @@ Args:
   &quot;data&quot;: { # The data source for DataScan. # Required. The data source for DataScan.
     &quot;entity&quot;: &quot;A String&quot;, # Immutable. The Dataplex entity that represents the data source (e.g. BigQuery table) for DataScan, of the form: projects/{project_number}/locations/{location_id}/lakes/{lake_id}/zones/{zone_id}/entities/{entity_id}.
     &quot;resource&quot;: &quot;A String&quot;, # Immutable. The service-qualified full resource name of the cloud resource for a DataScan job to scan against. The field could be: BigQuery table of type &quot;TABLE&quot; for DataProfileScan/DataQualityScan Format: //bigquery.googleapis.com/projects/PROJECT_ID/datasets/DATASET_ID/tables/TABLE_ID
-  },
-  &quot;dataDocumentationResult&quot;: { # The output of a DataDocumentation scan. # Output only. The result of the data documentation scan.
-    &quot;queries&quot;: [ # Output only. The list of generated queries.
-      { # A query in data documentation
-        &quot;description&quot;: &quot;A String&quot;, # Output only. The description for the query.
-        &quot;sql&quot;: &quot;A String&quot;, # Output only. The SQL query string which can be executed.
-      },
-    ],
-  },
-  &quot;dataDocumentationSpec&quot;: { # DataDocumentation scan related spec. # DataDocumentationScan related setting.
   },
   &quot;dataProfileResult&quot;: { # DataProfileResult defines the output of DataProfileScan. Each field of the table will have field type specific profile result. # Output only. The result of the data profile scan.
     &quot;postScanActionsResult&quot;: { # The result of post scan actions of DataProfileScan job. # Output only. The result of post scan actions.
@@ -1297,6 +1281,7 @@ Args:
     &quot;rowCount&quot;: &quot;A String&quot;, # The count of rows processed.
     &quot;rules&quot;: [ # A list of all the rules in a job, and their results.
       { # DataQualityRuleResult provides a more detailed, per-rule view of the results.
+        &quot;assertionRowCount&quot;: &quot;A String&quot;, # Output only. The number of rows returned by the sql statement in the SqlAssertion rule.This field is only valid for SqlAssertion rules.
         &quot;evaluatedCount&quot;: &quot;A String&quot;, # The number of rows a rule was evaluated against.This field is only valid for row-level type rules.Evaluated count can be configured to either include all rows (default) - with null rows automatically failing rule evaluation, or exclude null rows from the evaluated_count, by setting ignore_nulls = true.
         &quot;failingRowsQuery&quot;: &quot;A String&quot;, # The query to find rows that did not pass this rule.This field is only valid for row-level type rules.
         &quot;nullCount&quot;: &quot;A String&quot;, # The number of rows with null values in the specified column.
@@ -1327,6 +1312,9 @@ Args:
             &quot;values&quot;: [ # Optional. Expected values for the column value.
               &quot;A String&quot;,
             ],
+          },
+          &quot;sqlAssertion&quot;: { # Queries for rows returned by the provided SQL statement. If any rows are are returned, this rule fails.The SQL statement needs to use BigQuery standard SQL syntax, and must not contain any semicolons.${data()} can be used to reference the rows being evaluated, i.e. the table after all additional filters (row filters, incremental data filters, sampling) are applied.Example: SELECT * FROM ${data()} WHERE price &lt; 0 # Aggregate rule which evaluates the number of rows returned for the provided statement.
+            &quot;sqlStatement&quot;: &quot;A String&quot;, # Optional. The SQL statement.
           },
           &quot;statisticRangeExpectation&quot;: { # Evaluates whether the column aggregate statistic lies between a specified range. # Aggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
             &quot;maxValue&quot;: &quot;A String&quot;, # Optional. The maximum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.
@@ -1399,6 +1387,9 @@ Args:
           &quot;values&quot;: [ # Optional. Expected values for the column value.
             &quot;A String&quot;,
           ],
+        },
+        &quot;sqlAssertion&quot;: { # Queries for rows returned by the provided SQL statement. If any rows are are returned, this rule fails.The SQL statement needs to use BigQuery standard SQL syntax, and must not contain any semicolons.${data()} can be used to reference the rows being evaluated, i.e. the table after all additional filters (row filters, incremental data filters, sampling) are applied.Example: SELECT * FROM ${data()} WHERE price &lt; 0 # Aggregate rule which evaluates the number of rows returned for the provided statement.
+          &quot;sqlStatement&quot;: &quot;A String&quot;, # Optional. The SQL statement.
         },
         &quot;statisticRangeExpectation&quot;: { # Evaluates whether the column aggregate statistic lies between a specified range. # Aggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
           &quot;maxValue&quot;: &quot;A String&quot;, # Optional. The maximum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.
@@ -1496,16 +1487,6 @@ Returns:
 
     { # Run DataScan Response.
   &quot;job&quot;: { # A DataScanJob represents an instance of DataScan execution. # DataScanJob created by RunDataScan request.
-    &quot;dataDocumentationResult&quot;: { # The output of a DataDocumentation scan. # Output only. The result of the data documentation scan.
-      &quot;queries&quot;: [ # Output only. The list of generated queries.
-        { # A query in data documentation
-          &quot;description&quot;: &quot;A String&quot;, # Output only. The description for the query.
-          &quot;sql&quot;: &quot;A String&quot;, # Output only. The SQL query string which can be executed.
-        },
-      ],
-    },
-    &quot;dataDocumentationSpec&quot;: { # DataDocumentation scan related spec. # Output only. DataDocumentationScan related setting.
-    },
     &quot;dataProfileResult&quot;: { # DataProfileResult defines the output of DataProfileScan. Each field of the table will have field type specific profile result. # Output only. The result of the data profile scan.
       &quot;postScanActionsResult&quot;: { # The result of post scan actions of DataProfileScan job. # Output only. The result of post scan actions.
         &quot;bigqueryExportResult&quot;: { # The result of BigQuery export post scan action. # Output only. The result of BigQuery export post scan action.
@@ -1610,6 +1591,7 @@ Returns:
       &quot;rowCount&quot;: &quot;A String&quot;, # The count of rows processed.
       &quot;rules&quot;: [ # A list of all the rules in a job, and their results.
         { # DataQualityRuleResult provides a more detailed, per-rule view of the results.
+          &quot;assertionRowCount&quot;: &quot;A String&quot;, # Output only. The number of rows returned by the sql statement in the SqlAssertion rule.This field is only valid for SqlAssertion rules.
           &quot;evaluatedCount&quot;: &quot;A String&quot;, # The number of rows a rule was evaluated against.This field is only valid for row-level type rules.Evaluated count can be configured to either include all rows (default) - with null rows automatically failing rule evaluation, or exclude null rows from the evaluated_count, by setting ignore_nulls = true.
           &quot;failingRowsQuery&quot;: &quot;A String&quot;, # The query to find rows that did not pass this rule.This field is only valid for row-level type rules.
           &quot;nullCount&quot;: &quot;A String&quot;, # The number of rows with null values in the specified column.
@@ -1640,6 +1622,9 @@ Returns:
               &quot;values&quot;: [ # Optional. Expected values for the column value.
                 &quot;A String&quot;,
               ],
+            },
+            &quot;sqlAssertion&quot;: { # Queries for rows returned by the provided SQL statement. If any rows are are returned, this rule fails.The SQL statement needs to use BigQuery standard SQL syntax, and must not contain any semicolons.${data()} can be used to reference the rows being evaluated, i.e. the table after all additional filters (row filters, incremental data filters, sampling) are applied.Example: SELECT * FROM ${data()} WHERE price &lt; 0 # Aggregate rule which evaluates the number of rows returned for the provided statement.
+              &quot;sqlStatement&quot;: &quot;A String&quot;, # Optional. The SQL statement.
             },
             &quot;statisticRangeExpectation&quot;: { # Evaluates whether the column aggregate statistic lies between a specified range. # Aggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
               &quot;maxValue&quot;: &quot;A String&quot;, # Optional. The maximum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.
@@ -1712,6 +1697,9 @@ Returns:
             &quot;values&quot;: [ # Optional. Expected values for the column value.
               &quot;A String&quot;,
             ],
+          },
+          &quot;sqlAssertion&quot;: { # Queries for rows returned by the provided SQL statement. If any rows are are returned, this rule fails.The SQL statement needs to use BigQuery standard SQL syntax, and must not contain any semicolons.${data()} can be used to reference the rows being evaluated, i.e. the table after all additional filters (row filters, incremental data filters, sampling) are applied.Example: SELECT * FROM ${data()} WHERE price &lt; 0 # Aggregate rule which evaluates the number of rows returned for the provided statement.
+            &quot;sqlStatement&quot;: &quot;A String&quot;, # Optional. The SQL statement.
           },
           &quot;statisticRangeExpectation&quot;: { # Evaluates whether the column aggregate statistic lies between a specified range. # Aggregate rule which evaluates whether the column aggregate statistic lies between a specified range.
             &quot;maxValue&quot;: &quot;A String&quot;, # Optional. The maximum column statistic value allowed for a row to pass this validation.At least one of min_value and max_value need to be provided.

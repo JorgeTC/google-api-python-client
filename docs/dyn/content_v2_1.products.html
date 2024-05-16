@@ -131,6 +131,10 @@ Args:
         &quot;adsRedirect&quot;: &quot;A String&quot;, # Allows advertisers to override the item URL when the product is shown within the context of Product Ads.
         &quot;adult&quot;: True or False, # Should be set to true if the item is targeted towards adults.
         &quot;ageGroup&quot;: &quot;A String&quot;, # Target age group of the item.
+        &quot;autoPricingMinPrice&quot;: { # A safeguard in the [Automated Discounts](//support.google.com/merchants/answer/10295759) and [Dynamic Promotions](//support.google.com/merchants/answer/13949249) projects, ensuring that discounts on merchants&#x27; offers do not fall below this value, thereby preserving the offer&#x27;s value and profitability.
+          &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+          &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+        },
         &quot;availability&quot;: &quot;A String&quot;, # Availability status of the item.
         &quot;availabilityDate&quot;: &quot;A String&quot;, # The day a pre-ordered product becomes available for delivery, in ISO 8601 format.
         &quot;brand&quot;: &quot;A String&quot;, # Brand of the item.
@@ -198,6 +202,15 @@ Args:
         &quot;expirationDate&quot;: &quot;A String&quot;, # Date on which the item should expire, as specified upon insertion, in ISO 8601 format. The actual expiration date in Google Shopping is exposed in `productstatuses` as `googleExpirationDate` and might be earlier if `expirationDate` is too far in the future.
         &quot;externalSellerId&quot;: &quot;A String&quot;, # Required for multi-seller accounts. Use this attribute if you&#x27;re a marketplace uploading products for various sellers to your multi-seller account.
         &quot;feedLabel&quot;: &quot;A String&quot;, # Feed label for the item. Either `targetCountry` or `feedLabel` is required. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-).
+        &quot;freeShippingThreshold&quot;: [ # Optional. Conditions to be met for a product to have free shipping.
+          { # Conditions to be met for a product to have free shipping.
+            &quot;country&quot;: &quot;A String&quot;, # Required. The [CLDR territory code](http://www.unicode.org/repos/cldr/tags/latest/common/main/en.xml) of the country to which an item will ship.
+            &quot;priceThreshold&quot;: { # Required. The minimum product price for the shipping cost to become free. Represented as a number.
+              &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+              &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+            },
+          },
+        ],
         &quot;gender&quot;: &quot;A String&quot;, # Target gender of the item.
         &quot;googleProductCategory&quot;: &quot;A String&quot;, # Google&#x27;s category of the item (see [Google product taxonomy](https://support.google.com/merchants/answer/1705911)). When querying products, this field will contain the user provided value. There is currently no way to get back the auto assigned google product categories through the API.
         &quot;gtin&quot;: &quot;A String&quot;, # Global Trade Item Number (GTIN) of the item.
@@ -207,8 +220,13 @@ Args:
         &quot;includedDestinations&quot;: [ # The list of [destinations to include](//support.google.com/merchants/answer/7501026) for this target (corresponds to checked check boxes in Merchant Center). Default destinations are always included unless provided in `excludedDestinations`.
           &quot;A String&quot;,
         ],
-        &quot;installment&quot;: { # Number and amount of installments to pay for an item.
+        &quot;installment&quot;: { # Details of a monthly installment payment offering. [Learn more](https://support.google.com/merchants/answer/6324474) about installments. # Number and amount of installments to pay for an item.
           &quot;amount&quot;: { # The amount the buyer has to pay per month.
+            &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+            &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+          },
+          &quot;creditType&quot;: &quot;A String&quot;, # Optional. Type of installment payments. Supported values are: - &quot;`finance`&quot; - &quot;`lease`&quot;
+          &quot;downpayment&quot;: { # Optional. The initial down payment amount the buyer has to pay.
             &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
             &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
           },
@@ -222,10 +240,18 @@ Args:
         ],
         &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
         &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-        &quot;loyaltyPoints&quot;: { # Loyalty points that users receive after purchasing the item. Japan only.
-          &quot;name&quot;: &quot;A String&quot;, # Name of loyalty points program. It is recommended to limit the name to 12 full-width characters or 24 Roman characters.
-          &quot;pointsValue&quot;: &quot;A String&quot;, # The retailer&#x27;s loyalty points in absolute value.
-          &quot;ratio&quot;: 3.14, # The ratio of a point when converted to currency. Google assumes currency based on Merchant Center settings. If ratio is left out, it defaults to 1.0.
+        &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+          &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+            &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+            &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+          },
+          &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+          &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+            &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+            &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+          },
+          &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+          &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
         },
         &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
         &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
@@ -327,12 +353,20 @@ Args:
           &quot;A String&quot;,
         ],
         &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+        &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
+          &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
+          &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+        },
+        &quot;structuredTitle&quot;: { # Structured title, for algorithmically (AI)-generated titles. See [title](https://support.google.com/merchants/answer/6324415#Whentouse) for more information. # Structured title, for algorithmically (AI)-generated titles.
+          &quot;content&quot;: &quot;A String&quot;, # Required. The title text. Maximum length is 150 characters.
+          &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+        },
         &quot;subscriptionCost&quot;: { # Number of periods (months or years) and amount of payment per period for an item with an associated subscription contract.
           &quot;amount&quot;: { # The amount the buyer has to pay per subscription period.
             &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
             &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
           },
-          &quot;period&quot;: &quot;A String&quot;, # The type of subscription period.
+          &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
           &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
         },
         &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
@@ -401,6 +435,10 @@ Returns:
         &quot;adsRedirect&quot;: &quot;A String&quot;, # Allows advertisers to override the item URL when the product is shown within the context of Product Ads.
         &quot;adult&quot;: True or False, # Should be set to true if the item is targeted towards adults.
         &quot;ageGroup&quot;: &quot;A String&quot;, # Target age group of the item.
+        &quot;autoPricingMinPrice&quot;: { # A safeguard in the [Automated Discounts](//support.google.com/merchants/answer/10295759) and [Dynamic Promotions](//support.google.com/merchants/answer/13949249) projects, ensuring that discounts on merchants&#x27; offers do not fall below this value, thereby preserving the offer&#x27;s value and profitability.
+          &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+          &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+        },
         &quot;availability&quot;: &quot;A String&quot;, # Availability status of the item.
         &quot;availabilityDate&quot;: &quot;A String&quot;, # The day a pre-ordered product becomes available for delivery, in ISO 8601 format.
         &quot;brand&quot;: &quot;A String&quot;, # Brand of the item.
@@ -468,6 +506,15 @@ Returns:
         &quot;expirationDate&quot;: &quot;A String&quot;, # Date on which the item should expire, as specified upon insertion, in ISO 8601 format. The actual expiration date in Google Shopping is exposed in `productstatuses` as `googleExpirationDate` and might be earlier if `expirationDate` is too far in the future.
         &quot;externalSellerId&quot;: &quot;A String&quot;, # Required for multi-seller accounts. Use this attribute if you&#x27;re a marketplace uploading products for various sellers to your multi-seller account.
         &quot;feedLabel&quot;: &quot;A String&quot;, # Feed label for the item. Either `targetCountry` or `feedLabel` is required. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-).
+        &quot;freeShippingThreshold&quot;: [ # Optional. Conditions to be met for a product to have free shipping.
+          { # Conditions to be met for a product to have free shipping.
+            &quot;country&quot;: &quot;A String&quot;, # Required. The [CLDR territory code](http://www.unicode.org/repos/cldr/tags/latest/common/main/en.xml) of the country to which an item will ship.
+            &quot;priceThreshold&quot;: { # Required. The minimum product price for the shipping cost to become free. Represented as a number.
+              &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+              &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+            },
+          },
+        ],
         &quot;gender&quot;: &quot;A String&quot;, # Target gender of the item.
         &quot;googleProductCategory&quot;: &quot;A String&quot;, # Google&#x27;s category of the item (see [Google product taxonomy](https://support.google.com/merchants/answer/1705911)). When querying products, this field will contain the user provided value. There is currently no way to get back the auto assigned google product categories through the API.
         &quot;gtin&quot;: &quot;A String&quot;, # Global Trade Item Number (GTIN) of the item.
@@ -477,8 +524,13 @@ Returns:
         &quot;includedDestinations&quot;: [ # The list of [destinations to include](//support.google.com/merchants/answer/7501026) for this target (corresponds to checked check boxes in Merchant Center). Default destinations are always included unless provided in `excludedDestinations`.
           &quot;A String&quot;,
         ],
-        &quot;installment&quot;: { # Number and amount of installments to pay for an item.
+        &quot;installment&quot;: { # Details of a monthly installment payment offering. [Learn more](https://support.google.com/merchants/answer/6324474) about installments. # Number and amount of installments to pay for an item.
           &quot;amount&quot;: { # The amount the buyer has to pay per month.
+            &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+            &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+          },
+          &quot;creditType&quot;: &quot;A String&quot;, # Optional. Type of installment payments. Supported values are: - &quot;`finance`&quot; - &quot;`lease`&quot;
+          &quot;downpayment&quot;: { # Optional. The initial down payment amount the buyer has to pay.
             &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
             &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
           },
@@ -492,10 +544,18 @@ Returns:
         ],
         &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
         &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-        &quot;loyaltyPoints&quot;: { # Loyalty points that users receive after purchasing the item. Japan only.
-          &quot;name&quot;: &quot;A String&quot;, # Name of loyalty points program. It is recommended to limit the name to 12 full-width characters or 24 Roman characters.
-          &quot;pointsValue&quot;: &quot;A String&quot;, # The retailer&#x27;s loyalty points in absolute value.
-          &quot;ratio&quot;: 3.14, # The ratio of a point when converted to currency. Google assumes currency based on Merchant Center settings. If ratio is left out, it defaults to 1.0.
+        &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+          &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+            &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+            &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+          },
+          &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+          &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+            &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+            &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+          },
+          &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+          &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
         },
         &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
         &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
@@ -597,12 +657,20 @@ Returns:
           &quot;A String&quot;,
         ],
         &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+        &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
+          &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
+          &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+        },
+        &quot;structuredTitle&quot;: { # Structured title, for algorithmically (AI)-generated titles. See [title](https://support.google.com/merchants/answer/6324415#Whentouse) for more information. # Structured title, for algorithmically (AI)-generated titles.
+          &quot;content&quot;: &quot;A String&quot;, # Required. The title text. Maximum length is 150 characters.
+          &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+        },
         &quot;subscriptionCost&quot;: { # Number of periods (months or years) and amount of payment per period for an item with an associated subscription contract.
           &quot;amount&quot;: { # The amount the buyer has to pay per subscription period.
             &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
             &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
           },
-          &quot;period&quot;: &quot;A String&quot;, # The type of subscription period.
+          &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
           &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
         },
         &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
@@ -677,6 +745,10 @@ Returns:
   &quot;adsRedirect&quot;: &quot;A String&quot;, # Allows advertisers to override the item URL when the product is shown within the context of Product Ads.
   &quot;adult&quot;: True or False, # Should be set to true if the item is targeted towards adults.
   &quot;ageGroup&quot;: &quot;A String&quot;, # Target age group of the item.
+  &quot;autoPricingMinPrice&quot;: { # A safeguard in the [Automated Discounts](//support.google.com/merchants/answer/10295759) and [Dynamic Promotions](//support.google.com/merchants/answer/13949249) projects, ensuring that discounts on merchants&#x27; offers do not fall below this value, thereby preserving the offer&#x27;s value and profitability.
+    &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+    &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+  },
   &quot;availability&quot;: &quot;A String&quot;, # Availability status of the item.
   &quot;availabilityDate&quot;: &quot;A String&quot;, # The day a pre-ordered product becomes available for delivery, in ISO 8601 format.
   &quot;brand&quot;: &quot;A String&quot;, # Brand of the item.
@@ -744,6 +816,15 @@ Returns:
   &quot;expirationDate&quot;: &quot;A String&quot;, # Date on which the item should expire, as specified upon insertion, in ISO 8601 format. The actual expiration date in Google Shopping is exposed in `productstatuses` as `googleExpirationDate` and might be earlier if `expirationDate` is too far in the future.
   &quot;externalSellerId&quot;: &quot;A String&quot;, # Required for multi-seller accounts. Use this attribute if you&#x27;re a marketplace uploading products for various sellers to your multi-seller account.
   &quot;feedLabel&quot;: &quot;A String&quot;, # Feed label for the item. Either `targetCountry` or `feedLabel` is required. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-).
+  &quot;freeShippingThreshold&quot;: [ # Optional. Conditions to be met for a product to have free shipping.
+    { # Conditions to be met for a product to have free shipping.
+      &quot;country&quot;: &quot;A String&quot;, # Required. The [CLDR territory code](http://www.unicode.org/repos/cldr/tags/latest/common/main/en.xml) of the country to which an item will ship.
+      &quot;priceThreshold&quot;: { # Required. The minimum product price for the shipping cost to become free. Represented as a number.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+    },
+  ],
   &quot;gender&quot;: &quot;A String&quot;, # Target gender of the item.
   &quot;googleProductCategory&quot;: &quot;A String&quot;, # Google&#x27;s category of the item (see [Google product taxonomy](https://support.google.com/merchants/answer/1705911)). When querying products, this field will contain the user provided value. There is currently no way to get back the auto assigned google product categories through the API.
   &quot;gtin&quot;: &quot;A String&quot;, # Global Trade Item Number (GTIN) of the item.
@@ -753,8 +834,13 @@ Returns:
   &quot;includedDestinations&quot;: [ # The list of [destinations to include](//support.google.com/merchants/answer/7501026) for this target (corresponds to checked check boxes in Merchant Center). Default destinations are always included unless provided in `excludedDestinations`.
     &quot;A String&quot;,
   ],
-  &quot;installment&quot;: { # Number and amount of installments to pay for an item.
+  &quot;installment&quot;: { # Details of a monthly installment payment offering. [Learn more](https://support.google.com/merchants/answer/6324474) about installments. # Number and amount of installments to pay for an item.
     &quot;amount&quot;: { # The amount the buyer has to pay per month.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;creditType&quot;: &quot;A String&quot;, # Optional. Type of installment payments. Supported values are: - &quot;`finance`&quot; - &quot;`lease`&quot;
+    &quot;downpayment&quot;: { # Optional. The initial down payment amount the buyer has to pay.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
@@ -768,10 +854,18 @@ Returns:
   ],
   &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
   &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-  &quot;loyaltyPoints&quot;: { # Loyalty points that users receive after purchasing the item. Japan only.
-    &quot;name&quot;: &quot;A String&quot;, # Name of loyalty points program. It is recommended to limit the name to 12 full-width characters or 24 Roman characters.
-    &quot;pointsValue&quot;: &quot;A String&quot;, # The retailer&#x27;s loyalty points in absolute value.
-    &quot;ratio&quot;: 3.14, # The ratio of a point when converted to currency. Google assumes currency based on Merchant Center settings. If ratio is left out, it defaults to 1.0.
+  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+    &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+    &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+    &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
   },
   &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
   &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
@@ -873,12 +967,20 @@ Returns:
     &quot;A String&quot;,
   ],
   &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+  &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
+    &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
+    &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+  },
+  &quot;structuredTitle&quot;: { # Structured title, for algorithmically (AI)-generated titles. See [title](https://support.google.com/merchants/answer/6324415#Whentouse) for more information. # Structured title, for algorithmically (AI)-generated titles.
+    &quot;content&quot;: &quot;A String&quot;, # Required. The title text. Maximum length is 150 characters.
+    &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+  },
   &quot;subscriptionCost&quot;: { # Number of periods (months or years) and amount of payment per period for an item with an associated subscription contract.
     &quot;amount&quot;: { # The amount the buyer has to pay per subscription period.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
-    &quot;period&quot;: &quot;A String&quot;, # The type of subscription period.
+    &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
     &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
   },
   &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
@@ -928,6 +1030,10 @@ Args:
   &quot;adsRedirect&quot;: &quot;A String&quot;, # Allows advertisers to override the item URL when the product is shown within the context of Product Ads.
   &quot;adult&quot;: True or False, # Should be set to true if the item is targeted towards adults.
   &quot;ageGroup&quot;: &quot;A String&quot;, # Target age group of the item.
+  &quot;autoPricingMinPrice&quot;: { # A safeguard in the [Automated Discounts](//support.google.com/merchants/answer/10295759) and [Dynamic Promotions](//support.google.com/merchants/answer/13949249) projects, ensuring that discounts on merchants&#x27; offers do not fall below this value, thereby preserving the offer&#x27;s value and profitability.
+    &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+    &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+  },
   &quot;availability&quot;: &quot;A String&quot;, # Availability status of the item.
   &quot;availabilityDate&quot;: &quot;A String&quot;, # The day a pre-ordered product becomes available for delivery, in ISO 8601 format.
   &quot;brand&quot;: &quot;A String&quot;, # Brand of the item.
@@ -995,6 +1101,15 @@ Args:
   &quot;expirationDate&quot;: &quot;A String&quot;, # Date on which the item should expire, as specified upon insertion, in ISO 8601 format. The actual expiration date in Google Shopping is exposed in `productstatuses` as `googleExpirationDate` and might be earlier if `expirationDate` is too far in the future.
   &quot;externalSellerId&quot;: &quot;A String&quot;, # Required for multi-seller accounts. Use this attribute if you&#x27;re a marketplace uploading products for various sellers to your multi-seller account.
   &quot;feedLabel&quot;: &quot;A String&quot;, # Feed label for the item. Either `targetCountry` or `feedLabel` is required. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-).
+  &quot;freeShippingThreshold&quot;: [ # Optional. Conditions to be met for a product to have free shipping.
+    { # Conditions to be met for a product to have free shipping.
+      &quot;country&quot;: &quot;A String&quot;, # Required. The [CLDR territory code](http://www.unicode.org/repos/cldr/tags/latest/common/main/en.xml) of the country to which an item will ship.
+      &quot;priceThreshold&quot;: { # Required. The minimum product price for the shipping cost to become free. Represented as a number.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+    },
+  ],
   &quot;gender&quot;: &quot;A String&quot;, # Target gender of the item.
   &quot;googleProductCategory&quot;: &quot;A String&quot;, # Google&#x27;s category of the item (see [Google product taxonomy](https://support.google.com/merchants/answer/1705911)). When querying products, this field will contain the user provided value. There is currently no way to get back the auto assigned google product categories through the API.
   &quot;gtin&quot;: &quot;A String&quot;, # Global Trade Item Number (GTIN) of the item.
@@ -1004,8 +1119,13 @@ Args:
   &quot;includedDestinations&quot;: [ # The list of [destinations to include](//support.google.com/merchants/answer/7501026) for this target (corresponds to checked check boxes in Merchant Center). Default destinations are always included unless provided in `excludedDestinations`.
     &quot;A String&quot;,
   ],
-  &quot;installment&quot;: { # Number and amount of installments to pay for an item.
+  &quot;installment&quot;: { # Details of a monthly installment payment offering. [Learn more](https://support.google.com/merchants/answer/6324474) about installments. # Number and amount of installments to pay for an item.
     &quot;amount&quot;: { # The amount the buyer has to pay per month.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;creditType&quot;: &quot;A String&quot;, # Optional. Type of installment payments. Supported values are: - &quot;`finance`&quot; - &quot;`lease`&quot;
+    &quot;downpayment&quot;: { # Optional. The initial down payment amount the buyer has to pay.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
@@ -1019,10 +1139,18 @@ Args:
   ],
   &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
   &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-  &quot;loyaltyPoints&quot;: { # Loyalty points that users receive after purchasing the item. Japan only.
-    &quot;name&quot;: &quot;A String&quot;, # Name of loyalty points program. It is recommended to limit the name to 12 full-width characters or 24 Roman characters.
-    &quot;pointsValue&quot;: &quot;A String&quot;, # The retailer&#x27;s loyalty points in absolute value.
-    &quot;ratio&quot;: 3.14, # The ratio of a point when converted to currency. Google assumes currency based on Merchant Center settings. If ratio is left out, it defaults to 1.0.
+  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+    &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+    &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+    &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
   },
   &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
   &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
@@ -1124,12 +1252,20 @@ Args:
     &quot;A String&quot;,
   ],
   &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+  &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
+    &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
+    &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+  },
+  &quot;structuredTitle&quot;: { # Structured title, for algorithmically (AI)-generated titles. See [title](https://support.google.com/merchants/answer/6324415#Whentouse) for more information. # Structured title, for algorithmically (AI)-generated titles.
+    &quot;content&quot;: &quot;A String&quot;, # Required. The title text. Maximum length is 150 characters.
+    &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+  },
   &quot;subscriptionCost&quot;: { # Number of periods (months or years) and amount of payment per period for an item with an associated subscription contract.
     &quot;amount&quot;: { # The amount the buyer has to pay per subscription period.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
-    &quot;period&quot;: &quot;A String&quot;, # The type of subscription period.
+    &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
     &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
   },
   &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
@@ -1178,6 +1314,10 @@ Returns:
   &quot;adsRedirect&quot;: &quot;A String&quot;, # Allows advertisers to override the item URL when the product is shown within the context of Product Ads.
   &quot;adult&quot;: True or False, # Should be set to true if the item is targeted towards adults.
   &quot;ageGroup&quot;: &quot;A String&quot;, # Target age group of the item.
+  &quot;autoPricingMinPrice&quot;: { # A safeguard in the [Automated Discounts](//support.google.com/merchants/answer/10295759) and [Dynamic Promotions](//support.google.com/merchants/answer/13949249) projects, ensuring that discounts on merchants&#x27; offers do not fall below this value, thereby preserving the offer&#x27;s value and profitability.
+    &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+    &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+  },
   &quot;availability&quot;: &quot;A String&quot;, # Availability status of the item.
   &quot;availabilityDate&quot;: &quot;A String&quot;, # The day a pre-ordered product becomes available for delivery, in ISO 8601 format.
   &quot;brand&quot;: &quot;A String&quot;, # Brand of the item.
@@ -1245,6 +1385,15 @@ Returns:
   &quot;expirationDate&quot;: &quot;A String&quot;, # Date on which the item should expire, as specified upon insertion, in ISO 8601 format. The actual expiration date in Google Shopping is exposed in `productstatuses` as `googleExpirationDate` and might be earlier if `expirationDate` is too far in the future.
   &quot;externalSellerId&quot;: &quot;A String&quot;, # Required for multi-seller accounts. Use this attribute if you&#x27;re a marketplace uploading products for various sellers to your multi-seller account.
   &quot;feedLabel&quot;: &quot;A String&quot;, # Feed label for the item. Either `targetCountry` or `feedLabel` is required. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-).
+  &quot;freeShippingThreshold&quot;: [ # Optional. Conditions to be met for a product to have free shipping.
+    { # Conditions to be met for a product to have free shipping.
+      &quot;country&quot;: &quot;A String&quot;, # Required. The [CLDR territory code](http://www.unicode.org/repos/cldr/tags/latest/common/main/en.xml) of the country to which an item will ship.
+      &quot;priceThreshold&quot;: { # Required. The minimum product price for the shipping cost to become free. Represented as a number.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+    },
+  ],
   &quot;gender&quot;: &quot;A String&quot;, # Target gender of the item.
   &quot;googleProductCategory&quot;: &quot;A String&quot;, # Google&#x27;s category of the item (see [Google product taxonomy](https://support.google.com/merchants/answer/1705911)). When querying products, this field will contain the user provided value. There is currently no way to get back the auto assigned google product categories through the API.
   &quot;gtin&quot;: &quot;A String&quot;, # Global Trade Item Number (GTIN) of the item.
@@ -1254,8 +1403,13 @@ Returns:
   &quot;includedDestinations&quot;: [ # The list of [destinations to include](//support.google.com/merchants/answer/7501026) for this target (corresponds to checked check boxes in Merchant Center). Default destinations are always included unless provided in `excludedDestinations`.
     &quot;A String&quot;,
   ],
-  &quot;installment&quot;: { # Number and amount of installments to pay for an item.
+  &quot;installment&quot;: { # Details of a monthly installment payment offering. [Learn more](https://support.google.com/merchants/answer/6324474) about installments. # Number and amount of installments to pay for an item.
     &quot;amount&quot;: { # The amount the buyer has to pay per month.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;creditType&quot;: &quot;A String&quot;, # Optional. Type of installment payments. Supported values are: - &quot;`finance`&quot; - &quot;`lease`&quot;
+    &quot;downpayment&quot;: { # Optional. The initial down payment amount the buyer has to pay.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
@@ -1269,10 +1423,18 @@ Returns:
   ],
   &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
   &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-  &quot;loyaltyPoints&quot;: { # Loyalty points that users receive after purchasing the item. Japan only.
-    &quot;name&quot;: &quot;A String&quot;, # Name of loyalty points program. It is recommended to limit the name to 12 full-width characters or 24 Roman characters.
-    &quot;pointsValue&quot;: &quot;A String&quot;, # The retailer&#x27;s loyalty points in absolute value.
-    &quot;ratio&quot;: 3.14, # The ratio of a point when converted to currency. Google assumes currency based on Merchant Center settings. If ratio is left out, it defaults to 1.0.
+  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+    &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+    &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+    &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
   },
   &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
   &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
@@ -1374,12 +1536,20 @@ Returns:
     &quot;A String&quot;,
   ],
   &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+  &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
+    &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
+    &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+  },
+  &quot;structuredTitle&quot;: { # Structured title, for algorithmically (AI)-generated titles. See [title](https://support.google.com/merchants/answer/6324415#Whentouse) for more information. # Structured title, for algorithmically (AI)-generated titles.
+    &quot;content&quot;: &quot;A String&quot;, # Required. The title text. Maximum length is 150 characters.
+    &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+  },
   &quot;subscriptionCost&quot;: { # Number of periods (months or years) and amount of payment per period for an item with an associated subscription contract.
     &quot;amount&quot;: { # The amount the buyer has to pay per subscription period.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
-    &quot;period&quot;: &quot;A String&quot;, # The type of subscription period.
+    &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
     &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
   },
   &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
@@ -1440,6 +1610,10 @@ Returns:
       &quot;adsRedirect&quot;: &quot;A String&quot;, # Allows advertisers to override the item URL when the product is shown within the context of Product Ads.
       &quot;adult&quot;: True or False, # Should be set to true if the item is targeted towards adults.
       &quot;ageGroup&quot;: &quot;A String&quot;, # Target age group of the item.
+      &quot;autoPricingMinPrice&quot;: { # A safeguard in the [Automated Discounts](//support.google.com/merchants/answer/10295759) and [Dynamic Promotions](//support.google.com/merchants/answer/13949249) projects, ensuring that discounts on merchants&#x27; offers do not fall below this value, thereby preserving the offer&#x27;s value and profitability.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
       &quot;availability&quot;: &quot;A String&quot;, # Availability status of the item.
       &quot;availabilityDate&quot;: &quot;A String&quot;, # The day a pre-ordered product becomes available for delivery, in ISO 8601 format.
       &quot;brand&quot;: &quot;A String&quot;, # Brand of the item.
@@ -1507,6 +1681,15 @@ Returns:
       &quot;expirationDate&quot;: &quot;A String&quot;, # Date on which the item should expire, as specified upon insertion, in ISO 8601 format. The actual expiration date in Google Shopping is exposed in `productstatuses` as `googleExpirationDate` and might be earlier if `expirationDate` is too far in the future.
       &quot;externalSellerId&quot;: &quot;A String&quot;, # Required for multi-seller accounts. Use this attribute if you&#x27;re a marketplace uploading products for various sellers to your multi-seller account.
       &quot;feedLabel&quot;: &quot;A String&quot;, # Feed label for the item. Either `targetCountry` or `feedLabel` is required. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-).
+      &quot;freeShippingThreshold&quot;: [ # Optional. Conditions to be met for a product to have free shipping.
+        { # Conditions to be met for a product to have free shipping.
+          &quot;country&quot;: &quot;A String&quot;, # Required. The [CLDR territory code](http://www.unicode.org/repos/cldr/tags/latest/common/main/en.xml) of the country to which an item will ship.
+          &quot;priceThreshold&quot;: { # Required. The minimum product price for the shipping cost to become free. Represented as a number.
+            &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+            &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+          },
+        },
+      ],
       &quot;gender&quot;: &quot;A String&quot;, # Target gender of the item.
       &quot;googleProductCategory&quot;: &quot;A String&quot;, # Google&#x27;s category of the item (see [Google product taxonomy](https://support.google.com/merchants/answer/1705911)). When querying products, this field will contain the user provided value. There is currently no way to get back the auto assigned google product categories through the API.
       &quot;gtin&quot;: &quot;A String&quot;, # Global Trade Item Number (GTIN) of the item.
@@ -1516,8 +1699,13 @@ Returns:
       &quot;includedDestinations&quot;: [ # The list of [destinations to include](//support.google.com/merchants/answer/7501026) for this target (corresponds to checked check boxes in Merchant Center). Default destinations are always included unless provided in `excludedDestinations`.
         &quot;A String&quot;,
       ],
-      &quot;installment&quot;: { # Number and amount of installments to pay for an item.
+      &quot;installment&quot;: { # Details of a monthly installment payment offering. [Learn more](https://support.google.com/merchants/answer/6324474) about installments. # Number and amount of installments to pay for an item.
         &quot;amount&quot;: { # The amount the buyer has to pay per month.
+          &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+          &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+        },
+        &quot;creditType&quot;: &quot;A String&quot;, # Optional. Type of installment payments. Supported values are: - &quot;`finance`&quot; - &quot;`lease`&quot;
+        &quot;downpayment&quot;: { # Optional. The initial down payment amount the buyer has to pay.
           &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
           &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
         },
@@ -1531,10 +1719,18 @@ Returns:
       ],
       &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
       &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-      &quot;loyaltyPoints&quot;: { # Loyalty points that users receive after purchasing the item. Japan only.
-        &quot;name&quot;: &quot;A String&quot;, # Name of loyalty points program. It is recommended to limit the name to 12 full-width characters or 24 Roman characters.
-        &quot;pointsValue&quot;: &quot;A String&quot;, # The retailer&#x27;s loyalty points in absolute value.
-        &quot;ratio&quot;: 3.14, # The ratio of a point when converted to currency. Google assumes currency based on Merchant Center settings. If ratio is left out, it defaults to 1.0.
+      &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+        &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+          &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+          &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+        },
+        &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+        &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+          &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+          &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+        },
+        &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+        &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
       },
       &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
       &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
@@ -1636,12 +1832,20 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+      &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
+        &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
+        &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+      },
+      &quot;structuredTitle&quot;: { # Structured title, for algorithmically (AI)-generated titles. See [title](https://support.google.com/merchants/answer/6324415#Whentouse) for more information. # Structured title, for algorithmically (AI)-generated titles.
+        &quot;content&quot;: &quot;A String&quot;, # Required. The title text. Maximum length is 150 characters.
+        &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+      },
       &quot;subscriptionCost&quot;: { # Number of periods (months or years) and amount of payment per period for an item with an associated subscription contract.
         &quot;amount&quot;: { # The amount the buyer has to pay per subscription period.
           &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
           &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
         },
-        &quot;period&quot;: &quot;A String&quot;, # The type of subscription period.
+        &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
         &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
       },
       &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
@@ -1708,6 +1912,10 @@ Args:
   &quot;adsRedirect&quot;: &quot;A String&quot;, # Allows advertisers to override the item URL when the product is shown within the context of Product Ads.
   &quot;adult&quot;: True or False, # Should be set to true if the item is targeted towards adults.
   &quot;ageGroup&quot;: &quot;A String&quot;, # Target age group of the item.
+  &quot;autoPricingMinPrice&quot;: { # A safeguard in the [Automated Discounts](//support.google.com/merchants/answer/10295759) and [Dynamic Promotions](//support.google.com/merchants/answer/13949249) projects, ensuring that discounts on merchants&#x27; offers do not fall below this value, thereby preserving the offer&#x27;s value and profitability.
+    &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+    &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+  },
   &quot;availability&quot;: &quot;A String&quot;, # Availability status of the item.
   &quot;availabilityDate&quot;: &quot;A String&quot;, # The day a pre-ordered product becomes available for delivery, in ISO 8601 format.
   &quot;brand&quot;: &quot;A String&quot;, # Brand of the item.
@@ -1775,6 +1983,15 @@ Args:
   &quot;expirationDate&quot;: &quot;A String&quot;, # Date on which the item should expire, as specified upon insertion, in ISO 8601 format. The actual expiration date in Google Shopping is exposed in `productstatuses` as `googleExpirationDate` and might be earlier if `expirationDate` is too far in the future.
   &quot;externalSellerId&quot;: &quot;A String&quot;, # Required for multi-seller accounts. Use this attribute if you&#x27;re a marketplace uploading products for various sellers to your multi-seller account.
   &quot;feedLabel&quot;: &quot;A String&quot;, # Feed label for the item. Either `targetCountry` or `feedLabel` is required. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-).
+  &quot;freeShippingThreshold&quot;: [ # Optional. Conditions to be met for a product to have free shipping.
+    { # Conditions to be met for a product to have free shipping.
+      &quot;country&quot;: &quot;A String&quot;, # Required. The [CLDR territory code](http://www.unicode.org/repos/cldr/tags/latest/common/main/en.xml) of the country to which an item will ship.
+      &quot;priceThreshold&quot;: { # Required. The minimum product price for the shipping cost to become free. Represented as a number.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+    },
+  ],
   &quot;gender&quot;: &quot;A String&quot;, # Target gender of the item.
   &quot;googleProductCategory&quot;: &quot;A String&quot;, # Google&#x27;s category of the item (see [Google product taxonomy](https://support.google.com/merchants/answer/1705911)). When querying products, this field will contain the user provided value. There is currently no way to get back the auto assigned google product categories through the API.
   &quot;gtin&quot;: &quot;A String&quot;, # Global Trade Item Number (GTIN) of the item.
@@ -1784,8 +2001,13 @@ Args:
   &quot;includedDestinations&quot;: [ # The list of [destinations to include](//support.google.com/merchants/answer/7501026) for this target (corresponds to checked check boxes in Merchant Center). Default destinations are always included unless provided in `excludedDestinations`.
     &quot;A String&quot;,
   ],
-  &quot;installment&quot;: { # Number and amount of installments to pay for an item.
+  &quot;installment&quot;: { # Details of a monthly installment payment offering. [Learn more](https://support.google.com/merchants/answer/6324474) about installments. # Number and amount of installments to pay for an item.
     &quot;amount&quot;: { # The amount the buyer has to pay per month.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;creditType&quot;: &quot;A String&quot;, # Optional. Type of installment payments. Supported values are: - &quot;`finance`&quot; - &quot;`lease`&quot;
+    &quot;downpayment&quot;: { # Optional. The initial down payment amount the buyer has to pay.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
@@ -1799,10 +2021,18 @@ Args:
   ],
   &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
   &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-  &quot;loyaltyPoints&quot;: { # Loyalty points that users receive after purchasing the item. Japan only.
-    &quot;name&quot;: &quot;A String&quot;, # Name of loyalty points program. It is recommended to limit the name to 12 full-width characters or 24 Roman characters.
-    &quot;pointsValue&quot;: &quot;A String&quot;, # The retailer&#x27;s loyalty points in absolute value.
-    &quot;ratio&quot;: 3.14, # The ratio of a point when converted to currency. Google assumes currency based on Merchant Center settings. If ratio is left out, it defaults to 1.0.
+  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+    &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+    &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+    &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
   },
   &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
   &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
@@ -1904,12 +2134,20 @@ Args:
     &quot;A String&quot;,
   ],
   &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+  &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
+    &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
+    &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+  },
+  &quot;structuredTitle&quot;: { # Structured title, for algorithmically (AI)-generated titles. See [title](https://support.google.com/merchants/answer/6324415#Whentouse) for more information. # Structured title, for algorithmically (AI)-generated titles.
+    &quot;content&quot;: &quot;A String&quot;, # Required. The title text. Maximum length is 150 characters.
+    &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+  },
   &quot;subscriptionCost&quot;: { # Number of periods (months or years) and amount of payment per period for an item with an associated subscription contract.
     &quot;amount&quot;: { # The amount the buyer has to pay per subscription period.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
-    &quot;period&quot;: &quot;A String&quot;, # The type of subscription period.
+    &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
     &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
   },
   &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
@@ -1958,6 +2196,10 @@ Returns:
   &quot;adsRedirect&quot;: &quot;A String&quot;, # Allows advertisers to override the item URL when the product is shown within the context of Product Ads.
   &quot;adult&quot;: True or False, # Should be set to true if the item is targeted towards adults.
   &quot;ageGroup&quot;: &quot;A String&quot;, # Target age group of the item.
+  &quot;autoPricingMinPrice&quot;: { # A safeguard in the [Automated Discounts](//support.google.com/merchants/answer/10295759) and [Dynamic Promotions](//support.google.com/merchants/answer/13949249) projects, ensuring that discounts on merchants&#x27; offers do not fall below this value, thereby preserving the offer&#x27;s value and profitability.
+    &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+    &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+  },
   &quot;availability&quot;: &quot;A String&quot;, # Availability status of the item.
   &quot;availabilityDate&quot;: &quot;A String&quot;, # The day a pre-ordered product becomes available for delivery, in ISO 8601 format.
   &quot;brand&quot;: &quot;A String&quot;, # Brand of the item.
@@ -2025,6 +2267,15 @@ Returns:
   &quot;expirationDate&quot;: &quot;A String&quot;, # Date on which the item should expire, as specified upon insertion, in ISO 8601 format. The actual expiration date in Google Shopping is exposed in `productstatuses` as `googleExpirationDate` and might be earlier if `expirationDate` is too far in the future.
   &quot;externalSellerId&quot;: &quot;A String&quot;, # Required for multi-seller accounts. Use this attribute if you&#x27;re a marketplace uploading products for various sellers to your multi-seller account.
   &quot;feedLabel&quot;: &quot;A String&quot;, # Feed label for the item. Either `targetCountry` or `feedLabel` is required. Must be less than or equal to 20 uppercase letters (A-Z), numbers (0-9), and dashes (-).
+  &quot;freeShippingThreshold&quot;: [ # Optional. Conditions to be met for a product to have free shipping.
+    { # Conditions to be met for a product to have free shipping.
+      &quot;country&quot;: &quot;A String&quot;, # Required. The [CLDR territory code](http://www.unicode.org/repos/cldr/tags/latest/common/main/en.xml) of the country to which an item will ship.
+      &quot;priceThreshold&quot;: { # Required. The minimum product price for the shipping cost to become free. Represented as a number.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+    },
+  ],
   &quot;gender&quot;: &quot;A String&quot;, # Target gender of the item.
   &quot;googleProductCategory&quot;: &quot;A String&quot;, # Google&#x27;s category of the item (see [Google product taxonomy](https://support.google.com/merchants/answer/1705911)). When querying products, this field will contain the user provided value. There is currently no way to get back the auto assigned google product categories through the API.
   &quot;gtin&quot;: &quot;A String&quot;, # Global Trade Item Number (GTIN) of the item.
@@ -2034,8 +2285,13 @@ Returns:
   &quot;includedDestinations&quot;: [ # The list of [destinations to include](//support.google.com/merchants/answer/7501026) for this target (corresponds to checked check boxes in Merchant Center). Default destinations are always included unless provided in `excludedDestinations`.
     &quot;A String&quot;,
   ],
-  &quot;installment&quot;: { # Number and amount of installments to pay for an item.
+  &quot;installment&quot;: { # Details of a monthly installment payment offering. [Learn more](https://support.google.com/merchants/answer/6324474) about installments. # Number and amount of installments to pay for an item.
     &quot;amount&quot;: { # The amount the buyer has to pay per month.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;creditType&quot;: &quot;A String&quot;, # Optional. Type of installment payments. Supported values are: - &quot;`finance`&quot; - &quot;`lease`&quot;
+    &quot;downpayment&quot;: { # Optional. The initial down payment amount the buyer has to pay.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
@@ -2049,10 +2305,18 @@ Returns:
   ],
   &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
   &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-  &quot;loyaltyPoints&quot;: { # Loyalty points that users receive after purchasing the item. Japan only.
-    &quot;name&quot;: &quot;A String&quot;, # Name of loyalty points program. It is recommended to limit the name to 12 full-width characters or 24 Roman characters.
-    &quot;pointsValue&quot;: &quot;A String&quot;, # The retailer&#x27;s loyalty points in absolute value.
-    &quot;ratio&quot;: 3.14, # The ratio of a point when converted to currency. Google assumes currency based on Merchant Center settings. If ratio is left out, it defaults to 1.0.
+  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+    &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+    &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+      &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+      &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+    },
+    &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+    &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
   },
   &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
   &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
@@ -2154,12 +2418,20 @@ Returns:
     &quot;A String&quot;,
   ],
   &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+  &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
+    &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
+    &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+  },
+  &quot;structuredTitle&quot;: { # Structured title, for algorithmically (AI)-generated titles. See [title](https://support.google.com/merchants/answer/6324415#Whentouse) for more information. # Structured title, for algorithmically (AI)-generated titles.
+    &quot;content&quot;: &quot;A String&quot;, # Required. The title text. Maximum length is 150 characters.
+    &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
+  },
   &quot;subscriptionCost&quot;: { # Number of periods (months or years) and amount of payment per period for an item with an associated subscription contract.
     &quot;amount&quot;: { # The amount the buyer has to pay per subscription period.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
-    &quot;period&quot;: &quot;A String&quot;, # The type of subscription period.
+    &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
     &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
   },
   &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.

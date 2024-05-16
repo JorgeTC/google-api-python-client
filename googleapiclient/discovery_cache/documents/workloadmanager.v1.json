@@ -226,6 +226,11 @@
 "name"
 ],
 "parameters": {
+"force": {
+"description": "Optional. Followed the best practice from https://aip.dev/135#cascading-delete",
+"location": "query",
+"type": "boolean"
+},
 "name": {
 "description": "Required. Name of the resource",
 "location": "path",
@@ -761,174 +766,42 @@
 ]
 }
 }
-},
-"workloadProfiles": {
-"methods": {
-"get": {
-"description": "Gets details of a single workload.",
-"flatPath": "v1/projects/{projectsId}/locations/{locationsId}/workloadProfiles/{workloadProfilesId}",
-"httpMethod": "GET",
-"id": "workloadmanager.projects.locations.workloadProfiles.get",
-"parameterOrder": [
-"name"
-],
-"parameters": {
-"name": {
-"description": "Required. Name of the resource",
-"location": "path",
-"pattern": "^projects/[^/]+/locations/[^/]+/workloadProfiles/[^/]+$",
-"required": true,
-"type": "string"
-}
-},
-"path": "v1/{+name}",
-"response": {
-"$ref": "WorkloadProfile"
-},
-"scopes": [
-"https://www.googleapis.com/auth/cloud-platform"
-]
-},
-"list": {
-"deprecated": true,
-"description": "List workloads",
-"flatPath": "v1/projects/{projectsId}/locations/{locationsId}/workloadProfiles",
-"httpMethod": "GET",
-"id": "workloadmanager.projects.locations.workloadProfiles.list",
-"parameterOrder": [
-"parent"
-],
-"parameters": {
-"filter": {
-"description": "Optional. Filtering results",
-"location": "query",
-"type": "string"
-},
-"pageSize": {
-"description": "Optional. Requested page size. Server may return fewer items than requested. If unspecified, server will pick an appropriate default.",
-"format": "int32",
-"location": "query",
-"type": "integer"
-},
-"pageToken": {
-"description": "Optional. A token identifying a page of results the server should return.",
-"location": "query",
-"type": "string"
-},
-"parent": {
-"description": "Required. Parent value for ListWorkloadRequest",
-"location": "path",
-"pattern": "^projects/[^/]+/locations/[^/]+$",
-"required": true,
-"type": "string"
-}
-},
-"path": "v1/{+parent}/workloadProfiles",
-"response": {
-"$ref": "ListWorkloadProfilesResponse"
-},
-"scopes": [
-"https://www.googleapis.com/auth/cloud-platform"
-]
-}
-}
 }
 }
 }
 }
 }
 },
-"revision": "20240228",
+"revision": "20240501",
 "rootUrl": "https://workloadmanager.googleapis.com/",
 "schemas": {
-"APILayerServer": {
-"description": "The API layer server",
-"id": "APILayerServer",
+"AssetLocation": {
+"description": "Provides the mapping of a cloud asset to a direct physical location or to a proxy that defines the location on its behalf.",
+"id": "AssetLocation",
 "properties": {
-"name": {
-"description": "Output only. The api layer name",
-"readOnly": true,
-"type": "string"
+"expected": {
+"$ref": "IsolationExpectations",
+"description": "Defines the customer expectation around ZI/ZS for this asset and ZI/ZS state of the region at the time of asset creation."
 },
-"osVersion": {
-"description": "Output only. OS information",
-"readOnly": true,
-"type": "string"
-},
-"resources": {
-"description": "Output only. resources in the component",
+"extraParameters": {
+"description": "Defines extra parameters required for specific asset types.",
 "items": {
-"$ref": "CloudResource"
+"$ref": "ExtraParameter"
 },
-"readOnly": true,
-"type": "array"
-}
-},
-"type": "object"
-},
-"AvailabilityGroup": {
-"description": "The availability groups for sqlserver",
-"id": "AvailabilityGroup",
-"properties": {
-"databases": {
-"description": "Output only. The databases",
-"items": {
-"type": "string"
-},
-"readOnly": true,
 "type": "array"
 },
-"name": {
-"description": "Output only. The availability group name",
-"readOnly": true,
-"type": "string"
-},
-"primaryServer": {
-"description": "Output only. The primary server",
-"readOnly": true,
-"type": "string"
-},
-"secondaryServers": {
-"description": "Output only. The secondary servers",
+"locationData": {
+"description": "Contains all kinds of physical location definitions for this asset.",
 "items": {
-"type": "string"
+"$ref": "LocationData"
 },
-"readOnly": true,
 "type": "array"
-}
 },
-"type": "object"
-},
-"BackendServer": {
-"description": "The backend server",
-"id": "BackendServer",
-"properties": {
-"backupFile": {
-"description": "Output only. The backup file",
-"readOnly": true,
-"type": "string"
-},
-"backupSchedule": {
-"description": "Output only. The backup schedule",
-"readOnly": true,
-"type": "string"
-},
-"name": {
-"description": "Output only. The backend name",
-"readOnly": true,
-"type": "string"
-},
-"osVersion": {
-"description": "Output only. OS information",
-"readOnly": true,
-"type": "string"
-},
-"resources": {
-"description": "Output only. resources in the component",
+"parentAsset": {
+"description": "Defines parents assets if any in order to allow later generation of child_asset_location data via child assets.",
 "items": {
-"$ref": "CloudResource"
+"$ref": "CloudAsset"
 },
-"readOnly": true,
 "type": "array"
 }
 },
@@ -949,100 +822,57 @@
 },
 "type": "object"
 },
+"BlobstoreLocation": {
+"description": "Policy ID that identified data placement in Blobstore as per go/blobstore-user-guide#data-metadata-placement-and-failure-domains",
+"id": "BlobstoreLocation",
+"properties": {
+"policyId": {
+"items": {
+"type": "string"
+},
+"type": "array"
+}
+},
+"type": "object"
+},
 "CancelOperationRequest": {
 "description": "The request message for Operations.CancelOperation.",
 "id": "CancelOperationRequest",
 "properties": {},
 "type": "object"
 },
-"CloudResource": {
-"description": "The resource on GCP",
-"id": "CloudResource",
+"CloudAsset": {
+"id": "CloudAsset",
 "properties": {
-"kind": {
-"description": "Output only. ComputeInstance, ComputeDisk, VPC, Bare Metal server, etc.",
-"enum": [
-"RESOURCE_KIND_UNSPECIFIED",
-"RESOURCE_KIND_INSTANCE",
-"RESOURCE_KIND_DISK",
-"RESOURCE_KIND_ADDRESS",
-"RESOURCE_KIND_FILESTORE",
-"RESOURCE_KIND_HEALTH_CHECK",
-"RESOURCE_KIND_FORWARDING_RULE",
-"RESOURCE_KIND_BACKEND_SERVICE",
-"RESOURCE_KIND_SUBNETWORK",
-"RESOURCE_KIND_NETWORK",
-"RESOURCE_KIND_PUBLIC_ADDRESS",
-"RESOURCE_KIND_INSTANCE_GROUP"
-],
-"enumDescriptions": [
-"Unspecified resource kind.",
-"This is a compute instance.",
-"This is a compute disk.",
-"This is a compute address.",
-"This is a filestore instance.",
-"This is a compute health check.",
-"This is a compute forwarding rule.",
-"This is a compute backend service.",
-"This is a compute subnetwork.",
-"This is a compute network.",
-"This is a public accessible IP Address.",
-"This is a compute instance group."
-],
-"readOnly": true,
+"assetName": {
 "type": "string"
 },
-"name": {
-"description": "Output only. resource name",
-"readOnly": true,
+"assetType": {
 "type": "string"
 }
 },
 "type": "object"
 },
-"Cluster": {
-"description": "The cluster for sqlserver",
-"id": "Cluster",
+"CloudAssetComposition": {
+"id": "CloudAssetComposition",
 "properties": {
-"nodes": {
-"description": "Output only. The nodes",
+"childAsset": {
 "items": {
-"type": "string"
+"$ref": "CloudAsset"
 },
-"readOnly": true,
 "type": "array"
-},
-"witnessServer": {
-"description": "Output only. The witness server",
-"readOnly": true,
-"type": "string"
 }
 },
 "type": "object"
 },
-"Database": {
-"description": "The database for sqlserver",
-"id": "Database",
+"DirectLocationAssignment": {
+"id": "DirectLocationAssignment",
 "properties": {
-"backupFile": {
-"description": "Output only. The backup file",
-"readOnly": true,
-"type": "string"
+"location": {
+"items": {
+"$ref": "LocationAssignment"
 },
-"backupSchedule": {
-"description": "Output only. The backup schedule",
-"readOnly": true,
-"type": "string"
-},
-"hostVm": {
-"description": "Output only. The host VM",
-"readOnly": true,
-"type": "string"
-},
-"name": {
-"description": "Output only. The database name",
-"readOnly": true,
-"type": "string"
+"type": "array"
 }
 },
 "type": "object"
@@ -1138,6 +968,13 @@
 "readOnly": true,
 "type": "string"
 },
+"externalDataSources": {
+"description": "Optional. External data sources",
+"items": {
+"$ref": "ExternalDataSources"
+},
+"type": "array"
+},
 "inventoryTime": {
 "description": "Output only. [Output only] Inventory time stamp",
 "format": "google-datetime",
@@ -1226,27 +1063,40 @@
 },
 "type": "object"
 },
-"FrontEndServer": {
-"description": "The front end server",
-"id": "FrontEndServer",
+"ExternalDataSources": {
+"description": "Message for external data sources",
+"id": "ExternalDataSources",
 "properties": {
 "name": {
-"description": "Output only. The frontend name",
-"readOnly": true,
+"description": "Required. Name of external data source. The name will be used inside the rego/sql to refer the external data",
 "type": "string"
 },
-"osVersion": {
-"description": "Output only. OS information",
-"readOnly": true,
+"type": {
+"description": "Required. Type of external data source",
+"enum": [
+"TYPE_UNSPECIFIED",
+"BIG_QUERY_TABLE"
+],
+"enumDescriptions": [
+"Unknown type",
+"BigQuery table"
+],
 "type": "string"
 },
-"resources": {
-"description": "Output only. resources in the component",
-"items": {
-"$ref": "CloudResource"
+"uri": {
+"description": "Required. URI of external data source. example of bq table {project_ID}.{dataset_ID}.{table_ID}",
+"type": "string"
+}
 },
-"readOnly": true,
-"type": "array"
+"type": "object"
+},
+"ExtraParameter": {
+"description": "Defines parameters that should only be used for specific asset types.",
+"id": "ExtraParameter",
+"properties": {
+"regionalMigDistributionPolicy": {
+"$ref": "RegionalMigDistributionPolicy",
+"description": "Details about zones used by regional compute.googleapis.com/InstanceGroupManager to create instances."
 }
 },
 "type": "object"
@@ -1294,76 +1144,122 @@
 },
 "type": "object"
 },
-"Instance": {
-"description": "a vm instance",
-"id": "Instance",
+"IsolationExpectations": {
+"id": "IsolationExpectations",
 "properties": {
-"name": {
-"description": "Output only. name of the VM",
-"readOnly": true,
-"type": "string"
-},
-"region": {
-"description": "Output only. The location of the VM",
-"readOnly": true,
-"type": "string"
-},
-"status": {
-"description": "Output only. The state of the VM",
+"ziOrgPolicy": {
 "enum": [
-"INSTANCESTATE_UNSPECIFIED",
-"PROVISIONING",
-"STAGING",
-"RUNNING",
-"STOPPING",
-"STOPPED",
-"TERMINATED",
-"SUSPENDING",
-"SUSPENDED",
-"REPAIRING",
-"DEPROVISIONING"
+"ZI_UNSPECIFIED",
+"ZI_UNKNOWN",
+"ZI_NOT_REQUIRED",
+"ZI_PREFERRED",
+"ZI_REQUIRED"
 ],
 "enumDescriptions": [
-"The Status of the VM is unspecified",
-"Resources are being allocated for the instance.",
-"All required resources have been allocated and the instance is being started.",
-"The instance is running.",
-"The instance is currently stopping (either being deleted or killed).",
-"The instance has stopped due to various reasons (user request, VM preemption, project freezing, etc.).",
-"The instance has failed in some way.",
-"The instance is suspending.",
-"The instance is suspended.",
-"The instance is in repair.",
-"The instance is in de-provisioning state."
+"",
+"To be used if tracking is not available",
+"",
+"",
+""
 ],
-"readOnly": true,
-"type": "string"
-}
-},
-"type": "object"
-},
-"Layer": {
-"description": "The database layer",
-"id": "Layer",
-"properties": {
-"applicationType": {
-"description": "the application layer",
 "type": "string"
 },
-"databaseType": {
-"description": "Optional. the database layer",
+"ziRegionPolicy": {
+"enum": [
+"ZI_REGION_POLICY_UNSPECIFIED",
+"ZI_REGION_POLICY_UNKNOWN",
+"ZI_REGION_POLICY_NOT_SET",
+"ZI_REGION_POLICY_FAIL_OPEN",
+"ZI_REGION_POLICY_FAIL_CLOSED"
+],
+"enumDescriptions": [
+"",
+"To be used if tracking is not available",
+"",
+"",
+""
+],
 "type": "string"
 },
-"instances": {
-"description": "Optional. instances in a layer",
-"items": {
-"$ref": "Instance"
+"ziRegionState": {
+"enum": [
+"ZI_REGION_UNSPECIFIED",
+"ZI_REGION_UNKNOWN",
+"ZI_REGION_NOT_ENABLED",
+"ZI_REGION_ENABLED"
+],
+"enumDescriptions": [
+"",
+"To be used if tracking is not available",
+"",
+""
+],
+"type": "string"
 },
-"type": "array"
+"zoneIsolation": {
+"deprecated": true,
+"description": "Deprecated: use zi_org_policy, zi_region_policy and zi_region_state instead for setting ZI expectations as per go/zicy-publish-physical-location.",
+"enum": [
+"ZI_UNSPECIFIED",
+"ZI_UNKNOWN",
+"ZI_NOT_REQUIRED",
+"ZI_PREFERRED",
+"ZI_REQUIRED"
+],
+"enumDescriptions": [
+"",
+"To be used if tracking is not available",
+"",
+"",
+""
+],
+"type": "string"
 },
-"sid": {
-"description": "Output only. system identification of a layer",
-"readOnly": true,
+"zoneSeparation": {
+"deprecated": true,
+"description": "Deprecated: use zs_org_policy, and zs_region_stateinstead for setting Zs expectations as per go/zicy-publish-physical-location.",
+"enum": [
+"ZS_UNSPECIFIED",
+"ZS_UNKNOWN",
+"ZS_NOT_REQUIRED",
+"ZS_REQUIRED"
+],
+"enumDescriptions": [
+"",
+"To be used if tracking is not available",
+"",
+""
+],
+"type": "string"
+},
+"zsOrgPolicy": {
+"enum": [
+"ZS_UNSPECIFIED",
+"ZS_UNKNOWN",
+"ZS_NOT_REQUIRED",
+"ZS_REQUIRED"
+],
+"enumDescriptions": [
+"",
+"To be used if tracking is not available",
+"",
+""
+],
+"type": "string"
+},
+"zsRegionState": {
+"enum": [
+"ZS_REGION_UNSPECIFIED",
+"ZS_REGION_UNKNOWN",
+"ZS_REGION_NOT_ENABLED",
+"ZS_REGION_ENABLED"
+],
+"enumDescriptions": [
+"",
+"To be used if tracking of the asset ZS-bit is not available",
+"",
+""
+],
 "type": "string"
 }
 },
@@ -1509,50 +1405,6 @@
 },
 "type": "object"
 },
-"ListWorkloadProfilesResponse": {
-"description": "List workloadResponse returns a response with the list of workload overview",
-"id": "ListWorkloadProfilesResponse",
-"properties": {
-"nextPageToken": {
-"description": "Output only. A token identifying a page of results the server should return",
-"readOnly": true,
-"type": "string"
-},
-"unreachable": {
-"description": "Locations that could not be reached.",
-"items": {
-"type": "string"
-},
-"type": "array"
-},
-"workloadOverviews": {
-"description": "Output only. The list of Workload Overview",
-"items": {
-"$ref": "WorkloadProfileOverview"
-},
-"readOnly": true,
-"type": "array"
-}
-},
-"type": "object"
-},
-"LoadBalancerServer": {
-"description": "The load balancer for sqlserver",
-"id": "LoadBalancerServer",
-"properties": {
-"ip": {
-"description": "Output only. The IP address",
-"readOnly": true,
-"type": "string"
-},
-"vm": {
-"description": "Output only. The VM name",
-"readOnly": true,
-"type": "string"
-}
-},
-"type": "object"
-},
 "Location": {
 "description": "A resource that represents a Google Cloud location.",
 "id": "Location",
@@ -1583,6 +1435,61 @@
 "name": {
 "description": "Resource name for the location, which may vary between implementations. For example: `\"projects/example-project/locations/us-east1\"`",
 "type": "string"
+}
+},
+"type": "object"
+},
+"LocationAssignment": {
+"id": "LocationAssignment",
+"properties": {
+"location": {
+"type": "string"
+},
+"locationType": {
+"enum": [
+"UNSPECIFIED",
+"CLUSTER",
+"POP",
+"CLOUD_ZONE",
+"CLOUD_REGION",
+"MULTI_REGION_GEO",
+"MULTI_REGION_JURISDICTION",
+"GLOBAL",
+"OTHER"
+],
+"enumDescriptions": [
+"",
+"1-10: Physical failure domains.",
+"",
+"11-20: Logical failure domains.",
+"",
+"",
+"",
+"",
+""
+],
+"type": "string"
+}
+},
+"type": "object"
+},
+"LocationData": {
+"id": "LocationData",
+"properties": {
+"blobstoreLocation": {
+"$ref": "BlobstoreLocation"
+},
+"childAssetLocation": {
+"$ref": "CloudAssetComposition"
+},
+"directLocation": {
+"$ref": "DirectLocationAssignment"
+},
+"gcpProjectProxy": {
+"$ref": "TenantProjectProxy"
+},
+"spannerLocation": {
+"$ref": "SpannerLocation"
 }
 },
 "type": "object"
@@ -1662,6 +1569,25 @@
 "description": "Output only. Name of the verb executed by the operation.",
 "readOnly": true,
 "type": "string"
+}
+},
+"type": "object"
+},
+"RegionalMigDistributionPolicy": {
+"description": "To be used for specifying the intended distribution of regional compute.googleapis.com/InstanceGroupManager instances",
+"id": "RegionalMigDistributionPolicy",
+"properties": {
+"targetShape": {
+"description": "The shape in which the group converges around distribution of resources. Instance of proto2 enum",
+"format": "int32",
+"type": "integer"
+},
+"zones": {
+"description": "Cloud zones used by regional MIG to create instances.",
+"items": {
+"$ref": "ZoneConfiguration"
+},
+"type": "array"
 }
 },
 "type": "object"
@@ -1822,47 +1748,6 @@
 },
 "type": "object"
 },
-"SapComponent": {
-"description": "The component of sap workload",
-"id": "SapComponent",
-"properties": {
-"haHosts": {
-"description": "A list of host URIs that are part of the HA configuration if present. An empty list indicates the component is not configured for HA.",
-"items": {
-"type": "string"
-},
-"type": "array"
-},
-"resources": {
-"description": "Output only. resources in the component",
-"items": {
-"$ref": "CloudResource"
-},
-"readOnly": true,
-"type": "array"
-},
-"sid": {
-"description": "Output only. sid is the sap component identificator",
-"readOnly": true,
-"type": "string"
-},
-"topologyType": {
-"description": "The detected topology of the component.",
-"enum": [
-"TOPOLOGY_TYPE_UNSPECIFIED",
-"TOPOLOGY_SCALE_UP",
-"TOPOLOGY_SCALE_OUT"
-],
-"enumDescriptions": [
-"Unspecified topology.",
-"A scale-up single node system.",
-"A scale-out multi-node system."
-],
-"type": "string"
-}
-},
-"type": "object"
-},
 "SapDiscovery": {
 "description": "The schema of SAP system discovery data.",
 "id": "SapDiscovery",
@@ -1959,6 +1844,10 @@
 "description": "Optional. Indicates whether this is a Java or ABAP Netweaver instance. true means it is ABAP, false means it is Java.",
 "type": "boolean"
 },
+"appInstanceNumber": {
+"description": "Optional. Instance number of the SAP application instance.",
+"type": "string"
+},
 "applicationType": {
 "description": "Required. Type of the application. Netweaver, etc.",
 "enum": [
@@ -1971,8 +1860,16 @@
 ],
 "type": "string"
 },
+"ascsInstanceNumber": {
+"description": "Optional. Instance number of the ASCS instance.",
+"type": "string"
+},
 "ascsUri": {
 "description": "Optional. Resource URI of the recognized ASCS host of the application.",
+"type": "string"
+},
+"ersInstanceNumber": {
+"description": "Optional. Instance number of the ERS instance.",
 "type": "string"
 },
 "kernelVersion": {
@@ -1990,6 +1887,10 @@
 "description": "A set of properties describing an SAP Database layer.",
 "id": "SapDiscoveryComponentDatabaseProperties",
 "properties": {
+"databaseSid": {
+"description": "Optional. SID of the system database.",
+"type": "string"
+},
 "databaseType": {
 "description": "Required. Type of the database. HANA, DB2, etc.",
 "enum": [
@@ -2008,6 +1909,10 @@
 },
 "databaseVersion": {
 "description": "Optional. The version of the database software running in the system.",
+"type": "string"
+},
+"instanceNumber": {
+"description": "Optional. Instance number of the SAP instance.",
 "type": "string"
 },
 "primaryInstanceUri": {
@@ -2123,6 +2028,13 @@
 "description": "A set of properties only present for an instance type resource",
 "id": "SapDiscoveryResourceInstanceProperties",
 "properties": {
+"appInstances": {
+"description": "Optional. App server instances on the host",
+"items": {
+"$ref": "SapDiscoveryResourceInstancePropertiesAppInstance"
+},
+"type": "array"
+},
 "clusterInstances": {
 "description": "Optional. A list of instance URIs that are part of a cluster with this one.",
 "items": {
@@ -2130,8 +2042,46 @@
 },
 "type": "array"
 },
+"instanceNumber": {
+"description": "Optional. The VM's instance number.",
+"format": "int64",
+"type": "string"
+},
+"instanceRole": {
+"description": "Optional. Bitmask of instance role, a resource may have multiple roles at once.",
+"enum": [
+"INSTANCE_ROLE_UNSPECIFIED",
+"INSTANCE_ROLE_ASCS",
+"INSTANCE_ROLE_ERS",
+"INSTANCE_ROLE_APP_SERVER",
+"INSTANCE_ROLE_DATABASE"
+],
+"enumDescriptions": [
+"Unspecified instance role.",
+"Application central services.",
+"Enqueue replication server.",
+"Application server.",
+"Database node."
+],
+"type": "string"
+},
 "virtualHostname": {
 "description": "Optional. A virtual hostname of the instance if it has one.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"SapDiscoveryResourceInstancePropertiesAppInstance": {
+"description": "Fields to describe an SAP application server instance.",
+"id": "SapDiscoveryResourceInstancePropertiesAppInstance",
+"properties": {
+"name": {
+"description": "Optional. Instance name of the SAP application instance.",
+"type": "string"
+},
+"number": {
+"description": "Optional. Instance number of the SAP application instance.",
 "type": "string"
 }
 },
@@ -2260,53 +2210,6 @@
 },
 "type": "object"
 },
-"SapWorkload": {
-"description": "The body of sap workload",
-"id": "SapWorkload",
-"properties": {
-"application": {
-"$ref": "SapComponent",
-"description": "Output only. the acsc componment",
-"readOnly": true
-},
-"database": {
-"$ref": "SapComponent",
-"description": "Output only. the database componment",
-"readOnly": true
-},
-"metadata": {
-"additionalProperties": {
-"type": "string"
-},
-"description": "Output only. The metadata for SAP workload.",
-"readOnly": true,
-"type": "object"
-}
-},
-"type": "object"
-},
-"SapWorkloadOverview": {
-"description": "The overview of sap workload",
-"id": "SapWorkloadOverview",
-"properties": {
-"appSid": {
-"description": "Output only. The application SID",
-"readOnly": true,
-"type": "string"
-},
-"dbSid": {
-"description": "Output only. The database SID",
-"readOnly": true,
-"type": "string"
-},
-"sapSystemId": {
-"description": "Output only. The UUID for a SAP workload",
-"readOnly": true,
-"type": "string"
-}
-},
-"type": "object"
-},
 "ScannedResource": {
 "description": "Message of scanned resource",
 "id": "ScannedResource",
@@ -2318,6 +2221,18 @@
 "type": {
 "description": "resource type",
 "type": "string"
+}
+},
+"type": "object"
+},
+"SpannerLocation": {
+"id": "SpannerLocation",
+"properties": {
+"dbName": {
+"items": {
+"type": "string"
+},
+"type": "array"
 }
 },
 "type": "object"
@@ -2410,59 +2325,6 @@
 },
 "type": "object"
 },
-"SqlserverWorkload": {
-"description": "The body of sqlserver workload",
-"id": "SqlserverWorkload",
-"properties": {
-"ags": {
-"description": "Output only. The availability groups for sqlserver",
-"items": {
-"$ref": "AvailabilityGroup"
-},
-"readOnly": true,
-"type": "array"
-},
-"cluster": {
-"$ref": "Cluster",
-"description": "Output only. The cluster for sqlserver",
-"readOnly": true
-},
-"databases": {
-"description": "Output only. The databases for sqlserver",
-"items": {
-"$ref": "Database"
-},
-"readOnly": true,
-"type": "array"
-},
-"loadBalancerServer": {
-"$ref": "LoadBalancerServer",
-"description": "Output only. The load balancer for sqlserver",
-"readOnly": true
-}
-},
-"type": "object"
-},
-"SqlserverWorkloadOverview": {
-"description": "The overview of sqlserver workload",
-"id": "SqlserverWorkloadOverview",
-"properties": {
-"availabilityGroup": {
-"description": "Output only. The availability groups",
-"items": {
-"type": "string"
-},
-"readOnly": true,
-"type": "array"
-},
-"sqlserverSystemId": {
-"description": "Output only. The UUID for a Sqlserver workload",
-"readOnly": true,
-"type": "string"
-}
-},
-"type": "object"
-},
 "Status": {
 "description": "The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).",
 "id": "Status",
@@ -2490,41 +2352,14 @@
 },
 "type": "object"
 },
-"ThreeTierWorkload": {
-"description": "The body of three tier workload",
-"id": "ThreeTierWorkload",
+"TenantProjectProxy": {
+"id": "TenantProjectProxy",
 "properties": {
-"apiLayer": {
-"$ref": "APILayerServer",
-"description": "Output only. The API layer for three tier workload",
-"readOnly": true
-},
-"backend": {
-"$ref": "BackendServer",
-"description": "Output only. The backend for three tier workload",
-"readOnly": true
-},
-"endpoint": {
-"description": "Output only. the workload endpoint",
-"readOnly": true,
+"projectNumbers": {
+"items": {
 "type": "string"
 },
-"frontend": {
-"$ref": "FrontEndServer",
-"description": "Output only. The frontend for three tier workload",
-"readOnly": true
-}
-},
-"type": "object"
-},
-"ThreeTierWorkloadOverview": {
-"description": "The overview of three tier workload",
-"id": "ThreeTierWorkloadOverview",
-"properties": {
-"threeTierSystemId": {
-"description": "Output only. The UUID for a three tier workload",
-"readOnly": true,
-"type": "string"
+"type": "array"
 }
 },
 "type": "object"
@@ -2551,115 +2386,14 @@
 },
 "type": "object"
 },
-"WorkloadProfile": {
-"description": "workload resource",
-"id": "WorkloadProfile",
-"properties": {
-"application": {
-"$ref": "Layer",
-"deprecated": true,
-"description": "Optional. The application layer"
-},
-"ascs": {
-"$ref": "Layer",
-"deprecated": true,
-"description": "Optional. The ascs layer"
-},
-"database": {
-"$ref": "Layer",
-"deprecated": true,
-"description": "Optional. The database layer"
-},
-"labels": {
-"additionalProperties": {
-"type": "string"
-},
-"description": "Optional. such as name, description, version. More example can be found in deployment",
-"type": "object"
-},
-"name": {
-"description": "Identifier. name of resource names have the form 'projects/{project_id}/workloads/{workload_id}'",
-"type": "string"
-},
-"refreshedTime": {
-"description": "Required. time when the workload data was refreshed",
-"format": "google-datetime",
-"type": "string"
-},
-"sapWorkload": {
-"$ref": "SapWorkload",
-"description": "The sap workload content"
-},
-"sqlserverWorkload": {
-"$ref": "SqlserverWorkload",
-"description": "The sqlserver workload content"
-},
-"state": {
-"deprecated": true,
-"description": "Output only. [output only] the current state if a a workload",
-"enum": [
-"STATE_UNSPECIFIED",
-"ACTIVE",
-"DEPLOYING",
-"DESTROYING",
-"MAINTENANCE"
-],
-"enumDescriptions": [
-"unspecified",
-"ACTIVE state",
-"workload is in Deploying state",
-"The workload is in Destroying state",
-"The Workload is undermaintance"
-],
-"readOnly": true,
-"type": "string"
-},
-"threeTierWorkload": {
-"$ref": "ThreeTierWorkload",
-"description": "The 3 tier web app workload content"
-},
-"workloadType": {
-"description": "Required. The type of the workload",
-"enum": [
-"WORKLOAD_TYPE_UNSPECIFIED",
-"S4_HANA",
-"SQL_SERVER",
-"THREE_TIER_WEB_APP"
-],
-"enumDescriptions": [
-"unspecified workload type",
-"running sap workload s4/hana",
-"running sqlserver workload",
-"running 3 tier web app workload"
-],
-"type": "string"
-}
-},
-"type": "object"
-},
-"WorkloadProfileOverview": {
-"description": "a workload profile overview",
-"id": "WorkloadProfileOverview",
-"properties": {
-"sapWorkloadOverview": {
-"$ref": "SapWorkloadOverview",
-"description": "The sap workload overview"
-},
-"sqlserverWorkloadOverview": {
-"$ref": "SqlserverWorkloadOverview",
-"description": "The sqlserver workload overview"
-},
-"threeTierWorkloadOverview": {
-"$ref": "ThreeTierWorkloadOverview",
-"description": "The three tier workload overview"
-}
-},
-"type": "object"
-},
 "WriteInsightRequest": {
 "description": "Request for sending the data insights.",
 "id": "WriteInsightRequest",
 "properties": {
+"agentVersion": {
+"description": "Optional. The agent version collected this data point.",
+"type": "string"
+},
 "insight": {
 "$ref": "Insight",
 "description": "Required. The metrics data details."
@@ -2675,6 +2409,15 @@
 "description": "The response for write insights request.",
 "id": "WriteInsightResponse",
 "properties": {},
+"type": "object"
+},
+"ZoneConfiguration": {
+"id": "ZoneConfiguration",
+"properties": {
+"zone": {
+"type": "string"
+}
+},
 "type": "object"
 }
 },

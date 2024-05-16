@@ -5309,11 +5309,6 @@
 "required": true,
 "type": "string"
 },
-"paths": {
-"location": "query",
-"repeated": true,
-"type": "string"
-},
 "project": {
 "description": "Project ID for this request.",
 "location": "path",
@@ -10684,6 +10679,21 @@
 "pattern": "(?:(?:[-a-z0-9]{1,63}\\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))",
 "required": true,
 "type": "string"
+},
+"view": {
+"description": "View of the instance template.",
+"enum": [
+"BASIC",
+"FULL",
+"INSTANCE_VIEW_UNSPECIFIED"
+],
+"enumDescriptions": [
+"Include everything except Partner Metadata.",
+"Include everything.",
+"The default / unset value. The API will default to the BASIC view."
+],
+"location": "query",
+"type": "string"
 }
 },
 "path": "projects/{project}/global/instanceTemplates/{instanceTemplate}",
@@ -10814,6 +10824,21 @@
 "description": "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false. For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
 "location": "query",
 "type": "boolean"
+},
+"view": {
+"description": "View of the instance template.",
+"enum": [
+"BASIC",
+"FULL",
+"INSTANCE_VIEW_UNSPECIFIED"
+],
+"enumDescriptions": [
+"Include everything except Partner Metadata.",
+"Include everything.",
+"The default / unset value. The API will default to the BASIC view."
+],
+"location": "query",
+"type": "string"
 }
 },
 "path": "projects/{project}/global/instanceTemplates",
@@ -11362,6 +11387,21 @@
 "required": true,
 "type": "string"
 },
+"view": {
+"description": "View of the instance.",
+"enum": [
+"BASIC",
+"FULL",
+"INSTANCE_VIEW_UNSPECIFIED"
+],
+"enumDescriptions": [
+"Include everything except Partner Metadata.",
+"Include everything.",
+"The default / unset value. The API will default to the BASIC view."
+],
+"location": "query",
+"type": "string"
+},
 "zone": {
 "description": "The name of the zone for this request.",
 "location": "path",
@@ -11525,6 +11565,54 @@
 "path": "projects/{project}/zones/{zone}/instances/{resource}/getIamPolicy",
 "response": {
 "$ref": "Policy"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute",
+"https://www.googleapis.com/auth/compute.readonly"
+]
+},
+"getPartnerMetadata": {
+"description": "Gets partner metadata of the specified instance and namespaces.",
+"flatPath": "projects/{project}/zones/{zone}/instances/{instance}/getPartnerMetadata",
+"httpMethod": "GET",
+"id": "compute.instances.getPartnerMetadata",
+"parameterOrder": [
+"project",
+"zone",
+"instance"
+],
+"parameters": {
+"instance": {
+"description": "Name of the instance scoping this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?|[1-9][0-9]{0,19}",
+"required": true,
+"type": "string"
+},
+"namespaces": {
+"description": "Comma separated partner metadata namespaces.",
+"location": "query",
+"type": "string"
+},
+"project": {
+"description": "Project ID for this request.",
+"location": "path",
+"pattern": "(?:(?:[-a-z0-9]{1,63}\\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))",
+"required": true,
+"type": "string"
+},
+"zone": {
+"description": "The name of the zone for this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?",
+"required": true,
+"type": "string"
+}
+},
+"path": "projects/{project}/zones/{zone}/instances/{instance}/getPartnerMetadata",
+"response": {
+"$ref": "PartnerMetadata"
 },
 "scopes": [
 "https://www.googleapis.com/auth/cloud-platform",
@@ -11816,6 +11904,21 @@
 "location": "query",
 "type": "boolean"
 },
+"view": {
+"description": "View of the instance.",
+"enum": [
+"BASIC",
+"FULL",
+"INSTANCE_VIEW_UNSPECIFIED"
+],
+"enumDescriptions": [
+"Include everything except Partner Metadata.",
+"Include everything.",
+"The default / unset value. The API will default to the BASIC view."
+],
+"location": "query",
+"type": "string"
+},
 "zone": {
 "description": "The name of the zone for this request.",
 "location": "path",
@@ -11903,6 +12006,56 @@
 "https://www.googleapis.com/auth/cloud-platform",
 "https://www.googleapis.com/auth/compute",
 "https://www.googleapis.com/auth/compute.readonly"
+]
+},
+"patchPartnerMetadata": {
+"description": "Patches partner metadata of the specified instance.",
+"flatPath": "projects/{project}/zones/{zone}/instances/{instance}/patchPartnerMetadata",
+"httpMethod": "POST",
+"id": "compute.instances.patchPartnerMetadata",
+"parameterOrder": [
+"project",
+"zone",
+"instance"
+],
+"parameters": {
+"instance": {
+"description": "Name of the instance scoping this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?|[1-9][0-9]{0,19}",
+"required": true,
+"type": "string"
+},
+"project": {
+"description": "Project ID for this request.",
+"location": "path",
+"pattern": "(?:(?:[-a-z0-9]{1,63}\\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))",
+"required": true,
+"type": "string"
+},
+"requestId": {
+"description": "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported ( 00000000-0000-0000-0000-000000000000).",
+"location": "query",
+"type": "string"
+},
+"zone": {
+"description": "The name of the zone for this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?",
+"required": true,
+"type": "string"
+}
+},
+"path": "projects/{project}/zones/{zone}/instances/{instance}/patchPartnerMetadata",
+"request": {
+"$ref": "PartnerMetadata"
+},
+"response": {
+"$ref": "Operation"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute"
 ]
 },
 "performMaintenance": {
@@ -26280,6 +26433,21 @@
 "pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?",
 "required": true,
 "type": "string"
+},
+"view": {
+"description": "View of the instance template.",
+"enum": [
+"BASIC",
+"FULL",
+"INSTANCE_VIEW_UNSPECIFIED"
+],
+"enumDescriptions": [
+"Include everything except Partner Metadata.",
+"Include everything.",
+"The default / unset value. The API will default to the BASIC view."
+],
+"location": "query",
+"type": "string"
 }
 },
 "path": "projects/{project}/regions/{region}/instanceTemplates/{instanceTemplate}",
@@ -26385,6 +26553,21 @@
 "description": "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false. For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
 "location": "query",
 "type": "boolean"
+},
+"view": {
+"description": "View of the instance template.",
+"enum": [
+"BASIC",
+"FULL",
+"INSTANCE_VIEW_UNSPECIFIED"
+],
+"enumDescriptions": [
+"Include everything except Partner Metadata.",
+"Include everything.",
+"The default / unset value. The API will default to the BASIC view."
+],
+"location": "query",
+"type": "string"
 }
 },
 "path": "projects/{project}/regions/{region}/instanceTemplates",
@@ -32184,6 +32367,58 @@
 "https://www.googleapis.com/auth/compute"
 ]
 },
+"deleteRoutePolicy": {
+"description": "Deletes Route Policy",
+"flatPath": "projects/{project}/regions/{region}/routers/{router}/deleteRoutePolicy",
+"httpMethod": "POST",
+"id": "compute.routers.deleteRoutePolicy",
+"parameterOrder": [
+"project",
+"region",
+"router"
+],
+"parameters": {
+"policy": {
+"description": "The Policy name for this request. Name must conform to RFC1035",
+"location": "query",
+"type": "string"
+},
+"project": {
+"description": "Project ID for this request.",
+"location": "path",
+"pattern": "(?:(?:[-a-z0-9]{1,63}\\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))",
+"required": true,
+"type": "string"
+},
+"region": {
+"description": "Name of the region for this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?",
+"required": true,
+"type": "string"
+},
+"requestId": {
+"description": "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported ( 00000000-0000-0000-0000-000000000000).",
+"location": "query",
+"type": "string"
+},
+"router": {
+"description": "Name of the Router resource where Route Policy is defined.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?|[1-9][0-9]{0,19}",
+"required": true,
+"type": "string"
+}
+},
+"path": "projects/{project}/regions/{region}/routers/{router}/deleteRoutePolicy",
+"response": {
+"$ref": "Operation"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute"
+]
+},
 "get": {
 "description": "Returns the specified Router resource.",
 "flatPath": "projects/{project}/regions/{region}/routers/{router}",
@@ -32350,6 +32585,53 @@
 "https://www.googleapis.com/auth/compute.readonly"
 ]
 },
+"getRoutePolicy": {
+"description": "Returns specified Route Policy",
+"flatPath": "projects/{project}/regions/{region}/routers/{router}/getRoutePolicy",
+"httpMethod": "GET",
+"id": "compute.routers.getRoutePolicy",
+"parameterOrder": [
+"project",
+"region",
+"router"
+],
+"parameters": {
+"policy": {
+"description": "The Policy name for this request. Name must conform to RFC1035",
+"location": "query",
+"type": "string"
+},
+"project": {
+"description": "Project ID for this request.",
+"location": "path",
+"pattern": "(?:(?:[-a-z0-9]{1,63}\\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))",
+"required": true,
+"type": "string"
+},
+"region": {
+"description": "Name of the region for this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?",
+"required": true,
+"type": "string"
+},
+"router": {
+"description": "Name of the Router resource to query for the route policy. The name should conform to RFC1035.",
+"location": "path",
+"required": true,
+"type": "string"
+}
+},
+"path": "projects/{project}/regions/{region}/routers/{router}/getRoutePolicy",
+"response": {
+"$ref": "RoutersGetRoutePolicyResponse"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute",
+"https://www.googleapis.com/auth/compute.readonly"
+]
+},
 "getRouterStatus": {
 "description": "Retrieves runtime information of the specified router.",
 "flatPath": "projects/{project}/regions/{region}/routers/{router}/getRouterStatus",
@@ -32491,6 +32773,196 @@
 "path": "projects/{project}/regions/{region}/routers",
 "response": {
 "$ref": "RouterList"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute",
+"https://www.googleapis.com/auth/compute.readonly"
+]
+},
+"listBgpRoutes": {
+"description": "Retrieves a list of router bgp routes available to the specified project.",
+"flatPath": "projects/{project}/regions/{region}/routers/{router}/listBgpRoutes",
+"httpMethod": "GET",
+"id": "compute.routers.listBgpRoutes",
+"parameterOrder": [
+"project",
+"region",
+"router"
+],
+"parameters": {
+"addressFamily": {
+"default": "UNSPECIFIED_IP_VERSION",
+"description": "(Required) limit results to this address family (either IPv4 or IPv6)",
+"enum": [
+"IPV4",
+"IPV6",
+"UNSPECIFIED_IP_VERSION"
+],
+"enumDescriptions": [
+"",
+"",
+""
+],
+"location": "query",
+"type": "string"
+},
+"destinationPrefix": {
+"description": "Limit results to destinations that are subnets of this CIDR range",
+"location": "query",
+"type": "string"
+},
+"filter": {
+"description": "A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request. If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`. For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`. The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ``` You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based on resource labels. To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = \"Intel Skylake\") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = \"Intel Skylake\") OR (cpuPlatform = \"Intel Broadwell\") AND (scheduling.automaticRestart = true) ``` If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples: `fieldname eq unquoted literal` `fieldname eq 'single quoted literal'` `fieldname eq \"double quoted literal\"` `(fieldname1 eq literal) (fieldname2 ne \"literal\")` The literal value is interpreted as a regular expression using Google RE2 library syntax. The literal value must match the entire field. For example, to filter for instances that do not end with name \"instance\", you would use `name ne .*instance`. You cannot combine constraints on multiple fields using regular expressions.",
+"location": "query",
+"type": "string"
+},
+"maxResults": {
+"default": "500",
+"description": "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
+"format": "uint32",
+"location": "query",
+"minimum": "0",
+"type": "integer"
+},
+"orderBy": {
+"description": "Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name. You can also sort results in descending order based on the creation timestamp using `orderBy=\"creationTimestamp desc\"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first. Currently, only sorting by `name` or `creationTimestamp desc` is supported.",
+"location": "query",
+"type": "string"
+},
+"pageToken": {
+"description": "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
+"location": "query",
+"type": "string"
+},
+"peer": {
+"description": "(Required) limit results to the BGP peer with the given name. Name should conform to RFC1035.",
+"location": "query",
+"type": "string"
+},
+"policyApplied": {
+"default": "true",
+"description": "When true, the method returns post-policy routes. Otherwise, it returns pre-policy routes.",
+"location": "query",
+"type": "boolean"
+},
+"project": {
+"description": "Project ID for this request.",
+"location": "path",
+"pattern": "(?:(?:[-a-z0-9]{1,63}\\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))",
+"required": true,
+"type": "string"
+},
+"region": {
+"description": "Name of the region for this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?",
+"required": true,
+"type": "string"
+},
+"returnPartialSuccess": {
+"description": "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false. For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
+"location": "query",
+"type": "boolean"
+},
+"routeType": {
+"default": "UNSPECIFIED_ROUTE_TYPE",
+"description": "(Required) limit results to this type of route (either LEARNED or ADVERTISED)",
+"enum": [
+"ADVERTISED",
+"LEARNED",
+"UNSPECIFIED_ROUTE_TYPE"
+],
+"enumDescriptions": [
+"",
+"",
+""
+],
+"location": "query",
+"type": "string"
+},
+"router": {
+"description": "Name or id of the resource for this request. Name should conform to RFC1035.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?|[1-9][0-9]{0,19}",
+"required": true,
+"type": "string"
+}
+},
+"path": "projects/{project}/regions/{region}/routers/{router}/listBgpRoutes",
+"response": {
+"$ref": "RoutersListBgpRoutes"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute",
+"https://www.googleapis.com/auth/compute.readonly"
+]
+},
+"listRoutePolicies": {
+"description": "Retrieves a list of router route policy subresources available to the specified project.",
+"flatPath": "projects/{project}/regions/{region}/routers/{router}/listRoutePolicies",
+"httpMethod": "GET",
+"id": "compute.routers.listRoutePolicies",
+"parameterOrder": [
+"project",
+"region",
+"router"
+],
+"parameters": {
+"filter": {
+"description": "A filter expression that filters resources listed in the response. Most Compute resources support two types of filter expressions: expressions that support regular expressions and expressions that follow API improvement proposal AIP-160. These two types of filter expressions cannot be mixed in one request. If you want to use AIP-160, your expression must specify the field name, an operator, and the value that you want to use for filtering. The value must be a string, a number, or a boolean. The operator must be either `=`, `!=`, `>`, `<`, `<=`, `>=` or `:`. For example, if you are filtering Compute Engine instances, you can exclude instances named `example-instance` by specifying `name != example-instance`. The `:*` comparison can be used to test whether a key has been defined. For example, to find all objects with `owner` label use: ``` labels.owner:* ``` You can also filter nested fields. For example, you could specify `scheduling.automaticRestart = false` to include instances only if they are not scheduled for automatic restarts. You can use filtering on nested fields to filter based on resource labels. To filter on multiple expressions, provide each separate expression within parentheses. For example: ``` (scheduling.automaticRestart = true) (cpuPlatform = \"Intel Skylake\") ``` By default, each expression is an `AND` expression. However, you can include `AND` and `OR` expressions explicitly. For example: ``` (cpuPlatform = \"Intel Skylake\") OR (cpuPlatform = \"Intel Broadwell\") AND (scheduling.automaticRestart = true) ``` If you want to use a regular expression, use the `eq` (equal) or `ne` (not equal) operator against a single un-parenthesized expression with or without quotes or against multiple parenthesized expressions. Examples: `fieldname eq unquoted literal` `fieldname eq 'single quoted literal'` `fieldname eq \"double quoted literal\"` `(fieldname1 eq literal) (fieldname2 ne \"literal\")` The literal value is interpreted as a regular expression using Google RE2 library syntax. The literal value must match the entire field. For example, to filter for instances that do not end with name \"instance\", you would use `name ne .*instance`. You cannot combine constraints on multiple fields using regular expressions.",
+"location": "query",
+"type": "string"
+},
+"maxResults": {
+"default": "500",
+"description": "The maximum number of results per page that should be returned. If the number of available results is larger than `maxResults`, Compute Engine returns a `nextPageToken` that can be used to get the next page of results in subsequent list requests. Acceptable values are `0` to `500`, inclusive. (Default: `500`)",
+"format": "uint32",
+"location": "query",
+"minimum": "0",
+"type": "integer"
+},
+"orderBy": {
+"description": "Sorts list results by a certain order. By default, results are returned in alphanumerical order based on the resource name. You can also sort results in descending order based on the creation timestamp using `orderBy=\"creationTimestamp desc\"`. This sorts results based on the `creationTimestamp` field in reverse chronological order (newest result first). Use this to sort resources like operations so that the newest operation is returned first. Currently, only sorting by `name` or `creationTimestamp desc` is supported.",
+"location": "query",
+"type": "string"
+},
+"pageToken": {
+"description": "Specifies a page token to use. Set `pageToken` to the `nextPageToken` returned by a previous list request to get the next page of results.",
+"location": "query",
+"type": "string"
+},
+"project": {
+"description": "Project ID for this request.",
+"location": "path",
+"pattern": "(?:(?:[-a-z0-9]{1,63}\\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))",
+"required": true,
+"type": "string"
+},
+"region": {
+"description": "Name of the region for this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?",
+"required": true,
+"type": "string"
+},
+"returnPartialSuccess": {
+"description": "Opt-in for partial success behavior which provides partial results in case of failure. The default value is false. For example, when partial success behavior is enabled, aggregatedList for a single zone scope either returns all resources in the zone or no resources, with an error code.",
+"location": "query",
+"type": "boolean"
+},
+"router": {
+"description": "Name or id of the resource for this request. Name should conform to RFC1035.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?|[1-9][0-9]{0,19}",
+"required": true,
+"type": "string"
+}
+},
+"path": "projects/{project}/regions/{region}/routers/{router}/listRoutePolicies",
+"response": {
+"$ref": "RoutersListRoutePolicies"
 },
 "scopes": [
 "https://www.googleapis.com/auth/cloud-platform",
@@ -32681,6 +33153,56 @@
 "path": "projects/{project}/regions/{region}/routers/{router}",
 "request": {
 "$ref": "Router"
+},
+"response": {
+"$ref": "Operation"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute"
+]
+},
+"updateRoutePolicy": {
+"description": "Updates or creates new Route Policy",
+"flatPath": "projects/{project}/regions/{region}/routers/{router}/updateRoutePolicy",
+"httpMethod": "POST",
+"id": "compute.routers.updateRoutePolicy",
+"parameterOrder": [
+"project",
+"region",
+"router"
+],
+"parameters": {
+"project": {
+"description": "Project ID for this request.",
+"location": "path",
+"pattern": "(?:(?:[-a-z0-9]{1,63}\\.)*(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?):)?(?:[0-9]{1,19}|(?:[a-z0-9](?:[-a-z0-9]{0,61}[a-z0-9])?))",
+"required": true,
+"type": "string"
+},
+"region": {
+"description": "Name of the region for this request.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?",
+"required": true,
+"type": "string"
+},
+"requestId": {
+"description": "An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported ( 00000000-0000-0000-0000-000000000000).",
+"location": "query",
+"type": "string"
+},
+"router": {
+"description": "Name of the Router resource where Route Policy is defined.",
+"location": "path",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?|[1-9][0-9]{0,19}",
+"required": true,
+"type": "string"
+}
+},
+"path": "projects/{project}/regions/{region}/routers/{router}/updateRoutePolicy",
+"request": {
+"$ref": "RoutePolicy"
 },
 "response": {
 "$ref": "Operation"
@@ -41057,7 +41579,7 @@
 }
 }
 },
-"revision": "20240227",
+"revision": "20240430",
 "rootUrl": "https://compute.googleapis.com/",
 "schemas": {
 "AWSV4Signature": {
@@ -41634,7 +42156,7 @@ false
 "type": "string"
 },
 "publicPtrDomainName": {
-"description": "The DNS domain name for the public PTR record. You can set this field only if the `setPublicPtr` field is enabled in accessConfig. If this field is unspecified in ipv6AccessConfig, a default PTR record will be createc for first IP in associated external IPv6 range.",
+"description": "The DNS domain name for the public PTR record. You can set this field only if the `setPublicPtr` field is enabled in accessConfig. If this field is unspecified in ipv6AccessConfig, a default PTR record will be created for first IP in associated external IPv6 range.",
 "type": "string"
 },
 "securityPolicy": {
@@ -42490,7 +43012,7 @@ false
 "type": "object"
 },
 "AllocationSpecificSKUReservation": {
-"description": "This reservation type allows to pre allocate specific instance configuration. Next ID: 6",
+"description": "This reservation type allows to pre allocate specific instance configuration.",
 "id": "AllocationSpecificSKUReservation",
 "properties": {
 "assuredCount": {
@@ -45598,6 +46120,91 @@ false
 },
 "type": "object"
 },
+"BgpRoute": {
+"id": "BgpRoute",
+"properties": {
+"asPaths": {
+"description": "[Output only] AS-PATH for the route",
+"items": {
+"$ref": "BgpRouteAsPath"
+},
+"type": "array"
+},
+"communities": {
+"description": "[Output only] BGP communities in human-readable A:B format.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+"destination": {
+"$ref": "BgpRouteNetworkLayerReachabilityInformation",
+"description": "[Output only] Destination IP range for the route, in human-readable CIDR format"
+},
+"med": {
+"description": "[Output only] BGP multi-exit discriminator",
+"format": "uint32",
+"type": "integer"
+},
+"origin": {
+"description": "[Output only] BGP origin (EGP, IGP or INCOMPLETE)",
+"enum": [
+"BGP_ORIGIN_EGP",
+"BGP_ORIGIN_IGP",
+"BGP_ORIGIN_INCOMPLETE"
+],
+"enumDescriptions": [
+"",
+"",
+""
+],
+"type": "string"
+}
+},
+"type": "object"
+},
+"BgpRouteAsPath": {
+"id": "BgpRouteAsPath",
+"properties": {
+"asns": {
+"description": "[Output only] ASNs in the path segment. When type is SEQUENCE, these are ordered.",
+"items": {
+"format": "int32",
+"type": "integer"
+},
+"type": "array"
+},
+"type": {
+"description": "[Output only] Type of AS-PATH segment (SEQUENCE or SET)",
+"enum": [
+"AS_PATH_TYPE_SEQUENCE",
+"AS_PATH_TYPE_SET"
+],
+"enumDescriptions": [
+"",
+""
+],
+"type": "string"
+}
+},
+"type": "object"
+},
+"BgpRouteNetworkLayerReachabilityInformation": {
+"description": "Network Layer Reachability Information (NLRI) for a route.",
+"id": "BgpRouteNetworkLayerReachabilityInformation",
+"properties": {
+"pathId": {
+"description": "If the BGP session supports multiple paths (RFC 7911), the path identifier for this route.",
+"format": "uint32",
+"type": "integer"
+},
+"prefix": {
+"description": "Human readable CIDR notation for a prefix. E.g. 10.42.0.0/16.",
+"type": "string"
+}
+},
+"type": "object"
+},
 "Binding": {
 "description": "Associates `members`, or principals, with a `role`.",
 "id": "Binding",
@@ -45981,6 +46588,7 @@ false
 "enum": [
 "ACCELERATOR_OPTIMIZED",
 "ACCELERATOR_OPTIMIZED_A3",
+"ACCELERATOR_OPTIMIZED_A3_MEGA",
 "COMPUTE_OPTIMIZED",
 "COMPUTE_OPTIMIZED_C2D",
 "COMPUTE_OPTIMIZED_C3",
@@ -45999,6 +46607,7 @@ false
 "TYPE_UNSPECIFIED"
 ],
 "enumDescriptions": [
+"",
 "",
 "",
 "",
@@ -46649,7 +47258,7 @@ false
 "type": "array"
 },
 "allowOriginRegexes": {
-"description": "Specifies a regular expression that matches allowed origins. For more information about the regular expression syntax, see Syntax. An origin is allowed if it matches either an item in allowOrigins or an item in allowOriginRegexes. Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED.",
+"description": "Specifies a regular expression that matches allowed origins. For more information, see regular expression syntax . An origin is allowed if it matches either an item in allowOrigins or an item in allowOriginRegexes. Regular expressions can only be used when the loadBalancingScheme is set to INTERNAL_SELF_MANAGED.",
 "items": {
 "type": "string"
 },
@@ -46663,7 +47272,7 @@ false
 "type": "array"
 },
 "disabled": {
-"description": "If true, the setting specifies the CORS policy is disabled. The default value of false, which indicates that the CORS policy is in effect.",
+"description": "If true, disables the CORS policy. The default value is false, which indicates that the CORS policy is in effect.",
 "type": "boolean"
 },
 "exposeHeaders": {
@@ -48348,7 +48957,7 @@ false
 "additionalProperties": {
 "type": "string"
 },
-"description": "Additional structured details about this error. Keys should match /[a-zA-Z0-9-_]/ and be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than {\"instanceLimit\": \"100/request\"}, should be returned as, {\"instanceLimitPerRequest\": \"100\"}, if the client exceeds the number of instances that can be created in a single (batch) request.",
+"description": "Additional structured details about this error. Keys must match /a-z+/ but should ideally be lowerCamelCase. Also they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than {\"instanceLimit\": \"100/request\"}, should be returned as, {\"instanceLimitPerRequest\": \"100\"}, if the client exceeds the number of instances that can be created in a single (batch) request.",
 "type": "object"
 },
 "reason": {
@@ -49754,6 +50363,10 @@ false
 "id": {
 "description": "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
 "format": "uint64",
+"type": "string"
+},
+"ipCollection": {
+"description": "Resource reference of a PublicDelegatedPrefix. The PDP must be a sub-PDP in EXTERNAL_IPV6_FORWARDING_RULE_CREATION mode. Use one of the following formats to specify a sub-PDP when creating an IPv6 NetLB forwarding rule using BYOIP: Full resource URL, as in https://www.googleapis.com/compute/v1/projects/project_id/regions/region /publicDelegatedPrefixes/sub-pdp-name Partial URL, as in: - projects/project_id/regions/region/publicDelegatedPrefixes/sub-pdp-name - regions/region/publicDelegatedPrefixes/sub-pdp-name ",
 "type": "string"
 },
 "ipVersion": {
@@ -51431,7 +52044,7 @@ false
 "type": "string"
 },
 "requestPath": {
-"description": "The request path of the HTTP/2 health check request. The default value is /.",
+"description": "The request path of the HTTP/2 health check request. The default value is /. Must comply with RFC3986.",
 "type": "string"
 },
 "response": {
@@ -51484,7 +52097,7 @@ false
 "type": "string"
 },
 "requestPath": {
-"description": "The request path of the HTTP health check request. The default value is /.",
+"description": "The request path of the HTTP health check request. The default value is /. Must comply with RFC3986.",
 "type": "string"
 },
 "response": {
@@ -51537,7 +52150,7 @@ false
 "type": "string"
 },
 "requestPath": {
-"description": "The request path of the HTTPS health check request. The default value is /.",
+"description": "The request path of the HTTPS health check request. The default value is /. Must comply with RFC3986.",
 "type": "string"
 },
 "response": {
@@ -51609,7 +52222,7 @@ false
 "type": "string"
 },
 "sourceRegions": {
-"description": "The list of cloud regions from which health checks are performed. If any regions are specified, then exactly 3 regions should be specified. The region names must be valid names of GCP regions. This can only be set for global health check. If this list is non-empty, then there are restrictions on what other health check fields are supported and what other resources can use this health check: - SSL, HTTP2, and GRPC protocols are not supported. - The TCP request field is not supported. - The proxyHeader field for HTTP, HTTPS, and TCP is not supported. - The checkIntervalSec field must be at least 30. - The health check cannot be used with BackendService nor with managed instance group auto-healing. ",
+"description": "The list of cloud regions from which health checks are performed. If any regions are specified, then exactly 3 regions should be specified. The region names must be valid names of Google Cloud regions. This can only be set for global health check. If this list is non-empty, then there are restrictions on what other health check fields are supported and what other resources can use this health check: - SSL, HTTP2, and GRPC protocols are not supported. - The TCP request field is not supported. - The proxyHeader field for HTTP, HTTPS, and TCP is not supported. - The checkIntervalSec field must be at least 30. - The health check cannot be used with BackendService nor with managed instance group auto-healing. ",
 "items": {
 "type": "string"
 },
@@ -53972,6 +54585,13 @@ false
 "$ref": "InstanceParams",
 "description": "Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload."
 },
+"partnerMetadata": {
+"additionalProperties": {
+"$ref": "StructuredEntries"
+},
+"description": "Partner Metadata assigned to the instance. A map from a subdomain (namespace) to entries map.",
+"type": "object"
+},
 "postKeyRevocationActionType": {
 "description": "PostKeyRevocationActionType of the instance.",
 "enum": [
@@ -55357,7 +55977,7 @@ false
 "additionalProperties": {
 "type": "string"
 },
-"description": "Resource manager tags to be bound to the instance group manager. Tag keys and values have the same definition as resource manager tags. Keys must be in the format `tagKeys/123`, and values are in the format `tagValues/456`. The field is allowed for INSERT only.",
+"description": "Resource manager tags to bind to the managed instance group. The tags are key-value pairs. Keys must be in the format tagKeys/123 and values in the format tagValues/456. For more information, see Manage tags for resources.",
 "type": "object"
 }
 },
@@ -55368,7 +55988,8 @@ false
 "id": "InstanceGroupManagerResizeRequest",
 "properties": {
 "count": {
-"description": "The count of instances to create as part of this resize request.",
+"deprecated": true,
+"description": "This field is deprecated, please use resize_by instead. The count of instances to create as part of this resize request.",
 "format": "int32",
 "type": "integer"
 },
@@ -55425,14 +56046,25 @@ false
 "CREATING",
 "FAILED",
 "PROVISIONING",
+"STATE_UNSPECIFIED",
 "SUCCEEDED"
+],
+"enumDeprecated": [
+false,
+false,
+false,
+false,
+true,
+false,
+false
 ],
 "enumDescriptions": [
 "The request was created successfully and was accepted for provisioning when the capacity becomes available.",
 "The request is cancelled.",
-"resize request is being created and may still fail creation.",
+"Resize request is being created and may still fail creation.",
 "The request failed before or during provisioning. If the request fails during provisioning, any VMs that were created during provisioning are rolled back and removed from the MIG.",
-"The target resource(s) are being provisioned.",
+"The value is deprecated. ResizeRequests would stay in the ACCEPTED state during provisioning attempts. The target resource(s) are being provisioned.",
+"Default value. This value should never be returned.",
 "The request succeeded."
 ],
 "type": "string"
@@ -55789,7 +56421,7 @@ false
 },
 "perInstanceConfigs": {
 "$ref": "InstanceGroupManagerStatusStatefulPerInstanceConfigs",
-"description": "[Output Only] Status of per-instance configurations on the instance."
+"description": "[Output Only] Status of per-instance configurations on the instances."
 }
 },
 "type": "object"
@@ -57334,6 +57966,13 @@ false
 "$ref": "NetworkPerformanceConfig",
 "description": "Note that for MachineImage, this is not supported yet."
 },
+"partnerMetadata": {
+"additionalProperties": {
+"$ref": "StructuredEntries"
+},
+"description": "Partner Metadata assigned to the instance properties. A map from a subdomain (namespace) to entries map.",
+"type": "object"
+},
 "postKeyRevocationActionType": {
 "description": "PostKeyRevocationActionType of the instance.",
 "enum": [
@@ -58096,7 +58735,7 @@ false
 "type": "string"
 },
 "type": {
-"description": "[Output Only] The type of the firewall policy. Can be one of HIERARCHY, NETWORK, NETWORK_REGIONAL.",
+"description": "[Output Only] The type of the firewall policy. Can be one of HIERARCHY, NETWORK, NETWORK_REGIONAL, SYSTEM_GLOBAL, SYSTEM_REGIONAL.",
 "enum": [
 "HIERARCHY",
 "NETWORK",
@@ -63974,7 +64613,13 @@ false
 "description": "Metadata defined as annotations on the network endpoint.",
 "type": "object"
 },
+"clientDestinationPort": {
+"description": "Represents the port number to which PSC consumer sends packets. Only valid for network endpoint groups created with GCE_VM_IP_PORTMAP endpoint type.",
+"format": "int32",
+"type": "integer"
+},
 "clientPort": {
+"deprecated": true,
 "description": "Represents the port number to which PSC consumer sends packets. Only valid for network endpoint groups created with CLIENT_PORT_PER_ENDPOINT mapping mode.",
 "format": "int32",
 "type": "integer"
@@ -64019,6 +64664,7 @@ false
 "description": "Only valid when networkEndpointType is SERVERLESS. Only one of cloudRun, appEngine or cloudFunction may be set."
 },
 "clientPortMappingMode": {
+"deprecated": true,
 "description": "Only valid when networkEndpointType is GCE_VM_IP_PORT and the NEG is regional.",
 "enum": [
 "CLIENT_PORT_PER_ENDPOINT",
@@ -64075,10 +64721,11 @@ false
 "type": "string"
 },
 "networkEndpointType": {
-"description": "Type of network endpoints in this network endpoint group. Can be one of GCE_VM_IP, GCE_VM_IP_PORT, NON_GCP_PRIVATE_IP_PORT, INTERNET_FQDN_PORT, INTERNET_IP_PORT, SERVERLESS, PRIVATE_SERVICE_CONNECT.",
+"description": "Type of network endpoints in this network endpoint group. Can be one of GCE_VM_IP, GCE_VM_IP_PORT, NON_GCP_PRIVATE_IP_PORT, INTERNET_FQDN_PORT, INTERNET_IP_PORT, SERVERLESS, PRIVATE_SERVICE_CONNECT, GCE_VM_IP_PORTMAP.",
 "enum": [
 "GCE_VM_IP",
 "GCE_VM_IP_PORT",
+"GCE_VM_IP_PORTMAP",
 "INTERNET_FQDN_PORT",
 "INTERNET_IP_PORT",
 "NON_GCP_PRIVATE_IP_PORT",
@@ -64088,6 +64735,7 @@ false
 "enumDescriptions": [
 "The network endpoint is represented by an IP address.",
 "The network endpoint is represented by IP address and port pair.",
+"The network endpoint is represented by an IP, Port and Client Destination Port.",
 "The network endpoint is represented by fully qualified domain name and port.",
 "The network endpoint is represented by an internet IP address and port.",
 "The network endpoint is represented by an IP address and port. The endpoint belongs to a VM or pod running in a customer's on-premises.",
@@ -68545,7 +69193,7 @@ false
 },
 "filter": {
 "$ref": "PacketMirroringFilter",
-"description": "Filter for mirrored traffic. If unspecified, all traffic is mirrored."
+"description": "Filter for mirrored traffic. If unspecified, all IPv4 traffic is mirrored."
 },
 "id": {
 "description": "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
@@ -68767,7 +69415,7 @@ false
 "type": "array"
 },
 "cidrRanges": {
-"description": "One or more IPv4 or IPv6 CIDR ranges that apply as filter on the source (ingress) or destination (egress) IP in the IP header. If no ranges are specified, all IPv4 traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored. To mirror all IPv4 and IPv6 traffic, use \"0.0.0.0/0,::/0\". Note: Support for IPv6 traffic is in preview.",
+"description": "One or more IPv4 or IPv6 CIDR ranges that apply as filters on the source (ingress) or destination (egress) IP in the IP header. If no ranges are specified, all IPv4 traffic that matches the specified IPProtocols is mirrored. If neither cidrRanges nor IPProtocols is specified, all IPv4 traffic is mirrored. To mirror all IPv4 and IPv6 traffic, use \"0.0.0.0/0,::/0\".",
 "items": {
 "type": "string"
 },
@@ -69159,6 +69807,25 @@ false
 },
 "type": "object"
 },
+"PartnerMetadata": {
+"description": "Model definition of partner_metadata field. To be used in dedicated Partner Metadata methods and to be inlined in the Instance and InstanceTemplate resources.",
+"id": "PartnerMetadata",
+"properties": {
+"fingerprint": {
+"description": "Instance-level hash to be used for optimistic locking.",
+"format": "byte",
+"type": "string"
+},
+"partnerMetadata": {
+"additionalProperties": {
+"$ref": "StructuredEntries"
+},
+"description": "Partner Metadata assigned to the instance. A map from a subdomain to entries map. Subdomain name must be compliant with RFC1035 definition. The total size of all keys and values must be less than 2MB. Subdomain 'metadata.compute.googleapis.com' is reserverd for instance's metadata.",
+"type": "object"
+}
+},
+"type": "object"
+},
 "PathMatcher": {
 "description": "A matcher for the path portion of the URL. The BackendService from the longest-matched rule will serve the URL. If no rule was matched, the default service is used.",
 "id": "PathMatcher",
@@ -69169,15 +69836,15 @@ false
 },
 "defaultRouteAction": {
 "$ref": "HttpRouteAction",
-"description": "defaultRouteAction takes effect when none of the pathRules or routeRules match. The load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend. If defaultRouteAction specifies any weightedBackendServices, defaultService must not be set. Conversely if defaultService is set, defaultRouteAction cannot contain any weightedBackendServices. Only one of defaultRouteAction or defaultUrlRedirect must be set. URL maps for classic Application Load Balancers only support the urlRewrite action within a path matcher's defaultRouteAction."
+"description": "defaultRouteAction takes effect when none of the pathRules or routeRules match. The load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend. If defaultRouteAction specifies any weightedBackendServices, defaultService must not be set. Conversely if defaultService is set, defaultRouteAction cannot contain any weightedBackendServices. If defaultRouteAction is specified, don't set defaultUrlRedirect. If defaultRouteAction.weightedBackendServices is specified, don't set defaultService. URL maps for classic Application Load Balancers only support the urlRewrite action within a path matcher's defaultRouteAction."
 },
 "defaultService": {
-"description": "The full or partial URL to the BackendService resource. This URL is used if none of the pathRules or routeRules defined by this PathMatcher are matched. For example, the following are all valid URLs to a BackendService resource: - https://www.googleapis.com/compute/v1/projects/project /global/backendServices/backendService - compute/v1/projects/project/global/backendServices/backendService - global/backendServices/backendService If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend. However, if defaultService is specified, defaultRouteAction cannot contain any weightedBackendServices. Conversely, if defaultRouteAction specifies any weightedBackendServices, defaultService must not be specified. Only one of defaultService, defaultUrlRedirect , or defaultRouteAction.weightedBackendService must be set. Authorization requires one or more of the following Google IAM permissions on the specified resource default_service: - compute.backendBuckets.use - compute.backendServices.use ",
+"description": "The full or partial URL to the BackendService resource. This URL is used if none of the pathRules or routeRules defined by this PathMatcher are matched. For example, the following are all valid URLs to a BackendService resource: - https://www.googleapis.com/compute/v1/projects/project /global/backendServices/backendService - compute/v1/projects/project/global/backendServices/backendService - global/backendServices/backendService If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend. However, if defaultService is specified, defaultRouteAction cannot contain any weightedBackendServices. Conversely, if defaultRouteAction specifies any weightedBackendServices, defaultService must not be specified. If defaultService is specified, then set either defaultUrlRedirect or defaultRouteAction.weightedBackendService. Don't set both. Authorization requires one or more of the following Google IAM permissions on the specified resource default_service: - compute.backendBuckets.use - compute.backendServices.use ",
 "type": "string"
 },
 "defaultUrlRedirect": {
 "$ref": "HttpRedirectAction",
-"description": "When none of the specified pathRules or routeRules match, the request is redirected to a URL specified by defaultUrlRedirect. If defaultUrlRedirect is specified, defaultService or defaultRouteAction must not be set. Not supported when the URL map is bound to a target gRPC proxy."
+"description": "When none of the specified pathRules or routeRules match, the request is redirected to a URL specified by defaultUrlRedirect. If defaultUrlRedirect is specified, then set either defaultService or defaultRouteAction. Don't set both. Not supported when the URL map is bound to a target gRPC proxy."
 },
 "description": {
 "description": "An optional description of this resource. Provide this property when you create the resource.",
@@ -69975,6 +70642,11 @@ false
 "description": "A PublicDelegatedPrefix resource represents an IP block within a PublicAdvertisedPrefix that is configured within a single cloud scope (global or region). IPs in the block can be allocated to resources within that scope. Public delegated prefixes may be further broken up into smaller IP blocks in the same scope as the parent block.",
 "id": "PublicDelegatedPrefix",
 "properties": {
+"allocatablePrefixLength": {
+"description": "The allocatable prefix length supported by this public delegated prefix. This field is optional and cannot be set for prefixes in DELEGATION mode. It cannot be set for IPv4 prefixes either, and it always defaults to 32.",
+"format": "int32",
+"type": "integer"
+},
 "byoipApiVersion": {
 "description": "[Output Only] The version of BYOIP API.",
 "enum": [
@@ -70016,6 +70688,18 @@ false
 "kind": {
 "default": "compute#publicDelegatedPrefix",
 "description": "[Output Only] Type of the resource. Always compute#publicDelegatedPrefix for public delegated prefixes.",
+"type": "string"
+},
+"mode": {
+"description": "The public delegated prefix mode for IPv6 only.",
+"enum": [
+"DELEGATION",
+"EXTERNAL_IPV6_FORWARDING_RULE_CREATION"
+],
+"enumDescriptions": [
+"The public delegated prefix is used for further sub-delegation only. Such prefixes cannot set allocatablePrefixLength.",
+"The public delegated prefix is used for creating forwarding rules only. Such prefixes cannot set publicDelegatedSubPrefixes."
+],
 "type": "string"
 },
 "name": {
@@ -70384,6 +71068,11 @@ false
 "description": "Represents a sub PublicDelegatedPrefix.",
 "id": "PublicDelegatedPrefixPublicDelegatedSubPrefix",
 "properties": {
+"allocatablePrefixLength": {
+"description": "The allocatable prefix length supported by this PublicDelegatedSubPrefix.",
+"format": "int32",
+"type": "integer"
+},
 "delegateeProject": {
 "description": "Name of the project scoping this PublicDelegatedSubPrefix.",
 "type": "string"
@@ -70399,6 +71088,18 @@ false
 "isAddress": {
 "description": "Whether the sub prefix is delegated to create Address resources in the delegatee project.",
 "type": "boolean"
+},
+"mode": {
+"description": "The PublicDelegatedSubPrefix mode for IPv6 only.",
+"enum": [
+"DELEGATION",
+"EXTERNAL_IPV6_FORWARDING_RULE_CREATION"
+],
+"enumDescriptions": [
+"The public delegated prefix is used for further sub-delegation only. Such prefixes cannot set allocatablePrefixLength.",
+"The public delegated prefix is used for creating forwarding rules only. Such prefixes cannot set publicDelegatedSubPrefixes."
+],
+"type": "string"
 },
 "name": {
 "description": "The name of the sub public delegated prefix.",
@@ -70712,6 +71413,7 @@ false
 "SNAPSHOTS",
 "SSD_TOTAL_GB",
 "SSL_CERTIFICATES",
+"SSL_POLICIES",
 "STATIC_ADDRESSES",
 "STATIC_BYOIP_ADDRESSES",
 "STATIC_EXTERNAL_IPV6_ADDRESS_RANGES",
@@ -70729,6 +71431,7 @@ false
 "TPU_LITE_PODSLICE_V5",
 "TPU_PODSLICE_V4",
 "URL_MAPS",
+"VARIABLE_IPV6_PUBLIC_DELEGATED_PREFIXES",
 "VPN_GATEWAYS",
 "VPN_TUNNELS",
 "XPN_SERVICE_PROJECTS"
@@ -70896,6 +71599,8 @@ false
 "",
 "",
 "",
+"",
+"",
 ""
 ],
 "type": "string"
@@ -71009,6 +71714,127 @@ false
 "name": {
 "description": "[Output Only] Name of the resource.",
 "type": "string"
+},
+"quotaStatusWarning": {
+"description": "[Output Only] Warning of fetching the `quotas` field for this region. This field is populated only if fetching of the `quotas` field fails.",
+"properties": {
+"code": {
+"description": "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response.",
+"enum": [
+"CLEANUP_FAILED",
+"DEPRECATED_RESOURCE_USED",
+"DEPRECATED_TYPE_USED",
+"DISK_SIZE_LARGER_THAN_IMAGE_SIZE",
+"EXPERIMENTAL_TYPE_USED",
+"EXTERNAL_API_WARNING",
+"FIELD_VALUE_OVERRIDEN",
+"INJECTED_KERNELS_DEPRECATED",
+"INVALID_HEALTH_CHECK_FOR_DYNAMIC_WIEGHTED_LB",
+"LARGE_DEPLOYMENT_WARNING",
+"LIST_OVERHEAD_QUOTA_EXCEED",
+"MISSING_TYPE_DEPENDENCY",
+"NEXT_HOP_ADDRESS_NOT_ASSIGNED",
+"NEXT_HOP_CANNOT_IP_FORWARD",
+"NEXT_HOP_INSTANCE_HAS_NO_IPV6_INTERFACE",
+"NEXT_HOP_INSTANCE_NOT_FOUND",
+"NEXT_HOP_INSTANCE_NOT_ON_NETWORK",
+"NEXT_HOP_NOT_RUNNING",
+"NOT_CRITICAL_ERROR",
+"NO_RESULTS_ON_PAGE",
+"PARTIAL_SUCCESS",
+"REQUIRED_TOS_AGREEMENT",
+"RESOURCE_IN_USE_BY_OTHER_RESOURCE_WARNING",
+"RESOURCE_NOT_DELETED",
+"SCHEMA_VALIDATION_IGNORED",
+"SINGLE_INSTANCE_PROPERTY_TEMPLATE",
+"UNDECLARED_PROPERTIES",
+"UNREACHABLE"
+],
+"enumDeprecated": [
+false,
+false,
+false,
+false,
+false,
+false,
+true,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false
+],
+"enumDescriptions": [
+"Warning about failed cleanup of transient changes made by a failed operation.",
+"A link to a deprecated resource was created.",
+"When deploying and at least one of the resources has a type marked as deprecated",
+"The user created a boot disk that is larger than image size.",
+"When deploying and at least one of the resources has a type marked as experimental",
+"Warning that is present in an external api call",
+"Warning that value of a field has been overridden. Deprecated unused field.",
+"The operation involved use of an injected kernel, which is deprecated.",
+"A WEIGHTED_MAGLEV backend service is associated with a health check that is not of type HTTP/HTTPS/HTTP2.",
+"When deploying a deployment with a exceedingly large number of resources",
+"Resource can't be retrieved due to list overhead quota exceed which captures the amount of resources filtered out by user-defined list filter.",
+"A resource depends on a missing type",
+"The route's nextHopIp address is not assigned to an instance on the network.",
+"The route's next hop instance cannot ip forward.",
+"The route's nextHopInstance URL refers to an instance that does not have an ipv6 interface on the same network as the route.",
+"The route's nextHopInstance URL refers to an instance that does not exist.",
+"The route's nextHopInstance URL refers to an instance that is not on the same network as the route.",
+"The route's next hop instance does not have a status of RUNNING.",
+"Error which is not critical. We decided to continue the process despite the mentioned error.",
+"No results are present on a particular list page.",
+"Success is reported, but some results may be missing due to errors",
+"The user attempted to use a resource that requires a TOS they have not accepted.",
+"Warning that a resource is in use.",
+"One or more of the resources set to auto-delete could not be deleted because they were in use.",
+"When a resource schema validation is ignored.",
+"Instance template used in instance group manager is valid as such, but its application does not make a lot of sense, because it allows only single instance in instance group.",
+"When undeclared properties in the schema are present",
+"A given scope cannot be reached."
+],
+"type": "string"
+},
+"data": {
+"description": "[Output Only] Metadata about this warning in key: value format. For example: \"data\": [ { \"key\": \"scope\", \"value\": \"zones/us-east1-d\" } ",
+"items": {
+"properties": {
+"key": {
+"description": "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+"type": "string"
+},
+"value": {
+"description": "[Output Only] A warning data value corresponding to the key.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"type": "array"
+},
+"message": {
+"description": "[Output Only] A human-readable description of the warning code.",
+"type": "string"
+}
+},
+"type": "object"
 },
 "quotas": {
 "description": "[Output Only] Quotas assigned to this region.",
@@ -72573,7 +73399,7 @@ false
 "type": "array"
 },
 "type": {
-"description": "[Output Only] The type of the firewall policy. Can be one of HIERARCHY, NETWORK, NETWORK_REGIONAL.",
+"description": "[Output Only] The type of the firewall policy. Can be one of HIERARCHY, NETWORK, NETWORK_REGIONAL, SYSTEM_GLOBAL, SYSTEM_REGIONAL.",
 "enum": [
 "HIERARCHY",
 "NETWORK",
@@ -73710,7 +74536,7 @@ false
 "type": "object"
 },
 "ResourcePolicyGroupPlacementPolicy": {
-"description": "A GroupPlacementPolicy specifies resource placement configuration. It specifies the failure bucket separation as well as network locality",
+"description": "A GroupPlacementPolicy specifies resource placement configuration. It specifies the failure bucket separation",
 "id": "ResourcePolicyGroupPlacementPolicy",
 "properties": {
 "availabilityDomainCount": {
@@ -74636,6 +75462,61 @@ false
 },
 "type": "object"
 },
+"RoutePolicy": {
+"id": "RoutePolicy",
+"properties": {
+"fingerprint": {
+"description": "A fingerprint for the Route Policy being applied to this Router, which is essentially a hash of the Route Policy used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update Route Policy. You must always provide an up-to-date fingerprint hash in order to update or change labels. To see the latest fingerprint, make a getRoutePolicy() request to retrieve a Route Policy.",
+"format": "byte",
+"type": "string"
+},
+"name": {
+"description": "Route Policy name, which must be a resource ID segment and unique within all the router's Route Policies. Name should conform to RFC1035.",
+"type": "string"
+},
+"terms": {
+"description": "List of terms (the order in the list is not important, they are evaluated in order of priority). Order of policies is not retained and might change when getting policy later.",
+"items": {
+"$ref": "RoutePolicyPolicyTerm"
+},
+"type": "array"
+},
+"type": {
+"enum": [
+"ROUTE_POLICY_TYPE_EXPORT",
+"ROUTE_POLICY_TYPE_IMPORT"
+],
+"enumDescriptions": [
+"The Route Policy is an Export Policy.",
+"The Route Policy is an Import Policy."
+],
+"type": "string"
+}
+},
+"type": "object"
+},
+"RoutePolicyPolicyTerm": {
+"id": "RoutePolicyPolicyTerm",
+"properties": {
+"actions": {
+"description": "CEL expressions to evaluate to modify a route when this term matches.",
+"items": {
+"$ref": "Expr"
+},
+"type": "array"
+},
+"match": {
+"$ref": "Expr",
+"description": "CEL expression evaluated against a route to determine if this term applies. When not set, the term applies to all routes."
+},
+"priority": {
+"description": "The evaluation priority for this term, which must be between 0 (inclusive) and 2^31 (exclusive), and unique within the list.",
+"format": "int32",
+"type": "integer"
+}
+},
+"type": "object"
+},
 "Router": {
 "description": "Represents a Cloud Router resource. For more information about Cloud Router, read the Cloud Router overview.",
 "id": "Router",
@@ -75025,15 +75906,29 @@ false
 "type": "boolean"
 },
 "enableIpv6": {
-"description": "Enable IPv6 traffic over BGP Peer. If not specified, it is disabled by default.",
+"description": "Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.",
 "type": "boolean"
+},
+"exportPolicies": {
+"description": "List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+"importPolicies": {
+"description": "List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.",
+"items": {
+"type": "string"
+},
+"type": "array"
 },
 "interfaceName": {
 "description": "Name of the interface the BGP peer is associated with.",
 "type": "string"
 },
 "ipAddress": {
-"description": "IP address of the interface inside Google Cloud Platform. Only IPv4 is supported.",
+"description": "IP address of the interface inside Google Cloud Platform.",
 "type": "string"
 },
 "ipv4NexthopAddress": {
@@ -75081,7 +75976,7 @@ false
 "type": "integer"
 },
 "peerIpAddress": {
-"description": "IP address of the BGP interface outside Google Cloud Platform. Only IPv4 is supported.",
+"description": "IP address of the BGP interface outside Google Cloud Platform.",
 "type": "string"
 },
 "peerIpv4NexthopAddress": {
@@ -75148,7 +76043,7 @@ false
 "id": "RouterInterface",
 "properties": {
 "ipRange": {
-"description": "IP address and range of the interface. The IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example: 169.254.0.1/30. NOTE: Do not truncate the address as it represents the IP address of the interface.",
+"description": "IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fc00:0:1:1::1/112. Within the router's VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose. ",
 "type": "string"
 },
 "ipVersion": {
@@ -75714,7 +76609,7 @@ false
 "type": "boolean"
 },
 "enableIpv6": {
-"description": "Enable IPv6 traffic over BGP Peer. If not specified, it is disabled by default.",
+"description": "Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.",
 "type": "boolean"
 },
 "ipAddress": {
@@ -75916,6 +76811,337 @@ false
 },
 "result": {
 "$ref": "RouterStatus"
+}
+},
+"type": "object"
+},
+"RoutersGetRoutePolicyResponse": {
+"id": "RoutersGetRoutePolicyResponse",
+"properties": {
+"resource": {
+"$ref": "RoutePolicy"
+}
+},
+"type": "object"
+},
+"RoutersListBgpRoutes": {
+"id": "RoutersListBgpRoutes",
+"properties": {
+"etag": {
+"type": "string"
+},
+"id": {
+"description": "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
+"type": "string"
+},
+"kind": {
+"default": "compute#routersListBgpRoutes",
+"description": "[Output Only] Type of resource. Always compute#routersListBgpRoutes for lists of bgp routes.",
+"type": "string"
+},
+"nextPageToken": {
+"description": "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger than maxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
+"type": "string"
+},
+"result": {
+"description": "[Output Only] A list of bgp routes.",
+"items": {
+"$ref": "BgpRoute"
+},
+"type": "array"
+},
+"selfLink": {
+"description": "[Output Only] Server-defined URL for this resource.",
+"type": "string"
+},
+"unreachables": {
+"description": "[Output Only] Unreachable resources.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+"warning": {
+"description": "[Output Only] Informational warning message.",
+"properties": {
+"code": {
+"description": "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response.",
+"enum": [
+"CLEANUP_FAILED",
+"DEPRECATED_RESOURCE_USED",
+"DEPRECATED_TYPE_USED",
+"DISK_SIZE_LARGER_THAN_IMAGE_SIZE",
+"EXPERIMENTAL_TYPE_USED",
+"EXTERNAL_API_WARNING",
+"FIELD_VALUE_OVERRIDEN",
+"INJECTED_KERNELS_DEPRECATED",
+"INVALID_HEALTH_CHECK_FOR_DYNAMIC_WIEGHTED_LB",
+"LARGE_DEPLOYMENT_WARNING",
+"LIST_OVERHEAD_QUOTA_EXCEED",
+"MISSING_TYPE_DEPENDENCY",
+"NEXT_HOP_ADDRESS_NOT_ASSIGNED",
+"NEXT_HOP_CANNOT_IP_FORWARD",
+"NEXT_HOP_INSTANCE_HAS_NO_IPV6_INTERFACE",
+"NEXT_HOP_INSTANCE_NOT_FOUND",
+"NEXT_HOP_INSTANCE_NOT_ON_NETWORK",
+"NEXT_HOP_NOT_RUNNING",
+"NOT_CRITICAL_ERROR",
+"NO_RESULTS_ON_PAGE",
+"PARTIAL_SUCCESS",
+"REQUIRED_TOS_AGREEMENT",
+"RESOURCE_IN_USE_BY_OTHER_RESOURCE_WARNING",
+"RESOURCE_NOT_DELETED",
+"SCHEMA_VALIDATION_IGNORED",
+"SINGLE_INSTANCE_PROPERTY_TEMPLATE",
+"UNDECLARED_PROPERTIES",
+"UNREACHABLE"
+],
+"enumDeprecated": [
+false,
+false,
+false,
+false,
+false,
+false,
+true,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false
+],
+"enumDescriptions": [
+"Warning about failed cleanup of transient changes made by a failed operation.",
+"A link to a deprecated resource was created.",
+"When deploying and at least one of the resources has a type marked as deprecated",
+"The user created a boot disk that is larger than image size.",
+"When deploying and at least one of the resources has a type marked as experimental",
+"Warning that is present in an external api call",
+"Warning that value of a field has been overridden. Deprecated unused field.",
+"The operation involved use of an injected kernel, which is deprecated.",
+"A WEIGHTED_MAGLEV backend service is associated with a health check that is not of type HTTP/HTTPS/HTTP2.",
+"When deploying a deployment with a exceedingly large number of resources",
+"Resource can't be retrieved due to list overhead quota exceed which captures the amount of resources filtered out by user-defined list filter.",
+"A resource depends on a missing type",
+"The route's nextHopIp address is not assigned to an instance on the network.",
+"The route's next hop instance cannot ip forward.",
+"The route's nextHopInstance URL refers to an instance that does not have an ipv6 interface on the same network as the route.",
+"The route's nextHopInstance URL refers to an instance that does not exist.",
+"The route's nextHopInstance URL refers to an instance that is not on the same network as the route.",
+"The route's next hop instance does not have a status of RUNNING.",
+"Error which is not critical. We decided to continue the process despite the mentioned error.",
+"No results are present on a particular list page.",
+"Success is reported, but some results may be missing due to errors",
+"The user attempted to use a resource that requires a TOS they have not accepted.",
+"Warning that a resource is in use.",
+"One or more of the resources set to auto-delete could not be deleted because they were in use.",
+"When a resource schema validation is ignored.",
+"Instance template used in instance group manager is valid as such, but its application does not make a lot of sense, because it allows only single instance in instance group.",
+"When undeclared properties in the schema are present",
+"A given scope cannot be reached."
+],
+"type": "string"
+},
+"data": {
+"description": "[Output Only] Metadata about this warning in key: value format. For example: \"data\": [ { \"key\": \"scope\", \"value\": \"zones/us-east1-d\" } ",
+"items": {
+"properties": {
+"key": {
+"description": "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+"type": "string"
+},
+"value": {
+"description": "[Output Only] A warning data value corresponding to the key.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"type": "array"
+},
+"message": {
+"description": "[Output Only] A human-readable description of the warning code.",
+"type": "string"
+}
+},
+"type": "object"
+}
+},
+"type": "object"
+},
+"RoutersListRoutePolicies": {
+"id": "RoutersListRoutePolicies",
+"properties": {
+"etag": {
+"type": "string"
+},
+"id": {
+"description": "[Output Only] The unique identifier for the resource. This identifier is defined by the server.",
+"type": "string"
+},
+"kind": {
+"default": "compute#routersListRoutePolicies",
+"description": "[Output Only] Type of resource. Always compute#routersListRoutePolicies for lists of route policies.",
+"type": "string"
+},
+"nextPageToken": {
+"description": "[Output Only] This token allows you to get the next page of results for list requests. If the number of results is larger than maxResults, use the nextPageToken as a value for the query parameter pageToken in the next list request. Subsequent list requests will have their own nextPageToken to continue paging through the results.",
+"type": "string"
+},
+"result": {
+"description": "[Output Only] A list of route policies.",
+"items": {
+"$ref": "RoutePolicy"
+},
+"type": "array"
+},
+"selfLink": {
+"description": "[Output Only] Server-defined URL for this resource.",
+"type": "string"
+},
+"unreachables": {
+"description": "[Output Only] Unreachable resources.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+"warning": {
+"description": "[Output Only] Informational warning message.",
+"properties": {
+"code": {
+"description": "[Output Only] A warning code, if applicable. For example, Compute Engine returns NO_RESULTS_ON_PAGE if there are no results in the response.",
+"enum": [
+"CLEANUP_FAILED",
+"DEPRECATED_RESOURCE_USED",
+"DEPRECATED_TYPE_USED",
+"DISK_SIZE_LARGER_THAN_IMAGE_SIZE",
+"EXPERIMENTAL_TYPE_USED",
+"EXTERNAL_API_WARNING",
+"FIELD_VALUE_OVERRIDEN",
+"INJECTED_KERNELS_DEPRECATED",
+"INVALID_HEALTH_CHECK_FOR_DYNAMIC_WIEGHTED_LB",
+"LARGE_DEPLOYMENT_WARNING",
+"LIST_OVERHEAD_QUOTA_EXCEED",
+"MISSING_TYPE_DEPENDENCY",
+"NEXT_HOP_ADDRESS_NOT_ASSIGNED",
+"NEXT_HOP_CANNOT_IP_FORWARD",
+"NEXT_HOP_INSTANCE_HAS_NO_IPV6_INTERFACE",
+"NEXT_HOP_INSTANCE_NOT_FOUND",
+"NEXT_HOP_INSTANCE_NOT_ON_NETWORK",
+"NEXT_HOP_NOT_RUNNING",
+"NOT_CRITICAL_ERROR",
+"NO_RESULTS_ON_PAGE",
+"PARTIAL_SUCCESS",
+"REQUIRED_TOS_AGREEMENT",
+"RESOURCE_IN_USE_BY_OTHER_RESOURCE_WARNING",
+"RESOURCE_NOT_DELETED",
+"SCHEMA_VALIDATION_IGNORED",
+"SINGLE_INSTANCE_PROPERTY_TEMPLATE",
+"UNDECLARED_PROPERTIES",
+"UNREACHABLE"
+],
+"enumDeprecated": [
+false,
+false,
+false,
+false,
+false,
+false,
+true,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false,
+false
+],
+"enumDescriptions": [
+"Warning about failed cleanup of transient changes made by a failed operation.",
+"A link to a deprecated resource was created.",
+"When deploying and at least one of the resources has a type marked as deprecated",
+"The user created a boot disk that is larger than image size.",
+"When deploying and at least one of the resources has a type marked as experimental",
+"Warning that is present in an external api call",
+"Warning that value of a field has been overridden. Deprecated unused field.",
+"The operation involved use of an injected kernel, which is deprecated.",
+"A WEIGHTED_MAGLEV backend service is associated with a health check that is not of type HTTP/HTTPS/HTTP2.",
+"When deploying a deployment with a exceedingly large number of resources",
+"Resource can't be retrieved due to list overhead quota exceed which captures the amount of resources filtered out by user-defined list filter.",
+"A resource depends on a missing type",
+"The route's nextHopIp address is not assigned to an instance on the network.",
+"The route's next hop instance cannot ip forward.",
+"The route's nextHopInstance URL refers to an instance that does not have an ipv6 interface on the same network as the route.",
+"The route's nextHopInstance URL refers to an instance that does not exist.",
+"The route's nextHopInstance URL refers to an instance that is not on the same network as the route.",
+"The route's next hop instance does not have a status of RUNNING.",
+"Error which is not critical. We decided to continue the process despite the mentioned error.",
+"No results are present on a particular list page.",
+"Success is reported, but some results may be missing due to errors",
+"The user attempted to use a resource that requires a TOS they have not accepted.",
+"Warning that a resource is in use.",
+"One or more of the resources set to auto-delete could not be deleted because they were in use.",
+"When a resource schema validation is ignored.",
+"Instance template used in instance group manager is valid as such, but its application does not make a lot of sense, because it allows only single instance in instance group.",
+"When undeclared properties in the schema are present",
+"A given scope cannot be reached."
+],
+"type": "string"
+},
+"data": {
+"description": "[Output Only] Metadata about this warning in key: value format. For example: \"data\": [ { \"key\": \"scope\", \"value\": \"zones/us-east1-d\" } ",
+"items": {
+"properties": {
+"key": {
+"description": "[Output Only] A key that provides more detail on the warning being returned. For example, for warnings where there are no results in a list request for a particular zone, this key might be scope and the key value might be the zone name. Other examples might be a key indicating a deprecated resource and a suggested replacement, or a warning about invalid network settings (for example, if an instance attempts to perform IP forwarding but is not enabled for IP forwarding).",
+"type": "string"
+},
+"value": {
+"description": "[Output Only] A warning data value corresponding to the key.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"type": "array"
+},
+"message": {
+"description": "[Output Only] A human-readable description of the warning code.",
+"type": "string"
+}
+},
+"type": "object"
 }
 },
 "type": "object"
@@ -76946,6 +78172,11 @@ false
 "description": "[Output Only] Server-defined URL for this resource with the resource id.",
 "type": "string"
 },
+"shortName": {
+"description": "User-provided name of the organization security policy. The name should be unique in the organization in which the security policy is created. This should only be used when SecurityPolicyType is CLOUD_ARMOR. The name must be 1-63 characters long, and comply with https://www.ietf.org/rfc/rfc1035.txt. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.",
+"pattern": "[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?",
+"type": "string"
+},
 "type": {
 "description": "The type indicates the intended use of the security policy. - CLOUD_ARMOR: Cloud Armor backend security policies can be configured to filter incoming HTTP requests targeting backend services. They filter requests before they hit the origin servers. - CLOUD_ARMOR_EDGE: Cloud Armor edge security policies can be configured to filter incoming HTTP requests targeting backend services (including Cloud CDN-enabled) as well as backend buckets (Cloud Storage). They filter requests before the request is served from Google's cache. - CLOUD_ARMOR_INTERNAL_SERVICE: Cloud Armor internal service policies can be configured to filter HTTP requests targeting services managed by Traffic Director in a service mesh. They filter requests before the request is served from the application. - CLOUD_ARMOR_NETWORK: Cloud Armor network policies can be configured to filter packets targeting network load balancing resources such as backend services, target pools, target instances, and instances with external IPs. They filter requests before the request is served from the application. This field can be set only at resource creation time.",
 "enum": [
@@ -77179,12 +78410,30 @@ false
 "description": "[Output Only] The display name of the security policy of the association.",
 "type": "string"
 },
+"excludedFolders": {
+"description": "A list of folders to exclude from the security policy.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+"excludedProjects": {
+"description": "A list of projects to exclude from the security policy.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
 "name": {
 "description": "The name for an association.",
 "type": "string"
 },
 "securityPolicyId": {
 "description": "[Output Only] The security policy ID of the association.",
+"type": "string"
+},
+"shortName": {
+"description": "[Output Only] The short name of the security policy of the association.",
 "type": "string"
 }
 },
@@ -78103,14 +79352,14 @@ false
 "type": "string"
 },
 "consumerAcceptLists": {
-"description": "Projects that are allowed to connect to this service attachment.",
+"description": "Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks.",
 "items": {
 "$ref": "ServiceAttachmentConsumerProjectLimit"
 },
 "type": "array"
 },
 "consumerRejectLists": {
-"description": "Projects that are not allowed to connect to this service attachment. The project can be specified using its id or number.",
+"description": "Specifies a list of projects or networks that are not allowed to connect to this service attachment. The project can be specified using its project ID or project number and the network can be specified using its URL. A given service attachment can manage connections at either the project or network level. Therefore, both the reject and accept lists for a given service attachment must contain either only projects or only networks.",
 "items": {
 "type": "string"
 },
@@ -78173,7 +79422,7 @@ false
 "type": "string"
 },
 "propagatedConnectionLimit": {
-"description": "The number of consumer Network Connectivity Center spokes that connected Private Service Connect endpoints can be propagated to. This limit lets a service producer indirectly limit how many propagated Private Service Connect connections can be established to the producer's service attachment. If the connection preference of the service attachment is ACCEPT_MANUAL, the limit applies to each project or network that is listed in the consumer accept list. If the connection preference of the service attachment is ACCEPT_AUTOMATIC, the limit applies to each project that contains a connected endpoint. If unspecified, the default propagated connection limit is 250.",
+"description": "The number of consumer spokes that connected Private Service Connect endpoints can be propagated to through Network Connectivity Center. This limit lets the service producer limit how many propagated Private Service Connect connections can be established to this service attachment from a single consumer. If the connection preference of the service attachment is ACCEPT_MANUAL, the limit applies to each project or network that is listed in the consumer accept list. If the connection preference of the service attachment is ACCEPT_AUTOMATIC, the limit applies to each project that contains a connected endpoint. If unspecified, the default propagated connection limit is 250.",
 "format": "uint32",
 "type": "integer"
 },
@@ -79389,7 +80638,7 @@ false
 "additionalProperties": {
 "$ref": "SnapshotSettingsStorageLocationSettingsStorageLocationPreference"
 },
-"description": "When the policy is SPECIFIC_LOCATIONS, snapshots will be stored in the locations listed in this field. Keys are GCS bucket locations.",
+"description": "When the policy is SPECIFIC_LOCATIONS, snapshots will be stored in the locations listed in this field. Keys are Cloud Storage bucket locations. Only one location can be specified.",
 "type": "object"
 },
 "policy": {
@@ -79402,7 +80651,7 @@ false
 ],
 "enumDescriptions": [
 "Store snapshot in the same region as with the originating disk. No additional parameters are needed.",
-"Store snapshot to the nearest multi region GCS bucket, relative to the originating disk. No additional parameters are needed.",
+"Store snapshot in the nearest multi region Cloud Storage bucket, relative to the originating disk. No additional parameters are needed.",
 "Store snapshot in the specific locations, as specified by the user. The list of regions to store must be defined under the `locations` field.",
 ""
 ],
@@ -79416,7 +80665,7 @@ false
 "id": "SnapshotSettingsStorageLocationSettingsStorageLocationPreference",
 "properties": {
 "name": {
-"description": "Name of the location. It should be one of the GCS buckets.",
+"description": "Name of the location. It should be one of the Cloud Storage buckets. Only one location can be specified.",
 "type": "string"
 }
 },
@@ -82336,6 +83585,19 @@ false
 },
 "type": "object"
 },
+"StructuredEntries": {
+"id": "StructuredEntries",
+"properties": {
+"entries": {
+"additionalProperties": {
+"type": "any"
+},
+"description": "Map of a partner metadata that belong to the same subdomain. It accepts any value including google.protobuf.Struct.",
+"type": "object"
+}
+},
+"type": "object"
+},
 "Subnetwork": {
 "description": "Represents a Subnetwork resource. A subnetwork (also known as a subnet) is a logical partition of a Virtual Private Cloud network with one primary IP range and zero or more secondary IP ranges. For more information, read Virtual Private Cloud (VPC) Network.",
 "id": "Subnetwork",
@@ -84078,7 +85340,7 @@ false
 "type": "string"
 },
 "httpFilters": {
-"description": "URLs to networkservices.HttpFilter resources enabled for xDS clients using this configuration. For example, https://networkservices.googleapis.com/beta/projects/project/locations/ locationhttpFilters/httpFilter Only filters that handle outbound connection and stream events may be specified. These filters work in conjunction with a default set of HTTP filters that may already be configured by Traffic Director. Traffic Director will determine the final location of these filters within xDS configuration based on the name of the HTTP filter. If Traffic Director positions multiple filters at the same location, those filters will be in the same order as specified in this list. httpFilters only applies for loadbalancers with loadBalancingScheme set to INTERNAL_SELF_MANAGED. See ForwardingRule for more details.",
+"description": "URLs to networkservices.HttpFilter resources enabled for xDS clients using this configuration. For example, https://networkservices.googleapis.com/beta/projects/project/locations/ location/httpFilters/httpFilter Only filters that handle outbound connection and stream events may be specified. These filters work in conjunction with a default set of HTTP filters that may already be configured by Traffic Director. Traffic Director will determine the final location of these filters within xDS configuration based on the name of the HTTP filter. If Traffic Director positions multiple filters at the same location, those filters will be in the same order as specified in this list. httpFilters only applies for loadbalancers with loadBalancingScheme set to INTERNAL_SELF_MANAGED. See ForwardingRule for more details.",
 "items": {
 "type": "string"
 },
@@ -84143,6 +85405,20 @@ false
 },
 "sslPolicy": {
 "description": "URL of SslPolicy resource that will be associated with the TargetHttpsProxy resource. If not set, the TargetHttpsProxy resource has no SSL policy configured.",
+"type": "string"
+},
+"tlsEarlyData": {
+"description": " Specifies whether TLS 1.3 0-RTT Data (\"Early Data\") should be accepted for this service. Early Data allows a TLS resumption handshake to include the initial application payload (a HTTP request) alongside the handshake, reducing the effective round trips to \"zero\". This applies to TLS 1.3 connections over TCP (HTTP/2) as well as over UDP (QUIC/h3). This can improve application performance, especially on networks where interruptions may be common, such as on mobile. Requests with Early Data will have the \"Early-Data\" HTTP header set on the request, with a value of \"1\", to allow the backend to determine whether Early Data was included. Note: TLS Early Data may allow requests to be replayed, as the data is sent to the backend before the handshake has fully completed. Applications that allow idempotent HTTP methods to make non-idempotent changes, such as a GET request updating a database, should not accept Early Data on those requests, and reject requests with the \"Early-Data: 1\" HTTP header by returning a HTTP 425 (Too Early) status code, in order to remain RFC compliant. The default value is DISABLED.",
+"enum": [
+"DISABLED",
+"PERMISSIVE",
+"STRICT"
+],
+"enumDescriptions": [
+"TLS 1.3 Early Data is not advertised, and any (invalid) attempts to send Early Data will be rejected by closing the connection.",
+"This enables TLS 1.3 0-RTT, and only allows Early Data to be included on requests with safe HTTP methods (GET, HEAD, OPTIONS, TRACE). This mode does not enforce any other limitations for requests with Early Data. The application owner should validate that Early Data is acceptable for a given request path.",
+"This enables TLS 1.3 0-RTT, and only allows Early Data to be included on requests with safe HTTP methods (GET, HEAD, OPTIONS, TRACE) without query parameters. Requests that send Early Data with non-idempotent HTTP methods or with query parameters will be rejected with a HTTP 425."
+],
 "type": "string"
 },
 "urlMap": {
@@ -87072,7 +88348,7 @@ false
 "description": "defaultRouteAction takes effect when none of the hostRules match. The load balancer performs advanced routing actions, such as URL rewrites and header transformations, before forwarding the request to the selected backend. If defaultRouteAction specifies any weightedBackendServices, defaultService must not be set. Conversely if defaultService is set, defaultRouteAction cannot contain any weightedBackendServices. Only one of defaultRouteAction or defaultUrlRedirect must be set. URL maps for classic Application Load Balancers only support the urlRewrite action within defaultRouteAction. defaultRouteAction has no effect when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true."
 },
 "defaultService": {
-"description": "The full or partial URL of the defaultService resource to which traffic is directed if none of the hostRules match. If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend. However, if defaultService is specified, defaultRouteAction cannot contain any weightedBackendServices. Conversely, if routeAction specifies any weightedBackendServices, service must not be specified. Only one of defaultService, defaultUrlRedirect , or defaultRouteAction.weightedBackendService must be set. defaultService has no effect when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true.",
+"description": "The full or partial URL of the defaultService resource to which traffic is directed if none of the hostRules match. If defaultRouteAction is also specified, advanced routing actions, such as URL rewrites, take effect before sending the request to the backend. However, if defaultService is specified, defaultRouteAction cannot contain any weightedBackendServices. Conversely, if routeAction specifies any weightedBackendServices, service must not be specified. If defaultService is specified, then set either defaultUrlRedirect , or defaultRouteAction.weightedBackendService Don't set both. defaultService has no effect when the URL map is bound to a target gRPC proxy that has the validateForProxyless field set to true.",
 "type": "string"
 },
 "defaultUrlRedirect": {

@@ -150,7 +150,7 @@ Returns:
         },
         &quot;lineItemFreeTrialEndTime&quot;: &quot;A String&quot;, # Output only. The free trial end time will be populated after the line item is successfully processed. End time of the line item free trial period, in ISO 8061 format. For example, &quot;2019-08-31T17:28:54.564Z&quot;. It will be set the same as createTime if no free trial promotion is specified.
         &quot;lineItemIndex&quot;: 42, # Output only. A unique index of the subscription line item.
-        &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - a free trial promotion, which overrides the subscription-level free trial promotion. - an introductory pricing promotion. When used as input in Create or Provision API, specify its resource name only.
+        &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - an introductory pricing promotion. - a free trial promotion. This feature is not enabled. If used, the request will be rejected. When used as input in Create or Provision API, specify its resource name only.
           { # Describes the spec for one promotion.
             &quot;freeTrialDuration&quot;: { # Describes the length of a period of a time. # Output only. The duration of the free trial if the promotion is of type FREE_TRIAL.
               &quot;count&quot;: 42, # number of duration units to be included.
@@ -233,6 +233,7 @@ Returns:
     &quot;promotions&quot;: [ # Optional. Deprecated: consider using the top-level `promotion_specs` as the input. Optional. Resource name that identifies one or more promotions that can be applied on the product. A typical promotion for a subscription is Free trial. The format will be &#x27;partners/{partner_id}/promotions/{promotion_id}&#x27;.
       &quot;A String&quot;,
     ],
+    &quot;purchaseTime&quot;: &quot;A String&quot;, # Optional. The timestamp when the user transaction was made with the Partner. Specify for the case of &quot;bundle with choice&quot;, and it must be before the provision_time (when the user makes a selection).
     &quot;redirectUri&quot;: &quot;A String&quot;, # Output only. The place where partners should redirect the end-user to after creation. This field might also be populated when creation failed. However, Partners should always prepare a default URL to redirect the user in case this field is empty.
     &quot;renewalTime&quot;: &quot;A String&quot;, # Output only. The time at which the subscription is expected to be renewed by Google - a new charge will be incurred and the service entitlement will be renewed. A non-immediate cancellation will take place at this time too, before which, the service entitlement for the end user will remain valid. UTC timezone in ISO 8061 format. For example: &quot;2019-08-31T17:28:54.564Z&quot;
     &quot;serviceLocation&quot;: { # Describes a location of an end user. # Required. The location that the service is provided as indicated by the partner.
@@ -291,7 +292,7 @@ Args:
       },
       &quot;lineItemFreeTrialEndTime&quot;: &quot;A String&quot;, # Output only. The free trial end time will be populated after the line item is successfully processed. End time of the line item free trial period, in ISO 8061 format. For example, &quot;2019-08-31T17:28:54.564Z&quot;. It will be set the same as createTime if no free trial promotion is specified.
       &quot;lineItemIndex&quot;: 42, # Output only. A unique index of the subscription line item.
-      &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - a free trial promotion, which overrides the subscription-level free trial promotion. - an introductory pricing promotion. When used as input in Create or Provision API, specify its resource name only.
+      &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - an introductory pricing promotion. - a free trial promotion. This feature is not enabled. If used, the request will be rejected. When used as input in Create or Provision API, specify its resource name only.
         { # Describes the spec for one promotion.
           &quot;freeTrialDuration&quot;: { # Describes the length of a period of a time. # Output only. The duration of the free trial if the promotion is of type FREE_TRIAL.
             &quot;count&quot;: 42, # number of duration units to be included.
@@ -374,6 +375,7 @@ Args:
   &quot;promotions&quot;: [ # Optional. Deprecated: consider using the top-level `promotion_specs` as the input. Optional. Resource name that identifies one or more promotions that can be applied on the product. A typical promotion for a subscription is Free trial. The format will be &#x27;partners/{partner_id}/promotions/{promotion_id}&#x27;.
     &quot;A String&quot;,
   ],
+  &quot;purchaseTime&quot;: &quot;A String&quot;, # Optional. The timestamp when the user transaction was made with the Partner. Specify for the case of &quot;bundle with choice&quot;, and it must be before the provision_time (when the user makes a selection).
   &quot;redirectUri&quot;: &quot;A String&quot;, # Output only. The place where partners should redirect the end-user to after creation. This field might also be populated when creation failed. However, Partners should always prepare a default URL to redirect the user in case this field is empty.
   &quot;renewalTime&quot;: &quot;A String&quot;, # Output only. The time at which the subscription is expected to be renewed by Google - a new charge will be incurred and the service entitlement will be renewed. A non-immediate cancellation will take place at this time too, before which, the service entitlement for the end user will remain valid. UTC timezone in ISO 8061 format. For example: &quot;2019-08-31T17:28:54.564Z&quot;
   &quot;serviceLocation&quot;: { # Describes a location of an end user. # Required. The location that the service is provided as indicated by the partner.
@@ -425,7 +427,7 @@ Returns:
       },
       &quot;lineItemFreeTrialEndTime&quot;: &quot;A String&quot;, # Output only. The free trial end time will be populated after the line item is successfully processed. End time of the line item free trial period, in ISO 8061 format. For example, &quot;2019-08-31T17:28:54.564Z&quot;. It will be set the same as createTime if no free trial promotion is specified.
       &quot;lineItemIndex&quot;: 42, # Output only. A unique index of the subscription line item.
-      &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - a free trial promotion, which overrides the subscription-level free trial promotion. - an introductory pricing promotion. When used as input in Create or Provision API, specify its resource name only.
+      &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - an introductory pricing promotion. - a free trial promotion. This feature is not enabled. If used, the request will be rejected. When used as input in Create or Provision API, specify its resource name only.
         { # Describes the spec for one promotion.
           &quot;freeTrialDuration&quot;: { # Describes the length of a period of a time. # Output only. The duration of the free trial if the promotion is of type FREE_TRIAL.
             &quot;count&quot;: 42, # number of duration units to be included.
@@ -508,6 +510,7 @@ Returns:
   &quot;promotions&quot;: [ # Optional. Deprecated: consider using the top-level `promotion_specs` as the input. Optional. Resource name that identifies one or more promotions that can be applied on the product. A typical promotion for a subscription is Free trial. The format will be &#x27;partners/{partner_id}/promotions/{promotion_id}&#x27;.
     &quot;A String&quot;,
   ],
+  &quot;purchaseTime&quot;: &quot;A String&quot;, # Optional. The timestamp when the user transaction was made with the Partner. Specify for the case of &quot;bundle with choice&quot;, and it must be before the provision_time (when the user makes a selection).
   &quot;redirectUri&quot;: &quot;A String&quot;, # Output only. The place where partners should redirect the end-user to after creation. This field might also be populated when creation failed. However, Partners should always prepare a default URL to redirect the user in case this field is empty.
   &quot;renewalTime&quot;: &quot;A String&quot;, # Output only. The time at which the subscription is expected to be renewed by Google - a new charge will be incurred and the service entitlement will be renewed. A non-immediate cancellation will take place at this time too, before which, the service entitlement for the end user will remain valid. UTC timezone in ISO 8061 format. For example: &quot;2019-08-31T17:28:54.564Z&quot;
   &quot;serviceLocation&quot;: { # Describes a location of an end user. # Required. The location that the service is provided as indicated by the partner.
@@ -580,7 +583,7 @@ Returns:
         },
         &quot;lineItemFreeTrialEndTime&quot;: &quot;A String&quot;, # Output only. The free trial end time will be populated after the line item is successfully processed. End time of the line item free trial period, in ISO 8061 format. For example, &quot;2019-08-31T17:28:54.564Z&quot;. It will be set the same as createTime if no free trial promotion is specified.
         &quot;lineItemIndex&quot;: 42, # Output only. A unique index of the subscription line item.
-        &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - a free trial promotion, which overrides the subscription-level free trial promotion. - an introductory pricing promotion. When used as input in Create or Provision API, specify its resource name only.
+        &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - an introductory pricing promotion. - a free trial promotion. This feature is not enabled. If used, the request will be rejected. When used as input in Create or Provision API, specify its resource name only.
           { # Describes the spec for one promotion.
             &quot;freeTrialDuration&quot;: { # Describes the length of a period of a time. # Output only. The duration of the free trial if the promotion is of type FREE_TRIAL.
               &quot;count&quot;: 42, # number of duration units to be included.
@@ -663,6 +666,7 @@ Returns:
     &quot;promotions&quot;: [ # Optional. Deprecated: consider using the top-level `promotion_specs` as the input. Optional. Resource name that identifies one or more promotions that can be applied on the product. A typical promotion for a subscription is Free trial. The format will be &#x27;partners/{partner_id}/promotions/{promotion_id}&#x27;.
       &quot;A String&quot;,
     ],
+    &quot;purchaseTime&quot;: &quot;A String&quot;, # Optional. The timestamp when the user transaction was made with the Partner. Specify for the case of &quot;bundle with choice&quot;, and it must be before the provision_time (when the user makes a selection).
     &quot;redirectUri&quot;: &quot;A String&quot;, # Output only. The place where partners should redirect the end-user to after creation. This field might also be populated when creation failed. However, Partners should always prepare a default URL to redirect the user in case this field is empty.
     &quot;renewalTime&quot;: &quot;A String&quot;, # Output only. The time at which the subscription is expected to be renewed by Google - a new charge will be incurred and the service entitlement will be renewed. A non-immediate cancellation will take place at this time too, before which, the service entitlement for the end user will remain valid. UTC timezone in ISO 8061 format. For example: &quot;2019-08-31T17:28:54.564Z&quot;
     &quot;serviceLocation&quot;: { # Describes a location of an end user. # Required. The location that the service is provided as indicated by the partner.
@@ -756,7 +760,7 @@ Returns:
       },
       &quot;lineItemFreeTrialEndTime&quot;: &quot;A String&quot;, # Output only. The free trial end time will be populated after the line item is successfully processed. End time of the line item free trial period, in ISO 8061 format. For example, &quot;2019-08-31T17:28:54.564Z&quot;. It will be set the same as createTime if no free trial promotion is specified.
       &quot;lineItemIndex&quot;: 42, # Output only. A unique index of the subscription line item.
-      &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - a free trial promotion, which overrides the subscription-level free trial promotion. - an introductory pricing promotion. When used as input in Create or Provision API, specify its resource name only.
+      &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - an introductory pricing promotion. - a free trial promotion. This feature is not enabled. If used, the request will be rejected. When used as input in Create or Provision API, specify its resource name only.
         { # Describes the spec for one promotion.
           &quot;freeTrialDuration&quot;: { # Describes the length of a period of a time. # Output only. The duration of the free trial if the promotion is of type FREE_TRIAL.
             &quot;count&quot;: 42, # number of duration units to be included.
@@ -839,6 +843,7 @@ Returns:
   &quot;promotions&quot;: [ # Optional. Deprecated: consider using the top-level `promotion_specs` as the input. Optional. Resource name that identifies one or more promotions that can be applied on the product. A typical promotion for a subscription is Free trial. The format will be &#x27;partners/{partner_id}/promotions/{promotion_id}&#x27;.
     &quot;A String&quot;,
   ],
+  &quot;purchaseTime&quot;: &quot;A String&quot;, # Optional. The timestamp when the user transaction was made with the Partner. Specify for the case of &quot;bundle with choice&quot;, and it must be before the provision_time (when the user makes a selection).
   &quot;redirectUri&quot;: &quot;A String&quot;, # Output only. The place where partners should redirect the end-user to after creation. This field might also be populated when creation failed. However, Partners should always prepare a default URL to redirect the user in case this field is empty.
   &quot;renewalTime&quot;: &quot;A String&quot;, # Output only. The time at which the subscription is expected to be renewed by Google - a new charge will be incurred and the service entitlement will be renewed. A non-immediate cancellation will take place at this time too, before which, the service entitlement for the end user will remain valid. UTC timezone in ISO 8061 format. For example: &quot;2019-08-31T17:28:54.564Z&quot;
   &quot;serviceLocation&quot;: { # Describes a location of an end user. # Required. The location that the service is provided as indicated by the partner.
@@ -891,7 +896,7 @@ Args:
       },
       &quot;lineItemFreeTrialEndTime&quot;: &quot;A String&quot;, # Output only. The free trial end time will be populated after the line item is successfully processed. End time of the line item free trial period, in ISO 8061 format. For example, &quot;2019-08-31T17:28:54.564Z&quot;. It will be set the same as createTime if no free trial promotion is specified.
       &quot;lineItemIndex&quot;: 42, # Output only. A unique index of the subscription line item.
-      &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - a free trial promotion, which overrides the subscription-level free trial promotion. - an introductory pricing promotion. When used as input in Create or Provision API, specify its resource name only.
+      &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - an introductory pricing promotion. - a free trial promotion. This feature is not enabled. If used, the request will be rejected. When used as input in Create or Provision API, specify its resource name only.
         { # Describes the spec for one promotion.
           &quot;freeTrialDuration&quot;: { # Describes the length of a period of a time. # Output only. The duration of the free trial if the promotion is of type FREE_TRIAL.
             &quot;count&quot;: 42, # number of duration units to be included.
@@ -974,6 +979,7 @@ Args:
   &quot;promotions&quot;: [ # Optional. Deprecated: consider using the top-level `promotion_specs` as the input. Optional. Resource name that identifies one or more promotions that can be applied on the product. A typical promotion for a subscription is Free trial. The format will be &#x27;partners/{partner_id}/promotions/{promotion_id}&#x27;.
     &quot;A String&quot;,
   ],
+  &quot;purchaseTime&quot;: &quot;A String&quot;, # Optional. The timestamp when the user transaction was made with the Partner. Specify for the case of &quot;bundle with choice&quot;, and it must be before the provision_time (when the user makes a selection).
   &quot;redirectUri&quot;: &quot;A String&quot;, # Output only. The place where partners should redirect the end-user to after creation. This field might also be populated when creation failed. However, Partners should always prepare a default URL to redirect the user in case this field is empty.
   &quot;renewalTime&quot;: &quot;A String&quot;, # Output only. The time at which the subscription is expected to be renewed by Google - a new charge will be incurred and the service entitlement will be renewed. A non-immediate cancellation will take place at this time too, before which, the service entitlement for the end user will remain valid. UTC timezone in ISO 8061 format. For example: &quot;2019-08-31T17:28:54.564Z&quot;
   &quot;serviceLocation&quot;: { # Describes a location of an end user. # Required. The location that the service is provided as indicated by the partner.
@@ -1025,7 +1031,7 @@ Returns:
       },
       &quot;lineItemFreeTrialEndTime&quot;: &quot;A String&quot;, # Output only. The free trial end time will be populated after the line item is successfully processed. End time of the line item free trial period, in ISO 8061 format. For example, &quot;2019-08-31T17:28:54.564Z&quot;. It will be set the same as createTime if no free trial promotion is specified.
       &quot;lineItemIndex&quot;: 42, # Output only. A unique index of the subscription line item.
-      &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - a free trial promotion, which overrides the subscription-level free trial promotion. - an introductory pricing promotion. When used as input in Create or Provision API, specify its resource name only.
+      &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - an introductory pricing promotion. - a free trial promotion. This feature is not enabled. If used, the request will be rejected. When used as input in Create or Provision API, specify its resource name only.
         { # Describes the spec for one promotion.
           &quot;freeTrialDuration&quot;: { # Describes the length of a period of a time. # Output only. The duration of the free trial if the promotion is of type FREE_TRIAL.
             &quot;count&quot;: 42, # number of duration units to be included.
@@ -1108,6 +1114,7 @@ Returns:
   &quot;promotions&quot;: [ # Optional. Deprecated: consider using the top-level `promotion_specs` as the input. Optional. Resource name that identifies one or more promotions that can be applied on the product. A typical promotion for a subscription is Free trial. The format will be &#x27;partners/{partner_id}/promotions/{promotion_id}&#x27;.
     &quot;A String&quot;,
   ],
+  &quot;purchaseTime&quot;: &quot;A String&quot;, # Optional. The timestamp when the user transaction was made with the Partner. Specify for the case of &quot;bundle with choice&quot;, and it must be before the provision_time (when the user makes a selection).
   &quot;redirectUri&quot;: &quot;A String&quot;, # Output only. The place where partners should redirect the end-user to after creation. This field might also be populated when creation failed. However, Partners should always prepare a default URL to redirect the user in case this field is empty.
   &quot;renewalTime&quot;: &quot;A String&quot;, # Output only. The time at which the subscription is expected to be renewed by Google - a new charge will be incurred and the service entitlement will be renewed. A non-immediate cancellation will take place at this time too, before which, the service entitlement for the end user will remain valid. UTC timezone in ISO 8061 format. For example: &quot;2019-08-31T17:28:54.564Z&quot;
   &quot;serviceLocation&quot;: { # Describes a location of an end user. # Required. The location that the service is provided as indicated by the partner.
@@ -1172,7 +1179,7 @@ Returns:
         },
         &quot;lineItemFreeTrialEndTime&quot;: &quot;A String&quot;, # Output only. The free trial end time will be populated after the line item is successfully processed. End time of the line item free trial period, in ISO 8061 format. For example, &quot;2019-08-31T17:28:54.564Z&quot;. It will be set the same as createTime if no free trial promotion is specified.
         &quot;lineItemIndex&quot;: 42, # Output only. A unique index of the subscription line item.
-        &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - a free trial promotion, which overrides the subscription-level free trial promotion. - an introductory pricing promotion. When used as input in Create or Provision API, specify its resource name only.
+        &quot;lineItemPromotionSpecs&quot;: [ # Optional. The promotions applied on the line item. It can be: - an introductory pricing promotion. - a free trial promotion. This feature is not enabled. If used, the request will be rejected. When used as input in Create or Provision API, specify its resource name only.
           { # Describes the spec for one promotion.
             &quot;freeTrialDuration&quot;: { # Describes the length of a period of a time. # Output only. The duration of the free trial if the promotion is of type FREE_TRIAL.
               &quot;count&quot;: 42, # number of duration units to be included.
@@ -1255,6 +1262,7 @@ Returns:
     &quot;promotions&quot;: [ # Optional. Deprecated: consider using the top-level `promotion_specs` as the input. Optional. Resource name that identifies one or more promotions that can be applied on the product. A typical promotion for a subscription is Free trial. The format will be &#x27;partners/{partner_id}/promotions/{promotion_id}&#x27;.
       &quot;A String&quot;,
     ],
+    &quot;purchaseTime&quot;: &quot;A String&quot;, # Optional. The timestamp when the user transaction was made with the Partner. Specify for the case of &quot;bundle with choice&quot;, and it must be before the provision_time (when the user makes a selection).
     &quot;redirectUri&quot;: &quot;A String&quot;, # Output only. The place where partners should redirect the end-user to after creation. This field might also be populated when creation failed. However, Partners should always prepare a default URL to redirect the user in case this field is empty.
     &quot;renewalTime&quot;: &quot;A String&quot;, # Output only. The time at which the subscription is expected to be renewed by Google - a new charge will be incurred and the service entitlement will be renewed. A non-immediate cancellation will take place at this time too, before which, the service entitlement for the end user will remain valid. UTC timezone in ISO 8061 format. For example: &quot;2019-08-31T17:28:54.564Z&quot;
     &quot;serviceLocation&quot;: { # Describes a location of an end user. # Required. The location that the service is provided as indicated by the partner.
