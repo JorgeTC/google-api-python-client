@@ -228,7 +228,7 @@ Args:
     },
     &quot;build&quot;: &quot;A String&quot;, # Output only. The Cloud Build name of the latest successful deployment of the function.
     &quot;dockerRegistry&quot;: &quot;A String&quot;, # Docker Registry to use for this deployment. This configuration is only applicable to 1st Gen functions, 2nd Gen functions can only use Artifact Registry. If unspecified, it defaults to `ARTIFACT_REGISTRY`. If `docker_repository` field is specified, this field should either be left unspecified or set to `ARTIFACT_REGISTRY`.
-    &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Cross-project repositories are not supported. Cross-location repositories are not supported. Repository format must be &#x27;DOCKER&#x27;.
+    &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Repository format must be &#x27;DOCKER&#x27;.
     &quot;entryPoint&quot;: &quot;A String&quot;, # The name of the function (as defined in source code) that will be executed. Defaults to the resource name suffix, if not specified. For backward compatibility, if function with given name is not found, then the system will try to use function named &quot;function&quot;. For Node.js this is name of a function exported by the module specified in `source_location`.
     &quot;environmentVariables&quot;: { # User-provided build-time environment variables for the function
       &quot;a_key&quot;: &quot;A String&quot;,
@@ -237,7 +237,7 @@ Args:
       &quot;runtimeVersion&quot;: &quot;A String&quot;, # Output only. contains the runtime version which was used during latest function deployment.
     },
     &quot;runtime&quot;: &quot;A String&quot;, # The runtime in which to run the function. Required when deploying a new function, optional when updating an existing function. For a complete list of possible choices, see the [`gcloud` command reference](https://cloud.google.com/sdk/gcloud/reference/functions/deploy#--runtime).
-    &quot;serviceAccount&quot;: &quot;A String&quot;, # [Preview] Service account to be used for building the container
+    &quot;serviceAccount&quot;: &quot;A String&quot;, # Service account to be used for building the container. The format of this field is `projects/{projectId}/serviceAccounts/{serviceAccountEmail}`.
     &quot;source&quot;: { # The location of the function source code. # The location of the function source code.
       &quot;gitUri&quot;: &quot;A String&quot;, # If provided, get the source from GitHub repository. This option is valid only for GCF 1st Gen function. Example: https://github.com///blob//
       &quot;repoSource&quot;: { # Location of the source in a Google Cloud Source Repository. # If provided, get the source from this location in a Cloud Source Repository.
@@ -252,6 +252,7 @@ Args:
         &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
         &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
         &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+        &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
       },
     },
     &quot;sourceProvenance&quot;: { # Provenance of the source. Ways to find the original source, or verify that some source was used for this build. # Output only. A permanent fixed identifier for source.
@@ -268,6 +269,7 @@ Args:
         &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
         &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
         &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+        &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
       },
     },
     &quot;sourceToken&quot;: &quot;A String&quot;, # An identifier for Firebase function sources. Disclaimer: This field is only supported for Firebase function deployments.
@@ -293,7 +295,7 @@ Args:
     &quot;trigger&quot;: &quot;A String&quot;, # Output only. The resource name of the Eventarc trigger. The format of this field is `projects/{project}/locations/{region}/triggers/{trigger}`.
     &quot;triggerRegion&quot;: &quot;A String&quot;, # The region that the trigger will be in. The trigger will only receive events originating in this region. It can be the same region as the function, a different region or multi-region, or the global region. If not provided, defaults to the same region as the function.
   },
-  &quot;kmsKeyName&quot;: &quot;A String&quot;, # [Preview] Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources. It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`.
+  &quot;kmsKeyName&quot;: &quot;A String&quot;, # Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources. It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`.
   &quot;labels&quot;: { # Labels associated with this Cloud Function.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
@@ -303,6 +305,7 @@ Args:
     &quot;allTrafficOnLatestRevision&quot;: True or False, # Whether 100% of traffic is routed to the latest revision. On CreateFunction and UpdateFunction, when set to true, the revision being deployed will serve 100% of traffic, ignoring any traffic split settings, if any. On GetFunction, true will be returned if the latest revision is serving 100% of traffic.
     &quot;availableCpu&quot;: &quot;A String&quot;, # The number of CPUs used in a single container instance. Default value is calculated from available memory. Supports the same values as Cloud Run, see https://cloud.google.com/run/docs/reference/rest/v1/Container#resourcerequirements Example: &quot;1&quot; indicates 1 vCPU
     &quot;availableMemory&quot;: &quot;A String&quot;, # The amount of memory available for a function. Defaults to 256M. Supported units are k, M, G, Mi, Gi. If no unit is supplied the value is interpreted as bytes. See https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go a full description.
+    &quot;binaryAuthorizationPolicy&quot;: &quot;A String&quot;, # Optional. The binary authorization policy to be checked when deploying the Cloud Run service.
     &quot;environmentVariables&quot;: { # Environment variables that shall be available during function execution.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
@@ -349,13 +352,13 @@ Args:
     },
   ],
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The last update timestamp of a Cloud Function.
-  &quot;upgradeInfo&quot;: { # Information related to: * A function&#x27;s eligibility for 1st Gen to 2nd Gen migration * Current state of migration for function undergoing migration. # Output only. UpgradeInfo for this Cloud Function
+  &quot;upgradeInfo&quot;: { # Information related to: * A function&#x27;s eligibility for 1st Gen to 2nd Gen migration and 2nd Gen to CRf detach. * Current state of migration for function undergoing migration/detach. # Output only. UpgradeInfo for this Cloud Function
     &quot;buildConfig&quot;: { # Describes the Build step of the function that builds a container from the given source. # Describes the Build step of the function that builds a container to prepare for 2nd gen upgrade.
       &quot;automaticUpdatePolicy&quot;: { # Security patches are applied automatically to the runtime without requiring the function to be redeployed.
       },
       &quot;build&quot;: &quot;A String&quot;, # Output only. The Cloud Build name of the latest successful deployment of the function.
       &quot;dockerRegistry&quot;: &quot;A String&quot;, # Docker Registry to use for this deployment. This configuration is only applicable to 1st Gen functions, 2nd Gen functions can only use Artifact Registry. If unspecified, it defaults to `ARTIFACT_REGISTRY`. If `docker_repository` field is specified, this field should either be left unspecified or set to `ARTIFACT_REGISTRY`.
-      &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Cross-project repositories are not supported. Cross-location repositories are not supported. Repository format must be &#x27;DOCKER&#x27;.
+      &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Repository format must be &#x27;DOCKER&#x27;.
       &quot;entryPoint&quot;: &quot;A String&quot;, # The name of the function (as defined in source code) that will be executed. Defaults to the resource name suffix, if not specified. For backward compatibility, if function with given name is not found, then the system will try to use function named &quot;function&quot;. For Node.js this is name of a function exported by the module specified in `source_location`.
       &quot;environmentVariables&quot;: { # User-provided build-time environment variables for the function
         &quot;a_key&quot;: &quot;A String&quot;,
@@ -364,7 +367,7 @@ Args:
         &quot;runtimeVersion&quot;: &quot;A String&quot;, # Output only. contains the runtime version which was used during latest function deployment.
       },
       &quot;runtime&quot;: &quot;A String&quot;, # The runtime in which to run the function. Required when deploying a new function, optional when updating an existing function. For a complete list of possible choices, see the [`gcloud` command reference](https://cloud.google.com/sdk/gcloud/reference/functions/deploy#--runtime).
-      &quot;serviceAccount&quot;: &quot;A String&quot;, # [Preview] Service account to be used for building the container
+      &quot;serviceAccount&quot;: &quot;A String&quot;, # Service account to be used for building the container. The format of this field is `projects/{projectId}/serviceAccounts/{serviceAccountEmail}`.
       &quot;source&quot;: { # The location of the function source code. # The location of the function source code.
         &quot;gitUri&quot;: &quot;A String&quot;, # If provided, get the source from GitHub repository. This option is valid only for GCF 1st Gen function. Example: https://github.com///blob//
         &quot;repoSource&quot;: { # Location of the source in a Google Cloud Source Repository. # If provided, get the source from this location in a Cloud Source Repository.
@@ -379,6 +382,7 @@ Args:
           &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
           &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
           &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+          &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
         },
       },
       &quot;sourceProvenance&quot;: { # Provenance of the source. Ways to find the original source, or verify that some source was used for this build. # Output only. A permanent fixed identifier for source.
@@ -395,6 +399,7 @@ Args:
           &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
           &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
           &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+          &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
         },
       },
       &quot;sourceToken&quot;: &quot;A String&quot;, # An identifier for Firebase function sources. Disclaimer: This field is only supported for Firebase function deployments.
@@ -421,6 +426,7 @@ Args:
       &quot;allTrafficOnLatestRevision&quot;: True or False, # Whether 100% of traffic is routed to the latest revision. On CreateFunction and UpdateFunction, when set to true, the revision being deployed will serve 100% of traffic, ignoring any traffic split settings, if any. On GetFunction, true will be returned if the latest revision is serving 100% of traffic.
       &quot;availableCpu&quot;: &quot;A String&quot;, # The number of CPUs used in a single container instance. Default value is calculated from available memory. Supports the same values as Cloud Run, see https://cloud.google.com/run/docs/reference/rest/v1/Container#resourcerequirements Example: &quot;1&quot; indicates 1 vCPU
       &quot;availableMemory&quot;: &quot;A String&quot;, # The amount of memory available for a function. Defaults to 256M. Supported units are k, M, G, Mi, Gi. If no unit is supplied the value is interpreted as bytes. See https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go a full description.
+      &quot;binaryAuthorizationPolicy&quot;: &quot;A String&quot;, # Optional. The binary authorization policy to be checked when deploying the Cloud Run service.
       &quot;environmentVariables&quot;: { # Environment variables that shall be available during function execution.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
@@ -564,7 +570,7 @@ Args:
 
 { # Request of `GenerateSourceUploadUrl` method.
   &quot;environment&quot;: &quot;A String&quot;, # The function environment the generated upload url will be used for. The upload url for 2nd Gen functions can also be used for 1st gen functions, but not vice versa. If not specified, 2nd generation-style upload URLs are generated.
-  &quot;kmsKeyName&quot;: &quot;A String&quot;, # [Preview] Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function source code objects in intermediate Cloud Storage buckets. When you generate an upload url and upload your source code, it gets copied to an intermediate Cloud Storage bucket. The source code is then copied to a versioned directory in the sources bucket in the consumer project during the function deployment. It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`. The Google Cloud Functions service account (service-{project_number}@gcf-admin-robot.iam.gserviceaccount.com) must be granted the role &#x27;Cloud KMS CryptoKey Encrypter/Decrypter (roles/cloudkms.cryptoKeyEncrypterDecrypter)&#x27; on the Key/KeyRing/Project/Organization (least access preferred).
+  &quot;kmsKeyName&quot;: &quot;A String&quot;, # Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function source code objects in intermediate Cloud Storage buckets. When you generate an upload url and upload your source code, it gets copied to an intermediate Cloud Storage bucket. The source code is then copied to a versioned directory in the sources bucket in the consumer project during the function deployment. It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`. The Google Cloud Functions service account (service-{project_number}@gcf-admin-robot.iam.gserviceaccount.com) must be granted the role &#x27;Cloud KMS CryptoKey Encrypter/Decrypter (roles/cloudkms.cryptoKeyEncrypterDecrypter)&#x27; on the Key/KeyRing/Project/Organization (least access preferred).
 }
 
   x__xgafv: string, V1 error format.
@@ -580,6 +586,7 @@ Returns:
     &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
     &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
     &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+    &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
   },
   &quot;uploadUrl&quot;: &quot;A String&quot;, # The generated Google Cloud Storage signed URL that should be used for a function source code upload. The uploaded file should be a zip archive which contains a function.
 }</pre>
@@ -606,7 +613,7 @@ Returns:
     },
     &quot;build&quot;: &quot;A String&quot;, # Output only. The Cloud Build name of the latest successful deployment of the function.
     &quot;dockerRegistry&quot;: &quot;A String&quot;, # Docker Registry to use for this deployment. This configuration is only applicable to 1st Gen functions, 2nd Gen functions can only use Artifact Registry. If unspecified, it defaults to `ARTIFACT_REGISTRY`. If `docker_repository` field is specified, this field should either be left unspecified or set to `ARTIFACT_REGISTRY`.
-    &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Cross-project repositories are not supported. Cross-location repositories are not supported. Repository format must be &#x27;DOCKER&#x27;.
+    &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Repository format must be &#x27;DOCKER&#x27;.
     &quot;entryPoint&quot;: &quot;A String&quot;, # The name of the function (as defined in source code) that will be executed. Defaults to the resource name suffix, if not specified. For backward compatibility, if function with given name is not found, then the system will try to use function named &quot;function&quot;. For Node.js this is name of a function exported by the module specified in `source_location`.
     &quot;environmentVariables&quot;: { # User-provided build-time environment variables for the function
       &quot;a_key&quot;: &quot;A String&quot;,
@@ -615,7 +622,7 @@ Returns:
       &quot;runtimeVersion&quot;: &quot;A String&quot;, # Output only. contains the runtime version which was used during latest function deployment.
     },
     &quot;runtime&quot;: &quot;A String&quot;, # The runtime in which to run the function. Required when deploying a new function, optional when updating an existing function. For a complete list of possible choices, see the [`gcloud` command reference](https://cloud.google.com/sdk/gcloud/reference/functions/deploy#--runtime).
-    &quot;serviceAccount&quot;: &quot;A String&quot;, # [Preview] Service account to be used for building the container
+    &quot;serviceAccount&quot;: &quot;A String&quot;, # Service account to be used for building the container. The format of this field is `projects/{projectId}/serviceAccounts/{serviceAccountEmail}`.
     &quot;source&quot;: { # The location of the function source code. # The location of the function source code.
       &quot;gitUri&quot;: &quot;A String&quot;, # If provided, get the source from GitHub repository. This option is valid only for GCF 1st Gen function. Example: https://github.com///blob//
       &quot;repoSource&quot;: { # Location of the source in a Google Cloud Source Repository. # If provided, get the source from this location in a Cloud Source Repository.
@@ -630,6 +637,7 @@ Returns:
         &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
         &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
         &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+        &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
       },
     },
     &quot;sourceProvenance&quot;: { # Provenance of the source. Ways to find the original source, or verify that some source was used for this build. # Output only. A permanent fixed identifier for source.
@@ -646,6 +654,7 @@ Returns:
         &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
         &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
         &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+        &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
       },
     },
     &quot;sourceToken&quot;: &quot;A String&quot;, # An identifier for Firebase function sources. Disclaimer: This field is only supported for Firebase function deployments.
@@ -671,7 +680,7 @@ Returns:
     &quot;trigger&quot;: &quot;A String&quot;, # Output only. The resource name of the Eventarc trigger. The format of this field is `projects/{project}/locations/{region}/triggers/{trigger}`.
     &quot;triggerRegion&quot;: &quot;A String&quot;, # The region that the trigger will be in. The trigger will only receive events originating in this region. It can be the same region as the function, a different region or multi-region, or the global region. If not provided, defaults to the same region as the function.
   },
-  &quot;kmsKeyName&quot;: &quot;A String&quot;, # [Preview] Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources. It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`.
+  &quot;kmsKeyName&quot;: &quot;A String&quot;, # Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources. It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`.
   &quot;labels&quot;: { # Labels associated with this Cloud Function.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
@@ -681,6 +690,7 @@ Returns:
     &quot;allTrafficOnLatestRevision&quot;: True or False, # Whether 100% of traffic is routed to the latest revision. On CreateFunction and UpdateFunction, when set to true, the revision being deployed will serve 100% of traffic, ignoring any traffic split settings, if any. On GetFunction, true will be returned if the latest revision is serving 100% of traffic.
     &quot;availableCpu&quot;: &quot;A String&quot;, # The number of CPUs used in a single container instance. Default value is calculated from available memory. Supports the same values as Cloud Run, see https://cloud.google.com/run/docs/reference/rest/v1/Container#resourcerequirements Example: &quot;1&quot; indicates 1 vCPU
     &quot;availableMemory&quot;: &quot;A String&quot;, # The amount of memory available for a function. Defaults to 256M. Supported units are k, M, G, Mi, Gi. If no unit is supplied the value is interpreted as bytes. See https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go a full description.
+    &quot;binaryAuthorizationPolicy&quot;: &quot;A String&quot;, # Optional. The binary authorization policy to be checked when deploying the Cloud Run service.
     &quot;environmentVariables&quot;: { # Environment variables that shall be available during function execution.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
@@ -727,13 +737,13 @@ Returns:
     },
   ],
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The last update timestamp of a Cloud Function.
-  &quot;upgradeInfo&quot;: { # Information related to: * A function&#x27;s eligibility for 1st Gen to 2nd Gen migration * Current state of migration for function undergoing migration. # Output only. UpgradeInfo for this Cloud Function
+  &quot;upgradeInfo&quot;: { # Information related to: * A function&#x27;s eligibility for 1st Gen to 2nd Gen migration and 2nd Gen to CRf detach. * Current state of migration for function undergoing migration/detach. # Output only. UpgradeInfo for this Cloud Function
     &quot;buildConfig&quot;: { # Describes the Build step of the function that builds a container from the given source. # Describes the Build step of the function that builds a container to prepare for 2nd gen upgrade.
       &quot;automaticUpdatePolicy&quot;: { # Security patches are applied automatically to the runtime without requiring the function to be redeployed.
       },
       &quot;build&quot;: &quot;A String&quot;, # Output only. The Cloud Build name of the latest successful deployment of the function.
       &quot;dockerRegistry&quot;: &quot;A String&quot;, # Docker Registry to use for this deployment. This configuration is only applicable to 1st Gen functions, 2nd Gen functions can only use Artifact Registry. If unspecified, it defaults to `ARTIFACT_REGISTRY`. If `docker_repository` field is specified, this field should either be left unspecified or set to `ARTIFACT_REGISTRY`.
-      &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Cross-project repositories are not supported. Cross-location repositories are not supported. Repository format must be &#x27;DOCKER&#x27;.
+      &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Repository format must be &#x27;DOCKER&#x27;.
       &quot;entryPoint&quot;: &quot;A String&quot;, # The name of the function (as defined in source code) that will be executed. Defaults to the resource name suffix, if not specified. For backward compatibility, if function with given name is not found, then the system will try to use function named &quot;function&quot;. For Node.js this is name of a function exported by the module specified in `source_location`.
       &quot;environmentVariables&quot;: { # User-provided build-time environment variables for the function
         &quot;a_key&quot;: &quot;A String&quot;,
@@ -742,7 +752,7 @@ Returns:
         &quot;runtimeVersion&quot;: &quot;A String&quot;, # Output only. contains the runtime version which was used during latest function deployment.
       },
       &quot;runtime&quot;: &quot;A String&quot;, # The runtime in which to run the function. Required when deploying a new function, optional when updating an existing function. For a complete list of possible choices, see the [`gcloud` command reference](https://cloud.google.com/sdk/gcloud/reference/functions/deploy#--runtime).
-      &quot;serviceAccount&quot;: &quot;A String&quot;, # [Preview] Service account to be used for building the container
+      &quot;serviceAccount&quot;: &quot;A String&quot;, # Service account to be used for building the container. The format of this field is `projects/{projectId}/serviceAccounts/{serviceAccountEmail}`.
       &quot;source&quot;: { # The location of the function source code. # The location of the function source code.
         &quot;gitUri&quot;: &quot;A String&quot;, # If provided, get the source from GitHub repository. This option is valid only for GCF 1st Gen function. Example: https://github.com///blob//
         &quot;repoSource&quot;: { # Location of the source in a Google Cloud Source Repository. # If provided, get the source from this location in a Cloud Source Repository.
@@ -757,6 +767,7 @@ Returns:
           &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
           &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
           &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+          &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
         },
       },
       &quot;sourceProvenance&quot;: { # Provenance of the source. Ways to find the original source, or verify that some source was used for this build. # Output only. A permanent fixed identifier for source.
@@ -773,6 +784,7 @@ Returns:
           &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
           &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
           &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+          &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
         },
       },
       &quot;sourceToken&quot;: &quot;A String&quot;, # An identifier for Firebase function sources. Disclaimer: This field is only supported for Firebase function deployments.
@@ -799,6 +811,7 @@ Returns:
       &quot;allTrafficOnLatestRevision&quot;: True or False, # Whether 100% of traffic is routed to the latest revision. On CreateFunction and UpdateFunction, when set to true, the revision being deployed will serve 100% of traffic, ignoring any traffic split settings, if any. On GetFunction, true will be returned if the latest revision is serving 100% of traffic.
       &quot;availableCpu&quot;: &quot;A String&quot;, # The number of CPUs used in a single container instance. Default value is calculated from available memory. Supports the same values as Cloud Run, see https://cloud.google.com/run/docs/reference/rest/v1/Container#resourcerequirements Example: &quot;1&quot; indicates 1 vCPU
       &quot;availableMemory&quot;: &quot;A String&quot;, # The amount of memory available for a function. Defaults to 256M. Supported units are k, M, G, Mi, Gi. If no unit is supplied the value is interpreted as bytes. See https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go a full description.
+      &quot;binaryAuthorizationPolicy&quot;: &quot;A String&quot;, # Optional. The binary authorization policy to be checked when deploying the Cloud Run service.
       &quot;environmentVariables&quot;: { # Environment variables that shall be available during function execution.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
@@ -916,7 +929,7 @@ Returns:
         },
         &quot;build&quot;: &quot;A String&quot;, # Output only. The Cloud Build name of the latest successful deployment of the function.
         &quot;dockerRegistry&quot;: &quot;A String&quot;, # Docker Registry to use for this deployment. This configuration is only applicable to 1st Gen functions, 2nd Gen functions can only use Artifact Registry. If unspecified, it defaults to `ARTIFACT_REGISTRY`. If `docker_repository` field is specified, this field should either be left unspecified or set to `ARTIFACT_REGISTRY`.
-        &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Cross-project repositories are not supported. Cross-location repositories are not supported. Repository format must be &#x27;DOCKER&#x27;.
+        &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Repository format must be &#x27;DOCKER&#x27;.
         &quot;entryPoint&quot;: &quot;A String&quot;, # The name of the function (as defined in source code) that will be executed. Defaults to the resource name suffix, if not specified. For backward compatibility, if function with given name is not found, then the system will try to use function named &quot;function&quot;. For Node.js this is name of a function exported by the module specified in `source_location`.
         &quot;environmentVariables&quot;: { # User-provided build-time environment variables for the function
           &quot;a_key&quot;: &quot;A String&quot;,
@@ -925,7 +938,7 @@ Returns:
           &quot;runtimeVersion&quot;: &quot;A String&quot;, # Output only. contains the runtime version which was used during latest function deployment.
         },
         &quot;runtime&quot;: &quot;A String&quot;, # The runtime in which to run the function. Required when deploying a new function, optional when updating an existing function. For a complete list of possible choices, see the [`gcloud` command reference](https://cloud.google.com/sdk/gcloud/reference/functions/deploy#--runtime).
-        &quot;serviceAccount&quot;: &quot;A String&quot;, # [Preview] Service account to be used for building the container
+        &quot;serviceAccount&quot;: &quot;A String&quot;, # Service account to be used for building the container. The format of this field is `projects/{projectId}/serviceAccounts/{serviceAccountEmail}`.
         &quot;source&quot;: { # The location of the function source code. # The location of the function source code.
           &quot;gitUri&quot;: &quot;A String&quot;, # If provided, get the source from GitHub repository. This option is valid only for GCF 1st Gen function. Example: https://github.com///blob//
           &quot;repoSource&quot;: { # Location of the source in a Google Cloud Source Repository. # If provided, get the source from this location in a Cloud Source Repository.
@@ -940,6 +953,7 @@ Returns:
             &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
             &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
             &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+            &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
           },
         },
         &quot;sourceProvenance&quot;: { # Provenance of the source. Ways to find the original source, or verify that some source was used for this build. # Output only. A permanent fixed identifier for source.
@@ -956,6 +970,7 @@ Returns:
             &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
             &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
             &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+            &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
           },
         },
         &quot;sourceToken&quot;: &quot;A String&quot;, # An identifier for Firebase function sources. Disclaimer: This field is only supported for Firebase function deployments.
@@ -981,7 +996,7 @@ Returns:
         &quot;trigger&quot;: &quot;A String&quot;, # Output only. The resource name of the Eventarc trigger. The format of this field is `projects/{project}/locations/{region}/triggers/{trigger}`.
         &quot;triggerRegion&quot;: &quot;A String&quot;, # The region that the trigger will be in. The trigger will only receive events originating in this region. It can be the same region as the function, a different region or multi-region, or the global region. If not provided, defaults to the same region as the function.
       },
-      &quot;kmsKeyName&quot;: &quot;A String&quot;, # [Preview] Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources. It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`.
+      &quot;kmsKeyName&quot;: &quot;A String&quot;, # Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources. It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`.
       &quot;labels&quot;: { # Labels associated with this Cloud Function.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
@@ -991,6 +1006,7 @@ Returns:
         &quot;allTrafficOnLatestRevision&quot;: True or False, # Whether 100% of traffic is routed to the latest revision. On CreateFunction and UpdateFunction, when set to true, the revision being deployed will serve 100% of traffic, ignoring any traffic split settings, if any. On GetFunction, true will be returned if the latest revision is serving 100% of traffic.
         &quot;availableCpu&quot;: &quot;A String&quot;, # The number of CPUs used in a single container instance. Default value is calculated from available memory. Supports the same values as Cloud Run, see https://cloud.google.com/run/docs/reference/rest/v1/Container#resourcerequirements Example: &quot;1&quot; indicates 1 vCPU
         &quot;availableMemory&quot;: &quot;A String&quot;, # The amount of memory available for a function. Defaults to 256M. Supported units are k, M, G, Mi, Gi. If no unit is supplied the value is interpreted as bytes. See https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go a full description.
+        &quot;binaryAuthorizationPolicy&quot;: &quot;A String&quot;, # Optional. The binary authorization policy to be checked when deploying the Cloud Run service.
         &quot;environmentVariables&quot;: { # Environment variables that shall be available during function execution.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
@@ -1037,13 +1053,13 @@ Returns:
         },
       ],
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The last update timestamp of a Cloud Function.
-      &quot;upgradeInfo&quot;: { # Information related to: * A function&#x27;s eligibility for 1st Gen to 2nd Gen migration * Current state of migration for function undergoing migration. # Output only. UpgradeInfo for this Cloud Function
+      &quot;upgradeInfo&quot;: { # Information related to: * A function&#x27;s eligibility for 1st Gen to 2nd Gen migration and 2nd Gen to CRf detach. * Current state of migration for function undergoing migration/detach. # Output only. UpgradeInfo for this Cloud Function
         &quot;buildConfig&quot;: { # Describes the Build step of the function that builds a container from the given source. # Describes the Build step of the function that builds a container to prepare for 2nd gen upgrade.
           &quot;automaticUpdatePolicy&quot;: { # Security patches are applied automatically to the runtime without requiring the function to be redeployed.
           },
           &quot;build&quot;: &quot;A String&quot;, # Output only. The Cloud Build name of the latest successful deployment of the function.
           &quot;dockerRegistry&quot;: &quot;A String&quot;, # Docker Registry to use for this deployment. This configuration is only applicable to 1st Gen functions, 2nd Gen functions can only use Artifact Registry. If unspecified, it defaults to `ARTIFACT_REGISTRY`. If `docker_repository` field is specified, this field should either be left unspecified or set to `ARTIFACT_REGISTRY`.
-          &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Cross-project repositories are not supported. Cross-location repositories are not supported. Repository format must be &#x27;DOCKER&#x27;.
+          &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Repository format must be &#x27;DOCKER&#x27;.
           &quot;entryPoint&quot;: &quot;A String&quot;, # The name of the function (as defined in source code) that will be executed. Defaults to the resource name suffix, if not specified. For backward compatibility, if function with given name is not found, then the system will try to use function named &quot;function&quot;. For Node.js this is name of a function exported by the module specified in `source_location`.
           &quot;environmentVariables&quot;: { # User-provided build-time environment variables for the function
             &quot;a_key&quot;: &quot;A String&quot;,
@@ -1052,7 +1068,7 @@ Returns:
             &quot;runtimeVersion&quot;: &quot;A String&quot;, # Output only. contains the runtime version which was used during latest function deployment.
           },
           &quot;runtime&quot;: &quot;A String&quot;, # The runtime in which to run the function. Required when deploying a new function, optional when updating an existing function. For a complete list of possible choices, see the [`gcloud` command reference](https://cloud.google.com/sdk/gcloud/reference/functions/deploy#--runtime).
-          &quot;serviceAccount&quot;: &quot;A String&quot;, # [Preview] Service account to be used for building the container
+          &quot;serviceAccount&quot;: &quot;A String&quot;, # Service account to be used for building the container. The format of this field is `projects/{projectId}/serviceAccounts/{serviceAccountEmail}`.
           &quot;source&quot;: { # The location of the function source code. # The location of the function source code.
             &quot;gitUri&quot;: &quot;A String&quot;, # If provided, get the source from GitHub repository. This option is valid only for GCF 1st Gen function. Example: https://github.com///blob//
             &quot;repoSource&quot;: { # Location of the source in a Google Cloud Source Repository. # If provided, get the source from this location in a Cloud Source Repository.
@@ -1067,6 +1083,7 @@ Returns:
               &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
               &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
               &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+              &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
             },
           },
           &quot;sourceProvenance&quot;: { # Provenance of the source. Ways to find the original source, or verify that some source was used for this build. # Output only. A permanent fixed identifier for source.
@@ -1083,6 +1100,7 @@ Returns:
               &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
               &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
               &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+              &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
             },
           },
           &quot;sourceToken&quot;: &quot;A String&quot;, # An identifier for Firebase function sources. Disclaimer: This field is only supported for Firebase function deployments.
@@ -1109,6 +1127,7 @@ Returns:
           &quot;allTrafficOnLatestRevision&quot;: True or False, # Whether 100% of traffic is routed to the latest revision. On CreateFunction and UpdateFunction, when set to true, the revision being deployed will serve 100% of traffic, ignoring any traffic split settings, if any. On GetFunction, true will be returned if the latest revision is serving 100% of traffic.
           &quot;availableCpu&quot;: &quot;A String&quot;, # The number of CPUs used in a single container instance. Default value is calculated from available memory. Supports the same values as Cloud Run, see https://cloud.google.com/run/docs/reference/rest/v1/Container#resourcerequirements Example: &quot;1&quot; indicates 1 vCPU
           &quot;availableMemory&quot;: &quot;A String&quot;, # The amount of memory available for a function. Defaults to 256M. Supported units are k, M, G, Mi, Gi. If no unit is supplied the value is interpreted as bytes. See https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go a full description.
+          &quot;binaryAuthorizationPolicy&quot;: &quot;A String&quot;, # Optional. The binary authorization policy to be checked when deploying the Cloud Run service.
           &quot;environmentVariables&quot;: { # Environment variables that shall be available during function execution.
             &quot;a_key&quot;: &quot;A String&quot;,
           },
@@ -1187,7 +1206,7 @@ Args:
     },
     &quot;build&quot;: &quot;A String&quot;, # Output only. The Cloud Build name of the latest successful deployment of the function.
     &quot;dockerRegistry&quot;: &quot;A String&quot;, # Docker Registry to use for this deployment. This configuration is only applicable to 1st Gen functions, 2nd Gen functions can only use Artifact Registry. If unspecified, it defaults to `ARTIFACT_REGISTRY`. If `docker_repository` field is specified, this field should either be left unspecified or set to `ARTIFACT_REGISTRY`.
-    &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Cross-project repositories are not supported. Cross-location repositories are not supported. Repository format must be &#x27;DOCKER&#x27;.
+    &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Repository format must be &#x27;DOCKER&#x27;.
     &quot;entryPoint&quot;: &quot;A String&quot;, # The name of the function (as defined in source code) that will be executed. Defaults to the resource name suffix, if not specified. For backward compatibility, if function with given name is not found, then the system will try to use function named &quot;function&quot;. For Node.js this is name of a function exported by the module specified in `source_location`.
     &quot;environmentVariables&quot;: { # User-provided build-time environment variables for the function
       &quot;a_key&quot;: &quot;A String&quot;,
@@ -1196,7 +1215,7 @@ Args:
       &quot;runtimeVersion&quot;: &quot;A String&quot;, # Output only. contains the runtime version which was used during latest function deployment.
     },
     &quot;runtime&quot;: &quot;A String&quot;, # The runtime in which to run the function. Required when deploying a new function, optional when updating an existing function. For a complete list of possible choices, see the [`gcloud` command reference](https://cloud.google.com/sdk/gcloud/reference/functions/deploy#--runtime).
-    &quot;serviceAccount&quot;: &quot;A String&quot;, # [Preview] Service account to be used for building the container
+    &quot;serviceAccount&quot;: &quot;A String&quot;, # Service account to be used for building the container. The format of this field is `projects/{projectId}/serviceAccounts/{serviceAccountEmail}`.
     &quot;source&quot;: { # The location of the function source code. # The location of the function source code.
       &quot;gitUri&quot;: &quot;A String&quot;, # If provided, get the source from GitHub repository. This option is valid only for GCF 1st Gen function. Example: https://github.com///blob//
       &quot;repoSource&quot;: { # Location of the source in a Google Cloud Source Repository. # If provided, get the source from this location in a Cloud Source Repository.
@@ -1211,6 +1230,7 @@ Args:
         &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
         &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
         &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+        &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
       },
     },
     &quot;sourceProvenance&quot;: { # Provenance of the source. Ways to find the original source, or verify that some source was used for this build. # Output only. A permanent fixed identifier for source.
@@ -1227,6 +1247,7 @@ Args:
         &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
         &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
         &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+        &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
       },
     },
     &quot;sourceToken&quot;: &quot;A String&quot;, # An identifier for Firebase function sources. Disclaimer: This field is only supported for Firebase function deployments.
@@ -1252,7 +1273,7 @@ Args:
     &quot;trigger&quot;: &quot;A String&quot;, # Output only. The resource name of the Eventarc trigger. The format of this field is `projects/{project}/locations/{region}/triggers/{trigger}`.
     &quot;triggerRegion&quot;: &quot;A String&quot;, # The region that the trigger will be in. The trigger will only receive events originating in this region. It can be the same region as the function, a different region or multi-region, or the global region. If not provided, defaults to the same region as the function.
   },
-  &quot;kmsKeyName&quot;: &quot;A String&quot;, # [Preview] Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources. It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`.
+  &quot;kmsKeyName&quot;: &quot;A String&quot;, # Resource name of a KMS crypto key (managed by the user) used to encrypt/decrypt function resources. It must match the pattern `projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{crypto_key}`.
   &quot;labels&quot;: { # Labels associated with this Cloud Function.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
@@ -1262,6 +1283,7 @@ Args:
     &quot;allTrafficOnLatestRevision&quot;: True or False, # Whether 100% of traffic is routed to the latest revision. On CreateFunction and UpdateFunction, when set to true, the revision being deployed will serve 100% of traffic, ignoring any traffic split settings, if any. On GetFunction, true will be returned if the latest revision is serving 100% of traffic.
     &quot;availableCpu&quot;: &quot;A String&quot;, # The number of CPUs used in a single container instance. Default value is calculated from available memory. Supports the same values as Cloud Run, see https://cloud.google.com/run/docs/reference/rest/v1/Container#resourcerequirements Example: &quot;1&quot; indicates 1 vCPU
     &quot;availableMemory&quot;: &quot;A String&quot;, # The amount of memory available for a function. Defaults to 256M. Supported units are k, M, G, Mi, Gi. If no unit is supplied the value is interpreted as bytes. See https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go a full description.
+    &quot;binaryAuthorizationPolicy&quot;: &quot;A String&quot;, # Optional. The binary authorization policy to be checked when deploying the Cloud Run service.
     &quot;environmentVariables&quot;: { # Environment variables that shall be available during function execution.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
@@ -1308,13 +1330,13 @@ Args:
     },
   ],
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The last update timestamp of a Cloud Function.
-  &quot;upgradeInfo&quot;: { # Information related to: * A function&#x27;s eligibility for 1st Gen to 2nd Gen migration * Current state of migration for function undergoing migration. # Output only. UpgradeInfo for this Cloud Function
+  &quot;upgradeInfo&quot;: { # Information related to: * A function&#x27;s eligibility for 1st Gen to 2nd Gen migration and 2nd Gen to CRf detach. * Current state of migration for function undergoing migration/detach. # Output only. UpgradeInfo for this Cloud Function
     &quot;buildConfig&quot;: { # Describes the Build step of the function that builds a container from the given source. # Describes the Build step of the function that builds a container to prepare for 2nd gen upgrade.
       &quot;automaticUpdatePolicy&quot;: { # Security patches are applied automatically to the runtime without requiring the function to be redeployed.
       },
       &quot;build&quot;: &quot;A String&quot;, # Output only. The Cloud Build name of the latest successful deployment of the function.
       &quot;dockerRegistry&quot;: &quot;A String&quot;, # Docker Registry to use for this deployment. This configuration is only applicable to 1st Gen functions, 2nd Gen functions can only use Artifact Registry. If unspecified, it defaults to `ARTIFACT_REGISTRY`. If `docker_repository` field is specified, this field should either be left unspecified or set to `ARTIFACT_REGISTRY`.
-      &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Cross-project repositories are not supported. Cross-location repositories are not supported. Repository format must be &#x27;DOCKER&#x27;.
+      &quot;dockerRepository&quot;: &quot;A String&quot;, # Repository in Artifact Registry to which the function docker image will be pushed after it is built by Cloud Build. If specified by user, it is created and managed by user with a customer managed encryption key. Otherwise, GCF will create and use a repository named &#x27;gcf-artifacts&#x27; for every deployed region. It must match the pattern `projects/{project}/locations/{location}/repositories/{repository}`. Repository format must be &#x27;DOCKER&#x27;.
       &quot;entryPoint&quot;: &quot;A String&quot;, # The name of the function (as defined in source code) that will be executed. Defaults to the resource name suffix, if not specified. For backward compatibility, if function with given name is not found, then the system will try to use function named &quot;function&quot;. For Node.js this is name of a function exported by the module specified in `source_location`.
       &quot;environmentVariables&quot;: { # User-provided build-time environment variables for the function
         &quot;a_key&quot;: &quot;A String&quot;,
@@ -1323,7 +1345,7 @@ Args:
         &quot;runtimeVersion&quot;: &quot;A String&quot;, # Output only. contains the runtime version which was used during latest function deployment.
       },
       &quot;runtime&quot;: &quot;A String&quot;, # The runtime in which to run the function. Required when deploying a new function, optional when updating an existing function. For a complete list of possible choices, see the [`gcloud` command reference](https://cloud.google.com/sdk/gcloud/reference/functions/deploy#--runtime).
-      &quot;serviceAccount&quot;: &quot;A String&quot;, # [Preview] Service account to be used for building the container
+      &quot;serviceAccount&quot;: &quot;A String&quot;, # Service account to be used for building the container. The format of this field is `projects/{projectId}/serviceAccounts/{serviceAccountEmail}`.
       &quot;source&quot;: { # The location of the function source code. # The location of the function source code.
         &quot;gitUri&quot;: &quot;A String&quot;, # If provided, get the source from GitHub repository. This option is valid only for GCF 1st Gen function. Example: https://github.com///blob//
         &quot;repoSource&quot;: { # Location of the source in a Google Cloud Source Repository. # If provided, get the source from this location in a Cloud Source Repository.
@@ -1338,6 +1360,7 @@ Args:
           &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
           &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
           &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+          &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
         },
       },
       &quot;sourceProvenance&quot;: { # Provenance of the source. Ways to find the original source, or verify that some source was used for this build. # Output only. A permanent fixed identifier for source.
@@ -1354,6 +1377,7 @@ Args:
           &quot;bucket&quot;: &quot;A String&quot;, # Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).
           &quot;generation&quot;: &quot;A String&quot;, # Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
           &quot;object&quot;: &quot;A String&quot;, # Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.
+          &quot;sourceUploadUrl&quot;: &quot;A String&quot;, # When the specified storage bucket is a 1st gen function uploard url bucket, this field should be set as the generated upload url for 1st gen deployment.
         },
       },
       &quot;sourceToken&quot;: &quot;A String&quot;, # An identifier for Firebase function sources. Disclaimer: This field is only supported for Firebase function deployments.
@@ -1380,6 +1404,7 @@ Args:
       &quot;allTrafficOnLatestRevision&quot;: True or False, # Whether 100% of traffic is routed to the latest revision. On CreateFunction and UpdateFunction, when set to true, the revision being deployed will serve 100% of traffic, ignoring any traffic split settings, if any. On GetFunction, true will be returned if the latest revision is serving 100% of traffic.
       &quot;availableCpu&quot;: &quot;A String&quot;, # The number of CPUs used in a single container instance. Default value is calculated from available memory. Supports the same values as Cloud Run, see https://cloud.google.com/run/docs/reference/rest/v1/Container#resourcerequirements Example: &quot;1&quot; indicates 1 vCPU
       &quot;availableMemory&quot;: &quot;A String&quot;, # The amount of memory available for a function. Defaults to 256M. Supported units are k, M, G, Mi, Gi. If no unit is supplied the value is interpreted as bytes. See https://github.com/kubernetes/kubernetes/blob/master/staging/src/k8s.io/apimachinery/pkg/api/resource/quantity.go a full description.
+      &quot;binaryAuthorizationPolicy&quot;: &quot;A String&quot;, # Optional. The binary authorization policy to be checked when deploying the Cloud Run service.
       &quot;environmentVariables&quot;: { # Environment variables that shall be available during function execution.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
@@ -1422,7 +1447,7 @@ Args:
   &quot;url&quot;: &quot;A String&quot;, # Output only. The deployed url for the function.
 }
 
-  updateMask: string, The list of fields to be updated. If no field mask is provided, all provided fields in the request will be updated.
+  updateMask: string, The list of fields to be updated. If no field mask is provided, all fields will be updated.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format

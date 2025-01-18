@@ -138,14 +138,17 @@ Args:
   },
   &quot;name&quot;: &quot;A String&quot;, # Immutable. Resource name of a PersistentResource.
   &quot;network&quot;: &quot;A String&quot;, # Optional. The full name of the Compute Engine [network](/compute/docs/networks-and-firewalls#networks) to peered with Vertex AI to host the persistent resources. For example, `projects/12345/global/networks/myVPC`. [Format](/compute/docs/reference/rest/v1/networks/insert) is of the form `projects/{project}/global/networks/{network}`. Where {project} is a project number, as in `12345`, and {network} is a network name. To specify this field, you must have already [configured VPC Network Peering for Vertex AI](https://cloud.google.com/vertex-ai/docs/general/vpc-peering). If this field is left unspecified, the resources aren&#x27;t peered with any network.
+  &quot;pscInterfaceConfig&quot;: { # Configuration for PSC-I. # Optional. Configuration for PSC-I for PersistentResource.
+    &quot;networkAttachment&quot;: &quot;A String&quot;, # Optional. The name of the Compute Engine [network attachment](https://cloud.google.com/vpc/docs/about-network-attachments) to attach to the resource within the region and user project. To specify this field, you must have already [created a network attachment] (https://cloud.google.com/vpc/docs/create-manage-network-attachments#create-network-attachments). This field is only used for resources using PSC-I.
+  },
   &quot;reservedIpRanges&quot;: [ # Optional. A list of names for the reserved IP ranges under the VPC network that can be used for this persistent resource. If set, we will deploy the persistent resource within the provided IP ranges. Otherwise, the persistent resource is deployed to any IP ranges under the provided VPC network. Example: [&#x27;vertex-ai-ip-range&#x27;].
     &quot;A String&quot;,
   ],
   &quot;resourcePools&quot;: [ # Required. The spec of the pools of different resources.
     { # Represents the spec of a group of resources of the same type, for example machine type, disk, and accelerators, in a PersistentResource.
-      &quot;autoscalingSpec&quot;: { # The min/max number of replicas allowed if enabling autoscaling # Optional. Optional spec to configure GKE autoscaling
+      &quot;autoscalingSpec&quot;: { # The min/max number of replicas allowed if enabling autoscaling # Optional. Optional spec to configure GKE or Ray-on-Vertex autoscaling
         &quot;maxReplicaCount&quot;: &quot;A String&quot;, # Optional. max replicas in the node pool, must be ≥ replica_count and &gt; min_replica_count or will throw error
-        &quot;minReplicaCount&quot;: &quot;A String&quot;, # Optional. min replicas in the node pool, must be ≤ replica_count and &lt; max_replica_count or will throw error
+        &quot;minReplicaCount&quot;: &quot;A String&quot;, # Optional. min replicas in the node pool, must be ≤ replica_count and &lt; max_replica_count or will throw error. For autoscaling enabled Ray-on-Vertex, we allow min_replica_count of a resource_pool to be 0 to match the OSS Ray behavior(https://docs.ray.io/en/latest/cluster/vms/user-guides/configuring-autoscaling.html#cluster-config-parameters). As for Persistent Resource, the min_replica_count must be &gt; 0, we added a corresponding validation inside CreatePersistentResourceRequestValidator.java.
       },
       &quot;diskSpec&quot;: { # Represents the spec of disk options. # Optional. Disk spec for the machine in this node pool.
         &quot;bootDiskSizeGb&quot;: 42, # Size in GB of the boot disk (default is 100GB).
@@ -156,6 +159,13 @@ Args:
         &quot;acceleratorCount&quot;: 42, # The number of accelerators to attach to the machine.
         &quot;acceleratorType&quot;: &quot;A String&quot;, # Immutable. The type of accelerator(s) that may be attached to the machine as per accelerator_count.
         &quot;machineType&quot;: &quot;A String&quot;, # Immutable. The type of the machine. See the [list of machine types supported for prediction](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types) See the [list of machine types supported for custom training](https://cloud.google.com/vertex-ai/docs/training/configure-compute#machine-types). For DeployedModel this field is optional, and the default value is `n1-standard-2`. For BatchPredictionJob or as part of WorkerPoolSpec this field is required.
+        &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
+          &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
+          &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
+          &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+            &quot;A String&quot;,
+          ],
+        },
         &quot;tpuTopology&quot;: &quot;A String&quot;, # Immutable. The topology of the TPUs. Corresponds to the TPU topologies available from GKE. (Example: tpu_topology: &quot;2x2x1&quot;).
       },
       &quot;replicaCount&quot;: &quot;A String&quot;, # Optional. The total number of machines to use for this resource pool.
@@ -172,6 +182,16 @@ Args:
     &quot;raySpec&quot;: { # Configuration information for the Ray cluster. For experimental launch, Ray cluster creation and Persistent cluster creation are 1:1 mapping: We will provision all the nodes within the Persistent cluster as Ray nodes. # Optional. Ray cluster configuration. Required when creating a dedicated RayCluster on the PersistentResource.
       &quot;headNodeResourcePoolId&quot;: &quot;A String&quot;, # Optional. This will be used to indicate which resource pool will serve as the Ray head node(the first node within that pool). Will use the machine from the first workerpool as the head node by default if this field isn&#x27;t set.
       &quot;imageUri&quot;: &quot;A String&quot;, # Optional. Default image for user to choose a preferred ML framework (for example, TensorFlow or Pytorch) by choosing from [Vertex prebuilt images](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers). Either this or the resource_pool_images is required. Use this field if you need all the resource pools to have the same Ray image. Otherwise, use the {@code resource_pool_images} field.
+      &quot;nfsMounts&quot;: [ # Optional. Use if you want to mount to any NFS storages.
+        { # Represents a mount configuration for Network File System (NFS) to mount.
+          &quot;mountPoint&quot;: &quot;A String&quot;, # Required. Destination mount path. The NFS will be mounted for the user under /mnt/nfs/
+          &quot;path&quot;: &quot;A String&quot;, # Required. Source path exported from NFS server. Has to start with &#x27;/&#x27;, and combined with the ip address, it indicates the source mount path in the form of `server:path`
+          &quot;server&quot;: &quot;A String&quot;, # Required. IP address of the NFS server.
+        },
+      ],
+      &quot;rayLogsSpec&quot;: { # Configuration for the Ray OSS Logs. # Optional. OSS Ray logging configurations.
+        &quot;disabled&quot;: True or False, # Optional. Flag to disable the export of Ray OSS logs to Cloud Logging.
+      },
       &quot;rayMetricSpec&quot;: { # Configuration for the Ray metrics. # Optional. Ray metrics configurations.
         &quot;disabled&quot;: True or False, # Optional. Flag to disable the Ray metrics collection.
       },
@@ -184,6 +204,8 @@ Args:
       &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. Required when all below conditions are met * `enable_custom_service_account` is true; * any runtime is specified via `ResourceRuntimeSpec` on creation time, for example, Ray The users must have `iam.serviceAccounts.actAs` permission on this service account and then the specified runtime containers will run as it. Do not set this field if you want to submit jobs using custom service account to this PersistentResource after creation, but only specify the `service_account` inside the job.
     },
   },
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;startTime&quot;: &quot;A String&quot;, # Output only. Time when the PersistentResource for the first time entered the `RUNNING` state.
   &quot;state&quot;: &quot;A String&quot;, # Output only. The detailed state of a Study.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the PersistentResource was most recently updated.
@@ -288,14 +310,17 @@ Returns:
   },
   &quot;name&quot;: &quot;A String&quot;, # Immutable. Resource name of a PersistentResource.
   &quot;network&quot;: &quot;A String&quot;, # Optional. The full name of the Compute Engine [network](/compute/docs/networks-and-firewalls#networks) to peered with Vertex AI to host the persistent resources. For example, `projects/12345/global/networks/myVPC`. [Format](/compute/docs/reference/rest/v1/networks/insert) is of the form `projects/{project}/global/networks/{network}`. Where {project} is a project number, as in `12345`, and {network} is a network name. To specify this field, you must have already [configured VPC Network Peering for Vertex AI](https://cloud.google.com/vertex-ai/docs/general/vpc-peering). If this field is left unspecified, the resources aren&#x27;t peered with any network.
+  &quot;pscInterfaceConfig&quot;: { # Configuration for PSC-I. # Optional. Configuration for PSC-I for PersistentResource.
+    &quot;networkAttachment&quot;: &quot;A String&quot;, # Optional. The name of the Compute Engine [network attachment](https://cloud.google.com/vpc/docs/about-network-attachments) to attach to the resource within the region and user project. To specify this field, you must have already [created a network attachment] (https://cloud.google.com/vpc/docs/create-manage-network-attachments#create-network-attachments). This field is only used for resources using PSC-I.
+  },
   &quot;reservedIpRanges&quot;: [ # Optional. A list of names for the reserved IP ranges under the VPC network that can be used for this persistent resource. If set, we will deploy the persistent resource within the provided IP ranges. Otherwise, the persistent resource is deployed to any IP ranges under the provided VPC network. Example: [&#x27;vertex-ai-ip-range&#x27;].
     &quot;A String&quot;,
   ],
   &quot;resourcePools&quot;: [ # Required. The spec of the pools of different resources.
     { # Represents the spec of a group of resources of the same type, for example machine type, disk, and accelerators, in a PersistentResource.
-      &quot;autoscalingSpec&quot;: { # The min/max number of replicas allowed if enabling autoscaling # Optional. Optional spec to configure GKE autoscaling
+      &quot;autoscalingSpec&quot;: { # The min/max number of replicas allowed if enabling autoscaling # Optional. Optional spec to configure GKE or Ray-on-Vertex autoscaling
         &quot;maxReplicaCount&quot;: &quot;A String&quot;, # Optional. max replicas in the node pool, must be ≥ replica_count and &gt; min_replica_count or will throw error
-        &quot;minReplicaCount&quot;: &quot;A String&quot;, # Optional. min replicas in the node pool, must be ≤ replica_count and &lt; max_replica_count or will throw error
+        &quot;minReplicaCount&quot;: &quot;A String&quot;, # Optional. min replicas in the node pool, must be ≤ replica_count and &lt; max_replica_count or will throw error. For autoscaling enabled Ray-on-Vertex, we allow min_replica_count of a resource_pool to be 0 to match the OSS Ray behavior(https://docs.ray.io/en/latest/cluster/vms/user-guides/configuring-autoscaling.html#cluster-config-parameters). As for Persistent Resource, the min_replica_count must be &gt; 0, we added a corresponding validation inside CreatePersistentResourceRequestValidator.java.
       },
       &quot;diskSpec&quot;: { # Represents the spec of disk options. # Optional. Disk spec for the machine in this node pool.
         &quot;bootDiskSizeGb&quot;: 42, # Size in GB of the boot disk (default is 100GB).
@@ -306,6 +331,13 @@ Returns:
         &quot;acceleratorCount&quot;: 42, # The number of accelerators to attach to the machine.
         &quot;acceleratorType&quot;: &quot;A String&quot;, # Immutable. The type of accelerator(s) that may be attached to the machine as per accelerator_count.
         &quot;machineType&quot;: &quot;A String&quot;, # Immutable. The type of the machine. See the [list of machine types supported for prediction](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types) See the [list of machine types supported for custom training](https://cloud.google.com/vertex-ai/docs/training/configure-compute#machine-types). For DeployedModel this field is optional, and the default value is `n1-standard-2`. For BatchPredictionJob or as part of WorkerPoolSpec this field is required.
+        &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
+          &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
+          &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
+          &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+            &quot;A String&quot;,
+          ],
+        },
         &quot;tpuTopology&quot;: &quot;A String&quot;, # Immutable. The topology of the TPUs. Corresponds to the TPU topologies available from GKE. (Example: tpu_topology: &quot;2x2x1&quot;).
       },
       &quot;replicaCount&quot;: &quot;A String&quot;, # Optional. The total number of machines to use for this resource pool.
@@ -322,6 +354,16 @@ Returns:
     &quot;raySpec&quot;: { # Configuration information for the Ray cluster. For experimental launch, Ray cluster creation and Persistent cluster creation are 1:1 mapping: We will provision all the nodes within the Persistent cluster as Ray nodes. # Optional. Ray cluster configuration. Required when creating a dedicated RayCluster on the PersistentResource.
       &quot;headNodeResourcePoolId&quot;: &quot;A String&quot;, # Optional. This will be used to indicate which resource pool will serve as the Ray head node(the first node within that pool). Will use the machine from the first workerpool as the head node by default if this field isn&#x27;t set.
       &quot;imageUri&quot;: &quot;A String&quot;, # Optional. Default image for user to choose a preferred ML framework (for example, TensorFlow or Pytorch) by choosing from [Vertex prebuilt images](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers). Either this or the resource_pool_images is required. Use this field if you need all the resource pools to have the same Ray image. Otherwise, use the {@code resource_pool_images} field.
+      &quot;nfsMounts&quot;: [ # Optional. Use if you want to mount to any NFS storages.
+        { # Represents a mount configuration for Network File System (NFS) to mount.
+          &quot;mountPoint&quot;: &quot;A String&quot;, # Required. Destination mount path. The NFS will be mounted for the user under /mnt/nfs/
+          &quot;path&quot;: &quot;A String&quot;, # Required. Source path exported from NFS server. Has to start with &#x27;/&#x27;, and combined with the ip address, it indicates the source mount path in the form of `server:path`
+          &quot;server&quot;: &quot;A String&quot;, # Required. IP address of the NFS server.
+        },
+      ],
+      &quot;rayLogsSpec&quot;: { # Configuration for the Ray OSS Logs. # Optional. OSS Ray logging configurations.
+        &quot;disabled&quot;: True or False, # Optional. Flag to disable the export of Ray OSS logs to Cloud Logging.
+      },
       &quot;rayMetricSpec&quot;: { # Configuration for the Ray metrics. # Optional. Ray metrics configurations.
         &quot;disabled&quot;: True or False, # Optional. Flag to disable the Ray metrics collection.
       },
@@ -334,6 +376,8 @@ Returns:
       &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. Required when all below conditions are met * `enable_custom_service_account` is true; * any runtime is specified via `ResourceRuntimeSpec` on creation time, for example, Ray The users must have `iam.serviceAccounts.actAs` permission on this service account and then the specified runtime containers will run as it. Do not set this field if you want to submit jobs using custom service account to this PersistentResource after creation, but only specify the `service_account` inside the job.
     },
   },
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;startTime&quot;: &quot;A String&quot;, # Output only. Time when the PersistentResource for the first time entered the `RUNNING` state.
   &quot;state&quot;: &quot;A String&quot;, # Output only. The detailed state of a Study.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the PersistentResource was most recently updated.
@@ -347,7 +391,7 @@ Returns:
 Args:
   parent: string, Required. The resource name of the Location to list the PersistentResources from. Format: `projects/{project}/locations/{location}` (required)
   pageSize: integer, Optional. The standard list page size.
-  pageToken: string, Optional. The standard list page token. Typically obtained via ListPersistentResourceResponse.next_page_token of the previous PersistentResourceService.ListPersistentResource call.
+  pageToken: string, Optional. The standard list page token. Typically obtained via ListPersistentResourcesResponse.next_page_token of the previous PersistentResourceService.ListPersistentResource call.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -379,14 +423,17 @@ Returns:
       },
       &quot;name&quot;: &quot;A String&quot;, # Immutable. Resource name of a PersistentResource.
       &quot;network&quot;: &quot;A String&quot;, # Optional. The full name of the Compute Engine [network](/compute/docs/networks-and-firewalls#networks) to peered with Vertex AI to host the persistent resources. For example, `projects/12345/global/networks/myVPC`. [Format](/compute/docs/reference/rest/v1/networks/insert) is of the form `projects/{project}/global/networks/{network}`. Where {project} is a project number, as in `12345`, and {network} is a network name. To specify this field, you must have already [configured VPC Network Peering for Vertex AI](https://cloud.google.com/vertex-ai/docs/general/vpc-peering). If this field is left unspecified, the resources aren&#x27;t peered with any network.
+      &quot;pscInterfaceConfig&quot;: { # Configuration for PSC-I. # Optional. Configuration for PSC-I for PersistentResource.
+        &quot;networkAttachment&quot;: &quot;A String&quot;, # Optional. The name of the Compute Engine [network attachment](https://cloud.google.com/vpc/docs/about-network-attachments) to attach to the resource within the region and user project. To specify this field, you must have already [created a network attachment] (https://cloud.google.com/vpc/docs/create-manage-network-attachments#create-network-attachments). This field is only used for resources using PSC-I.
+      },
       &quot;reservedIpRanges&quot;: [ # Optional. A list of names for the reserved IP ranges under the VPC network that can be used for this persistent resource. If set, we will deploy the persistent resource within the provided IP ranges. Otherwise, the persistent resource is deployed to any IP ranges under the provided VPC network. Example: [&#x27;vertex-ai-ip-range&#x27;].
         &quot;A String&quot;,
       ],
       &quot;resourcePools&quot;: [ # Required. The spec of the pools of different resources.
         { # Represents the spec of a group of resources of the same type, for example machine type, disk, and accelerators, in a PersistentResource.
-          &quot;autoscalingSpec&quot;: { # The min/max number of replicas allowed if enabling autoscaling # Optional. Optional spec to configure GKE autoscaling
+          &quot;autoscalingSpec&quot;: { # The min/max number of replicas allowed if enabling autoscaling # Optional. Optional spec to configure GKE or Ray-on-Vertex autoscaling
             &quot;maxReplicaCount&quot;: &quot;A String&quot;, # Optional. max replicas in the node pool, must be ≥ replica_count and &gt; min_replica_count or will throw error
-            &quot;minReplicaCount&quot;: &quot;A String&quot;, # Optional. min replicas in the node pool, must be ≤ replica_count and &lt; max_replica_count or will throw error
+            &quot;minReplicaCount&quot;: &quot;A String&quot;, # Optional. min replicas in the node pool, must be ≤ replica_count and &lt; max_replica_count or will throw error. For autoscaling enabled Ray-on-Vertex, we allow min_replica_count of a resource_pool to be 0 to match the OSS Ray behavior(https://docs.ray.io/en/latest/cluster/vms/user-guides/configuring-autoscaling.html#cluster-config-parameters). As for Persistent Resource, the min_replica_count must be &gt; 0, we added a corresponding validation inside CreatePersistentResourceRequestValidator.java.
           },
           &quot;diskSpec&quot;: { # Represents the spec of disk options. # Optional. Disk spec for the machine in this node pool.
             &quot;bootDiskSizeGb&quot;: 42, # Size in GB of the boot disk (default is 100GB).
@@ -397,6 +444,13 @@ Returns:
             &quot;acceleratorCount&quot;: 42, # The number of accelerators to attach to the machine.
             &quot;acceleratorType&quot;: &quot;A String&quot;, # Immutable. The type of accelerator(s) that may be attached to the machine as per accelerator_count.
             &quot;machineType&quot;: &quot;A String&quot;, # Immutable. The type of the machine. See the [list of machine types supported for prediction](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types) See the [list of machine types supported for custom training](https://cloud.google.com/vertex-ai/docs/training/configure-compute#machine-types). For DeployedModel this field is optional, and the default value is `n1-standard-2`. For BatchPredictionJob or as part of WorkerPoolSpec this field is required.
+            &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
+              &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
+              &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
+              &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+                &quot;A String&quot;,
+              ],
+            },
             &quot;tpuTopology&quot;: &quot;A String&quot;, # Immutable. The topology of the TPUs. Corresponds to the TPU topologies available from GKE. (Example: tpu_topology: &quot;2x2x1&quot;).
           },
           &quot;replicaCount&quot;: &quot;A String&quot;, # Optional. The total number of machines to use for this resource pool.
@@ -413,6 +467,16 @@ Returns:
         &quot;raySpec&quot;: { # Configuration information for the Ray cluster. For experimental launch, Ray cluster creation and Persistent cluster creation are 1:1 mapping: We will provision all the nodes within the Persistent cluster as Ray nodes. # Optional. Ray cluster configuration. Required when creating a dedicated RayCluster on the PersistentResource.
           &quot;headNodeResourcePoolId&quot;: &quot;A String&quot;, # Optional. This will be used to indicate which resource pool will serve as the Ray head node(the first node within that pool). Will use the machine from the first workerpool as the head node by default if this field isn&#x27;t set.
           &quot;imageUri&quot;: &quot;A String&quot;, # Optional. Default image for user to choose a preferred ML framework (for example, TensorFlow or Pytorch) by choosing from [Vertex prebuilt images](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers). Either this or the resource_pool_images is required. Use this field if you need all the resource pools to have the same Ray image. Otherwise, use the {@code resource_pool_images} field.
+          &quot;nfsMounts&quot;: [ # Optional. Use if you want to mount to any NFS storages.
+            { # Represents a mount configuration for Network File System (NFS) to mount.
+              &quot;mountPoint&quot;: &quot;A String&quot;, # Required. Destination mount path. The NFS will be mounted for the user under /mnt/nfs/
+              &quot;path&quot;: &quot;A String&quot;, # Required. Source path exported from NFS server. Has to start with &#x27;/&#x27;, and combined with the ip address, it indicates the source mount path in the form of `server:path`
+              &quot;server&quot;: &quot;A String&quot;, # Required. IP address of the NFS server.
+            },
+          ],
+          &quot;rayLogsSpec&quot;: { # Configuration for the Ray OSS Logs. # Optional. OSS Ray logging configurations.
+            &quot;disabled&quot;: True or False, # Optional. Flag to disable the export of Ray OSS logs to Cloud Logging.
+          },
           &quot;rayMetricSpec&quot;: { # Configuration for the Ray metrics. # Optional. Ray metrics configurations.
             &quot;disabled&quot;: True or False, # Optional. Flag to disable the Ray metrics collection.
           },
@@ -425,6 +489,8 @@ Returns:
           &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. Required when all below conditions are met * `enable_custom_service_account` is true; * any runtime is specified via `ResourceRuntimeSpec` on creation time, for example, Ray The users must have `iam.serviceAccounts.actAs` permission on this service account and then the specified runtime containers will run as it. Do not set this field if you want to submit jobs using custom service account to this PersistentResource after creation, but only specify the `service_account` inside the job.
         },
       },
+      &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+      &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
       &quot;startTime&quot;: &quot;A String&quot;, # Output only. Time when the PersistentResource for the first time entered the `RUNNING` state.
       &quot;state&quot;: &quot;A String&quot;, # Output only. The detailed state of a Study.
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the PersistentResource was most recently updated.
@@ -476,14 +542,17 @@ Args:
   },
   &quot;name&quot;: &quot;A String&quot;, # Immutable. Resource name of a PersistentResource.
   &quot;network&quot;: &quot;A String&quot;, # Optional. The full name of the Compute Engine [network](/compute/docs/networks-and-firewalls#networks) to peered with Vertex AI to host the persistent resources. For example, `projects/12345/global/networks/myVPC`. [Format](/compute/docs/reference/rest/v1/networks/insert) is of the form `projects/{project}/global/networks/{network}`. Where {project} is a project number, as in `12345`, and {network} is a network name. To specify this field, you must have already [configured VPC Network Peering for Vertex AI](https://cloud.google.com/vertex-ai/docs/general/vpc-peering). If this field is left unspecified, the resources aren&#x27;t peered with any network.
+  &quot;pscInterfaceConfig&quot;: { # Configuration for PSC-I. # Optional. Configuration for PSC-I for PersistentResource.
+    &quot;networkAttachment&quot;: &quot;A String&quot;, # Optional. The name of the Compute Engine [network attachment](https://cloud.google.com/vpc/docs/about-network-attachments) to attach to the resource within the region and user project. To specify this field, you must have already [created a network attachment] (https://cloud.google.com/vpc/docs/create-manage-network-attachments#create-network-attachments). This field is only used for resources using PSC-I.
+  },
   &quot;reservedIpRanges&quot;: [ # Optional. A list of names for the reserved IP ranges under the VPC network that can be used for this persistent resource. If set, we will deploy the persistent resource within the provided IP ranges. Otherwise, the persistent resource is deployed to any IP ranges under the provided VPC network. Example: [&#x27;vertex-ai-ip-range&#x27;].
     &quot;A String&quot;,
   ],
   &quot;resourcePools&quot;: [ # Required. The spec of the pools of different resources.
     { # Represents the spec of a group of resources of the same type, for example machine type, disk, and accelerators, in a PersistentResource.
-      &quot;autoscalingSpec&quot;: { # The min/max number of replicas allowed if enabling autoscaling # Optional. Optional spec to configure GKE autoscaling
+      &quot;autoscalingSpec&quot;: { # The min/max number of replicas allowed if enabling autoscaling # Optional. Optional spec to configure GKE or Ray-on-Vertex autoscaling
         &quot;maxReplicaCount&quot;: &quot;A String&quot;, # Optional. max replicas in the node pool, must be ≥ replica_count and &gt; min_replica_count or will throw error
-        &quot;minReplicaCount&quot;: &quot;A String&quot;, # Optional. min replicas in the node pool, must be ≤ replica_count and &lt; max_replica_count or will throw error
+        &quot;minReplicaCount&quot;: &quot;A String&quot;, # Optional. min replicas in the node pool, must be ≤ replica_count and &lt; max_replica_count or will throw error. For autoscaling enabled Ray-on-Vertex, we allow min_replica_count of a resource_pool to be 0 to match the OSS Ray behavior(https://docs.ray.io/en/latest/cluster/vms/user-guides/configuring-autoscaling.html#cluster-config-parameters). As for Persistent Resource, the min_replica_count must be &gt; 0, we added a corresponding validation inside CreatePersistentResourceRequestValidator.java.
       },
       &quot;diskSpec&quot;: { # Represents the spec of disk options. # Optional. Disk spec for the machine in this node pool.
         &quot;bootDiskSizeGb&quot;: 42, # Size in GB of the boot disk (default is 100GB).
@@ -494,6 +563,13 @@ Args:
         &quot;acceleratorCount&quot;: 42, # The number of accelerators to attach to the machine.
         &quot;acceleratorType&quot;: &quot;A String&quot;, # Immutable. The type of accelerator(s) that may be attached to the machine as per accelerator_count.
         &quot;machineType&quot;: &quot;A String&quot;, # Immutable. The type of the machine. See the [list of machine types supported for prediction](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types) See the [list of machine types supported for custom training](https://cloud.google.com/vertex-ai/docs/training/configure-compute#machine-types). For DeployedModel this field is optional, and the default value is `n1-standard-2`. For BatchPredictionJob or as part of WorkerPoolSpec this field is required.
+        &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
+          &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
+          &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
+          &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+            &quot;A String&quot;,
+          ],
+        },
         &quot;tpuTopology&quot;: &quot;A String&quot;, # Immutable. The topology of the TPUs. Corresponds to the TPU topologies available from GKE. (Example: tpu_topology: &quot;2x2x1&quot;).
       },
       &quot;replicaCount&quot;: &quot;A String&quot;, # Optional. The total number of machines to use for this resource pool.
@@ -510,6 +586,16 @@ Args:
     &quot;raySpec&quot;: { # Configuration information for the Ray cluster. For experimental launch, Ray cluster creation and Persistent cluster creation are 1:1 mapping: We will provision all the nodes within the Persistent cluster as Ray nodes. # Optional. Ray cluster configuration. Required when creating a dedicated RayCluster on the PersistentResource.
       &quot;headNodeResourcePoolId&quot;: &quot;A String&quot;, # Optional. This will be used to indicate which resource pool will serve as the Ray head node(the first node within that pool). Will use the machine from the first workerpool as the head node by default if this field isn&#x27;t set.
       &quot;imageUri&quot;: &quot;A String&quot;, # Optional. Default image for user to choose a preferred ML framework (for example, TensorFlow or Pytorch) by choosing from [Vertex prebuilt images](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers). Either this or the resource_pool_images is required. Use this field if you need all the resource pools to have the same Ray image. Otherwise, use the {@code resource_pool_images} field.
+      &quot;nfsMounts&quot;: [ # Optional. Use if you want to mount to any NFS storages.
+        { # Represents a mount configuration for Network File System (NFS) to mount.
+          &quot;mountPoint&quot;: &quot;A String&quot;, # Required. Destination mount path. The NFS will be mounted for the user under /mnt/nfs/
+          &quot;path&quot;: &quot;A String&quot;, # Required. Source path exported from NFS server. Has to start with &#x27;/&#x27;, and combined with the ip address, it indicates the source mount path in the form of `server:path`
+          &quot;server&quot;: &quot;A String&quot;, # Required. IP address of the NFS server.
+        },
+      ],
+      &quot;rayLogsSpec&quot;: { # Configuration for the Ray OSS Logs. # Optional. OSS Ray logging configurations.
+        &quot;disabled&quot;: True or False, # Optional. Flag to disable the export of Ray OSS logs to Cloud Logging.
+      },
       &quot;rayMetricSpec&quot;: { # Configuration for the Ray metrics. # Optional. Ray metrics configurations.
         &quot;disabled&quot;: True or False, # Optional. Flag to disable the Ray metrics collection.
       },
@@ -522,6 +608,8 @@ Args:
       &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. Required when all below conditions are met * `enable_custom_service_account` is true; * any runtime is specified via `ResourceRuntimeSpec` on creation time, for example, Ray The users must have `iam.serviceAccounts.actAs` permission on this service account and then the specified runtime containers will run as it. Do not set this field if you want to submit jobs using custom service account to this PersistentResource after creation, but only specify the `service_account` inside the job.
     },
   },
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;startTime&quot;: &quot;A String&quot;, # Output only. Time when the PersistentResource for the first time entered the `RUNNING` state.
   &quot;state&quot;: &quot;A String&quot;, # Output only. The detailed state of a Study.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the PersistentResource was most recently updated.

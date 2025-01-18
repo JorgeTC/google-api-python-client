@@ -144,6 +144,7 @@ Args:
             &quot;certificationAuthority&quot;: &quot;A String&quot;, # The certification authority, for example &quot;European_Commission&quot;. Maximum length is 2000 characters.
             &quot;certificationCode&quot;: &quot;A String&quot;, # The certification code, for eaxample &quot;123456&quot;. Maximum length is 2000 characters.
             &quot;certificationName&quot;: &quot;A String&quot;, # The name of the certification, for example &quot;EPREL&quot;. Maximum length is 2000 characters.
+            &quot;certificationValue&quot;: &quot;A String&quot;, # The certification value (also known as class, level or grade), for example &quot;A+&quot;, &quot;C&quot;, &quot;gold&quot;. Maximum length is 2000 characters.
           },
         ],
         &quot;channel&quot;: &quot;A String&quot;, # Required. The item&#x27;s channel (online or local). Acceptable values are: - &quot;`local`&quot; - &quot;`online`&quot;
@@ -240,19 +241,38 @@ Args:
         ],
         &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
         &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-        &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+        &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example, better pricing, points, etc) to the user of this item. This signular field points to the latest uploaded loyalty program info. This field will be deprecated in the coming weeks and should not be used in favor of the plural &#x27;LoyaltyProgram&#x27; field below.
           &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
             &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
             &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
           },
           &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+          &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
           &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
             &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
             &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
           },
           &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+          &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
           &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
         },
+        &quot;loyaltyPrograms&quot;: [ # Optional. A list of loyalty program information that is used to surface loyalty benefits (for example, better pricing, points, etc) to the user of this item.
+          { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446
+            &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+              &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+              &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+            },
+            &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+            &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
+            &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+              &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+              &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+            },
+            &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+            &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
+            &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
+          },
+        ],
         &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
         &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
         &quot;maxHandlingTime&quot;: &quot;A String&quot;, # Maximal product handling time (in business days).
@@ -352,7 +372,7 @@ Args:
         &quot;sizes&quot;: [ # Size of the item. Only one value is allowed. For variants with different sizes, insert a separate product for each size with the same `itemGroupId` value (see size definition).
           &quot;A String&quot;,
         ],
-        &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+        &quot;source&quot;: &quot;A String&quot;, # Output only. The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
         &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
           &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
           &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
@@ -369,6 +389,16 @@ Args:
           &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
           &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
         },
+        &quot;sustainabilityIncentives&quot;: [ # Optional. The list of sustainability incentive programs.
+          { # Information regarding sustainability related incentive programs such as rebates or tax relief.
+            &quot;amount&quot;: { # Optional. The fixed amount of the incentive.
+              &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+              &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+            },
+            &quot;percentage&quot;: 3.14, # Optional. The percentage of the sale price that the incentive is applied to.
+            &quot;type&quot;: &quot;A String&quot;, # Required. Sustainability incentive program.
+          },
+        ],
         &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
         &quot;taxCategory&quot;: &quot;A String&quot;, # The tax category of the product, used to configure detailed tax nexus in account-level tax settings.
         &quot;taxes&quot;: [ # Tax information.
@@ -448,6 +478,7 @@ Returns:
             &quot;certificationAuthority&quot;: &quot;A String&quot;, # The certification authority, for example &quot;European_Commission&quot;. Maximum length is 2000 characters.
             &quot;certificationCode&quot;: &quot;A String&quot;, # The certification code, for eaxample &quot;123456&quot;. Maximum length is 2000 characters.
             &quot;certificationName&quot;: &quot;A String&quot;, # The name of the certification, for example &quot;EPREL&quot;. Maximum length is 2000 characters.
+            &quot;certificationValue&quot;: &quot;A String&quot;, # The certification value (also known as class, level or grade), for example &quot;A+&quot;, &quot;C&quot;, &quot;gold&quot;. Maximum length is 2000 characters.
           },
         ],
         &quot;channel&quot;: &quot;A String&quot;, # Required. The item&#x27;s channel (online or local). Acceptable values are: - &quot;`local`&quot; - &quot;`online`&quot;
@@ -544,19 +575,38 @@ Returns:
         ],
         &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
         &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-        &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+        &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example, better pricing, points, etc) to the user of this item. This signular field points to the latest uploaded loyalty program info. This field will be deprecated in the coming weeks and should not be used in favor of the plural &#x27;LoyaltyProgram&#x27; field below.
           &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
             &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
             &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
           },
           &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+          &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
           &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
             &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
             &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
           },
           &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+          &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
           &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
         },
+        &quot;loyaltyPrograms&quot;: [ # Optional. A list of loyalty program information that is used to surface loyalty benefits (for example, better pricing, points, etc) to the user of this item.
+          { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446
+            &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+              &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+              &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+            },
+            &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+            &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
+            &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+              &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+              &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+            },
+            &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+            &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
+            &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
+          },
+        ],
         &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
         &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
         &quot;maxHandlingTime&quot;: &quot;A String&quot;, # Maximal product handling time (in business days).
@@ -656,7 +706,7 @@ Returns:
         &quot;sizes&quot;: [ # Size of the item. Only one value is allowed. For variants with different sizes, insert a separate product for each size with the same `itemGroupId` value (see size definition).
           &quot;A String&quot;,
         ],
-        &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+        &quot;source&quot;: &quot;A String&quot;, # Output only. The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
         &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
           &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
           &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
@@ -673,6 +723,16 @@ Returns:
           &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
           &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
         },
+        &quot;sustainabilityIncentives&quot;: [ # Optional. The list of sustainability incentive programs.
+          { # Information regarding sustainability related incentive programs such as rebates or tax relief.
+            &quot;amount&quot;: { # Optional. The fixed amount of the incentive.
+              &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+              &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+            },
+            &quot;percentage&quot;: 3.14, # Optional. The percentage of the sale price that the incentive is applied to.
+            &quot;type&quot;: &quot;A String&quot;, # Required. Sustainability incentive program.
+          },
+        ],
         &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
         &quot;taxCategory&quot;: &quot;A String&quot;, # The tax category of the product, used to configure detailed tax nexus in account-level tax settings.
         &quot;taxes&quot;: [ # Tax information.
@@ -758,6 +818,7 @@ Returns:
       &quot;certificationAuthority&quot;: &quot;A String&quot;, # The certification authority, for example &quot;European_Commission&quot;. Maximum length is 2000 characters.
       &quot;certificationCode&quot;: &quot;A String&quot;, # The certification code, for eaxample &quot;123456&quot;. Maximum length is 2000 characters.
       &quot;certificationName&quot;: &quot;A String&quot;, # The name of the certification, for example &quot;EPREL&quot;. Maximum length is 2000 characters.
+      &quot;certificationValue&quot;: &quot;A String&quot;, # The certification value (also known as class, level or grade), for example &quot;A+&quot;, &quot;C&quot;, &quot;gold&quot;. Maximum length is 2000 characters.
     },
   ],
   &quot;channel&quot;: &quot;A String&quot;, # Required. The item&#x27;s channel (online or local). Acceptable values are: - &quot;`local`&quot; - &quot;`online`&quot;
@@ -854,19 +915,38 @@ Returns:
   ],
   &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
   &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example, better pricing, points, etc) to the user of this item. This signular field points to the latest uploaded loyalty program info. This field will be deprecated in the coming weeks and should not be used in favor of the plural &#x27;LoyaltyProgram&#x27; field below.
     &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
     &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+    &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
     &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
     &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+    &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
     &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
   },
+  &quot;loyaltyPrograms&quot;: [ # Optional. A list of loyalty program information that is used to surface loyalty benefits (for example, better pricing, points, etc) to the user of this item.
+    { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446
+      &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+      &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
+      &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+      &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
+      &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
+    },
+  ],
   &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
   &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
   &quot;maxHandlingTime&quot;: &quot;A String&quot;, # Maximal product handling time (in business days).
@@ -966,7 +1046,7 @@ Returns:
   &quot;sizes&quot;: [ # Size of the item. Only one value is allowed. For variants with different sizes, insert a separate product for each size with the same `itemGroupId` value (see size definition).
     &quot;A String&quot;,
   ],
-  &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+  &quot;source&quot;: &quot;A String&quot;, # Output only. The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
   &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
     &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
     &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
@@ -983,6 +1063,16 @@ Returns:
     &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
     &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
   },
+  &quot;sustainabilityIncentives&quot;: [ # Optional. The list of sustainability incentive programs.
+    { # Information regarding sustainability related incentive programs such as rebates or tax relief.
+      &quot;amount&quot;: { # Optional. The fixed amount of the incentive.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;percentage&quot;: 3.14, # Optional. The percentage of the sale price that the incentive is applied to.
+      &quot;type&quot;: &quot;A String&quot;, # Required. Sustainability incentive program.
+    },
+  ],
   &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
   &quot;taxCategory&quot;: &quot;A String&quot;, # The tax category of the product, used to configure detailed tax nexus in account-level tax settings.
   &quot;taxes&quot;: [ # Tax information.
@@ -1043,6 +1133,7 @@ Args:
       &quot;certificationAuthority&quot;: &quot;A String&quot;, # The certification authority, for example &quot;European_Commission&quot;. Maximum length is 2000 characters.
       &quot;certificationCode&quot;: &quot;A String&quot;, # The certification code, for eaxample &quot;123456&quot;. Maximum length is 2000 characters.
       &quot;certificationName&quot;: &quot;A String&quot;, # The name of the certification, for example &quot;EPREL&quot;. Maximum length is 2000 characters.
+      &quot;certificationValue&quot;: &quot;A String&quot;, # The certification value (also known as class, level or grade), for example &quot;A+&quot;, &quot;C&quot;, &quot;gold&quot;. Maximum length is 2000 characters.
     },
   ],
   &quot;channel&quot;: &quot;A String&quot;, # Required. The item&#x27;s channel (online or local). Acceptable values are: - &quot;`local`&quot; - &quot;`online`&quot;
@@ -1139,19 +1230,38 @@ Args:
   ],
   &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
   &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example, better pricing, points, etc) to the user of this item. This signular field points to the latest uploaded loyalty program info. This field will be deprecated in the coming weeks and should not be used in favor of the plural &#x27;LoyaltyProgram&#x27; field below.
     &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
     &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+    &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
     &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
     &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+    &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
     &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
   },
+  &quot;loyaltyPrograms&quot;: [ # Optional. A list of loyalty program information that is used to surface loyalty benefits (for example, better pricing, points, etc) to the user of this item.
+    { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446
+      &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+      &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
+      &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+      &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
+      &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
+    },
+  ],
   &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
   &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
   &quot;maxHandlingTime&quot;: &quot;A String&quot;, # Maximal product handling time (in business days).
@@ -1251,7 +1361,7 @@ Args:
   &quot;sizes&quot;: [ # Size of the item. Only one value is allowed. For variants with different sizes, insert a separate product for each size with the same `itemGroupId` value (see size definition).
     &quot;A String&quot;,
   ],
-  &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+  &quot;source&quot;: &quot;A String&quot;, # Output only. The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
   &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
     &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
     &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
@@ -1268,6 +1378,16 @@ Args:
     &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
     &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
   },
+  &quot;sustainabilityIncentives&quot;: [ # Optional. The list of sustainability incentive programs.
+    { # Information regarding sustainability related incentive programs such as rebates or tax relief.
+      &quot;amount&quot;: { # Optional. The fixed amount of the incentive.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;percentage&quot;: 3.14, # Optional. The percentage of the sale price that the incentive is applied to.
+      &quot;type&quot;: &quot;A String&quot;, # Required. Sustainability incentive program.
+    },
+  ],
   &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
   &quot;taxCategory&quot;: &quot;A String&quot;, # The tax category of the product, used to configure detailed tax nexus in account-level tax settings.
   &quot;taxes&quot;: [ # Tax information.
@@ -1327,6 +1447,7 @@ Returns:
       &quot;certificationAuthority&quot;: &quot;A String&quot;, # The certification authority, for example &quot;European_Commission&quot;. Maximum length is 2000 characters.
       &quot;certificationCode&quot;: &quot;A String&quot;, # The certification code, for eaxample &quot;123456&quot;. Maximum length is 2000 characters.
       &quot;certificationName&quot;: &quot;A String&quot;, # The name of the certification, for example &quot;EPREL&quot;. Maximum length is 2000 characters.
+      &quot;certificationValue&quot;: &quot;A String&quot;, # The certification value (also known as class, level or grade), for example &quot;A+&quot;, &quot;C&quot;, &quot;gold&quot;. Maximum length is 2000 characters.
     },
   ],
   &quot;channel&quot;: &quot;A String&quot;, # Required. The item&#x27;s channel (online or local). Acceptable values are: - &quot;`local`&quot; - &quot;`online`&quot;
@@ -1423,19 +1544,38 @@ Returns:
   ],
   &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
   &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example, better pricing, points, etc) to the user of this item. This signular field points to the latest uploaded loyalty program info. This field will be deprecated in the coming weeks and should not be used in favor of the plural &#x27;LoyaltyProgram&#x27; field below.
     &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
     &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+    &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
     &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
     &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+    &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
     &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
   },
+  &quot;loyaltyPrograms&quot;: [ # Optional. A list of loyalty program information that is used to surface loyalty benefits (for example, better pricing, points, etc) to the user of this item.
+    { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446
+      &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+      &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
+      &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+      &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
+      &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
+    },
+  ],
   &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
   &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
   &quot;maxHandlingTime&quot;: &quot;A String&quot;, # Maximal product handling time (in business days).
@@ -1535,7 +1675,7 @@ Returns:
   &quot;sizes&quot;: [ # Size of the item. Only one value is allowed. For variants with different sizes, insert a separate product for each size with the same `itemGroupId` value (see size definition).
     &quot;A String&quot;,
   ],
-  &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+  &quot;source&quot;: &quot;A String&quot;, # Output only. The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
   &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
     &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
     &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
@@ -1552,6 +1692,16 @@ Returns:
     &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
     &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
   },
+  &quot;sustainabilityIncentives&quot;: [ # Optional. The list of sustainability incentive programs.
+    { # Information regarding sustainability related incentive programs such as rebates or tax relief.
+      &quot;amount&quot;: { # Optional. The fixed amount of the incentive.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;percentage&quot;: 3.14, # Optional. The percentage of the sale price that the incentive is applied to.
+      &quot;type&quot;: &quot;A String&quot;, # Required. Sustainability incentive program.
+    },
+  ],
   &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
   &quot;taxCategory&quot;: &quot;A String&quot;, # The tax category of the product, used to configure detailed tax nexus in account-level tax settings.
   &quot;taxes&quot;: [ # Tax information.
@@ -1623,6 +1773,7 @@ Returns:
           &quot;certificationAuthority&quot;: &quot;A String&quot;, # The certification authority, for example &quot;European_Commission&quot;. Maximum length is 2000 characters.
           &quot;certificationCode&quot;: &quot;A String&quot;, # The certification code, for eaxample &quot;123456&quot;. Maximum length is 2000 characters.
           &quot;certificationName&quot;: &quot;A String&quot;, # The name of the certification, for example &quot;EPREL&quot;. Maximum length is 2000 characters.
+          &quot;certificationValue&quot;: &quot;A String&quot;, # The certification value (also known as class, level or grade), for example &quot;A+&quot;, &quot;C&quot;, &quot;gold&quot;. Maximum length is 2000 characters.
         },
       ],
       &quot;channel&quot;: &quot;A String&quot;, # Required. The item&#x27;s channel (online or local). Acceptable values are: - &quot;`local`&quot; - &quot;`online`&quot;
@@ -1719,19 +1870,38 @@ Returns:
       ],
       &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
       &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-      &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+      &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example, better pricing, points, etc) to the user of this item. This signular field points to the latest uploaded loyalty program info. This field will be deprecated in the coming weeks and should not be used in favor of the plural &#x27;LoyaltyProgram&#x27; field below.
         &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
           &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
           &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
         },
         &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+        &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
         &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
           &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
           &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
         },
         &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+        &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
         &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
       },
+      &quot;loyaltyPrograms&quot;: [ # Optional. A list of loyalty program information that is used to surface loyalty benefits (for example, better pricing, points, etc) to the user of this item.
+        { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446
+          &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+            &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+            &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+          },
+          &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+          &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
+          &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+            &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+            &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+          },
+          &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+          &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
+          &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
+        },
+      ],
       &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
       &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
       &quot;maxHandlingTime&quot;: &quot;A String&quot;, # Maximal product handling time (in business days).
@@ -1831,7 +2001,7 @@ Returns:
       &quot;sizes&quot;: [ # Size of the item. Only one value is allowed. For variants with different sizes, insert a separate product for each size with the same `itemGroupId` value (see size definition).
         &quot;A String&quot;,
       ],
-      &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+      &quot;source&quot;: &quot;A String&quot;, # Output only. The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
       &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
         &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
         &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
@@ -1848,6 +2018,16 @@ Returns:
         &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
         &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
       },
+      &quot;sustainabilityIncentives&quot;: [ # Optional. The list of sustainability incentive programs.
+        { # Information regarding sustainability related incentive programs such as rebates or tax relief.
+          &quot;amount&quot;: { # Optional. The fixed amount of the incentive.
+            &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+            &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+          },
+          &quot;percentage&quot;: 3.14, # Optional. The percentage of the sale price that the incentive is applied to.
+          &quot;type&quot;: &quot;A String&quot;, # Required. Sustainability incentive program.
+        },
+      ],
       &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
       &quot;taxCategory&quot;: &quot;A String&quot;, # The tax category of the product, used to configure detailed tax nexus in account-level tax settings.
       &quot;taxes&quot;: [ # Tax information.
@@ -1925,6 +2105,7 @@ Args:
       &quot;certificationAuthority&quot;: &quot;A String&quot;, # The certification authority, for example &quot;European_Commission&quot;. Maximum length is 2000 characters.
       &quot;certificationCode&quot;: &quot;A String&quot;, # The certification code, for eaxample &quot;123456&quot;. Maximum length is 2000 characters.
       &quot;certificationName&quot;: &quot;A String&quot;, # The name of the certification, for example &quot;EPREL&quot;. Maximum length is 2000 characters.
+      &quot;certificationValue&quot;: &quot;A String&quot;, # The certification value (also known as class, level or grade), for example &quot;A+&quot;, &quot;C&quot;, &quot;gold&quot;. Maximum length is 2000 characters.
     },
   ],
   &quot;channel&quot;: &quot;A String&quot;, # Required. The item&#x27;s channel (online or local). Acceptable values are: - &quot;`local`&quot; - &quot;`online`&quot;
@@ -2021,19 +2202,38 @@ Args:
   ],
   &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
   &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example, better pricing, points, etc) to the user of this item. This signular field points to the latest uploaded loyalty program info. This field will be deprecated in the coming weeks and should not be used in favor of the plural &#x27;LoyaltyProgram&#x27; field below.
     &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
     &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+    &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
     &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
     &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+    &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
     &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
   },
+  &quot;loyaltyPrograms&quot;: [ # Optional. A list of loyalty program information that is used to surface loyalty benefits (for example, better pricing, points, etc) to the user of this item.
+    { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446
+      &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+      &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
+      &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+      &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
+      &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
+    },
+  ],
   &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
   &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
   &quot;maxHandlingTime&quot;: &quot;A String&quot;, # Maximal product handling time (in business days).
@@ -2133,7 +2333,7 @@ Args:
   &quot;sizes&quot;: [ # Size of the item. Only one value is allowed. For variants with different sizes, insert a separate product for each size with the same `itemGroupId` value (see size definition).
     &quot;A String&quot;,
   ],
-  &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+  &quot;source&quot;: &quot;A String&quot;, # Output only. The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
   &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
     &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
     &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
@@ -2150,6 +2350,16 @@ Args:
     &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
     &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
   },
+  &quot;sustainabilityIncentives&quot;: [ # Optional. The list of sustainability incentive programs.
+    { # Information regarding sustainability related incentive programs such as rebates or tax relief.
+      &quot;amount&quot;: { # Optional. The fixed amount of the incentive.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;percentage&quot;: 3.14, # Optional. The percentage of the sale price that the incentive is applied to.
+      &quot;type&quot;: &quot;A String&quot;, # Required. Sustainability incentive program.
+    },
+  ],
   &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
   &quot;taxCategory&quot;: &quot;A String&quot;, # The tax category of the product, used to configure detailed tax nexus in account-level tax settings.
   &quot;taxes&quot;: [ # Tax information.
@@ -2209,6 +2419,7 @@ Returns:
       &quot;certificationAuthority&quot;: &quot;A String&quot;, # The certification authority, for example &quot;European_Commission&quot;. Maximum length is 2000 characters.
       &quot;certificationCode&quot;: &quot;A String&quot;, # The certification code, for eaxample &quot;123456&quot;. Maximum length is 2000 characters.
       &quot;certificationName&quot;: &quot;A String&quot;, # The name of the certification, for example &quot;EPREL&quot;. Maximum length is 2000 characters.
+      &quot;certificationValue&quot;: &quot;A String&quot;, # The certification value (also known as class, level or grade), for example &quot;A+&quot;, &quot;C&quot;, &quot;gold&quot;. Maximum length is 2000 characters.
     },
   ],
   &quot;channel&quot;: &quot;A String&quot;, # Required. The item&#x27;s channel (online or local). Acceptable values are: - &quot;`local`&quot; - &quot;`online`&quot;
@@ -2305,19 +2516,38 @@ Returns:
   ],
   &quot;link&quot;: &quot;A String&quot;, # URL directly linking to your item&#x27;s page on your website.
   &quot;linkTemplate&quot;: &quot;A String&quot;, # URL template for merchant hosted local storefront.
-  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example pricing, points, etc) to the user for this item.
+  &quot;loyaltyProgram&quot;: { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446 # Loyalty program information that is used to surface loyalty benefits ( for example, better pricing, points, etc) to the user of this item. This signular field points to the latest uploaded loyalty program info. This field will be deprecated in the coming weeks and should not be used in favor of the plural &#x27;LoyaltyProgram&#x27; field below.
     &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
     &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+    &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
     &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
       &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
       &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
     },
     &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+    &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
     &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
   },
+  &quot;loyaltyPrograms&quot;: [ # Optional. A list of loyalty program information that is used to surface loyalty benefits (for example, better pricing, points, etc) to the user of this item.
+    { # Allows the setting up of loyalty program benefits (for example price or points). https://support.google.com/merchants/answer/12922446
+      &quot;cashbackForFutureUse&quot;: { # Optional. The cashback that can be used for future purchases.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;loyaltyPoints&quot;: &quot;A String&quot;, # Optional. The amount of loyalty points earned on a purchase.
+      &quot;memberPriceEffectiveDate&quot;: &quot;A String&quot;, # Optional. A date range during which the item is eligible for member price. If not specified, the member price is always applicable. The date range is represented by a pair of ISO 8601 dates separated by a space, comma, or slash.
+      &quot;price&quot;: { # Optional. The price for members of the given tier (instant discount price). Must be smaller or equal to the regular price.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;programLabel&quot;: &quot;A String&quot;, # Required. The label of the loyalty program. This is an internal label that uniquely identifies the relationship between a merchant entity and a loyalty program entity. It must be provided so that system can associate the assets below (for example, price and points) with a merchant. The corresponding program must be linked to the merchant account.
+      &quot;shippingLabel&quot;: &quot;A String&quot;, # Optional. The shipping label for the loyalty program. You can use this label to indicate whether this offer has the loyalty shipping benefit. If not specified, the item is not eligible for loyalty shipping for the given loyalty tier.
+      &quot;tierLabel&quot;: &quot;A String&quot;, # Required. The label of the tier within the loyalty program. Must match one of the labels within the program.
+    },
+  ],
   &quot;material&quot;: &quot;A String&quot;, # The material of which the item is made.
   &quot;maxEnergyEfficiencyClass&quot;: &quot;A String&quot;, # The energy efficiency class as defined in EU directive 2010/30/EU.
   &quot;maxHandlingTime&quot;: &quot;A String&quot;, # Maximal product handling time (in business days).
@@ -2417,7 +2647,7 @@ Returns:
   &quot;sizes&quot;: [ # Size of the item. Only one value is allowed. For variants with different sizes, insert a separate product for each size with the same `itemGroupId` value (see size definition).
     &quot;A String&quot;,
   ],
-  &quot;source&quot;: &quot;A String&quot;, # The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
+  &quot;source&quot;: &quot;A String&quot;, # Output only. The source of the offer, that is, how the offer was created. Acceptable values are: - &quot;`api`&quot; - &quot;`crawl`&quot; - &quot;`feed`&quot;
   &quot;structuredDescription&quot;: { # Structured description, for algorithmically (AI)-generated descriptions. See [description](https://support.google.com/merchants/answer/6324468#When_to_use) for more information. # Structured description, for algorithmically (AI)-generated descriptions.
     &quot;content&quot;: &quot;A String&quot;, # Required. The description text. Maximum length is 5000 characters.
     &quot;digitalSourceType&quot;: &quot;A String&quot;, # Optional. The digital source type. Acceptable values are: - &quot;`trained_algorithmic_media`&quot; - &quot;`default`&quot;
@@ -2434,6 +2664,16 @@ Returns:
     &quot;period&quot;: &quot;A String&quot;, # The type of subscription period. - &quot;`month`&quot; - &quot;`year`&quot;
     &quot;periodLength&quot;: &quot;A String&quot;, # The number of subscription periods the buyer has to pay.
   },
+  &quot;sustainabilityIncentives&quot;: [ # Optional. The list of sustainability incentive programs.
+    { # Information regarding sustainability related incentive programs such as rebates or tax relief.
+      &quot;amount&quot;: { # Optional. The fixed amount of the incentive.
+        &quot;currency&quot;: &quot;A String&quot;, # The currency of the price.
+        &quot;value&quot;: &quot;A String&quot;, # The price represented as a number.
+      },
+      &quot;percentage&quot;: 3.14, # Optional. The percentage of the sale price that the incentive is applied to.
+      &quot;type&quot;: &quot;A String&quot;, # Required. Sustainability incentive program.
+    },
+  ],
   &quot;targetCountry&quot;: &quot;A String&quot;, # Required. The CLDR territory code for the item&#x27;s country of sale.
   &quot;taxCategory&quot;: &quot;A String&quot;, # The tax category of the product, used to configure detailed tax nexus in account-level tax settings.
   &quot;taxes&quot;: [ # Tax information.

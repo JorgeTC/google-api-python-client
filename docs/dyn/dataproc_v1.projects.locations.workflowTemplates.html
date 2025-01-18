@@ -148,7 +148,7 @@ Args:
         },
         &quot;mainClass&quot;: &quot;A String&quot;, # The name of the driver&#x27;s main class. The jar file that contains the class must be in the default CLASSPATH or specified in jarFileUris.
         &quot;mainJarFileUri&quot;: &quot;A String&quot;, # The HCFS URI of the jar file that contains the main class.
-        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might beoverwritten. Can include properties set in/etc/flink/conf/flink-defaults.conf and classes in user code.
+        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might be overwritten. Can include properties set in /etc/flink/conf/flink-defaults.conf and classes in user code.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;savepointUri&quot;: &quot;A String&quot;, # Optional. HCFS URI of the savepoint, which contains the last saved progress for starting the current job.
@@ -245,7 +245,7 @@ Args:
           ],
         },
       },
-      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/0.9.0/python-programming-guide.html) applications on YARN. # Optional. Job is a PySpark job.
+      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/latest/api/python/index.html#pyspark-overview) applications on YARN. # Optional. Job is a PySpark job.
         &quot;archiveUris&quot;: [ # Optional. HCFS URIs of archives to be extracted into the working directory of each executor. Supported file types: .jar, .tar, .tar.gz, .tgz, and .zip.
           &quot;A String&quot;,
         ],
@@ -406,7 +406,7 @@ Args:
         &quot;auxiliaryNodeGroups&quot;: [ # Optional. The node group settings.
           { # Node group identification and configuration information.
             &quot;nodeGroup&quot;: { # Dataproc Node Group. The Dataproc NodeGroup resource is not related to the Dataproc NodeGroupAffinity resource. # Required. Node group configuration.
-              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labelsn.
+              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labels.
                 &quot;a_key&quot;: &quot;A String&quot;,
               },
               &quot;name&quot;: &quot;A String&quot;, # The Node group resource name (https://aip.dev/122).
@@ -418,6 +418,8 @@ Args:
                   },
                 ],
                 &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+                  &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+                  &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
                   &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
                   &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
                   &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -439,6 +441,10 @@ Args:
                       &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
                     },
                   ],
+                  &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+                    &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+                    &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+                  },
                 },
                 &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
                   &quot;A String&quot;,
@@ -524,7 +530,7 @@ Args:
             &quot;enableVtpm&quot;: True or False, # Optional. Defines whether instances have the vTPM enabled.
           },
           &quot;subnetworkUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine subnetwork to be used for machine communications. Cannot be specified with network_uri.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/regions/[region]/subnetworks/sub0 projects/[project_id]/regions/[region]/subnetworks/sub0 sub0
-          &quot;tags&quot;: [ # The Compute Engine tags to add to all instances (see Tagging instances (https://cloud.google.com/compute/docs/label-or-tag-resources#tags)).
+          &quot;tags&quot;: [ # The Compute Engine network tags to add to all instances (see Tagging instances (https://cloud.google.com/vpc/docs/add-remove-network-tags)).
             &quot;A String&quot;,
           ],
           &quot;zoneUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine zone where the Dataproc cluster will be located. If omitted, the service will pick a zone in the cluster&#x27;s Compute Engine region. On a get request, zone will always be present.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/zones/[zone] projects/[project_id]/zones/[zone] [zone]
@@ -588,6 +594,8 @@ Args:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -609,6 +617,10 @@ Args:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -647,6 +659,8 @@ Args:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -668,6 +682,10 @@ Args:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -720,7 +738,7 @@ Args:
           },
         },
         &quot;softwareConfig&quot;: { # Specifies the selection and config of software inside the cluster. # Optional. The config settings for cluster software.
-          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported_dataproc_versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
+          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported-dataproc-image-versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
           &quot;optionalComponents&quot;: [ # Optional. The set of components to activate on the cluster.
             &quot;A String&quot;,
           ],
@@ -737,6 +755,8 @@ Args:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -758,6 +778,10 @@ Args:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -826,7 +850,7 @@ Returns:
         },
         &quot;mainClass&quot;: &quot;A String&quot;, # The name of the driver&#x27;s main class. The jar file that contains the class must be in the default CLASSPATH or specified in jarFileUris.
         &quot;mainJarFileUri&quot;: &quot;A String&quot;, # The HCFS URI of the jar file that contains the main class.
-        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might beoverwritten. Can include properties set in/etc/flink/conf/flink-defaults.conf and classes in user code.
+        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might be overwritten. Can include properties set in /etc/flink/conf/flink-defaults.conf and classes in user code.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;savepointUri&quot;: &quot;A String&quot;, # Optional. HCFS URI of the savepoint, which contains the last saved progress for starting the current job.
@@ -923,7 +947,7 @@ Returns:
           ],
         },
       },
-      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/0.9.0/python-programming-guide.html) applications on YARN. # Optional. Job is a PySpark job.
+      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/latest/api/python/index.html#pyspark-overview) applications on YARN. # Optional. Job is a PySpark job.
         &quot;archiveUris&quot;: [ # Optional. HCFS URIs of archives to be extracted into the working directory of each executor. Supported file types: .jar, .tar, .tar.gz, .tgz, and .zip.
           &quot;A String&quot;,
         ],
@@ -1084,7 +1108,7 @@ Returns:
         &quot;auxiliaryNodeGroups&quot;: [ # Optional. The node group settings.
           { # Node group identification and configuration information.
             &quot;nodeGroup&quot;: { # Dataproc Node Group. The Dataproc NodeGroup resource is not related to the Dataproc NodeGroupAffinity resource. # Required. Node group configuration.
-              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labelsn.
+              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labels.
                 &quot;a_key&quot;: &quot;A String&quot;,
               },
               &quot;name&quot;: &quot;A String&quot;, # The Node group resource name (https://aip.dev/122).
@@ -1096,6 +1120,8 @@ Returns:
                   },
                 ],
                 &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+                  &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+                  &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
                   &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
                   &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
                   &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -1117,6 +1143,10 @@ Returns:
                       &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
                     },
                   ],
+                  &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+                    &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+                    &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+                  },
                 },
                 &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
                   &quot;A String&quot;,
@@ -1202,7 +1232,7 @@ Returns:
             &quot;enableVtpm&quot;: True or False, # Optional. Defines whether instances have the vTPM enabled.
           },
           &quot;subnetworkUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine subnetwork to be used for machine communications. Cannot be specified with network_uri.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/regions/[region]/subnetworks/sub0 projects/[project_id]/regions/[region]/subnetworks/sub0 sub0
-          &quot;tags&quot;: [ # The Compute Engine tags to add to all instances (see Tagging instances (https://cloud.google.com/compute/docs/label-or-tag-resources#tags)).
+          &quot;tags&quot;: [ # The Compute Engine network tags to add to all instances (see Tagging instances (https://cloud.google.com/vpc/docs/add-remove-network-tags)).
             &quot;A String&quot;,
           ],
           &quot;zoneUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine zone where the Dataproc cluster will be located. If omitted, the service will pick a zone in the cluster&#x27;s Compute Engine region. On a get request, zone will always be present.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/zones/[zone] projects/[project_id]/zones/[zone] [zone]
@@ -1266,6 +1296,8 @@ Returns:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -1287,6 +1319,10 @@ Returns:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -1325,6 +1361,8 @@ Returns:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -1346,6 +1384,10 @@ Returns:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -1398,7 +1440,7 @@ Returns:
           },
         },
         &quot;softwareConfig&quot;: { # Specifies the selection and config of software inside the cluster. # Optional. The config settings for cluster software.
-          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported_dataproc_versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
+          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported-dataproc-image-versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
           &quot;optionalComponents&quot;: [ # Optional. The set of components to activate on the cluster.
             &quot;A String&quot;,
           ],
@@ -1415,6 +1457,8 @@ Returns:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -1436,6 +1480,10 @@ Returns:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -1531,7 +1579,7 @@ Returns:
         },
         &quot;mainClass&quot;: &quot;A String&quot;, # The name of the driver&#x27;s main class. The jar file that contains the class must be in the default CLASSPATH or specified in jarFileUris.
         &quot;mainJarFileUri&quot;: &quot;A String&quot;, # The HCFS URI of the jar file that contains the main class.
-        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might beoverwritten. Can include properties set in/etc/flink/conf/flink-defaults.conf and classes in user code.
+        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might be overwritten. Can include properties set in /etc/flink/conf/flink-defaults.conf and classes in user code.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;savepointUri&quot;: &quot;A String&quot;, # Optional. HCFS URI of the savepoint, which contains the last saved progress for starting the current job.
@@ -1628,7 +1676,7 @@ Returns:
           ],
         },
       },
-      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/0.9.0/python-programming-guide.html) applications on YARN. # Optional. Job is a PySpark job.
+      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/latest/api/python/index.html#pyspark-overview) applications on YARN. # Optional. Job is a PySpark job.
         &quot;archiveUris&quot;: [ # Optional. HCFS URIs of archives to be extracted into the working directory of each executor. Supported file types: .jar, .tar, .tar.gz, .tgz, and .zip.
           &quot;A String&quot;,
         ],
@@ -1789,7 +1837,7 @@ Returns:
         &quot;auxiliaryNodeGroups&quot;: [ # Optional. The node group settings.
           { # Node group identification and configuration information.
             &quot;nodeGroup&quot;: { # Dataproc Node Group. The Dataproc NodeGroup resource is not related to the Dataproc NodeGroupAffinity resource. # Required. Node group configuration.
-              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labelsn.
+              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labels.
                 &quot;a_key&quot;: &quot;A String&quot;,
               },
               &quot;name&quot;: &quot;A String&quot;, # The Node group resource name (https://aip.dev/122).
@@ -1801,6 +1849,8 @@ Returns:
                   },
                 ],
                 &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+                  &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+                  &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
                   &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
                   &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
                   &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -1822,6 +1872,10 @@ Returns:
                       &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
                     },
                   ],
+                  &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+                    &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+                    &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+                  },
                 },
                 &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
                   &quot;A String&quot;,
@@ -1907,7 +1961,7 @@ Returns:
             &quot;enableVtpm&quot;: True or False, # Optional. Defines whether instances have the vTPM enabled.
           },
           &quot;subnetworkUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine subnetwork to be used for machine communications. Cannot be specified with network_uri.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/regions/[region]/subnetworks/sub0 projects/[project_id]/regions/[region]/subnetworks/sub0 sub0
-          &quot;tags&quot;: [ # The Compute Engine tags to add to all instances (see Tagging instances (https://cloud.google.com/compute/docs/label-or-tag-resources#tags)).
+          &quot;tags&quot;: [ # The Compute Engine network tags to add to all instances (see Tagging instances (https://cloud.google.com/vpc/docs/add-remove-network-tags)).
             &quot;A String&quot;,
           ],
           &quot;zoneUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine zone where the Dataproc cluster will be located. If omitted, the service will pick a zone in the cluster&#x27;s Compute Engine region. On a get request, zone will always be present.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/zones/[zone] projects/[project_id]/zones/[zone] [zone]
@@ -1971,6 +2025,8 @@ Returns:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -1992,6 +2048,10 @@ Returns:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -2030,6 +2090,8 @@ Returns:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -2051,6 +2113,10 @@ Returns:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -2103,7 +2169,7 @@ Returns:
           },
         },
         &quot;softwareConfig&quot;: { # Specifies the selection and config of software inside the cluster. # Optional. The config settings for cluster software.
-          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported_dataproc_versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
+          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported-dataproc-image-versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
           &quot;optionalComponents&quot;: [ # Optional. The set of components to activate on the cluster.
             &quot;A String&quot;,
           ],
@@ -2120,6 +2186,8 @@ Returns:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -2141,6 +2209,10 @@ Returns:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -2300,7 +2372,7 @@ Args:
         },
         &quot;mainClass&quot;: &quot;A String&quot;, # The name of the driver&#x27;s main class. The jar file that contains the class must be in the default CLASSPATH or specified in jarFileUris.
         &quot;mainJarFileUri&quot;: &quot;A String&quot;, # The HCFS URI of the jar file that contains the main class.
-        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might beoverwritten. Can include properties set in/etc/flink/conf/flink-defaults.conf and classes in user code.
+        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might be overwritten. Can include properties set in /etc/flink/conf/flink-defaults.conf and classes in user code.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;savepointUri&quot;: &quot;A String&quot;, # Optional. HCFS URI of the savepoint, which contains the last saved progress for starting the current job.
@@ -2397,7 +2469,7 @@ Args:
           ],
         },
       },
-      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/0.9.0/python-programming-guide.html) applications on YARN. # Optional. Job is a PySpark job.
+      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/latest/api/python/index.html#pyspark-overview) applications on YARN. # Optional. Job is a PySpark job.
         &quot;archiveUris&quot;: [ # Optional. HCFS URIs of archives to be extracted into the working directory of each executor. Supported file types: .jar, .tar, .tar.gz, .tgz, and .zip.
           &quot;A String&quot;,
         ],
@@ -2558,7 +2630,7 @@ Args:
         &quot;auxiliaryNodeGroups&quot;: [ # Optional. The node group settings.
           { # Node group identification and configuration information.
             &quot;nodeGroup&quot;: { # Dataproc Node Group. The Dataproc NodeGroup resource is not related to the Dataproc NodeGroupAffinity resource. # Required. Node group configuration.
-              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labelsn.
+              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labels.
                 &quot;a_key&quot;: &quot;A String&quot;,
               },
               &quot;name&quot;: &quot;A String&quot;, # The Node group resource name (https://aip.dev/122).
@@ -2570,6 +2642,8 @@ Args:
                   },
                 ],
                 &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+                  &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+                  &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
                   &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
                   &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
                   &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -2591,6 +2665,10 @@ Args:
                       &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
                     },
                   ],
+                  &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+                    &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+                    &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+                  },
                 },
                 &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
                   &quot;A String&quot;,
@@ -2676,7 +2754,7 @@ Args:
             &quot;enableVtpm&quot;: True or False, # Optional. Defines whether instances have the vTPM enabled.
           },
           &quot;subnetworkUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine subnetwork to be used for machine communications. Cannot be specified with network_uri.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/regions/[region]/subnetworks/sub0 projects/[project_id]/regions/[region]/subnetworks/sub0 sub0
-          &quot;tags&quot;: [ # The Compute Engine tags to add to all instances (see Tagging instances (https://cloud.google.com/compute/docs/label-or-tag-resources#tags)).
+          &quot;tags&quot;: [ # The Compute Engine network tags to add to all instances (see Tagging instances (https://cloud.google.com/vpc/docs/add-remove-network-tags)).
             &quot;A String&quot;,
           ],
           &quot;zoneUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine zone where the Dataproc cluster will be located. If omitted, the service will pick a zone in the cluster&#x27;s Compute Engine region. On a get request, zone will always be present.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/zones/[zone] projects/[project_id]/zones/[zone] [zone]
@@ -2740,6 +2818,8 @@ Args:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -2761,6 +2841,10 @@ Args:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -2799,6 +2883,8 @@ Args:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -2820,6 +2906,10 @@ Args:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -2872,7 +2962,7 @@ Args:
           },
         },
         &quot;softwareConfig&quot;: { # Specifies the selection and config of software inside the cluster. # Optional. The config settings for cluster software.
-          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported_dataproc_versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
+          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported-dataproc-image-versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
           &quot;optionalComponents&quot;: [ # Optional. The set of components to activate on the cluster.
             &quot;A String&quot;,
           ],
@@ -2889,6 +2979,8 @@ Args:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -2910,6 +3002,10 @@ Args:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -3019,7 +3115,7 @@ Returns:
             },
             &quot;mainClass&quot;: &quot;A String&quot;, # The name of the driver&#x27;s main class. The jar file that contains the class must be in the default CLASSPATH or specified in jarFileUris.
             &quot;mainJarFileUri&quot;: &quot;A String&quot;, # The HCFS URI of the jar file that contains the main class.
-            &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might beoverwritten. Can include properties set in/etc/flink/conf/flink-defaults.conf and classes in user code.
+            &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might be overwritten. Can include properties set in /etc/flink/conf/flink-defaults.conf and classes in user code.
               &quot;a_key&quot;: &quot;A String&quot;,
             },
             &quot;savepointUri&quot;: &quot;A String&quot;, # Optional. HCFS URI of the savepoint, which contains the last saved progress for starting the current job.
@@ -3116,7 +3212,7 @@ Returns:
               ],
             },
           },
-          &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/0.9.0/python-programming-guide.html) applications on YARN. # Optional. Job is a PySpark job.
+          &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/latest/api/python/index.html#pyspark-overview) applications on YARN. # Optional. Job is a PySpark job.
             &quot;archiveUris&quot;: [ # Optional. HCFS URIs of archives to be extracted into the working directory of each executor. Supported file types: .jar, .tar, .tar.gz, .tgz, and .zip.
               &quot;A String&quot;,
             ],
@@ -3277,7 +3373,7 @@ Returns:
             &quot;auxiliaryNodeGroups&quot;: [ # Optional. The node group settings.
               { # Node group identification and configuration information.
                 &quot;nodeGroup&quot;: { # Dataproc Node Group. The Dataproc NodeGroup resource is not related to the Dataproc NodeGroupAffinity resource. # Required. Node group configuration.
-                  &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labelsn.
+                  &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labels.
                     &quot;a_key&quot;: &quot;A String&quot;,
                   },
                   &quot;name&quot;: &quot;A String&quot;, # The Node group resource name (https://aip.dev/122).
@@ -3289,6 +3385,8 @@ Returns:
                       },
                     ],
                     &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+                      &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+                      &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
                       &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
                       &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
                       &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -3310,6 +3408,10 @@ Returns:
                           &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
                         },
                       ],
+                      &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+                        &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+                        &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+                      },
                     },
                     &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
                       &quot;A String&quot;,
@@ -3395,7 +3497,7 @@ Returns:
                 &quot;enableVtpm&quot;: True or False, # Optional. Defines whether instances have the vTPM enabled.
               },
               &quot;subnetworkUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine subnetwork to be used for machine communications. Cannot be specified with network_uri.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/regions/[region]/subnetworks/sub0 projects/[project_id]/regions/[region]/subnetworks/sub0 sub0
-              &quot;tags&quot;: [ # The Compute Engine tags to add to all instances (see Tagging instances (https://cloud.google.com/compute/docs/label-or-tag-resources#tags)).
+              &quot;tags&quot;: [ # The Compute Engine network tags to add to all instances (see Tagging instances (https://cloud.google.com/vpc/docs/add-remove-network-tags)).
                 &quot;A String&quot;,
               ],
               &quot;zoneUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine zone where the Dataproc cluster will be located. If omitted, the service will pick a zone in the cluster&#x27;s Compute Engine region. On a get request, zone will always be present.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/zones/[zone] projects/[project_id]/zones/[zone] [zone]
@@ -3459,6 +3561,8 @@ Returns:
                 },
               ],
               &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+                &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+                &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
                 &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
                 &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
                 &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -3480,6 +3584,10 @@ Returns:
                     &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
                   },
                 ],
+                &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+                  &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+                  &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+                },
               },
               &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
                 &quot;A String&quot;,
@@ -3518,6 +3626,8 @@ Returns:
                 },
               ],
               &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+                &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+                &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
                 &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
                 &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
                 &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -3539,6 +3649,10 @@ Returns:
                     &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
                   },
                 ],
+                &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+                  &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+                  &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+                },
               },
               &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
                 &quot;A String&quot;,
@@ -3591,7 +3705,7 @@ Returns:
               },
             },
             &quot;softwareConfig&quot;: { # Specifies the selection and config of software inside the cluster. # Optional. The config settings for cluster software.
-              &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported_dataproc_versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
+              &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported-dataproc-image-versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
               &quot;optionalComponents&quot;: [ # Optional. The set of components to activate on the cluster.
                 &quot;A String&quot;,
               ],
@@ -3608,6 +3722,8 @@ Returns:
                 },
               ],
               &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+                &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+                &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
                 &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
                 &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
                 &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -3629,6 +3745,10 @@ Returns:
                     &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
                   },
                 ],
+                &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+                  &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+                  &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+                },
               },
               &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
                 &quot;A String&quot;,
@@ -3806,7 +3926,7 @@ Args:
         },
         &quot;mainClass&quot;: &quot;A String&quot;, # The name of the driver&#x27;s main class. The jar file that contains the class must be in the default CLASSPATH or specified in jarFileUris.
         &quot;mainJarFileUri&quot;: &quot;A String&quot;, # The HCFS URI of the jar file that contains the main class.
-        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might beoverwritten. Can include properties set in/etc/flink/conf/flink-defaults.conf and classes in user code.
+        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might be overwritten. Can include properties set in /etc/flink/conf/flink-defaults.conf and classes in user code.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;savepointUri&quot;: &quot;A String&quot;, # Optional. HCFS URI of the savepoint, which contains the last saved progress for starting the current job.
@@ -3903,7 +4023,7 @@ Args:
           ],
         },
       },
-      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/0.9.0/python-programming-guide.html) applications on YARN. # Optional. Job is a PySpark job.
+      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/latest/api/python/index.html#pyspark-overview) applications on YARN. # Optional. Job is a PySpark job.
         &quot;archiveUris&quot;: [ # Optional. HCFS URIs of archives to be extracted into the working directory of each executor. Supported file types: .jar, .tar, .tar.gz, .tgz, and .zip.
           &quot;A String&quot;,
         ],
@@ -4064,7 +4184,7 @@ Args:
         &quot;auxiliaryNodeGroups&quot;: [ # Optional. The node group settings.
           { # Node group identification and configuration information.
             &quot;nodeGroup&quot;: { # Dataproc Node Group. The Dataproc NodeGroup resource is not related to the Dataproc NodeGroupAffinity resource. # Required. Node group configuration.
-              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labelsn.
+              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labels.
                 &quot;a_key&quot;: &quot;A String&quot;,
               },
               &quot;name&quot;: &quot;A String&quot;, # The Node group resource name (https://aip.dev/122).
@@ -4076,6 +4196,8 @@ Args:
                   },
                 ],
                 &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+                  &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+                  &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
                   &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
                   &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
                   &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -4097,6 +4219,10 @@ Args:
                       &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
                     },
                   ],
+                  &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+                    &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+                    &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+                  },
                 },
                 &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
                   &quot;A String&quot;,
@@ -4182,7 +4308,7 @@ Args:
             &quot;enableVtpm&quot;: True or False, # Optional. Defines whether instances have the vTPM enabled.
           },
           &quot;subnetworkUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine subnetwork to be used for machine communications. Cannot be specified with network_uri.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/regions/[region]/subnetworks/sub0 projects/[project_id]/regions/[region]/subnetworks/sub0 sub0
-          &quot;tags&quot;: [ # The Compute Engine tags to add to all instances (see Tagging instances (https://cloud.google.com/compute/docs/label-or-tag-resources#tags)).
+          &quot;tags&quot;: [ # The Compute Engine network tags to add to all instances (see Tagging instances (https://cloud.google.com/vpc/docs/add-remove-network-tags)).
             &quot;A String&quot;,
           ],
           &quot;zoneUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine zone where the Dataproc cluster will be located. If omitted, the service will pick a zone in the cluster&#x27;s Compute Engine region. On a get request, zone will always be present.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/zones/[zone] projects/[project_id]/zones/[zone] [zone]
@@ -4246,6 +4372,8 @@ Args:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -4267,6 +4395,10 @@ Args:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -4305,6 +4437,8 @@ Args:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -4326,6 +4460,10 @@ Args:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -4378,7 +4516,7 @@ Args:
           },
         },
         &quot;softwareConfig&quot;: { # Specifies the selection and config of software inside the cluster. # Optional. The config settings for cluster software.
-          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported_dataproc_versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
+          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported-dataproc-image-versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
           &quot;optionalComponents&quot;: [ # Optional. The set of components to activate on the cluster.
             &quot;A String&quot;,
           ],
@@ -4395,6 +4533,8 @@ Args:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -4416,6 +4556,10 @@ Args:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -4484,7 +4628,7 @@ Returns:
         },
         &quot;mainClass&quot;: &quot;A String&quot;, # The name of the driver&#x27;s main class. The jar file that contains the class must be in the default CLASSPATH or specified in jarFileUris.
         &quot;mainJarFileUri&quot;: &quot;A String&quot;, # The HCFS URI of the jar file that contains the main class.
-        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might beoverwritten. Can include properties set in/etc/flink/conf/flink-defaults.conf and classes in user code.
+        &quot;properties&quot;: { # Optional. A mapping of property names to values, used to configure Flink. Properties that conflict with values set by the Dataproc API might be overwritten. Can include properties set in /etc/flink/conf/flink-defaults.conf and classes in user code.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;savepointUri&quot;: &quot;A String&quot;, # Optional. HCFS URI of the savepoint, which contains the last saved progress for starting the current job.
@@ -4581,7 +4725,7 @@ Returns:
           ],
         },
       },
-      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/0.9.0/python-programming-guide.html) applications on YARN. # Optional. Job is a PySpark job.
+      &quot;pysparkJob&quot;: { # A Dataproc job for running Apache PySpark (https://spark.apache.org/docs/latest/api/python/index.html#pyspark-overview) applications on YARN. # Optional. Job is a PySpark job.
         &quot;archiveUris&quot;: [ # Optional. HCFS URIs of archives to be extracted into the working directory of each executor. Supported file types: .jar, .tar, .tar.gz, .tgz, and .zip.
           &quot;A String&quot;,
         ],
@@ -4742,7 +4886,7 @@ Returns:
         &quot;auxiliaryNodeGroups&quot;: [ # Optional. The node group settings.
           { # Node group identification and configuration information.
             &quot;nodeGroup&quot;: { # Dataproc Node Group. The Dataproc NodeGroup resource is not related to the Dataproc NodeGroupAffinity resource. # Required. Node group configuration.
-              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labelsn.
+              &quot;labels&quot;: { # Optional. Node group labels. Label keys must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). Label values can be empty. If specified, they must consist of from 1 to 63 characters and conform to RFC 1035 (https://www.ietf.org/rfc/rfc1035.txt). The node group must have no more than 32 labels.
                 &quot;a_key&quot;: &quot;A String&quot;,
               },
               &quot;name&quot;: &quot;A String&quot;, # The Node group resource name (https://aip.dev/122).
@@ -4754,6 +4898,8 @@ Returns:
                   },
                 ],
                 &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+                  &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+                  &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
                   &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
                   &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
                   &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -4775,6 +4921,10 @@ Returns:
                       &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
                     },
                   ],
+                  &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+                    &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+                    &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+                  },
                 },
                 &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
                   &quot;A String&quot;,
@@ -4860,7 +5010,7 @@ Returns:
             &quot;enableVtpm&quot;: True or False, # Optional. Defines whether instances have the vTPM enabled.
           },
           &quot;subnetworkUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine subnetwork to be used for machine communications. Cannot be specified with network_uri.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/regions/[region]/subnetworks/sub0 projects/[project_id]/regions/[region]/subnetworks/sub0 sub0
-          &quot;tags&quot;: [ # The Compute Engine tags to add to all instances (see Tagging instances (https://cloud.google.com/compute/docs/label-or-tag-resources#tags)).
+          &quot;tags&quot;: [ # The Compute Engine network tags to add to all instances (see Tagging instances (https://cloud.google.com/vpc/docs/add-remove-network-tags)).
             &quot;A String&quot;,
           ],
           &quot;zoneUri&quot;: &quot;A String&quot;, # Optional. The Compute Engine zone where the Dataproc cluster will be located. If omitted, the service will pick a zone in the cluster&#x27;s Compute Engine region. On a get request, zone will always be present.A full URL, partial URI, or short name are valid. Examples: https://www.googleapis.com/compute/v1/projects/[project_id]/zones/[zone] projects/[project_id]/zones/[zone] [zone]
@@ -4924,6 +5074,8 @@ Returns:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -4945,6 +5097,10 @@ Returns:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -4983,6 +5139,8 @@ Returns:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -5004,6 +5162,10 @@ Returns:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,
@@ -5056,7 +5218,7 @@ Returns:
           },
         },
         &quot;softwareConfig&quot;: { # Specifies the selection and config of software inside the cluster. # Optional. The config settings for cluster software.
-          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported_dataproc_versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
+          &quot;imageVersion&quot;: &quot;A String&quot;, # Optional. The version of software inside the cluster. It must be one of the supported Dataproc Versions (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#supported-dataproc-image-versions), such as &quot;1.2&quot; (including a subminor version, such as &quot;1.2.29&quot;), or the &quot;preview&quot; version (https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-versions#other_versions). If unspecified, it defaults to the latest Debian version.
           &quot;optionalComponents&quot;: [ # Optional. The set of components to activate on the cluster.
             &quot;A String&quot;,
           ],
@@ -5073,6 +5235,8 @@ Returns:
             },
           ],
           &quot;diskConfig&quot;: { # Specifies the config of disk options for a group of VM instances. # Optional. Disk option config settings.
+            &quot;bootDiskProvisionedIops&quot;: &quot;A String&quot;, # Optional. Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. This field is supported only if boot_disk_type is hyperdisk-balanced.
+            &quot;bootDiskProvisionedThroughput&quot;: &quot;A String&quot;, # Optional. Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must be greater than or equal to 1. This field is supported only if boot_disk_type is hyperdisk-balanced.
             &quot;bootDiskSizeGb&quot;: 42, # Optional. Size in GB of the boot disk (default is 500GB).
             &quot;bootDiskType&quot;: &quot;A String&quot;, # Optional. Type of the boot disk (default is &quot;pd-standard&quot;). Valid values: &quot;pd-balanced&quot; (Persistent Disk Balanced Solid State Drive), &quot;pd-ssd&quot; (Persistent Disk Solid State Drive), or &quot;pd-standard&quot; (Persistent Disk Hard Disk Drive). See Disk types (https://cloud.google.com/compute/docs/disks#disk-types).
             &quot;localSsdInterface&quot;: &quot;A String&quot;, # Optional. Interface type of local SSDs (default is &quot;scsi&quot;). Valid values: &quot;scsi&quot; (Small Computer System Interface), &quot;nvme&quot; (Non-Volatile Memory Express). See local SSD performance (https://cloud.google.com/compute/docs/disks/local-ssd#performance).
@@ -5094,6 +5258,10 @@ Returns:
                 &quot;vmCount&quot;: 42, # Output only. Number of VM provisioned with the machine_type.
               },
             ],
+            &quot;provisioningModelMix&quot;: { # Defines how Dataproc should create VMs with a mixture of provisioning models. # Optional. Defines how the Group selects the provisioning model to ensure required reliability.
+              &quot;standardCapacityBase&quot;: 42, # Optional. The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standard_capacity_base, then it will start using standard_capacity_percent_above_base to mix Spot with Standard VMs. eg. If 15 instances are requested and standard_capacity_base is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+              &quot;standardCapacityPercentAboveBase&quot;: 42, # Optional. The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standard_capacity_base. eg. If 15 instances are requested and standard_capacity_base is 5 and standard_capacity_percent_above_base is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+            },
           },
           &quot;instanceNames&quot;: [ # Output only. The list of instance names. Dataproc derives the names from cluster_name, num_instances, and the instance group.
             &quot;A String&quot;,

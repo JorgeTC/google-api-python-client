@@ -170,8 +170,9 @@ Args:
       &quot;osLicense&quot;: &quot;A String&quot;, # The OS license returned from the adaptation module&#x27;s report.
       &quot;type&quot;: &quot;A String&quot;, # The license type that was used in OS adaptation.
     },
+    &quot;bootConversion&quot;: &quot;A String&quot;, # Optional. By default the virtual machine will keep its existing boot option. Setting this property will trigger an internal process which will convert the virtual machine from using the existing boot option to another.
     &quot;bootOption&quot;: &quot;A String&quot;, # The VM Boot Option, as set in the source VM.
-    &quot;computeScheduling&quot;: { # Scheduling information for VM on maintenance/restart behaviour and node allocation in sole tenant nodes. # Compute instance scheduling information (if empty default is used).
+    &quot;computeScheduling&quot;: { # Scheduling information for VM on maintenance/restart behaviour and node allocation in sole tenant nodes. Options for instance behavior when the host machine undergoes maintenance that may temporarily impact instance performance. # Compute instance scheduling information (if empty default is used).
       &quot;minNodeCpus&quot;: 42, # The minimum number of virtual CPUs this instance will consume when running on a sole-tenant node. Ignored if no node_affinites are configured.
       &quot;nodeAffinities&quot;: [ # A set of node affinity and anti-affinity configurations for sole tenant nodes.
         { # Node Affinity: the configuration of desired nodes onto which this Instance could be scheduled. Based on https://cloud.google.com/compute/docs/reference/rest/v1/instances/setScheduling
@@ -186,6 +187,8 @@ Args:
       &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
     },
     &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
+    &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
+    &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
     &quot;encryption&quot;: { # Encryption message describes the details of the applied encryption. # Optional. The encryption to apply to the VM disks.
       &quot;kmsKey&quot;: &quot;A String&quot;, # Required. The name of the encryption key that is stored in Google Cloud KMS.
     },
@@ -201,10 +204,11 @@ Args:
     },
     &quot;networkInterfaces&quot;: [ # List of NICs connected to this VM.
       { # NetworkInterface represents a NIC of a VM.
-        &quot;externalIp&quot;: &quot;A String&quot;, # The external IP to define in the NIC.
-        &quot;internalIp&quot;: &quot;A String&quot;, # The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
+        &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
+        &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
         &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
-        &quot;subnetwork&quot;: &quot;A String&quot;, # The subnetwork to connect the NIC to.
+        &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
+        &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
       },
     ],
     &quot;networkTags&quot;: [ # A list of network tags to associate with the VM.
@@ -238,7 +242,7 @@ Args:
       &quot;finalSync&quot;: { # ReplicationCycle contains information about the current replication cycle status. # Final sync step.
         &quot;cycleNumber&quot;: 42, # The cycle&#x27;s ordinal number.
         &quot;endTime&quot;: &quot;A String&quot;, # The time the replication cycle has ended.
-        &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Provides details on the state of the cycle in case of an error.
+        &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Provides details on the state of the cycle in case of an error.
           &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
           &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
             {
@@ -270,18 +274,18 @@ Args:
         &quot;totalPauseDuration&quot;: &quot;A String&quot;, # The accumulated duration the replication cycle was paused.
         &quot;warnings&quot;: [ # Output only. Warnings that occurred during the cycle.
           { # Represents migration resource warning information that can be used with google.rpc.Status message. MigrationWarning is used to present the user with warning information in migration operations.
-            &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Suggested action for solving the warning.
+            &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. Suggested action for solving the warning.
               &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
               &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
             },
             &quot;code&quot;: &quot;A String&quot;, # The warning code.
-            &quot;helpLinks&quot;: [ # URL(s) pointing to additional information on handling the current warning.
+            &quot;helpLinks&quot;: [ # Output only. URL(s) pointing to additional information on handling the current warning.
               { # Describes a URL link.
                 &quot;description&quot;: &quot;A String&quot;, # Describes what the link offers.
                 &quot;url&quot;: &quot;A String&quot;, # The URL of the link.
               },
             ],
-            &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # The localized warning message.
+            &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. The localized warning message.
               &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
               &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
             },
@@ -296,7 +300,7 @@ Args:
       &quot;previousReplicationCycle&quot;: { # ReplicationCycle contains information about the current replication cycle status. # A replication cycle prior cutover step.
         &quot;cycleNumber&quot;: 42, # The cycle&#x27;s ordinal number.
         &quot;endTime&quot;: &quot;A String&quot;, # The time the replication cycle has ended.
-        &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Provides details on the state of the cycle in case of an error.
+        &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Provides details on the state of the cycle in case of an error.
           &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
           &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
             {
@@ -328,18 +332,18 @@ Args:
         &quot;totalPauseDuration&quot;: &quot;A String&quot;, # The accumulated duration the replication cycle was paused.
         &quot;warnings&quot;: [ # Output only. Warnings that occurred during the cycle.
           { # Represents migration resource warning information that can be used with google.rpc.Status message. MigrationWarning is used to present the user with warning information in migration operations.
-            &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Suggested action for solving the warning.
+            &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. Suggested action for solving the warning.
               &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
               &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
             },
             &quot;code&quot;: &quot;A String&quot;, # The warning code.
-            &quot;helpLinks&quot;: [ # URL(s) pointing to additional information on handling the current warning.
+            &quot;helpLinks&quot;: [ # Output only. URL(s) pointing to additional information on handling the current warning.
               { # Describes a URL link.
                 &quot;description&quot;: &quot;A String&quot;, # Describes what the link offers.
                 &quot;url&quot;: &quot;A String&quot;, # The URL of the link.
               },
             ],
-            &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # The localized warning message.
+            &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. The localized warning message.
               &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
               &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
             },
@@ -421,8 +425,9 @@ Returns:
       &quot;osLicense&quot;: &quot;A String&quot;, # The OS license returned from the adaptation module&#x27;s report.
       &quot;type&quot;: &quot;A String&quot;, # The license type that was used in OS adaptation.
     },
+    &quot;bootConversion&quot;: &quot;A String&quot;, # Optional. By default the virtual machine will keep its existing boot option. Setting this property will trigger an internal process which will convert the virtual machine from using the existing boot option to another.
     &quot;bootOption&quot;: &quot;A String&quot;, # The VM Boot Option, as set in the source VM.
-    &quot;computeScheduling&quot;: { # Scheduling information for VM on maintenance/restart behaviour and node allocation in sole tenant nodes. # Compute instance scheduling information (if empty default is used).
+    &quot;computeScheduling&quot;: { # Scheduling information for VM on maintenance/restart behaviour and node allocation in sole tenant nodes. Options for instance behavior when the host machine undergoes maintenance that may temporarily impact instance performance. # Compute instance scheduling information (if empty default is used).
       &quot;minNodeCpus&quot;: 42, # The minimum number of virtual CPUs this instance will consume when running on a sole-tenant node. Ignored if no node_affinites are configured.
       &quot;nodeAffinities&quot;: [ # A set of node affinity and anti-affinity configurations for sole tenant nodes.
         { # Node Affinity: the configuration of desired nodes onto which this Instance could be scheduled. Based on https://cloud.google.com/compute/docs/reference/rest/v1/instances/setScheduling
@@ -437,6 +442,8 @@ Returns:
       &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
     },
     &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
+    &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
+    &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
     &quot;encryption&quot;: { # Encryption message describes the details of the applied encryption. # Optional. The encryption to apply to the VM disks.
       &quot;kmsKey&quot;: &quot;A String&quot;, # Required. The name of the encryption key that is stored in Google Cloud KMS.
     },
@@ -452,10 +459,11 @@ Returns:
     },
     &quot;networkInterfaces&quot;: [ # List of NICs connected to this VM.
       { # NetworkInterface represents a NIC of a VM.
-        &quot;externalIp&quot;: &quot;A String&quot;, # The external IP to define in the NIC.
-        &quot;internalIp&quot;: &quot;A String&quot;, # The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
+        &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
+        &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
         &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
-        &quot;subnetwork&quot;: &quot;A String&quot;, # The subnetwork to connect the NIC to.
+        &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
+        &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
       },
     ],
     &quot;networkTags&quot;: [ # A list of network tags to associate with the VM.
@@ -489,7 +497,7 @@ Returns:
       &quot;finalSync&quot;: { # ReplicationCycle contains information about the current replication cycle status. # Final sync step.
         &quot;cycleNumber&quot;: 42, # The cycle&#x27;s ordinal number.
         &quot;endTime&quot;: &quot;A String&quot;, # The time the replication cycle has ended.
-        &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Provides details on the state of the cycle in case of an error.
+        &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Provides details on the state of the cycle in case of an error.
           &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
           &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
             {
@@ -521,18 +529,18 @@ Returns:
         &quot;totalPauseDuration&quot;: &quot;A String&quot;, # The accumulated duration the replication cycle was paused.
         &quot;warnings&quot;: [ # Output only. Warnings that occurred during the cycle.
           { # Represents migration resource warning information that can be used with google.rpc.Status message. MigrationWarning is used to present the user with warning information in migration operations.
-            &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Suggested action for solving the warning.
+            &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. Suggested action for solving the warning.
               &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
               &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
             },
             &quot;code&quot;: &quot;A String&quot;, # The warning code.
-            &quot;helpLinks&quot;: [ # URL(s) pointing to additional information on handling the current warning.
+            &quot;helpLinks&quot;: [ # Output only. URL(s) pointing to additional information on handling the current warning.
               { # Describes a URL link.
                 &quot;description&quot;: &quot;A String&quot;, # Describes what the link offers.
                 &quot;url&quot;: &quot;A String&quot;, # The URL of the link.
               },
             ],
-            &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # The localized warning message.
+            &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. The localized warning message.
               &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
               &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
             },
@@ -547,7 +555,7 @@ Returns:
       &quot;previousReplicationCycle&quot;: { # ReplicationCycle contains information about the current replication cycle status. # A replication cycle prior cutover step.
         &quot;cycleNumber&quot;: 42, # The cycle&#x27;s ordinal number.
         &quot;endTime&quot;: &quot;A String&quot;, # The time the replication cycle has ended.
-        &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Provides details on the state of the cycle in case of an error.
+        &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Provides details on the state of the cycle in case of an error.
           &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
           &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
             {
@@ -579,18 +587,18 @@ Returns:
         &quot;totalPauseDuration&quot;: &quot;A String&quot;, # The accumulated duration the replication cycle was paused.
         &quot;warnings&quot;: [ # Output only. Warnings that occurred during the cycle.
           { # Represents migration resource warning information that can be used with google.rpc.Status message. MigrationWarning is used to present the user with warning information in migration operations.
-            &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Suggested action for solving the warning.
+            &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. Suggested action for solving the warning.
               &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
               &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
             },
             &quot;code&quot;: &quot;A String&quot;, # The warning code.
-            &quot;helpLinks&quot;: [ # URL(s) pointing to additional information on handling the current warning.
+            &quot;helpLinks&quot;: [ # Output only. URL(s) pointing to additional information on handling the current warning.
               { # Describes a URL link.
                 &quot;description&quot;: &quot;A String&quot;, # Describes what the link offers.
                 &quot;url&quot;: &quot;A String&quot;, # The URL of the link.
               },
             ],
-            &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # The localized warning message.
+            &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. The localized warning message.
               &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
               &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
             },
@@ -648,8 +656,9 @@ Returns:
           &quot;osLicense&quot;: &quot;A String&quot;, # The OS license returned from the adaptation module&#x27;s report.
           &quot;type&quot;: &quot;A String&quot;, # The license type that was used in OS adaptation.
         },
+        &quot;bootConversion&quot;: &quot;A String&quot;, # Optional. By default the virtual machine will keep its existing boot option. Setting this property will trigger an internal process which will convert the virtual machine from using the existing boot option to another.
         &quot;bootOption&quot;: &quot;A String&quot;, # The VM Boot Option, as set in the source VM.
-        &quot;computeScheduling&quot;: { # Scheduling information for VM on maintenance/restart behaviour and node allocation in sole tenant nodes. # Compute instance scheduling information (if empty default is used).
+        &quot;computeScheduling&quot;: { # Scheduling information for VM on maintenance/restart behaviour and node allocation in sole tenant nodes. Options for instance behavior when the host machine undergoes maintenance that may temporarily impact instance performance. # Compute instance scheduling information (if empty default is used).
           &quot;minNodeCpus&quot;: 42, # The minimum number of virtual CPUs this instance will consume when running on a sole-tenant node. Ignored if no node_affinites are configured.
           &quot;nodeAffinities&quot;: [ # A set of node affinity and anti-affinity configurations for sole tenant nodes.
             { # Node Affinity: the configuration of desired nodes onto which this Instance could be scheduled. Based on https://cloud.google.com/compute/docs/reference/rest/v1/instances/setScheduling
@@ -664,6 +673,8 @@ Returns:
           &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
         },
         &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
+        &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
+        &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
         &quot;encryption&quot;: { # Encryption message describes the details of the applied encryption. # Optional. The encryption to apply to the VM disks.
           &quot;kmsKey&quot;: &quot;A String&quot;, # Required. The name of the encryption key that is stored in Google Cloud KMS.
         },
@@ -679,10 +690,11 @@ Returns:
         },
         &quot;networkInterfaces&quot;: [ # List of NICs connected to this VM.
           { # NetworkInterface represents a NIC of a VM.
-            &quot;externalIp&quot;: &quot;A String&quot;, # The external IP to define in the NIC.
-            &quot;internalIp&quot;: &quot;A String&quot;, # The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
+            &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
+            &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
             &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
-            &quot;subnetwork&quot;: &quot;A String&quot;, # The subnetwork to connect the NIC to.
+            &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
+            &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
           },
         ],
         &quot;networkTags&quot;: [ # A list of network tags to associate with the VM.
@@ -716,7 +728,7 @@ Returns:
           &quot;finalSync&quot;: { # ReplicationCycle contains information about the current replication cycle status. # Final sync step.
             &quot;cycleNumber&quot;: 42, # The cycle&#x27;s ordinal number.
             &quot;endTime&quot;: &quot;A String&quot;, # The time the replication cycle has ended.
-            &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Provides details on the state of the cycle in case of an error.
+            &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Provides details on the state of the cycle in case of an error.
               &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
               &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
                 {
@@ -748,18 +760,18 @@ Returns:
             &quot;totalPauseDuration&quot;: &quot;A String&quot;, # The accumulated duration the replication cycle was paused.
             &quot;warnings&quot;: [ # Output only. Warnings that occurred during the cycle.
               { # Represents migration resource warning information that can be used with google.rpc.Status message. MigrationWarning is used to present the user with warning information in migration operations.
-                &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Suggested action for solving the warning.
+                &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. Suggested action for solving the warning.
                   &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
                   &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
                 },
                 &quot;code&quot;: &quot;A String&quot;, # The warning code.
-                &quot;helpLinks&quot;: [ # URL(s) pointing to additional information on handling the current warning.
+                &quot;helpLinks&quot;: [ # Output only. URL(s) pointing to additional information on handling the current warning.
                   { # Describes a URL link.
                     &quot;description&quot;: &quot;A String&quot;, # Describes what the link offers.
                     &quot;url&quot;: &quot;A String&quot;, # The URL of the link.
                   },
                 ],
-                &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # The localized warning message.
+                &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. The localized warning message.
                   &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
                   &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
                 },
@@ -774,7 +786,7 @@ Returns:
           &quot;previousReplicationCycle&quot;: { # ReplicationCycle contains information about the current replication cycle status. # A replication cycle prior cutover step.
             &quot;cycleNumber&quot;: 42, # The cycle&#x27;s ordinal number.
             &quot;endTime&quot;: &quot;A String&quot;, # The time the replication cycle has ended.
-            &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Provides details on the state of the cycle in case of an error.
+            &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Provides details on the state of the cycle in case of an error.
               &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
               &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
                 {
@@ -806,18 +818,18 @@ Returns:
             &quot;totalPauseDuration&quot;: &quot;A String&quot;, # The accumulated duration the replication cycle was paused.
             &quot;warnings&quot;: [ # Output only. Warnings that occurred during the cycle.
               { # Represents migration resource warning information that can be used with google.rpc.Status message. MigrationWarning is used to present the user with warning information in migration operations.
-                &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Suggested action for solving the warning.
+                &quot;actionItem&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. Suggested action for solving the warning.
                   &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
                   &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
                 },
                 &quot;code&quot;: &quot;A String&quot;, # The warning code.
-                &quot;helpLinks&quot;: [ # URL(s) pointing to additional information on handling the current warning.
+                &quot;helpLinks&quot;: [ # Output only. URL(s) pointing to additional information on handling the current warning.
                   { # Describes a URL link.
                     &quot;description&quot;: &quot;A String&quot;, # Describes what the link offers.
                     &quot;url&quot;: &quot;A String&quot;, # The URL of the link.
                   },
                 ],
-                &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # The localized warning message.
+                &quot;warningMessage&quot;: { # Provides a localized error message that is safe to return to the user which can be attached to an RPC error. # Output only. The localized warning message.
                   &quot;locale&quot;: &quot;A String&quot;, # The locale used following the specification defined at https://www.rfc-editor.org/rfc/bcp/bcp47.txt. Examples are: &quot;en-US&quot;, &quot;fr-CH&quot;, &quot;es-MX&quot;
                   &quot;message&quot;: &quot;A String&quot;, # The localized error message in the above locale.
                 },

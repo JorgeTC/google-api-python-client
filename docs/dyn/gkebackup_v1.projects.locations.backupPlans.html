@@ -132,6 +132,7 @@ Args:
     },
     &quot;includeSecrets&quot;: True or False, # Optional. This flag specifies whether Kubernetes Secret resources should be included when they fall into the scope of Backups. Default: False
     &quot;includeVolumeData&quot;: True or False, # Optional. This flag specifies whether volume data should be backed up when PVCs are included in the scope of a Backup. Default: False
+    &quot;permissiveMode&quot;: True or False, # Optional. If false, Backups will fail when Backup for GKE detects Kubernetes configuration that is non-standard or requires additional setup to restore. Default: False
     &quot;selectedApplications&quot;: { # A list of namespaced Kubernetes resources. # If set, include just the resources referenced by the listed ProtectedApplications.
       &quot;namespacedNames&quot;: [ # Optional. A list of namespaced Kubernetes resources.
         { # A reference to a namespaced resource in Kubernetes.
@@ -140,8 +141,8 @@ Args:
         },
       ],
     },
-    &quot;selectedNamespaces&quot;: { # A list of Kubernetes Namespaces # If set, include just the resources in the listed namespaces.
-      &quot;namespaces&quot;: [ # Optional. A list of Kubernetes Namespaces
+    &quot;selectedNamespaces&quot;: { # A list of Kubernetes Namespaces. # If set, include just the resources in the listed namespaces.
+      &quot;namespaces&quot;: [ # Optional. A list of Kubernetes Namespaces.
         &quot;A String&quot;,
       ],
     },
@@ -166,10 +167,10 @@ Args:
             &quot;year&quot;: 42, # Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.
           },
           &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Required. Specifies the start time of the window using time of the day in UTC.
-            &quot;hours&quot;: 42, # Hours of day in 24 hour format. Should be from 0 to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
-            &quot;minutes&quot;: 42, # Minutes of hour of day. Must be from 0 to 59.
-            &quot;nanos&quot;: 42, # Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.
-            &quot;seconds&quot;: 42, # Seconds of minutes of the time. Must normally be from 0 to 59. An API may allow the value 60 if it allows leap-seconds.
+            &quot;hours&quot;: 42, # Hours of a day in 24 hour format. Must be greater than or equal to 0 and typically must be less than or equal to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
+            &quot;minutes&quot;: 42, # Minutes of an hour. Must be greater than or equal to 0 and less than or equal to 59.
+            &quot;nanos&quot;: 42, # Fractions of seconds, in nanoseconds. Must be greater than or equal to 0 and less than or equal to 999,999,999.
+            &quot;seconds&quot;: 42, # Seconds of a minute. Must be greater than or equal to 0 and typically must be less than or equal to 59. An API may allow the value 60 if it allows leap-seconds.
           },
         },
       ],
@@ -194,7 +195,7 @@ Args:
   &quot;rpoRiskLevel&quot;: 42, # Output only. A number that represents the current risk level of this BackupPlan from RPO perspective with 1 being no risk and 5 being highest risk.
   &quot;rpoRiskReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why the BackupPlan is in the current rpo_risk_level and action items if any.
   &quot;state&quot;: &quot;A String&quot;, # Output only. State of the BackupPlan. This State field reflects the various stages a BackupPlan can be in during the Create operation. It will be set to &quot;DEACTIVATED&quot; if the BackupPlan is deactivated on an Update
-  &quot;stateReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why BackupPlan is in the current `state`
+  &quot;stateReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why BackupPlan is in the current `state`. This field is only meant for human readability and should not be used programmatically as this field is not guaranteed to be consistent.
   &quot;uid&quot;: &quot;A String&quot;, # Output only. Server generated global unique identifier of [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) format.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this BackupPlan resource was last updated.
 }
@@ -287,6 +288,7 @@ Returns:
     },
     &quot;includeSecrets&quot;: True or False, # Optional. This flag specifies whether Kubernetes Secret resources should be included when they fall into the scope of Backups. Default: False
     &quot;includeVolumeData&quot;: True or False, # Optional. This flag specifies whether volume data should be backed up when PVCs are included in the scope of a Backup. Default: False
+    &quot;permissiveMode&quot;: True or False, # Optional. If false, Backups will fail when Backup for GKE detects Kubernetes configuration that is non-standard or requires additional setup to restore. Default: False
     &quot;selectedApplications&quot;: { # A list of namespaced Kubernetes resources. # If set, include just the resources referenced by the listed ProtectedApplications.
       &quot;namespacedNames&quot;: [ # Optional. A list of namespaced Kubernetes resources.
         { # A reference to a namespaced resource in Kubernetes.
@@ -295,8 +297,8 @@ Returns:
         },
       ],
     },
-    &quot;selectedNamespaces&quot;: { # A list of Kubernetes Namespaces # If set, include just the resources in the listed namespaces.
-      &quot;namespaces&quot;: [ # Optional. A list of Kubernetes Namespaces
+    &quot;selectedNamespaces&quot;: { # A list of Kubernetes Namespaces. # If set, include just the resources in the listed namespaces.
+      &quot;namespaces&quot;: [ # Optional. A list of Kubernetes Namespaces.
         &quot;A String&quot;,
       ],
     },
@@ -321,10 +323,10 @@ Returns:
             &quot;year&quot;: 42, # Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.
           },
           &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Required. Specifies the start time of the window using time of the day in UTC.
-            &quot;hours&quot;: 42, # Hours of day in 24 hour format. Should be from 0 to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
-            &quot;minutes&quot;: 42, # Minutes of hour of day. Must be from 0 to 59.
-            &quot;nanos&quot;: 42, # Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.
-            &quot;seconds&quot;: 42, # Seconds of minutes of the time. Must normally be from 0 to 59. An API may allow the value 60 if it allows leap-seconds.
+            &quot;hours&quot;: 42, # Hours of a day in 24 hour format. Must be greater than or equal to 0 and typically must be less than or equal to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
+            &quot;minutes&quot;: 42, # Minutes of an hour. Must be greater than or equal to 0 and less than or equal to 59.
+            &quot;nanos&quot;: 42, # Fractions of seconds, in nanoseconds. Must be greater than or equal to 0 and less than or equal to 999,999,999.
+            &quot;seconds&quot;: 42, # Seconds of a minute. Must be greater than or equal to 0 and typically must be less than or equal to 59. An API may allow the value 60 if it allows leap-seconds.
           },
         },
       ],
@@ -349,7 +351,7 @@ Returns:
   &quot;rpoRiskLevel&quot;: 42, # Output only. A number that represents the current risk level of this BackupPlan from RPO perspective with 1 being no risk and 5 being highest risk.
   &quot;rpoRiskReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why the BackupPlan is in the current rpo_risk_level and action items if any.
   &quot;state&quot;: &quot;A String&quot;, # Output only. State of the BackupPlan. This State field reflects the various stages a BackupPlan can be in during the Create operation. It will be set to &quot;DEACTIVATED&quot; if the BackupPlan is deactivated on an Update
-  &quot;stateReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why BackupPlan is in the current `state`
+  &quot;stateReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why BackupPlan is in the current `state`. This field is only meant for human readability and should not be used programmatically as this field is not guaranteed to be consistent.
   &quot;uid&quot;: &quot;A String&quot;, # Output only. Server generated global unique identifier of [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) format.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this BackupPlan resource was last updated.
 }</pre>
@@ -431,6 +433,7 @@ Returns:
         },
         &quot;includeSecrets&quot;: True or False, # Optional. This flag specifies whether Kubernetes Secret resources should be included when they fall into the scope of Backups. Default: False
         &quot;includeVolumeData&quot;: True or False, # Optional. This flag specifies whether volume data should be backed up when PVCs are included in the scope of a Backup. Default: False
+        &quot;permissiveMode&quot;: True or False, # Optional. If false, Backups will fail when Backup for GKE detects Kubernetes configuration that is non-standard or requires additional setup to restore. Default: False
         &quot;selectedApplications&quot;: { # A list of namespaced Kubernetes resources. # If set, include just the resources referenced by the listed ProtectedApplications.
           &quot;namespacedNames&quot;: [ # Optional. A list of namespaced Kubernetes resources.
             { # A reference to a namespaced resource in Kubernetes.
@@ -439,8 +442,8 @@ Returns:
             },
           ],
         },
-        &quot;selectedNamespaces&quot;: { # A list of Kubernetes Namespaces # If set, include just the resources in the listed namespaces.
-          &quot;namespaces&quot;: [ # Optional. A list of Kubernetes Namespaces
+        &quot;selectedNamespaces&quot;: { # A list of Kubernetes Namespaces. # If set, include just the resources in the listed namespaces.
+          &quot;namespaces&quot;: [ # Optional. A list of Kubernetes Namespaces.
             &quot;A String&quot;,
           ],
         },
@@ -465,10 +468,10 @@ Returns:
                 &quot;year&quot;: 42, # Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.
               },
               &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Required. Specifies the start time of the window using time of the day in UTC.
-                &quot;hours&quot;: 42, # Hours of day in 24 hour format. Should be from 0 to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
-                &quot;minutes&quot;: 42, # Minutes of hour of day. Must be from 0 to 59.
-                &quot;nanos&quot;: 42, # Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.
-                &quot;seconds&quot;: 42, # Seconds of minutes of the time. Must normally be from 0 to 59. An API may allow the value 60 if it allows leap-seconds.
+                &quot;hours&quot;: 42, # Hours of a day in 24 hour format. Must be greater than or equal to 0 and typically must be less than or equal to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
+                &quot;minutes&quot;: 42, # Minutes of an hour. Must be greater than or equal to 0 and less than or equal to 59.
+                &quot;nanos&quot;: 42, # Fractions of seconds, in nanoseconds. Must be greater than or equal to 0 and less than or equal to 999,999,999.
+                &quot;seconds&quot;: 42, # Seconds of a minute. Must be greater than or equal to 0 and typically must be less than or equal to 59. An API may allow the value 60 if it allows leap-seconds.
               },
             },
           ],
@@ -493,7 +496,7 @@ Returns:
       &quot;rpoRiskLevel&quot;: 42, # Output only. A number that represents the current risk level of this BackupPlan from RPO perspective with 1 being no risk and 5 being highest risk.
       &quot;rpoRiskReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why the BackupPlan is in the current rpo_risk_level and action items if any.
       &quot;state&quot;: &quot;A String&quot;, # Output only. State of the BackupPlan. This State field reflects the various stages a BackupPlan can be in during the Create operation. It will be set to &quot;DEACTIVATED&quot; if the BackupPlan is deactivated on an Update
-      &quot;stateReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why BackupPlan is in the current `state`
+      &quot;stateReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why BackupPlan is in the current `state`. This field is only meant for human readability and should not be used programmatically as this field is not guaranteed to be consistent.
       &quot;uid&quot;: &quot;A String&quot;, # Output only. Server generated global unique identifier of [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) format.
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this BackupPlan resource was last updated.
     },
@@ -536,6 +539,7 @@ Args:
     },
     &quot;includeSecrets&quot;: True or False, # Optional. This flag specifies whether Kubernetes Secret resources should be included when they fall into the scope of Backups. Default: False
     &quot;includeVolumeData&quot;: True or False, # Optional. This flag specifies whether volume data should be backed up when PVCs are included in the scope of a Backup. Default: False
+    &quot;permissiveMode&quot;: True or False, # Optional. If false, Backups will fail when Backup for GKE detects Kubernetes configuration that is non-standard or requires additional setup to restore. Default: False
     &quot;selectedApplications&quot;: { # A list of namespaced Kubernetes resources. # If set, include just the resources referenced by the listed ProtectedApplications.
       &quot;namespacedNames&quot;: [ # Optional. A list of namespaced Kubernetes resources.
         { # A reference to a namespaced resource in Kubernetes.
@@ -544,8 +548,8 @@ Args:
         },
       ],
     },
-    &quot;selectedNamespaces&quot;: { # A list of Kubernetes Namespaces # If set, include just the resources in the listed namespaces.
-      &quot;namespaces&quot;: [ # Optional. A list of Kubernetes Namespaces
+    &quot;selectedNamespaces&quot;: { # A list of Kubernetes Namespaces. # If set, include just the resources in the listed namespaces.
+      &quot;namespaces&quot;: [ # Optional. A list of Kubernetes Namespaces.
         &quot;A String&quot;,
       ],
     },
@@ -570,10 +574,10 @@ Args:
             &quot;year&quot;: 42, # Year of the date. Must be from 1 to 9999, or 0 to specify a date without a year.
           },
           &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Required. Specifies the start time of the window using time of the day in UTC.
-            &quot;hours&quot;: 42, # Hours of day in 24 hour format. Should be from 0 to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
-            &quot;minutes&quot;: 42, # Minutes of hour of day. Must be from 0 to 59.
-            &quot;nanos&quot;: 42, # Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.
-            &quot;seconds&quot;: 42, # Seconds of minutes of the time. Must normally be from 0 to 59. An API may allow the value 60 if it allows leap-seconds.
+            &quot;hours&quot;: 42, # Hours of a day in 24 hour format. Must be greater than or equal to 0 and typically must be less than or equal to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
+            &quot;minutes&quot;: 42, # Minutes of an hour. Must be greater than or equal to 0 and less than or equal to 59.
+            &quot;nanos&quot;: 42, # Fractions of seconds, in nanoseconds. Must be greater than or equal to 0 and less than or equal to 999,999,999.
+            &quot;seconds&quot;: 42, # Seconds of a minute. Must be greater than or equal to 0 and typically must be less than or equal to 59. An API may allow the value 60 if it allows leap-seconds.
           },
         },
       ],
@@ -598,7 +602,7 @@ Args:
   &quot;rpoRiskLevel&quot;: 42, # Output only. A number that represents the current risk level of this BackupPlan from RPO perspective with 1 being no risk and 5 being highest risk.
   &quot;rpoRiskReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why the BackupPlan is in the current rpo_risk_level and action items if any.
   &quot;state&quot;: &quot;A String&quot;, # Output only. State of the BackupPlan. This State field reflects the various stages a BackupPlan can be in during the Create operation. It will be set to &quot;DEACTIVATED&quot; if the BackupPlan is deactivated on an Update
-  &quot;stateReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why BackupPlan is in the current `state`
+  &quot;stateReason&quot;: &quot;A String&quot;, # Output only. Human-readable description of why BackupPlan is in the current `state`. This field is only meant for human readability and should not be used programmatically as this field is not guaranteed to be consistent.
   &quot;uid&quot;: &quot;A String&quot;, # Output only. Server generated global unique identifier of [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) format.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this BackupPlan resource was last updated.
 }

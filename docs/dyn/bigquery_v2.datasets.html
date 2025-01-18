@@ -81,10 +81,10 @@ h1, h2, h3 {
   <code><a href="#delete">delete(projectId, datasetId, deleteContents=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Deletes the dataset specified by the datasetId value. Before you can delete a dataset, you must delete all its tables, either manually or by specifying deleteContents. Immediately after deletion, you can create another dataset with the same name.</p>
 <p class="toc_element">
-  <code><a href="#get">get(projectId, datasetId, datasetView=None, x__xgafv=None)</a></code></p>
+  <code><a href="#get">get(projectId, datasetId, accessPolicyVersion=None, datasetView=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Returns the dataset specified by datasetID.</p>
 <p class="toc_element">
-  <code><a href="#insert">insert(projectId, body=None, x__xgafv=None)</a></code></p>
+  <code><a href="#insert">insert(projectId, accessPolicyVersion=None, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Creates a new empty dataset.</p>
 <p class="toc_element">
   <code><a href="#list">list(projectId, all=None, filter=None, maxResults=None, pageToken=None, x__xgafv=None)</a></code></p>
@@ -93,13 +93,13 @@ h1, h2, h3 {
   <code><a href="#list_next">list_next()</a></code></p>
 <p class="firstline">Retrieves the next page of results.</p>
 <p class="toc_element">
-  <code><a href="#patch">patch(projectId, datasetId, body=None, x__xgafv=None)</a></code></p>
+  <code><a href="#patch">patch(projectId, datasetId, accessPolicyVersion=None, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Updates information in an existing dataset. The update method replaces the entire dataset resource, whereas the patch method only replaces fields that are provided in the submitted dataset resource. This method supports RFC5789 patch semantics.</p>
 <p class="toc_element">
   <code><a href="#undelete">undelete(projectId, datasetId, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Undeletes a dataset which is within time travel window based on datasetId. If a time is specified, the dataset version deleted at that time is undeleted, else the last live version is undeleted.</p>
 <p class="toc_element">
-  <code><a href="#update">update(projectId, datasetId, body=None, x__xgafv=None)</a></code></p>
+  <code><a href="#update">update(projectId, datasetId, accessPolicyVersion=None, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Updates information in an existing dataset. The update method replaces the entire dataset resource, whereas the patch method only replaces fields that are provided in the submitted dataset resource.</p>
 <h3>Method Details</h3>
 <div class="method">
@@ -123,12 +123,13 @@ Args:
 </div>
 
 <div class="method">
-    <code class="details" id="get">get(projectId, datasetId, datasetView=None, x__xgafv=None)</code>
+    <code class="details" id="get">get(projectId, datasetId, accessPolicyVersion=None, datasetView=None, x__xgafv=None)</code>
   <pre>Returns the dataset specified by datasetID.
 
 Args:
   projectId: string, Required. Project ID of the requested dataset (required)
   datasetId: string, Required. Dataset ID of the requested dataset (required)
+  accessPolicyVersion: integer, Optional. The version of the access policy schema to fetch. Valid values are 0, 1, and 3. Requests specifying an invalid value will be rejected. Requests for conditional access policy binding in datasets must specify version 3. Dataset with no conditional role bindings in access policy may specify any valid value or leave the field unset. This field will be mapped to [IAM Policy version] (https://cloud.google.com/iam/docs/policies#versions) and will be used to fetch policy from IAM. If unset or if 0 or 1 value is used for dataset with conditional bindings, access entry with condition will have role string appended by &#x27;withcond&#x27; string followed by a hash value. For example : { &quot;access&quot;: [ { &quot;role&quot;: &quot;roles/bigquery.dataViewer_with_conditionalbinding_7a34awqsda&quot;, &quot;userByEmail&quot;: &quot;user@example.com&quot;, } ] } Please refer https://cloud.google.com/iam/docs/troubleshooting-withcond for more details.
   datasetView: string, Optional. Specifies the view that determines which dataset information is returned. By default, metadata and ACL information are returned.
     Allowed values
       DATASET_VIEW_UNSPECIFIED - The default value. Default to the FULL view.
@@ -143,11 +144,17 @@ Args:
 Returns:
   An object of the form:
 
-    {
-  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER;
+    { # Represents a BigQuery dataset.
+  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER; If you patch a dataset, then this field is overwritten by the patched dataset&#x27;s access field. To add entities, you must supply the entire existing access array in addition to any new entities that you want to add.
     { # An object that defines dataset access for an entity.
+      &quot;condition&quot;: { # Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: &quot;Summary size limit&quot; description: &quot;Determines if a summary is less than 100 chars&quot; expression: &quot;document.summary.size() &lt; 100&quot; Example (Equality): title: &quot;Requestor is owner&quot; description: &quot;Determines if requestor is the document owner&quot; expression: &quot;document.owner == request.auth.claims.email&quot; Example (Logic): title: &quot;Public documents&quot; description: &quot;Determine whether the document should be publicly visible&quot; expression: &quot;document.type != &#x27;private&#x27; &amp;&amp; document.type != &#x27;internal&#x27;&quot; Example (Data Manipulation): title: &quot;Notification string&quot; description: &quot;Create a notification string with a timestamp.&quot; expression: &quot;&#x27;New message received at &#x27; + string(document.create_time)&quot; The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. # Optional. condition for the binding. If CEL expression in this field is true, this access binding will be considered
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.
+        &quot;expression&quot;: &quot;A String&quot;, # Textual representation of an expression in Common Expression Language syntax.
+        &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
+        &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
+      },
       &quot;dataset&quot;: { # Grants all resources of particular types in a particular dataset read access to the current dataset. Similar to how individually authorized views work, updates to any resource granted through its dataset (including creation of new resources) requires read permission to referenced resources, plus write permission to the authorizing dataset. # [Pick one] A grant authorizing all resources of a particular type in a particular dataset access to this dataset. Only views are supported for now. The role field is not required when this field is set. If that dataset is deleted and re-created, its access needs to be granted again via an update operation.
-        &quot;dataset&quot;: { # The dataset this entry applies to
+        &quot;dataset&quot;: { # Identifier for a dataset. # The dataset this entry applies to
           &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
           &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
         },
@@ -158,13 +165,13 @@ Returns:
       &quot;domain&quot;: &quot;A String&quot;, # [Pick one] A domain to grant access to. Any users signed in with the domain specified will be granted the specified access. Example: &quot;example.com&quot;. Maps to IAM policy member &quot;domain:DOMAIN&quot;.
       &quot;groupByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a Google Group to grant access to. Maps to IAM policy member &quot;group:GROUP&quot;.
       &quot;iamMember&quot;: &quot;A String&quot;, # [Pick one] Some other type of member that appears in the IAM Policy but isn&#x27;t a user, group, domain, or special group.
-      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: OWNER &lt;=&gt; roles/bigquery.dataOwner WRITER &lt;=&gt; roles/bigquery.dataEditor READER &lt;=&gt; roles/bigquery.dataViewer This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
+      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: * `OWNER`: `roles/bigquery.dataOwner` * `WRITER`: `roles/bigquery.dataEditor` * `READER`: `roles/bigquery.dataViewer` This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
       &quot;routine&quot;: { # Id path of a routine. # [Pick one] A routine from a different dataset to grant access to. Queries executed against that routine will have read access to views/tables/routines in this dataset. Only UDF is supported for now. The role field is not required when this field is set. If that routine is updated by any user, access to the routine needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this routine.
         &quot;projectId&quot;: &quot;A String&quot;, # Required. The ID of the project containing this routine.
         &quot;routineId&quot;: &quot;A String&quot;, # Required. The ID of the routine. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 256 characters.
       },
-      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: projectOwners: Owners of the enclosing project. projectReaders: Readers of the enclosing project. projectWriters: Writers of the enclosing project. allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
+      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: * projectOwners: Owners of the enclosing project. * projectReaders: Readers of the enclosing project. * projectWriters: Writers of the enclosing project. * allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
       &quot;userByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a user to grant access to. For example: fred@example.com. Maps to IAM policy member &quot;user:EMAIL&quot; or &quot;serviceAccount:EMAIL&quot;.
       &quot;view&quot;: { # [Pick one] A view from a different dataset to grant access to. Queries executed against that view will have read access to views/tables/routines in this dataset. The role field is not required when this field is set. If that view is updated by any user, access to the view needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this table.
@@ -174,12 +181,12 @@ Returns:
     },
   ],
   &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The time when this dataset was created, in milliseconds since the epoch.
-  &quot;datasetReference&quot;: { # Required. A reference that identifies the dataset.
+  &quot;datasetReference&quot;: { # Identifier for a dataset. # Required. A reference that identifies the dataset.
     &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
     &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
   },
   &quot;defaultCollation&quot;: &quot;A String&quot;, # Optional. Defines the default collation specification of future tables created in the dataset. If a table is created in this dataset without table-level default collation, then the table inherits the dataset default collation, which is applied to the string fields that do not have explicit collation specified. A change to this field affects only tables created afterwards, and does not alter the existing tables. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-  &quot;defaultEncryptionConfiguration&quot;: { # The default encryption key for all tables in the dataset. Once this property is set, all newly-created partitioned tables in the dataset will have encryption key set to this value, unless table creation request (or query) overrides the key.
+  &quot;defaultEncryptionConfiguration&quot;: { # Configuration for Cloud KMS encryption settings. # The default encryption key for all tables in the dataset. After this property is set, the encryption key of all newly-created tables in the dataset is set to this value unless the table creation request or query explicitly overrides the key.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key.
   },
   &quot;defaultPartitionExpirationMs&quot;: &quot;A String&quot;, # This default partition expiration, expressed in milliseconds. When new time-partitioned tables are created in a dataset where this property is set, the table will inherit this value, propagated as the `TimePartitioning.expirationMs` property on the new table. If you set `TimePartitioning.expirationMs` explicitly when creating a table, the `defaultPartitionExpirationMs` of the containing dataset is ignored. When creating a partitioned table, if `defaultPartitionExpirationMs` is set, the `defaultTableExpirationMs` value is ignored and the table will not be inherit a table expiration deadline.
@@ -187,9 +194,9 @@ Returns:
   &quot;defaultTableExpirationMs&quot;: &quot;A String&quot;, # Optional. The default lifetime of all tables in the dataset, in milliseconds. The minimum lifetime value is 3600000 milliseconds (one hour). To clear an existing default expiration with a PATCH request, set to 0. Once this property is set, all newly-created tables in the dataset will have an expirationTime property set to the creation time plus the value in this property, and changing the value will only affect new tables, not existing ones. When the expirationTime for a given table is reached, that table will be deleted automatically. If a table&#x27;s expirationTime is modified or removed before the table expires, or if you provide an explicit expirationTime when creating a table, that value takes precedence over the default expiration time indicated by this property.
   &quot;description&quot;: &quot;A String&quot;, # Optional. A user-friendly description of the dataset.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. A hash of the resource.
-  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
+  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema, or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
     &quot;defaultStorageLocationUri&quot;: &quot;A String&quot;, # Optional. The storage location URI for all tables in the dataset. Equivalent to hive metastore&#x27;s database locationUri. Maximum length of 1024 characters.
-    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2Mib.
+    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2MiB.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
   },
@@ -201,7 +208,7 @@ Returns:
   &quot;id&quot;: &quot;A String&quot;, # Output only. The fully-qualified unique name of the dataset in the format projectId:datasetId. The dataset name without the project name is given in the datasetId field. When creating a new dataset, leave this field blank, and instead specify the datasetId field.
   &quot;isCaseInsensitive&quot;: True or False, # Optional. TRUE if the dataset and its table names are case-insensitive, otherwise FALSE. By default, this is FALSE, which means the dataset and its table names are case-sensitive. This field does not affect routine references.
   &quot;kind&quot;: &quot;bigquery#dataset&quot;, # Output only. The resource type.
-  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See Creating and Updating Dataset Labels for more information.
+  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See [Creating and Updating Dataset Labels](https://cloud.google.com/bigquery/docs/creating-managing-labels#creating_and_updating_dataset_labels) for more information.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;lastModifiedTime&quot;: &quot;A String&quot;, # Output only. The date when this dataset was last modified, in milliseconds since the epoch.
@@ -209,21 +216,24 @@ Returns:
     &quot;linkState&quot;: &quot;A String&quot;, # Output only. Specifies whether Linked Dataset is currently in a linked state or not.
   },
   &quot;linkedDatasetSource&quot;: { # A dataset source type which refers to another BigQuery dataset. # Optional. The source dataset reference when the dataset is of type LINKED. For all other dataset types it is not set. This field cannot be updated once it is set. Any attempt to update this field using Update and Patch API Operations will be ignored.
-    &quot;sourceDataset&quot;: { # The source dataset reference contains project numbers and not project ids.
+    &quot;sourceDataset&quot;: { # Identifier for a dataset. # The source dataset reference contains project numbers and not project ids.
       &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
       &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
     },
   },
   &quot;location&quot;: &quot;A String&quot;, # The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
   &quot;maxTimeTravelHours&quot;: &quot;A String&quot;, # Optional. Defines the time travel window in hours. The value can be from 48 to 168 hours (2 to 7 days). The default value is 168 hours if this is not set.
-  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
+  &quot;resourceTags&quot;: { # Optional. The [tags](https://cloud.google.com/bigquery/docs/tags) attached to this dataset. Tag keys are globally unique. Tag key is expected to be in the namespaced format, for example &quot;123456789012/environment&quot; where 123456789012 is the ID of the parent organization or project resource for this tag key. Tag value is expected to be the short name, for example &quot;Production&quot;. See [Tag definitions](https://cloud.google.com/iam/docs/tags-access-control#definitions) for more details.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
+  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](https://cloud.google.com/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
     &quot;type&quot;: &quot;A String&quot;, # Output only. Specifies the type of dataset/table restriction.
   },
   &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;selfLink&quot;: &quot;A String&quot;, # Output only. A URL that can be used to access the resource again. You can use this URL in Get or Update requests to the resource.
   &quot;storageBillingModel&quot;: &quot;A String&quot;, # Optional. Updates storage_billing_model for the dataset.
-  &quot;tags&quot;: [ # Output only. Tags for the Dataset.
+  &quot;tags&quot;: [ # Output only. Tags for the dataset. To provide tags as inputs, use the `resourceTags` field.
     { # A global tag managed by Resource Manager. https://cloud.google.com/iam/docs/tags-access-control#definitions
       &quot;tagKey&quot;: &quot;A String&quot;, # Required. The namespaced friendly name of the tag key, e.g. &quot;12345/environment&quot; where 12345 is org id.
       &quot;tagValue&quot;: &quot;A String&quot;, # Required. The friendly short name of the tag value, e.g. &quot;production&quot;.
@@ -234,7 +244,7 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="insert">insert(projectId, body=None, x__xgafv=None)</code>
+    <code class="details" id="insert">insert(projectId, accessPolicyVersion=None, body=None, x__xgafv=None)</code>
   <pre>Creates a new empty dataset.
 
 Args:
@@ -242,11 +252,17 @@ Args:
   body: object, The request body.
     The object takes the form of:
 
-{
-  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER;
+{ # Represents a BigQuery dataset.
+  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER; If you patch a dataset, then this field is overwritten by the patched dataset&#x27;s access field. To add entities, you must supply the entire existing access array in addition to any new entities that you want to add.
     { # An object that defines dataset access for an entity.
+      &quot;condition&quot;: { # Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: &quot;Summary size limit&quot; description: &quot;Determines if a summary is less than 100 chars&quot; expression: &quot;document.summary.size() &lt; 100&quot; Example (Equality): title: &quot;Requestor is owner&quot; description: &quot;Determines if requestor is the document owner&quot; expression: &quot;document.owner == request.auth.claims.email&quot; Example (Logic): title: &quot;Public documents&quot; description: &quot;Determine whether the document should be publicly visible&quot; expression: &quot;document.type != &#x27;private&#x27; &amp;&amp; document.type != &#x27;internal&#x27;&quot; Example (Data Manipulation): title: &quot;Notification string&quot; description: &quot;Create a notification string with a timestamp.&quot; expression: &quot;&#x27;New message received at &#x27; + string(document.create_time)&quot; The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. # Optional. condition for the binding. If CEL expression in this field is true, this access binding will be considered
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.
+        &quot;expression&quot;: &quot;A String&quot;, # Textual representation of an expression in Common Expression Language syntax.
+        &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
+        &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
+      },
       &quot;dataset&quot;: { # Grants all resources of particular types in a particular dataset read access to the current dataset. Similar to how individually authorized views work, updates to any resource granted through its dataset (including creation of new resources) requires read permission to referenced resources, plus write permission to the authorizing dataset. # [Pick one] A grant authorizing all resources of a particular type in a particular dataset access to this dataset. Only views are supported for now. The role field is not required when this field is set. If that dataset is deleted and re-created, its access needs to be granted again via an update operation.
-        &quot;dataset&quot;: { # The dataset this entry applies to
+        &quot;dataset&quot;: { # Identifier for a dataset. # The dataset this entry applies to
           &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
           &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
         },
@@ -257,13 +273,13 @@ Args:
       &quot;domain&quot;: &quot;A String&quot;, # [Pick one] A domain to grant access to. Any users signed in with the domain specified will be granted the specified access. Example: &quot;example.com&quot;. Maps to IAM policy member &quot;domain:DOMAIN&quot;.
       &quot;groupByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a Google Group to grant access to. Maps to IAM policy member &quot;group:GROUP&quot;.
       &quot;iamMember&quot;: &quot;A String&quot;, # [Pick one] Some other type of member that appears in the IAM Policy but isn&#x27;t a user, group, domain, or special group.
-      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: OWNER &lt;=&gt; roles/bigquery.dataOwner WRITER &lt;=&gt; roles/bigquery.dataEditor READER &lt;=&gt; roles/bigquery.dataViewer This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
+      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: * `OWNER`: `roles/bigquery.dataOwner` * `WRITER`: `roles/bigquery.dataEditor` * `READER`: `roles/bigquery.dataViewer` This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
       &quot;routine&quot;: { # Id path of a routine. # [Pick one] A routine from a different dataset to grant access to. Queries executed against that routine will have read access to views/tables/routines in this dataset. Only UDF is supported for now. The role field is not required when this field is set. If that routine is updated by any user, access to the routine needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this routine.
         &quot;projectId&quot;: &quot;A String&quot;, # Required. The ID of the project containing this routine.
         &quot;routineId&quot;: &quot;A String&quot;, # Required. The ID of the routine. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 256 characters.
       },
-      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: projectOwners: Owners of the enclosing project. projectReaders: Readers of the enclosing project. projectWriters: Writers of the enclosing project. allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
+      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: * projectOwners: Owners of the enclosing project. * projectReaders: Readers of the enclosing project. * projectWriters: Writers of the enclosing project. * allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
       &quot;userByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a user to grant access to. For example: fred@example.com. Maps to IAM policy member &quot;user:EMAIL&quot; or &quot;serviceAccount:EMAIL&quot;.
       &quot;view&quot;: { # [Pick one] A view from a different dataset to grant access to. Queries executed against that view will have read access to views/tables/routines in this dataset. The role field is not required when this field is set. If that view is updated by any user, access to the view needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this table.
@@ -273,12 +289,12 @@ Args:
     },
   ],
   &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The time when this dataset was created, in milliseconds since the epoch.
-  &quot;datasetReference&quot;: { # Required. A reference that identifies the dataset.
+  &quot;datasetReference&quot;: { # Identifier for a dataset. # Required. A reference that identifies the dataset.
     &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
     &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
   },
   &quot;defaultCollation&quot;: &quot;A String&quot;, # Optional. Defines the default collation specification of future tables created in the dataset. If a table is created in this dataset without table-level default collation, then the table inherits the dataset default collation, which is applied to the string fields that do not have explicit collation specified. A change to this field affects only tables created afterwards, and does not alter the existing tables. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-  &quot;defaultEncryptionConfiguration&quot;: { # The default encryption key for all tables in the dataset. Once this property is set, all newly-created partitioned tables in the dataset will have encryption key set to this value, unless table creation request (or query) overrides the key.
+  &quot;defaultEncryptionConfiguration&quot;: { # Configuration for Cloud KMS encryption settings. # The default encryption key for all tables in the dataset. After this property is set, the encryption key of all newly-created tables in the dataset is set to this value unless the table creation request or query explicitly overrides the key.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key.
   },
   &quot;defaultPartitionExpirationMs&quot;: &quot;A String&quot;, # This default partition expiration, expressed in milliseconds. When new time-partitioned tables are created in a dataset where this property is set, the table will inherit this value, propagated as the `TimePartitioning.expirationMs` property on the new table. If you set `TimePartitioning.expirationMs` explicitly when creating a table, the `defaultPartitionExpirationMs` of the containing dataset is ignored. When creating a partitioned table, if `defaultPartitionExpirationMs` is set, the `defaultTableExpirationMs` value is ignored and the table will not be inherit a table expiration deadline.
@@ -286,9 +302,9 @@ Args:
   &quot;defaultTableExpirationMs&quot;: &quot;A String&quot;, # Optional. The default lifetime of all tables in the dataset, in milliseconds. The minimum lifetime value is 3600000 milliseconds (one hour). To clear an existing default expiration with a PATCH request, set to 0. Once this property is set, all newly-created tables in the dataset will have an expirationTime property set to the creation time plus the value in this property, and changing the value will only affect new tables, not existing ones. When the expirationTime for a given table is reached, that table will be deleted automatically. If a table&#x27;s expirationTime is modified or removed before the table expires, or if you provide an explicit expirationTime when creating a table, that value takes precedence over the default expiration time indicated by this property.
   &quot;description&quot;: &quot;A String&quot;, # Optional. A user-friendly description of the dataset.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. A hash of the resource.
-  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
+  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema, or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
     &quot;defaultStorageLocationUri&quot;: &quot;A String&quot;, # Optional. The storage location URI for all tables in the dataset. Equivalent to hive metastore&#x27;s database locationUri. Maximum length of 1024 characters.
-    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2Mib.
+    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2MiB.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
   },
@@ -300,7 +316,7 @@ Args:
   &quot;id&quot;: &quot;A String&quot;, # Output only. The fully-qualified unique name of the dataset in the format projectId:datasetId. The dataset name without the project name is given in the datasetId field. When creating a new dataset, leave this field blank, and instead specify the datasetId field.
   &quot;isCaseInsensitive&quot;: True or False, # Optional. TRUE if the dataset and its table names are case-insensitive, otherwise FALSE. By default, this is FALSE, which means the dataset and its table names are case-sensitive. This field does not affect routine references.
   &quot;kind&quot;: &quot;bigquery#dataset&quot;, # Output only. The resource type.
-  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See Creating and Updating Dataset Labels for more information.
+  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See [Creating and Updating Dataset Labels](https://cloud.google.com/bigquery/docs/creating-managing-labels#creating_and_updating_dataset_labels) for more information.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;lastModifiedTime&quot;: &quot;A String&quot;, # Output only. The date when this dataset was last modified, in milliseconds since the epoch.
@@ -308,21 +324,24 @@ Args:
     &quot;linkState&quot;: &quot;A String&quot;, # Output only. Specifies whether Linked Dataset is currently in a linked state or not.
   },
   &quot;linkedDatasetSource&quot;: { # A dataset source type which refers to another BigQuery dataset. # Optional. The source dataset reference when the dataset is of type LINKED. For all other dataset types it is not set. This field cannot be updated once it is set. Any attempt to update this field using Update and Patch API Operations will be ignored.
-    &quot;sourceDataset&quot;: { # The source dataset reference contains project numbers and not project ids.
+    &quot;sourceDataset&quot;: { # Identifier for a dataset. # The source dataset reference contains project numbers and not project ids.
       &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
       &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
     },
   },
   &quot;location&quot;: &quot;A String&quot;, # The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
   &quot;maxTimeTravelHours&quot;: &quot;A String&quot;, # Optional. Defines the time travel window in hours. The value can be from 48 to 168 hours (2 to 7 days). The default value is 168 hours if this is not set.
-  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
+  &quot;resourceTags&quot;: { # Optional. The [tags](https://cloud.google.com/bigquery/docs/tags) attached to this dataset. Tag keys are globally unique. Tag key is expected to be in the namespaced format, for example &quot;123456789012/environment&quot; where 123456789012 is the ID of the parent organization or project resource for this tag key. Tag value is expected to be the short name, for example &quot;Production&quot;. See [Tag definitions](https://cloud.google.com/iam/docs/tags-access-control#definitions) for more details.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
+  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](https://cloud.google.com/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
     &quot;type&quot;: &quot;A String&quot;, # Output only. Specifies the type of dataset/table restriction.
   },
   &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;selfLink&quot;: &quot;A String&quot;, # Output only. A URL that can be used to access the resource again. You can use this URL in Get or Update requests to the resource.
   &quot;storageBillingModel&quot;: &quot;A String&quot;, # Optional. Updates storage_billing_model for the dataset.
-  &quot;tags&quot;: [ # Output only. Tags for the Dataset.
+  &quot;tags&quot;: [ # Output only. Tags for the dataset. To provide tags as inputs, use the `resourceTags` field.
     { # A global tag managed by Resource Manager. https://cloud.google.com/iam/docs/tags-access-control#definitions
       &quot;tagKey&quot;: &quot;A String&quot;, # Required. The namespaced friendly name of the tag key, e.g. &quot;12345/environment&quot; where 12345 is org id.
       &quot;tagValue&quot;: &quot;A String&quot;, # Required. The friendly short name of the tag value, e.g. &quot;production&quot;.
@@ -331,6 +350,7 @@ Args:
   &quot;type&quot;: &quot;A String&quot;, # Output only. Same as `type` in `ListFormatDataset`. The type of the dataset, one of: * DEFAULT - only accessible by owner and authorized accounts, * PUBLIC - accessible by everyone, * LINKED - linked dataset, * EXTERNAL - dataset with definition in external metadata catalog.
 }
 
+  accessPolicyVersion: integer, Optional. The version of the provided access policy schema. Valid values are 0, 1, and 3. Requests specifying an invalid value will be rejected. This version refers to the schema version of the access policy and not the version of access policy. This field&#x27;s value can be equal or more than the access policy schema provided in the request. For example, * Requests with conditional access policy binding in datasets must specify version 3. * But dataset with no conditional role bindings in access policy may specify any valid value or leave the field unset. If unset or if 0 or 1 value is used for dataset with conditional bindings, request will be rejected. This field will be mapped to IAM Policy version (https://cloud.google.com/iam/docs/policies#versions) and will be used to set policy in IAM.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -339,11 +359,17 @@ Args:
 Returns:
   An object of the form:
 
-    {
-  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER;
+    { # Represents a BigQuery dataset.
+  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER; If you patch a dataset, then this field is overwritten by the patched dataset&#x27;s access field. To add entities, you must supply the entire existing access array in addition to any new entities that you want to add.
     { # An object that defines dataset access for an entity.
+      &quot;condition&quot;: { # Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: &quot;Summary size limit&quot; description: &quot;Determines if a summary is less than 100 chars&quot; expression: &quot;document.summary.size() &lt; 100&quot; Example (Equality): title: &quot;Requestor is owner&quot; description: &quot;Determines if requestor is the document owner&quot; expression: &quot;document.owner == request.auth.claims.email&quot; Example (Logic): title: &quot;Public documents&quot; description: &quot;Determine whether the document should be publicly visible&quot; expression: &quot;document.type != &#x27;private&#x27; &amp;&amp; document.type != &#x27;internal&#x27;&quot; Example (Data Manipulation): title: &quot;Notification string&quot; description: &quot;Create a notification string with a timestamp.&quot; expression: &quot;&#x27;New message received at &#x27; + string(document.create_time)&quot; The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. # Optional. condition for the binding. If CEL expression in this field is true, this access binding will be considered
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.
+        &quot;expression&quot;: &quot;A String&quot;, # Textual representation of an expression in Common Expression Language syntax.
+        &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
+        &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
+      },
       &quot;dataset&quot;: { # Grants all resources of particular types in a particular dataset read access to the current dataset. Similar to how individually authorized views work, updates to any resource granted through its dataset (including creation of new resources) requires read permission to referenced resources, plus write permission to the authorizing dataset. # [Pick one] A grant authorizing all resources of a particular type in a particular dataset access to this dataset. Only views are supported for now. The role field is not required when this field is set. If that dataset is deleted and re-created, its access needs to be granted again via an update operation.
-        &quot;dataset&quot;: { # The dataset this entry applies to
+        &quot;dataset&quot;: { # Identifier for a dataset. # The dataset this entry applies to
           &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
           &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
         },
@@ -354,13 +380,13 @@ Returns:
       &quot;domain&quot;: &quot;A String&quot;, # [Pick one] A domain to grant access to. Any users signed in with the domain specified will be granted the specified access. Example: &quot;example.com&quot;. Maps to IAM policy member &quot;domain:DOMAIN&quot;.
       &quot;groupByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a Google Group to grant access to. Maps to IAM policy member &quot;group:GROUP&quot;.
       &quot;iamMember&quot;: &quot;A String&quot;, # [Pick one] Some other type of member that appears in the IAM Policy but isn&#x27;t a user, group, domain, or special group.
-      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: OWNER &lt;=&gt; roles/bigquery.dataOwner WRITER &lt;=&gt; roles/bigquery.dataEditor READER &lt;=&gt; roles/bigquery.dataViewer This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
+      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: * `OWNER`: `roles/bigquery.dataOwner` * `WRITER`: `roles/bigquery.dataEditor` * `READER`: `roles/bigquery.dataViewer` This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
       &quot;routine&quot;: { # Id path of a routine. # [Pick one] A routine from a different dataset to grant access to. Queries executed against that routine will have read access to views/tables/routines in this dataset. Only UDF is supported for now. The role field is not required when this field is set. If that routine is updated by any user, access to the routine needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this routine.
         &quot;projectId&quot;: &quot;A String&quot;, # Required. The ID of the project containing this routine.
         &quot;routineId&quot;: &quot;A String&quot;, # Required. The ID of the routine. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 256 characters.
       },
-      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: projectOwners: Owners of the enclosing project. projectReaders: Readers of the enclosing project. projectWriters: Writers of the enclosing project. allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
+      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: * projectOwners: Owners of the enclosing project. * projectReaders: Readers of the enclosing project. * projectWriters: Writers of the enclosing project. * allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
       &quot;userByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a user to grant access to. For example: fred@example.com. Maps to IAM policy member &quot;user:EMAIL&quot; or &quot;serviceAccount:EMAIL&quot;.
       &quot;view&quot;: { # [Pick one] A view from a different dataset to grant access to. Queries executed against that view will have read access to views/tables/routines in this dataset. The role field is not required when this field is set. If that view is updated by any user, access to the view needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this table.
@@ -370,12 +396,12 @@ Returns:
     },
   ],
   &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The time when this dataset was created, in milliseconds since the epoch.
-  &quot;datasetReference&quot;: { # Required. A reference that identifies the dataset.
+  &quot;datasetReference&quot;: { # Identifier for a dataset. # Required. A reference that identifies the dataset.
     &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
     &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
   },
   &quot;defaultCollation&quot;: &quot;A String&quot;, # Optional. Defines the default collation specification of future tables created in the dataset. If a table is created in this dataset without table-level default collation, then the table inherits the dataset default collation, which is applied to the string fields that do not have explicit collation specified. A change to this field affects only tables created afterwards, and does not alter the existing tables. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-  &quot;defaultEncryptionConfiguration&quot;: { # The default encryption key for all tables in the dataset. Once this property is set, all newly-created partitioned tables in the dataset will have encryption key set to this value, unless table creation request (or query) overrides the key.
+  &quot;defaultEncryptionConfiguration&quot;: { # Configuration for Cloud KMS encryption settings. # The default encryption key for all tables in the dataset. After this property is set, the encryption key of all newly-created tables in the dataset is set to this value unless the table creation request or query explicitly overrides the key.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key.
   },
   &quot;defaultPartitionExpirationMs&quot;: &quot;A String&quot;, # This default partition expiration, expressed in milliseconds. When new time-partitioned tables are created in a dataset where this property is set, the table will inherit this value, propagated as the `TimePartitioning.expirationMs` property on the new table. If you set `TimePartitioning.expirationMs` explicitly when creating a table, the `defaultPartitionExpirationMs` of the containing dataset is ignored. When creating a partitioned table, if `defaultPartitionExpirationMs` is set, the `defaultTableExpirationMs` value is ignored and the table will not be inherit a table expiration deadline.
@@ -383,9 +409,9 @@ Returns:
   &quot;defaultTableExpirationMs&quot;: &quot;A String&quot;, # Optional. The default lifetime of all tables in the dataset, in milliseconds. The minimum lifetime value is 3600000 milliseconds (one hour). To clear an existing default expiration with a PATCH request, set to 0. Once this property is set, all newly-created tables in the dataset will have an expirationTime property set to the creation time plus the value in this property, and changing the value will only affect new tables, not existing ones. When the expirationTime for a given table is reached, that table will be deleted automatically. If a table&#x27;s expirationTime is modified or removed before the table expires, or if you provide an explicit expirationTime when creating a table, that value takes precedence over the default expiration time indicated by this property.
   &quot;description&quot;: &quot;A String&quot;, # Optional. A user-friendly description of the dataset.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. A hash of the resource.
-  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
+  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema, or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
     &quot;defaultStorageLocationUri&quot;: &quot;A String&quot;, # Optional. The storage location URI for all tables in the dataset. Equivalent to hive metastore&#x27;s database locationUri. Maximum length of 1024 characters.
-    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2Mib.
+    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2MiB.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
   },
@@ -397,7 +423,7 @@ Returns:
   &quot;id&quot;: &quot;A String&quot;, # Output only. The fully-qualified unique name of the dataset in the format projectId:datasetId. The dataset name without the project name is given in the datasetId field. When creating a new dataset, leave this field blank, and instead specify the datasetId field.
   &quot;isCaseInsensitive&quot;: True or False, # Optional. TRUE if the dataset and its table names are case-insensitive, otherwise FALSE. By default, this is FALSE, which means the dataset and its table names are case-sensitive. This field does not affect routine references.
   &quot;kind&quot;: &quot;bigquery#dataset&quot;, # Output only. The resource type.
-  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See Creating and Updating Dataset Labels for more information.
+  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See [Creating and Updating Dataset Labels](https://cloud.google.com/bigquery/docs/creating-managing-labels#creating_and_updating_dataset_labels) for more information.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;lastModifiedTime&quot;: &quot;A String&quot;, # Output only. The date when this dataset was last modified, in milliseconds since the epoch.
@@ -405,21 +431,24 @@ Returns:
     &quot;linkState&quot;: &quot;A String&quot;, # Output only. Specifies whether Linked Dataset is currently in a linked state or not.
   },
   &quot;linkedDatasetSource&quot;: { # A dataset source type which refers to another BigQuery dataset. # Optional. The source dataset reference when the dataset is of type LINKED. For all other dataset types it is not set. This field cannot be updated once it is set. Any attempt to update this field using Update and Patch API Operations will be ignored.
-    &quot;sourceDataset&quot;: { # The source dataset reference contains project numbers and not project ids.
+    &quot;sourceDataset&quot;: { # Identifier for a dataset. # The source dataset reference contains project numbers and not project ids.
       &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
       &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
     },
   },
   &quot;location&quot;: &quot;A String&quot;, # The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
   &quot;maxTimeTravelHours&quot;: &quot;A String&quot;, # Optional. Defines the time travel window in hours. The value can be from 48 to 168 hours (2 to 7 days). The default value is 168 hours if this is not set.
-  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
+  &quot;resourceTags&quot;: { # Optional. The [tags](https://cloud.google.com/bigquery/docs/tags) attached to this dataset. Tag keys are globally unique. Tag key is expected to be in the namespaced format, for example &quot;123456789012/environment&quot; where 123456789012 is the ID of the parent organization or project resource for this tag key. Tag value is expected to be the short name, for example &quot;Production&quot;. See [Tag definitions](https://cloud.google.com/iam/docs/tags-access-control#definitions) for more details.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
+  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](https://cloud.google.com/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
     &quot;type&quot;: &quot;A String&quot;, # Output only. Specifies the type of dataset/table restriction.
   },
   &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;selfLink&quot;: &quot;A String&quot;, # Output only. A URL that can be used to access the resource again. You can use this URL in Get or Update requests to the resource.
   &quot;storageBillingModel&quot;: &quot;A String&quot;, # Optional. Updates storage_billing_model for the dataset.
-  &quot;tags&quot;: [ # Output only. Tags for the Dataset.
+  &quot;tags&quot;: [ # Output only. Tags for the dataset. To provide tags as inputs, use the `resourceTags` field.
     { # A global tag managed by Resource Manager. https://cloud.google.com/iam/docs/tags-access-control#definitions
       &quot;tagKey&quot;: &quot;A String&quot;, # Required. The namespaced friendly name of the tag key, e.g. &quot;12345/environment&quot; where 12345 is org id.
       &quot;tagValue&quot;: &quot;A String&quot;, # Required. The friendly short name of the tag value, e.g. &quot;production&quot;.
@@ -436,7 +465,7 @@ Returns:
 Args:
   projectId: string, Required. Project ID of the datasets to be listed (required)
   all: boolean, Whether to list all datasets, including hidden ones
-  filter: string, An expression for filtering the results of the request by label. The syntax is \&quot;labels.&lt;name&gt;[:&lt;value&gt;]\&quot;. Multiple filters can be ANDed together by connecting with a space. Example: \&quot;labels.department:receiving labels.active\&quot;. See [Filtering datasets using labels](/bigquery/docs/filtering-labels#filtering_datasets_using_labels) for details.
+  filter: string, An expression for filtering the results of the request by label. The syntax is `labels.[:]`. Multiple filters can be ANDed together by connecting with a space. Example: `labels.department:receiving labels.active`. See [Filtering datasets using labels](https://cloud.google.com/bigquery/docs/filtering-labels#filtering_datasets_using_labels) for details.
   maxResults: integer, The maximum number of results to return in a single response page. Leverage the page tokens to iterate through the entire collection.
   pageToken: string, Page token, returned by a previous call, to request the next page of results
   x__xgafv: string, V1 error format.
@@ -450,7 +479,7 @@ Returns:
     { # Response format for a page of results when listing datasets.
   &quot;datasets&quot;: [ # An array of the dataset resources in the project. Each resource contains basic information. For full information about a particular dataset resource, use the Datasets: get method. This property is omitted when there are no datasets in the project.
     { # A dataset resource with only a subset of fields, to be returned in a list of datasets.
-      &quot;datasetReference&quot;: { # The dataset reference. Use this property to access specific parts of the dataset&#x27;s ID, such as project ID or dataset ID.
+      &quot;datasetReference&quot;: { # Identifier for a dataset. # The dataset reference. Use this property to access specific parts of the dataset&#x27;s ID, such as project ID or dataset ID.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
         &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
       },
@@ -487,7 +516,7 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="patch">patch(projectId, datasetId, body=None, x__xgafv=None)</code>
+    <code class="details" id="patch">patch(projectId, datasetId, accessPolicyVersion=None, body=None, x__xgafv=None)</code>
   <pre>Updates information in an existing dataset. The update method replaces the entire dataset resource, whereas the patch method only replaces fields that are provided in the submitted dataset resource. This method supports RFC5789 patch semantics.
 
 Args:
@@ -496,11 +525,17 @@ Args:
   body: object, The request body.
     The object takes the form of:
 
-{
-  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER;
+{ # Represents a BigQuery dataset.
+  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER; If you patch a dataset, then this field is overwritten by the patched dataset&#x27;s access field. To add entities, you must supply the entire existing access array in addition to any new entities that you want to add.
     { # An object that defines dataset access for an entity.
+      &quot;condition&quot;: { # Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: &quot;Summary size limit&quot; description: &quot;Determines if a summary is less than 100 chars&quot; expression: &quot;document.summary.size() &lt; 100&quot; Example (Equality): title: &quot;Requestor is owner&quot; description: &quot;Determines if requestor is the document owner&quot; expression: &quot;document.owner == request.auth.claims.email&quot; Example (Logic): title: &quot;Public documents&quot; description: &quot;Determine whether the document should be publicly visible&quot; expression: &quot;document.type != &#x27;private&#x27; &amp;&amp; document.type != &#x27;internal&#x27;&quot; Example (Data Manipulation): title: &quot;Notification string&quot; description: &quot;Create a notification string with a timestamp.&quot; expression: &quot;&#x27;New message received at &#x27; + string(document.create_time)&quot; The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. # Optional. condition for the binding. If CEL expression in this field is true, this access binding will be considered
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.
+        &quot;expression&quot;: &quot;A String&quot;, # Textual representation of an expression in Common Expression Language syntax.
+        &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
+        &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
+      },
       &quot;dataset&quot;: { # Grants all resources of particular types in a particular dataset read access to the current dataset. Similar to how individually authorized views work, updates to any resource granted through its dataset (including creation of new resources) requires read permission to referenced resources, plus write permission to the authorizing dataset. # [Pick one] A grant authorizing all resources of a particular type in a particular dataset access to this dataset. Only views are supported for now. The role field is not required when this field is set. If that dataset is deleted and re-created, its access needs to be granted again via an update operation.
-        &quot;dataset&quot;: { # The dataset this entry applies to
+        &quot;dataset&quot;: { # Identifier for a dataset. # The dataset this entry applies to
           &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
           &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
         },
@@ -511,13 +546,13 @@ Args:
       &quot;domain&quot;: &quot;A String&quot;, # [Pick one] A domain to grant access to. Any users signed in with the domain specified will be granted the specified access. Example: &quot;example.com&quot;. Maps to IAM policy member &quot;domain:DOMAIN&quot;.
       &quot;groupByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a Google Group to grant access to. Maps to IAM policy member &quot;group:GROUP&quot;.
       &quot;iamMember&quot;: &quot;A String&quot;, # [Pick one] Some other type of member that appears in the IAM Policy but isn&#x27;t a user, group, domain, or special group.
-      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: OWNER &lt;=&gt; roles/bigquery.dataOwner WRITER &lt;=&gt; roles/bigquery.dataEditor READER &lt;=&gt; roles/bigquery.dataViewer This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
+      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: * `OWNER`: `roles/bigquery.dataOwner` * `WRITER`: `roles/bigquery.dataEditor` * `READER`: `roles/bigquery.dataViewer` This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
       &quot;routine&quot;: { # Id path of a routine. # [Pick one] A routine from a different dataset to grant access to. Queries executed against that routine will have read access to views/tables/routines in this dataset. Only UDF is supported for now. The role field is not required when this field is set. If that routine is updated by any user, access to the routine needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this routine.
         &quot;projectId&quot;: &quot;A String&quot;, # Required. The ID of the project containing this routine.
         &quot;routineId&quot;: &quot;A String&quot;, # Required. The ID of the routine. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 256 characters.
       },
-      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: projectOwners: Owners of the enclosing project. projectReaders: Readers of the enclosing project. projectWriters: Writers of the enclosing project. allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
+      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: * projectOwners: Owners of the enclosing project. * projectReaders: Readers of the enclosing project. * projectWriters: Writers of the enclosing project. * allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
       &quot;userByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a user to grant access to. For example: fred@example.com. Maps to IAM policy member &quot;user:EMAIL&quot; or &quot;serviceAccount:EMAIL&quot;.
       &quot;view&quot;: { # [Pick one] A view from a different dataset to grant access to. Queries executed against that view will have read access to views/tables/routines in this dataset. The role field is not required when this field is set. If that view is updated by any user, access to the view needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this table.
@@ -527,12 +562,12 @@ Args:
     },
   ],
   &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The time when this dataset was created, in milliseconds since the epoch.
-  &quot;datasetReference&quot;: { # Required. A reference that identifies the dataset.
+  &quot;datasetReference&quot;: { # Identifier for a dataset. # Required. A reference that identifies the dataset.
     &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
     &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
   },
   &quot;defaultCollation&quot;: &quot;A String&quot;, # Optional. Defines the default collation specification of future tables created in the dataset. If a table is created in this dataset without table-level default collation, then the table inherits the dataset default collation, which is applied to the string fields that do not have explicit collation specified. A change to this field affects only tables created afterwards, and does not alter the existing tables. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-  &quot;defaultEncryptionConfiguration&quot;: { # The default encryption key for all tables in the dataset. Once this property is set, all newly-created partitioned tables in the dataset will have encryption key set to this value, unless table creation request (or query) overrides the key.
+  &quot;defaultEncryptionConfiguration&quot;: { # Configuration for Cloud KMS encryption settings. # The default encryption key for all tables in the dataset. After this property is set, the encryption key of all newly-created tables in the dataset is set to this value unless the table creation request or query explicitly overrides the key.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key.
   },
   &quot;defaultPartitionExpirationMs&quot;: &quot;A String&quot;, # This default partition expiration, expressed in milliseconds. When new time-partitioned tables are created in a dataset where this property is set, the table will inherit this value, propagated as the `TimePartitioning.expirationMs` property on the new table. If you set `TimePartitioning.expirationMs` explicitly when creating a table, the `defaultPartitionExpirationMs` of the containing dataset is ignored. When creating a partitioned table, if `defaultPartitionExpirationMs` is set, the `defaultTableExpirationMs` value is ignored and the table will not be inherit a table expiration deadline.
@@ -540,9 +575,9 @@ Args:
   &quot;defaultTableExpirationMs&quot;: &quot;A String&quot;, # Optional. The default lifetime of all tables in the dataset, in milliseconds. The minimum lifetime value is 3600000 milliseconds (one hour). To clear an existing default expiration with a PATCH request, set to 0. Once this property is set, all newly-created tables in the dataset will have an expirationTime property set to the creation time plus the value in this property, and changing the value will only affect new tables, not existing ones. When the expirationTime for a given table is reached, that table will be deleted automatically. If a table&#x27;s expirationTime is modified or removed before the table expires, or if you provide an explicit expirationTime when creating a table, that value takes precedence over the default expiration time indicated by this property.
   &quot;description&quot;: &quot;A String&quot;, # Optional. A user-friendly description of the dataset.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. A hash of the resource.
-  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
+  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema, or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
     &quot;defaultStorageLocationUri&quot;: &quot;A String&quot;, # Optional. The storage location URI for all tables in the dataset. Equivalent to hive metastore&#x27;s database locationUri. Maximum length of 1024 characters.
-    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2Mib.
+    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2MiB.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
   },
@@ -554,7 +589,7 @@ Args:
   &quot;id&quot;: &quot;A String&quot;, # Output only. The fully-qualified unique name of the dataset in the format projectId:datasetId. The dataset name without the project name is given in the datasetId field. When creating a new dataset, leave this field blank, and instead specify the datasetId field.
   &quot;isCaseInsensitive&quot;: True or False, # Optional. TRUE if the dataset and its table names are case-insensitive, otherwise FALSE. By default, this is FALSE, which means the dataset and its table names are case-sensitive. This field does not affect routine references.
   &quot;kind&quot;: &quot;bigquery#dataset&quot;, # Output only. The resource type.
-  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See Creating and Updating Dataset Labels for more information.
+  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See [Creating and Updating Dataset Labels](https://cloud.google.com/bigquery/docs/creating-managing-labels#creating_and_updating_dataset_labels) for more information.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;lastModifiedTime&quot;: &quot;A String&quot;, # Output only. The date when this dataset was last modified, in milliseconds since the epoch.
@@ -562,21 +597,24 @@ Args:
     &quot;linkState&quot;: &quot;A String&quot;, # Output only. Specifies whether Linked Dataset is currently in a linked state or not.
   },
   &quot;linkedDatasetSource&quot;: { # A dataset source type which refers to another BigQuery dataset. # Optional. The source dataset reference when the dataset is of type LINKED. For all other dataset types it is not set. This field cannot be updated once it is set. Any attempt to update this field using Update and Patch API Operations will be ignored.
-    &quot;sourceDataset&quot;: { # The source dataset reference contains project numbers and not project ids.
+    &quot;sourceDataset&quot;: { # Identifier for a dataset. # The source dataset reference contains project numbers and not project ids.
       &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
       &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
     },
   },
   &quot;location&quot;: &quot;A String&quot;, # The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
   &quot;maxTimeTravelHours&quot;: &quot;A String&quot;, # Optional. Defines the time travel window in hours. The value can be from 48 to 168 hours (2 to 7 days). The default value is 168 hours if this is not set.
-  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
+  &quot;resourceTags&quot;: { # Optional. The [tags](https://cloud.google.com/bigquery/docs/tags) attached to this dataset. Tag keys are globally unique. Tag key is expected to be in the namespaced format, for example &quot;123456789012/environment&quot; where 123456789012 is the ID of the parent organization or project resource for this tag key. Tag value is expected to be the short name, for example &quot;Production&quot;. See [Tag definitions](https://cloud.google.com/iam/docs/tags-access-control#definitions) for more details.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
+  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](https://cloud.google.com/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
     &quot;type&quot;: &quot;A String&quot;, # Output only. Specifies the type of dataset/table restriction.
   },
   &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;selfLink&quot;: &quot;A String&quot;, # Output only. A URL that can be used to access the resource again. You can use this URL in Get or Update requests to the resource.
   &quot;storageBillingModel&quot;: &quot;A String&quot;, # Optional. Updates storage_billing_model for the dataset.
-  &quot;tags&quot;: [ # Output only. Tags for the Dataset.
+  &quot;tags&quot;: [ # Output only. Tags for the dataset. To provide tags as inputs, use the `resourceTags` field.
     { # A global tag managed by Resource Manager. https://cloud.google.com/iam/docs/tags-access-control#definitions
       &quot;tagKey&quot;: &quot;A String&quot;, # Required. The namespaced friendly name of the tag key, e.g. &quot;12345/environment&quot; where 12345 is org id.
       &quot;tagValue&quot;: &quot;A String&quot;, # Required. The friendly short name of the tag value, e.g. &quot;production&quot;.
@@ -585,6 +623,7 @@ Args:
   &quot;type&quot;: &quot;A String&quot;, # Output only. Same as `type` in `ListFormatDataset`. The type of the dataset, one of: * DEFAULT - only accessible by owner and authorized accounts, * PUBLIC - accessible by everyone, * LINKED - linked dataset, * EXTERNAL - dataset with definition in external metadata catalog.
 }
 
+  accessPolicyVersion: integer, Optional. The version of the provided access policy schema. Valid values are 0, 1, and 3. Requests specifying an invalid value will be rejected. This version refers to the schema version of the access policy and not the version of access policy. This field&#x27;s value can be equal or more than the access policy schema provided in the request. For example, * Operations updating conditional access policy binding in datasets must specify version 3. Some of the operations are : - Adding a new access policy entry with condition. - Removing an access policy entry with condition. - Updating an access policy entry with condition. * But dataset with no conditional role bindings in access policy may specify any valid value or leave the field unset. If unset or if 0 or 1 value is used for dataset with conditional bindings, request will be rejected. This field will be mapped to IAM Policy version (https://cloud.google.com/iam/docs/policies#versions) and will be used to set policy in IAM.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -593,11 +632,17 @@ Args:
 Returns:
   An object of the form:
 
-    {
-  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER;
+    { # Represents a BigQuery dataset.
+  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER; If you patch a dataset, then this field is overwritten by the patched dataset&#x27;s access field. To add entities, you must supply the entire existing access array in addition to any new entities that you want to add.
     { # An object that defines dataset access for an entity.
+      &quot;condition&quot;: { # Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: &quot;Summary size limit&quot; description: &quot;Determines if a summary is less than 100 chars&quot; expression: &quot;document.summary.size() &lt; 100&quot; Example (Equality): title: &quot;Requestor is owner&quot; description: &quot;Determines if requestor is the document owner&quot; expression: &quot;document.owner == request.auth.claims.email&quot; Example (Logic): title: &quot;Public documents&quot; description: &quot;Determine whether the document should be publicly visible&quot; expression: &quot;document.type != &#x27;private&#x27; &amp;&amp; document.type != &#x27;internal&#x27;&quot; Example (Data Manipulation): title: &quot;Notification string&quot; description: &quot;Create a notification string with a timestamp.&quot; expression: &quot;&#x27;New message received at &#x27; + string(document.create_time)&quot; The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. # Optional. condition for the binding. If CEL expression in this field is true, this access binding will be considered
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.
+        &quot;expression&quot;: &quot;A String&quot;, # Textual representation of an expression in Common Expression Language syntax.
+        &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
+        &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
+      },
       &quot;dataset&quot;: { # Grants all resources of particular types in a particular dataset read access to the current dataset. Similar to how individually authorized views work, updates to any resource granted through its dataset (including creation of new resources) requires read permission to referenced resources, plus write permission to the authorizing dataset. # [Pick one] A grant authorizing all resources of a particular type in a particular dataset access to this dataset. Only views are supported for now. The role field is not required when this field is set. If that dataset is deleted and re-created, its access needs to be granted again via an update operation.
-        &quot;dataset&quot;: { # The dataset this entry applies to
+        &quot;dataset&quot;: { # Identifier for a dataset. # The dataset this entry applies to
           &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
           &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
         },
@@ -608,13 +653,13 @@ Returns:
       &quot;domain&quot;: &quot;A String&quot;, # [Pick one] A domain to grant access to. Any users signed in with the domain specified will be granted the specified access. Example: &quot;example.com&quot;. Maps to IAM policy member &quot;domain:DOMAIN&quot;.
       &quot;groupByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a Google Group to grant access to. Maps to IAM policy member &quot;group:GROUP&quot;.
       &quot;iamMember&quot;: &quot;A String&quot;, # [Pick one] Some other type of member that appears in the IAM Policy but isn&#x27;t a user, group, domain, or special group.
-      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: OWNER &lt;=&gt; roles/bigquery.dataOwner WRITER &lt;=&gt; roles/bigquery.dataEditor READER &lt;=&gt; roles/bigquery.dataViewer This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
+      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: * `OWNER`: `roles/bigquery.dataOwner` * `WRITER`: `roles/bigquery.dataEditor` * `READER`: `roles/bigquery.dataViewer` This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
       &quot;routine&quot;: { # Id path of a routine. # [Pick one] A routine from a different dataset to grant access to. Queries executed against that routine will have read access to views/tables/routines in this dataset. Only UDF is supported for now. The role field is not required when this field is set. If that routine is updated by any user, access to the routine needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this routine.
         &quot;projectId&quot;: &quot;A String&quot;, # Required. The ID of the project containing this routine.
         &quot;routineId&quot;: &quot;A String&quot;, # Required. The ID of the routine. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 256 characters.
       },
-      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: projectOwners: Owners of the enclosing project. projectReaders: Readers of the enclosing project. projectWriters: Writers of the enclosing project. allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
+      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: * projectOwners: Owners of the enclosing project. * projectReaders: Readers of the enclosing project. * projectWriters: Writers of the enclosing project. * allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
       &quot;userByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a user to grant access to. For example: fred@example.com. Maps to IAM policy member &quot;user:EMAIL&quot; or &quot;serviceAccount:EMAIL&quot;.
       &quot;view&quot;: { # [Pick one] A view from a different dataset to grant access to. Queries executed against that view will have read access to views/tables/routines in this dataset. The role field is not required when this field is set. If that view is updated by any user, access to the view needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this table.
@@ -624,12 +669,12 @@ Returns:
     },
   ],
   &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The time when this dataset was created, in milliseconds since the epoch.
-  &quot;datasetReference&quot;: { # Required. A reference that identifies the dataset.
+  &quot;datasetReference&quot;: { # Identifier for a dataset. # Required. A reference that identifies the dataset.
     &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
     &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
   },
   &quot;defaultCollation&quot;: &quot;A String&quot;, # Optional. Defines the default collation specification of future tables created in the dataset. If a table is created in this dataset without table-level default collation, then the table inherits the dataset default collation, which is applied to the string fields that do not have explicit collation specified. A change to this field affects only tables created afterwards, and does not alter the existing tables. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-  &quot;defaultEncryptionConfiguration&quot;: { # The default encryption key for all tables in the dataset. Once this property is set, all newly-created partitioned tables in the dataset will have encryption key set to this value, unless table creation request (or query) overrides the key.
+  &quot;defaultEncryptionConfiguration&quot;: { # Configuration for Cloud KMS encryption settings. # The default encryption key for all tables in the dataset. After this property is set, the encryption key of all newly-created tables in the dataset is set to this value unless the table creation request or query explicitly overrides the key.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key.
   },
   &quot;defaultPartitionExpirationMs&quot;: &quot;A String&quot;, # This default partition expiration, expressed in milliseconds. When new time-partitioned tables are created in a dataset where this property is set, the table will inherit this value, propagated as the `TimePartitioning.expirationMs` property on the new table. If you set `TimePartitioning.expirationMs` explicitly when creating a table, the `defaultPartitionExpirationMs` of the containing dataset is ignored. When creating a partitioned table, if `defaultPartitionExpirationMs` is set, the `defaultTableExpirationMs` value is ignored and the table will not be inherit a table expiration deadline.
@@ -637,9 +682,9 @@ Returns:
   &quot;defaultTableExpirationMs&quot;: &quot;A String&quot;, # Optional. The default lifetime of all tables in the dataset, in milliseconds. The minimum lifetime value is 3600000 milliseconds (one hour). To clear an existing default expiration with a PATCH request, set to 0. Once this property is set, all newly-created tables in the dataset will have an expirationTime property set to the creation time plus the value in this property, and changing the value will only affect new tables, not existing ones. When the expirationTime for a given table is reached, that table will be deleted automatically. If a table&#x27;s expirationTime is modified or removed before the table expires, or if you provide an explicit expirationTime when creating a table, that value takes precedence over the default expiration time indicated by this property.
   &quot;description&quot;: &quot;A String&quot;, # Optional. A user-friendly description of the dataset.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. A hash of the resource.
-  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
+  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema, or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
     &quot;defaultStorageLocationUri&quot;: &quot;A String&quot;, # Optional. The storage location URI for all tables in the dataset. Equivalent to hive metastore&#x27;s database locationUri. Maximum length of 1024 characters.
-    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2Mib.
+    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2MiB.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
   },
@@ -651,7 +696,7 @@ Returns:
   &quot;id&quot;: &quot;A String&quot;, # Output only. The fully-qualified unique name of the dataset in the format projectId:datasetId. The dataset name without the project name is given in the datasetId field. When creating a new dataset, leave this field blank, and instead specify the datasetId field.
   &quot;isCaseInsensitive&quot;: True or False, # Optional. TRUE if the dataset and its table names are case-insensitive, otherwise FALSE. By default, this is FALSE, which means the dataset and its table names are case-sensitive. This field does not affect routine references.
   &quot;kind&quot;: &quot;bigquery#dataset&quot;, # Output only. The resource type.
-  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See Creating and Updating Dataset Labels for more information.
+  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See [Creating and Updating Dataset Labels](https://cloud.google.com/bigquery/docs/creating-managing-labels#creating_and_updating_dataset_labels) for more information.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;lastModifiedTime&quot;: &quot;A String&quot;, # Output only. The date when this dataset was last modified, in milliseconds since the epoch.
@@ -659,21 +704,24 @@ Returns:
     &quot;linkState&quot;: &quot;A String&quot;, # Output only. Specifies whether Linked Dataset is currently in a linked state or not.
   },
   &quot;linkedDatasetSource&quot;: { # A dataset source type which refers to another BigQuery dataset. # Optional. The source dataset reference when the dataset is of type LINKED. For all other dataset types it is not set. This field cannot be updated once it is set. Any attempt to update this field using Update and Patch API Operations will be ignored.
-    &quot;sourceDataset&quot;: { # The source dataset reference contains project numbers and not project ids.
+    &quot;sourceDataset&quot;: { # Identifier for a dataset. # The source dataset reference contains project numbers and not project ids.
       &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
       &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
     },
   },
   &quot;location&quot;: &quot;A String&quot;, # The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
   &quot;maxTimeTravelHours&quot;: &quot;A String&quot;, # Optional. Defines the time travel window in hours. The value can be from 48 to 168 hours (2 to 7 days). The default value is 168 hours if this is not set.
-  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
+  &quot;resourceTags&quot;: { # Optional. The [tags](https://cloud.google.com/bigquery/docs/tags) attached to this dataset. Tag keys are globally unique. Tag key is expected to be in the namespaced format, for example &quot;123456789012/environment&quot; where 123456789012 is the ID of the parent organization or project resource for this tag key. Tag value is expected to be the short name, for example &quot;Production&quot;. See [Tag definitions](https://cloud.google.com/iam/docs/tags-access-control#definitions) for more details.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
+  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](https://cloud.google.com/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
     &quot;type&quot;: &quot;A String&quot;, # Output only. Specifies the type of dataset/table restriction.
   },
   &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;selfLink&quot;: &quot;A String&quot;, # Output only. A URL that can be used to access the resource again. You can use this URL in Get or Update requests to the resource.
   &quot;storageBillingModel&quot;: &quot;A String&quot;, # Optional. Updates storage_billing_model for the dataset.
-  &quot;tags&quot;: [ # Output only. Tags for the Dataset.
+  &quot;tags&quot;: [ # Output only. Tags for the dataset. To provide tags as inputs, use the `resourceTags` field.
     { # A global tag managed by Resource Manager. https://cloud.google.com/iam/docs/tags-access-control#definitions
       &quot;tagKey&quot;: &quot;A String&quot;, # Required. The namespaced friendly name of the tag key, e.g. &quot;12345/environment&quot; where 12345 is org id.
       &quot;tagValue&quot;: &quot;A String&quot;, # Required. The friendly short name of the tag value, e.g. &quot;production&quot;.
@@ -694,7 +742,7 @@ Args:
     The object takes the form of:
 
 { # Request format for undeleting a dataset.
-  &quot;deletionTime&quot;: &quot;A String&quot;, # Optional. The exact time when the dataset was deleted. If not specified, the most recently deleted version is undeleted.
+  &quot;deletionTime&quot;: &quot;A String&quot;, # Optional. The exact time when the dataset was deleted. If not specified, the most recently deleted version is undeleted. Undeleting a dataset using deletion time is not supported.
 }
 
   x__xgafv: string, V1 error format.
@@ -705,11 +753,17 @@ Args:
 Returns:
   An object of the form:
 
-    {
-  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER;
+    { # Represents a BigQuery dataset.
+  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER; If you patch a dataset, then this field is overwritten by the patched dataset&#x27;s access field. To add entities, you must supply the entire existing access array in addition to any new entities that you want to add.
     { # An object that defines dataset access for an entity.
+      &quot;condition&quot;: { # Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: &quot;Summary size limit&quot; description: &quot;Determines if a summary is less than 100 chars&quot; expression: &quot;document.summary.size() &lt; 100&quot; Example (Equality): title: &quot;Requestor is owner&quot; description: &quot;Determines if requestor is the document owner&quot; expression: &quot;document.owner == request.auth.claims.email&quot; Example (Logic): title: &quot;Public documents&quot; description: &quot;Determine whether the document should be publicly visible&quot; expression: &quot;document.type != &#x27;private&#x27; &amp;&amp; document.type != &#x27;internal&#x27;&quot; Example (Data Manipulation): title: &quot;Notification string&quot; description: &quot;Create a notification string with a timestamp.&quot; expression: &quot;&#x27;New message received at &#x27; + string(document.create_time)&quot; The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. # Optional. condition for the binding. If CEL expression in this field is true, this access binding will be considered
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.
+        &quot;expression&quot;: &quot;A String&quot;, # Textual representation of an expression in Common Expression Language syntax.
+        &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
+        &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
+      },
       &quot;dataset&quot;: { # Grants all resources of particular types in a particular dataset read access to the current dataset. Similar to how individually authorized views work, updates to any resource granted through its dataset (including creation of new resources) requires read permission to referenced resources, plus write permission to the authorizing dataset. # [Pick one] A grant authorizing all resources of a particular type in a particular dataset access to this dataset. Only views are supported for now. The role field is not required when this field is set. If that dataset is deleted and re-created, its access needs to be granted again via an update operation.
-        &quot;dataset&quot;: { # The dataset this entry applies to
+        &quot;dataset&quot;: { # Identifier for a dataset. # The dataset this entry applies to
           &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
           &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
         },
@@ -720,13 +774,13 @@ Returns:
       &quot;domain&quot;: &quot;A String&quot;, # [Pick one] A domain to grant access to. Any users signed in with the domain specified will be granted the specified access. Example: &quot;example.com&quot;. Maps to IAM policy member &quot;domain:DOMAIN&quot;.
       &quot;groupByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a Google Group to grant access to. Maps to IAM policy member &quot;group:GROUP&quot;.
       &quot;iamMember&quot;: &quot;A String&quot;, # [Pick one] Some other type of member that appears in the IAM Policy but isn&#x27;t a user, group, domain, or special group.
-      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: OWNER &lt;=&gt; roles/bigquery.dataOwner WRITER &lt;=&gt; roles/bigquery.dataEditor READER &lt;=&gt; roles/bigquery.dataViewer This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
+      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: * `OWNER`: `roles/bigquery.dataOwner` * `WRITER`: `roles/bigquery.dataEditor` * `READER`: `roles/bigquery.dataViewer` This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
       &quot;routine&quot;: { # Id path of a routine. # [Pick one] A routine from a different dataset to grant access to. Queries executed against that routine will have read access to views/tables/routines in this dataset. Only UDF is supported for now. The role field is not required when this field is set. If that routine is updated by any user, access to the routine needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this routine.
         &quot;projectId&quot;: &quot;A String&quot;, # Required. The ID of the project containing this routine.
         &quot;routineId&quot;: &quot;A String&quot;, # Required. The ID of the routine. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 256 characters.
       },
-      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: projectOwners: Owners of the enclosing project. projectReaders: Readers of the enclosing project. projectWriters: Writers of the enclosing project. allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
+      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: * projectOwners: Owners of the enclosing project. * projectReaders: Readers of the enclosing project. * projectWriters: Writers of the enclosing project. * allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
       &quot;userByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a user to grant access to. For example: fred@example.com. Maps to IAM policy member &quot;user:EMAIL&quot; or &quot;serviceAccount:EMAIL&quot;.
       &quot;view&quot;: { # [Pick one] A view from a different dataset to grant access to. Queries executed against that view will have read access to views/tables/routines in this dataset. The role field is not required when this field is set. If that view is updated by any user, access to the view needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this table.
@@ -736,12 +790,12 @@ Returns:
     },
   ],
   &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The time when this dataset was created, in milliseconds since the epoch.
-  &quot;datasetReference&quot;: { # Required. A reference that identifies the dataset.
+  &quot;datasetReference&quot;: { # Identifier for a dataset. # Required. A reference that identifies the dataset.
     &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
     &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
   },
   &quot;defaultCollation&quot;: &quot;A String&quot;, # Optional. Defines the default collation specification of future tables created in the dataset. If a table is created in this dataset without table-level default collation, then the table inherits the dataset default collation, which is applied to the string fields that do not have explicit collation specified. A change to this field affects only tables created afterwards, and does not alter the existing tables. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-  &quot;defaultEncryptionConfiguration&quot;: { # The default encryption key for all tables in the dataset. Once this property is set, all newly-created partitioned tables in the dataset will have encryption key set to this value, unless table creation request (or query) overrides the key.
+  &quot;defaultEncryptionConfiguration&quot;: { # Configuration for Cloud KMS encryption settings. # The default encryption key for all tables in the dataset. After this property is set, the encryption key of all newly-created tables in the dataset is set to this value unless the table creation request or query explicitly overrides the key.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key.
   },
   &quot;defaultPartitionExpirationMs&quot;: &quot;A String&quot;, # This default partition expiration, expressed in milliseconds. When new time-partitioned tables are created in a dataset where this property is set, the table will inherit this value, propagated as the `TimePartitioning.expirationMs` property on the new table. If you set `TimePartitioning.expirationMs` explicitly when creating a table, the `defaultPartitionExpirationMs` of the containing dataset is ignored. When creating a partitioned table, if `defaultPartitionExpirationMs` is set, the `defaultTableExpirationMs` value is ignored and the table will not be inherit a table expiration deadline.
@@ -749,9 +803,9 @@ Returns:
   &quot;defaultTableExpirationMs&quot;: &quot;A String&quot;, # Optional. The default lifetime of all tables in the dataset, in milliseconds. The minimum lifetime value is 3600000 milliseconds (one hour). To clear an existing default expiration with a PATCH request, set to 0. Once this property is set, all newly-created tables in the dataset will have an expirationTime property set to the creation time plus the value in this property, and changing the value will only affect new tables, not existing ones. When the expirationTime for a given table is reached, that table will be deleted automatically. If a table&#x27;s expirationTime is modified or removed before the table expires, or if you provide an explicit expirationTime when creating a table, that value takes precedence over the default expiration time indicated by this property.
   &quot;description&quot;: &quot;A String&quot;, # Optional. A user-friendly description of the dataset.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. A hash of the resource.
-  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
+  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema, or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
     &quot;defaultStorageLocationUri&quot;: &quot;A String&quot;, # Optional. The storage location URI for all tables in the dataset. Equivalent to hive metastore&#x27;s database locationUri. Maximum length of 1024 characters.
-    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2Mib.
+    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2MiB.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
   },
@@ -763,7 +817,7 @@ Returns:
   &quot;id&quot;: &quot;A String&quot;, # Output only. The fully-qualified unique name of the dataset in the format projectId:datasetId. The dataset name without the project name is given in the datasetId field. When creating a new dataset, leave this field blank, and instead specify the datasetId field.
   &quot;isCaseInsensitive&quot;: True or False, # Optional. TRUE if the dataset and its table names are case-insensitive, otherwise FALSE. By default, this is FALSE, which means the dataset and its table names are case-sensitive. This field does not affect routine references.
   &quot;kind&quot;: &quot;bigquery#dataset&quot;, # Output only. The resource type.
-  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See Creating and Updating Dataset Labels for more information.
+  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See [Creating and Updating Dataset Labels](https://cloud.google.com/bigquery/docs/creating-managing-labels#creating_and_updating_dataset_labels) for more information.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;lastModifiedTime&quot;: &quot;A String&quot;, # Output only. The date when this dataset was last modified, in milliseconds since the epoch.
@@ -771,21 +825,24 @@ Returns:
     &quot;linkState&quot;: &quot;A String&quot;, # Output only. Specifies whether Linked Dataset is currently in a linked state or not.
   },
   &quot;linkedDatasetSource&quot;: { # A dataset source type which refers to another BigQuery dataset. # Optional. The source dataset reference when the dataset is of type LINKED. For all other dataset types it is not set. This field cannot be updated once it is set. Any attempt to update this field using Update and Patch API Operations will be ignored.
-    &quot;sourceDataset&quot;: { # The source dataset reference contains project numbers and not project ids.
+    &quot;sourceDataset&quot;: { # Identifier for a dataset. # The source dataset reference contains project numbers and not project ids.
       &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
       &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
     },
   },
   &quot;location&quot;: &quot;A String&quot;, # The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
   &quot;maxTimeTravelHours&quot;: &quot;A String&quot;, # Optional. Defines the time travel window in hours. The value can be from 48 to 168 hours (2 to 7 days). The default value is 168 hours if this is not set.
-  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
+  &quot;resourceTags&quot;: { # Optional. The [tags](https://cloud.google.com/bigquery/docs/tags) attached to this dataset. Tag keys are globally unique. Tag key is expected to be in the namespaced format, for example &quot;123456789012/environment&quot; where 123456789012 is the ID of the parent organization or project resource for this tag key. Tag value is expected to be the short name, for example &quot;Production&quot;. See [Tag definitions](https://cloud.google.com/iam/docs/tags-access-control#definitions) for more details.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
+  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](https://cloud.google.com/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
     &quot;type&quot;: &quot;A String&quot;, # Output only. Specifies the type of dataset/table restriction.
   },
   &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;selfLink&quot;: &quot;A String&quot;, # Output only. A URL that can be used to access the resource again. You can use this URL in Get or Update requests to the resource.
   &quot;storageBillingModel&quot;: &quot;A String&quot;, # Optional. Updates storage_billing_model for the dataset.
-  &quot;tags&quot;: [ # Output only. Tags for the Dataset.
+  &quot;tags&quot;: [ # Output only. Tags for the dataset. To provide tags as inputs, use the `resourceTags` field.
     { # A global tag managed by Resource Manager. https://cloud.google.com/iam/docs/tags-access-control#definitions
       &quot;tagKey&quot;: &quot;A String&quot;, # Required. The namespaced friendly name of the tag key, e.g. &quot;12345/environment&quot; where 12345 is org id.
       &quot;tagValue&quot;: &quot;A String&quot;, # Required. The friendly short name of the tag value, e.g. &quot;production&quot;.
@@ -796,7 +853,7 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="update">update(projectId, datasetId, body=None, x__xgafv=None)</code>
+    <code class="details" id="update">update(projectId, datasetId, accessPolicyVersion=None, body=None, x__xgafv=None)</code>
   <pre>Updates information in an existing dataset. The update method replaces the entire dataset resource, whereas the patch method only replaces fields that are provided in the submitted dataset resource.
 
 Args:
@@ -805,11 +862,17 @@ Args:
   body: object, The request body.
     The object takes the form of:
 
-{
-  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER;
+{ # Represents a BigQuery dataset.
+  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER; If you patch a dataset, then this field is overwritten by the patched dataset&#x27;s access field. To add entities, you must supply the entire existing access array in addition to any new entities that you want to add.
     { # An object that defines dataset access for an entity.
+      &quot;condition&quot;: { # Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: &quot;Summary size limit&quot; description: &quot;Determines if a summary is less than 100 chars&quot; expression: &quot;document.summary.size() &lt; 100&quot; Example (Equality): title: &quot;Requestor is owner&quot; description: &quot;Determines if requestor is the document owner&quot; expression: &quot;document.owner == request.auth.claims.email&quot; Example (Logic): title: &quot;Public documents&quot; description: &quot;Determine whether the document should be publicly visible&quot; expression: &quot;document.type != &#x27;private&#x27; &amp;&amp; document.type != &#x27;internal&#x27;&quot; Example (Data Manipulation): title: &quot;Notification string&quot; description: &quot;Create a notification string with a timestamp.&quot; expression: &quot;&#x27;New message received at &#x27; + string(document.create_time)&quot; The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. # Optional. condition for the binding. If CEL expression in this field is true, this access binding will be considered
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.
+        &quot;expression&quot;: &quot;A String&quot;, # Textual representation of an expression in Common Expression Language syntax.
+        &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
+        &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
+      },
       &quot;dataset&quot;: { # Grants all resources of particular types in a particular dataset read access to the current dataset. Similar to how individually authorized views work, updates to any resource granted through its dataset (including creation of new resources) requires read permission to referenced resources, plus write permission to the authorizing dataset. # [Pick one] A grant authorizing all resources of a particular type in a particular dataset access to this dataset. Only views are supported for now. The role field is not required when this field is set. If that dataset is deleted and re-created, its access needs to be granted again via an update operation.
-        &quot;dataset&quot;: { # The dataset this entry applies to
+        &quot;dataset&quot;: { # Identifier for a dataset. # The dataset this entry applies to
           &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
           &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
         },
@@ -820,13 +883,13 @@ Args:
       &quot;domain&quot;: &quot;A String&quot;, # [Pick one] A domain to grant access to. Any users signed in with the domain specified will be granted the specified access. Example: &quot;example.com&quot;. Maps to IAM policy member &quot;domain:DOMAIN&quot;.
       &quot;groupByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a Google Group to grant access to. Maps to IAM policy member &quot;group:GROUP&quot;.
       &quot;iamMember&quot;: &quot;A String&quot;, # [Pick one] Some other type of member that appears in the IAM Policy but isn&#x27;t a user, group, domain, or special group.
-      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: OWNER &lt;=&gt; roles/bigquery.dataOwner WRITER &lt;=&gt; roles/bigquery.dataEditor READER &lt;=&gt; roles/bigquery.dataViewer This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
+      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: * `OWNER`: `roles/bigquery.dataOwner` * `WRITER`: `roles/bigquery.dataEditor` * `READER`: `roles/bigquery.dataViewer` This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
       &quot;routine&quot;: { # Id path of a routine. # [Pick one] A routine from a different dataset to grant access to. Queries executed against that routine will have read access to views/tables/routines in this dataset. Only UDF is supported for now. The role field is not required when this field is set. If that routine is updated by any user, access to the routine needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this routine.
         &quot;projectId&quot;: &quot;A String&quot;, # Required. The ID of the project containing this routine.
         &quot;routineId&quot;: &quot;A String&quot;, # Required. The ID of the routine. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 256 characters.
       },
-      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: projectOwners: Owners of the enclosing project. projectReaders: Readers of the enclosing project. projectWriters: Writers of the enclosing project. allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
+      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: * projectOwners: Owners of the enclosing project. * projectReaders: Readers of the enclosing project. * projectWriters: Writers of the enclosing project. * allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
       &quot;userByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a user to grant access to. For example: fred@example.com. Maps to IAM policy member &quot;user:EMAIL&quot; or &quot;serviceAccount:EMAIL&quot;.
       &quot;view&quot;: { # [Pick one] A view from a different dataset to grant access to. Queries executed against that view will have read access to views/tables/routines in this dataset. The role field is not required when this field is set. If that view is updated by any user, access to the view needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this table.
@@ -836,12 +899,12 @@ Args:
     },
   ],
   &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The time when this dataset was created, in milliseconds since the epoch.
-  &quot;datasetReference&quot;: { # Required. A reference that identifies the dataset.
+  &quot;datasetReference&quot;: { # Identifier for a dataset. # Required. A reference that identifies the dataset.
     &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
     &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
   },
   &quot;defaultCollation&quot;: &quot;A String&quot;, # Optional. Defines the default collation specification of future tables created in the dataset. If a table is created in this dataset without table-level default collation, then the table inherits the dataset default collation, which is applied to the string fields that do not have explicit collation specified. A change to this field affects only tables created afterwards, and does not alter the existing tables. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-  &quot;defaultEncryptionConfiguration&quot;: { # The default encryption key for all tables in the dataset. Once this property is set, all newly-created partitioned tables in the dataset will have encryption key set to this value, unless table creation request (or query) overrides the key.
+  &quot;defaultEncryptionConfiguration&quot;: { # Configuration for Cloud KMS encryption settings. # The default encryption key for all tables in the dataset. After this property is set, the encryption key of all newly-created tables in the dataset is set to this value unless the table creation request or query explicitly overrides the key.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key.
   },
   &quot;defaultPartitionExpirationMs&quot;: &quot;A String&quot;, # This default partition expiration, expressed in milliseconds. When new time-partitioned tables are created in a dataset where this property is set, the table will inherit this value, propagated as the `TimePartitioning.expirationMs` property on the new table. If you set `TimePartitioning.expirationMs` explicitly when creating a table, the `defaultPartitionExpirationMs` of the containing dataset is ignored. When creating a partitioned table, if `defaultPartitionExpirationMs` is set, the `defaultTableExpirationMs` value is ignored and the table will not be inherit a table expiration deadline.
@@ -849,9 +912,9 @@ Args:
   &quot;defaultTableExpirationMs&quot;: &quot;A String&quot;, # Optional. The default lifetime of all tables in the dataset, in milliseconds. The minimum lifetime value is 3600000 milliseconds (one hour). To clear an existing default expiration with a PATCH request, set to 0. Once this property is set, all newly-created tables in the dataset will have an expirationTime property set to the creation time plus the value in this property, and changing the value will only affect new tables, not existing ones. When the expirationTime for a given table is reached, that table will be deleted automatically. If a table&#x27;s expirationTime is modified or removed before the table expires, or if you provide an explicit expirationTime when creating a table, that value takes precedence over the default expiration time indicated by this property.
   &quot;description&quot;: &quot;A String&quot;, # Optional. A user-friendly description of the dataset.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. A hash of the resource.
-  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
+  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema, or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
     &quot;defaultStorageLocationUri&quot;: &quot;A String&quot;, # Optional. The storage location URI for all tables in the dataset. Equivalent to hive metastore&#x27;s database locationUri. Maximum length of 1024 characters.
-    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2Mib.
+    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2MiB.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
   },
@@ -863,7 +926,7 @@ Args:
   &quot;id&quot;: &quot;A String&quot;, # Output only. The fully-qualified unique name of the dataset in the format projectId:datasetId. The dataset name without the project name is given in the datasetId field. When creating a new dataset, leave this field blank, and instead specify the datasetId field.
   &quot;isCaseInsensitive&quot;: True or False, # Optional. TRUE if the dataset and its table names are case-insensitive, otherwise FALSE. By default, this is FALSE, which means the dataset and its table names are case-sensitive. This field does not affect routine references.
   &quot;kind&quot;: &quot;bigquery#dataset&quot;, # Output only. The resource type.
-  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See Creating and Updating Dataset Labels for more information.
+  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See [Creating and Updating Dataset Labels](https://cloud.google.com/bigquery/docs/creating-managing-labels#creating_and_updating_dataset_labels) for more information.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;lastModifiedTime&quot;: &quot;A String&quot;, # Output only. The date when this dataset was last modified, in milliseconds since the epoch.
@@ -871,21 +934,24 @@ Args:
     &quot;linkState&quot;: &quot;A String&quot;, # Output only. Specifies whether Linked Dataset is currently in a linked state or not.
   },
   &quot;linkedDatasetSource&quot;: { # A dataset source type which refers to another BigQuery dataset. # Optional. The source dataset reference when the dataset is of type LINKED. For all other dataset types it is not set. This field cannot be updated once it is set. Any attempt to update this field using Update and Patch API Operations will be ignored.
-    &quot;sourceDataset&quot;: { # The source dataset reference contains project numbers and not project ids.
+    &quot;sourceDataset&quot;: { # Identifier for a dataset. # The source dataset reference contains project numbers and not project ids.
       &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
       &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
     },
   },
   &quot;location&quot;: &quot;A String&quot;, # The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
   &quot;maxTimeTravelHours&quot;: &quot;A String&quot;, # Optional. Defines the time travel window in hours. The value can be from 48 to 168 hours (2 to 7 days). The default value is 168 hours if this is not set.
-  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
+  &quot;resourceTags&quot;: { # Optional. The [tags](https://cloud.google.com/bigquery/docs/tags) attached to this dataset. Tag keys are globally unique. Tag key is expected to be in the namespaced format, for example &quot;123456789012/environment&quot; where 123456789012 is the ID of the parent organization or project resource for this tag key. Tag value is expected to be the short name, for example &quot;Production&quot;. See [Tag definitions](https://cloud.google.com/iam/docs/tags-access-control#definitions) for more details.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
+  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](https://cloud.google.com/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
     &quot;type&quot;: &quot;A String&quot;, # Output only. Specifies the type of dataset/table restriction.
   },
   &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;selfLink&quot;: &quot;A String&quot;, # Output only. A URL that can be used to access the resource again. You can use this URL in Get or Update requests to the resource.
   &quot;storageBillingModel&quot;: &quot;A String&quot;, # Optional. Updates storage_billing_model for the dataset.
-  &quot;tags&quot;: [ # Output only. Tags for the Dataset.
+  &quot;tags&quot;: [ # Output only. Tags for the dataset. To provide tags as inputs, use the `resourceTags` field.
     { # A global tag managed by Resource Manager. https://cloud.google.com/iam/docs/tags-access-control#definitions
       &quot;tagKey&quot;: &quot;A String&quot;, # Required. The namespaced friendly name of the tag key, e.g. &quot;12345/environment&quot; where 12345 is org id.
       &quot;tagValue&quot;: &quot;A String&quot;, # Required. The friendly short name of the tag value, e.g. &quot;production&quot;.
@@ -894,6 +960,7 @@ Args:
   &quot;type&quot;: &quot;A String&quot;, # Output only. Same as `type` in `ListFormatDataset`. The type of the dataset, one of: * DEFAULT - only accessible by owner and authorized accounts, * PUBLIC - accessible by everyone, * LINKED - linked dataset, * EXTERNAL - dataset with definition in external metadata catalog.
 }
 
+  accessPolicyVersion: integer, Optional. The version of the provided access policy schema. Valid values are 0, 1, and 3. Requests specifying an invalid value will be rejected. This version refers to the schema version of the access policy and not the version of access policy. This field&#x27;s value can be equal or more than the access policy schema provided in the request. For example, * Operations updating conditional access policy binding in datasets must specify version 3. Some of the operations are : - Adding a new access policy entry with condition. - Removing an access policy entry with condition. - Updating an access policy entry with condition. * But dataset with no conditional role bindings in access policy may specify any valid value or leave the field unset. If unset or if 0 or 1 value is used for dataset with conditional bindings, request will be rejected. This field will be mapped to IAM Policy version (https://cloud.google.com/iam/docs/policies#versions) and will be used to set policy in IAM.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -902,11 +969,17 @@ Args:
 Returns:
   An object of the form:
 
-    {
-  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER;
+    { # Represents a BigQuery dataset.
+  &quot;access&quot;: [ # Optional. An array of objects that define dataset access for one or more entities. You can set this property when inserting or updating a dataset in order to control who is allowed to access the data. If unspecified at dataset creation time, BigQuery adds default dataset access for the following entities: access.specialGroup: projectReaders; access.role: READER; access.specialGroup: projectWriters; access.role: WRITER; access.specialGroup: projectOwners; access.role: OWNER; access.userByEmail: [dataset creator email]; access.role: OWNER; If you patch a dataset, then this field is overwritten by the patched dataset&#x27;s access field. To add entities, you must supply the entire existing access array in addition to any new entities that you want to add.
     { # An object that defines dataset access for an entity.
+      &quot;condition&quot;: { # Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: &quot;Summary size limit&quot; description: &quot;Determines if a summary is less than 100 chars&quot; expression: &quot;document.summary.size() &lt; 100&quot; Example (Equality): title: &quot;Requestor is owner&quot; description: &quot;Determines if requestor is the document owner&quot; expression: &quot;document.owner == request.auth.claims.email&quot; Example (Logic): title: &quot;Public documents&quot; description: &quot;Determine whether the document should be publicly visible&quot; expression: &quot;document.type != &#x27;private&#x27; &amp;&amp; document.type != &#x27;internal&#x27;&quot; Example (Data Manipulation): title: &quot;Notification string&quot; description: &quot;Create a notification string with a timestamp.&quot; expression: &quot;&#x27;New message received at &#x27; + string(document.create_time)&quot; The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. # Optional. condition for the binding. If CEL expression in this field is true, this access binding will be considered
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.
+        &quot;expression&quot;: &quot;A String&quot;, # Textual representation of an expression in Common Expression Language syntax.
+        &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
+        &quot;title&quot;: &quot;A String&quot;, # Optional. Title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
+      },
       &quot;dataset&quot;: { # Grants all resources of particular types in a particular dataset read access to the current dataset. Similar to how individually authorized views work, updates to any resource granted through its dataset (including creation of new resources) requires read permission to referenced resources, plus write permission to the authorizing dataset. # [Pick one] A grant authorizing all resources of a particular type in a particular dataset access to this dataset. Only views are supported for now. The role field is not required when this field is set. If that dataset is deleted and re-created, its access needs to be granted again via an update operation.
-        &quot;dataset&quot;: { # The dataset this entry applies to
+        &quot;dataset&quot;: { # Identifier for a dataset. # The dataset this entry applies to
           &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
           &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
         },
@@ -917,13 +990,13 @@ Returns:
       &quot;domain&quot;: &quot;A String&quot;, # [Pick one] A domain to grant access to. Any users signed in with the domain specified will be granted the specified access. Example: &quot;example.com&quot;. Maps to IAM policy member &quot;domain:DOMAIN&quot;.
       &quot;groupByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a Google Group to grant access to. Maps to IAM policy member &quot;group:GROUP&quot;.
       &quot;iamMember&quot;: &quot;A String&quot;, # [Pick one] Some other type of member that appears in the IAM Policy but isn&#x27;t a user, group, domain, or special group.
-      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: OWNER &lt;=&gt; roles/bigquery.dataOwner WRITER &lt;=&gt; roles/bigquery.dataEditor READER &lt;=&gt; roles/bigquery.dataViewer This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
+      &quot;role&quot;: &quot;A String&quot;, # An IAM role ID that should be granted to the user, group, or domain specified in this access entry. The following legacy mappings will be applied: * `OWNER`: `roles/bigquery.dataOwner` * `WRITER`: `roles/bigquery.dataEditor` * `READER`: `roles/bigquery.dataViewer` This field will accept any of the above formats, but will return only the legacy format. For example, if you set this field to &quot;roles/bigquery.dataOwner&quot;, it will be returned back as &quot;OWNER&quot;.
       &quot;routine&quot;: { # Id path of a routine. # [Pick one] A routine from a different dataset to grant access to. Queries executed against that routine will have read access to views/tables/routines in this dataset. Only UDF is supported for now. The role field is not required when this field is set. If that routine is updated by any user, access to the routine needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this routine.
         &quot;projectId&quot;: &quot;A String&quot;, # Required. The ID of the project containing this routine.
         &quot;routineId&quot;: &quot;A String&quot;, # Required. The ID of the routine. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 256 characters.
       },
-      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: projectOwners: Owners of the enclosing project. projectReaders: Readers of the enclosing project. projectWriters: Writers of the enclosing project. allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
+      &quot;specialGroup&quot;: &quot;A String&quot;, # [Pick one] A special group to grant access to. Possible values include: * projectOwners: Owners of the enclosing project. * projectReaders: Readers of the enclosing project. * projectWriters: Writers of the enclosing project. * allAuthenticatedUsers: All authenticated BigQuery users. Maps to similarly-named IAM members.
       &quot;userByEmail&quot;: &quot;A String&quot;, # [Pick one] An email address of a user to grant access to. For example: fred@example.com. Maps to IAM policy member &quot;user:EMAIL&quot; or &quot;serviceAccount:EMAIL&quot;.
       &quot;view&quot;: { # [Pick one] A view from a different dataset to grant access to. Queries executed against that view will have read access to views/tables/routines in this dataset. The role field is not required when this field is set. If that view is updated by any user, access to the view needs to be granted again via an update operation.
         &quot;datasetId&quot;: &quot;A String&quot;, # Required. The ID of the dataset containing this table.
@@ -933,12 +1006,12 @@ Returns:
     },
   ],
   &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The time when this dataset was created, in milliseconds since the epoch.
-  &quot;datasetReference&quot;: { # Required. A reference that identifies the dataset.
+  &quot;datasetReference&quot;: { # Identifier for a dataset. # Required. A reference that identifies the dataset.
     &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
     &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
   },
   &quot;defaultCollation&quot;: &quot;A String&quot;, # Optional. Defines the default collation specification of future tables created in the dataset. If a table is created in this dataset without table-level default collation, then the table inherits the dataset default collation, which is applied to the string fields that do not have explicit collation specified. A change to this field affects only tables created afterwards, and does not alter the existing tables. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-  &quot;defaultEncryptionConfiguration&quot;: { # The default encryption key for all tables in the dataset. Once this property is set, all newly-created partitioned tables in the dataset will have encryption key set to this value, unless table creation request (or query) overrides the key.
+  &quot;defaultEncryptionConfiguration&quot;: { # Configuration for Cloud KMS encryption settings. # The default encryption key for all tables in the dataset. After this property is set, the encryption key of all newly-created tables in the dataset is set to this value unless the table creation request or query explicitly overrides the key.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # Optional. Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key.
   },
   &quot;defaultPartitionExpirationMs&quot;: &quot;A String&quot;, # This default partition expiration, expressed in milliseconds. When new time-partitioned tables are created in a dataset where this property is set, the table will inherit this value, propagated as the `TimePartitioning.expirationMs` property on the new table. If you set `TimePartitioning.expirationMs` explicitly when creating a table, the `defaultPartitionExpirationMs` of the containing dataset is ignored. When creating a partitioned table, if `defaultPartitionExpirationMs` is set, the `defaultTableExpirationMs` value is ignored and the table will not be inherit a table expiration deadline.
@@ -946,9 +1019,9 @@ Returns:
   &quot;defaultTableExpirationMs&quot;: &quot;A String&quot;, # Optional. The default lifetime of all tables in the dataset, in milliseconds. The minimum lifetime value is 3600000 milliseconds (one hour). To clear an existing default expiration with a PATCH request, set to 0. Once this property is set, all newly-created tables in the dataset will have an expirationTime property set to the creation time plus the value in this property, and changing the value will only affect new tables, not existing ones. When the expirationTime for a given table is reached, that table will be deleted automatically. If a table&#x27;s expirationTime is modified or removed before the table expires, or if you provide an explicit expirationTime when creating a table, that value takes precedence over the default expiration time indicated by this property.
   &quot;description&quot;: &quot;A String&quot;, # Optional. A user-friendly description of the dataset.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. A hash of the resource.
-  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
+  &quot;externalCatalogDatasetOptions&quot;: { # Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema, or namespace represented by the current dataset. # Optional. Options defining open source compatible datasets living in the BigQuery catalog. Contains metadata of open source database, schema or namespace represented by the current dataset.
     &quot;defaultStorageLocationUri&quot;: &quot;A String&quot;, # Optional. The storage location URI for all tables in the dataset. Equivalent to hive metastore&#x27;s database locationUri. Maximum length of 1024 characters.
-    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2Mib.
+    &quot;parameters&quot;: { # Optional. A map of key value pairs defining the parameters and properties of the open source schema. Maximum size of 2MiB.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
   },
@@ -960,7 +1033,7 @@ Returns:
   &quot;id&quot;: &quot;A String&quot;, # Output only. The fully-qualified unique name of the dataset in the format projectId:datasetId. The dataset name without the project name is given in the datasetId field. When creating a new dataset, leave this field blank, and instead specify the datasetId field.
   &quot;isCaseInsensitive&quot;: True or False, # Optional. TRUE if the dataset and its table names are case-insensitive, otherwise FALSE. By default, this is FALSE, which means the dataset and its table names are case-sensitive. This field does not affect routine references.
   &quot;kind&quot;: &quot;bigquery#dataset&quot;, # Output only. The resource type.
-  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See Creating and Updating Dataset Labels for more information.
+  &quot;labels&quot;: { # The labels associated with this dataset. You can use these to organize and group your datasets. You can set this property when inserting or updating a dataset. See [Creating and Updating Dataset Labels](https://cloud.google.com/bigquery/docs/creating-managing-labels#creating_and_updating_dataset_labels) for more information.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;lastModifiedTime&quot;: &quot;A String&quot;, # Output only. The date when this dataset was last modified, in milliseconds since the epoch.
@@ -968,21 +1041,24 @@ Returns:
     &quot;linkState&quot;: &quot;A String&quot;, # Output only. Specifies whether Linked Dataset is currently in a linked state or not.
   },
   &quot;linkedDatasetSource&quot;: { # A dataset source type which refers to another BigQuery dataset. # Optional. The source dataset reference when the dataset is of type LINKED. For all other dataset types it is not set. This field cannot be updated once it is set. Any attempt to update this field using Update and Patch API Operations will be ignored.
-    &quot;sourceDataset&quot;: { # The source dataset reference contains project numbers and not project ids.
+    &quot;sourceDataset&quot;: { # Identifier for a dataset. # The source dataset reference contains project numbers and not project ids.
       &quot;datasetId&quot;: &quot;A String&quot;, # Required. A unique ID for this dataset, without the project name. The ID must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum length is 1,024 characters.
       &quot;projectId&quot;: &quot;A String&quot;, # Optional. The ID of the project containing this dataset.
     },
   },
   &quot;location&quot;: &quot;A String&quot;, # The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
   &quot;maxTimeTravelHours&quot;: &quot;A String&quot;, # Optional. Defines the time travel window in hours. The value can be from 48 to 168 hours (2 to 7 days). The default value is 168 hours if this is not set.
-  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
+  &quot;resourceTags&quot;: { # Optional. The [tags](https://cloud.google.com/bigquery/docs/tags) attached to this dataset. Tag keys are globally unique. Tag key is expected to be in the namespaced format, for example &quot;123456789012/environment&quot; where 123456789012 is the ID of the parent organization or project resource for this tag key. Tag value is expected to be the short name, for example &quot;Production&quot;. See [Tag definitions](https://cloud.google.com/iam/docs/tags-access-control#definitions) for more details.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
+  &quot;restrictions&quot;: { # Optional. Output only. Restriction config for all tables and dataset. If set, restrict certain accesses on the dataset and all its tables based on the config. See [Data egress](https://cloud.google.com/bigquery/docs/analytics-hub-introduction#data_egress) for more details.
     &quot;type&quot;: &quot;A String&quot;, # Output only. Specifies the type of dataset/table restriction.
   },
   &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;selfLink&quot;: &quot;A String&quot;, # Output only. A URL that can be used to access the resource again. You can use this URL in Get or Update requests to the resource.
   &quot;storageBillingModel&quot;: &quot;A String&quot;, # Optional. Updates storage_billing_model for the dataset.
-  &quot;tags&quot;: [ # Output only. Tags for the Dataset.
+  &quot;tags&quot;: [ # Output only. Tags for the dataset. To provide tags as inputs, use the `resourceTags` field.
     { # A global tag managed by Resource Manager. https://cloud.google.com/iam/docs/tags-access-control#definitions
       &quot;tagKey&quot;: &quot;A String&quot;, # Required. The namespaced friendly name of the tag key, e.g. &quot;12345/environment&quot; where 12345 is org id.
       &quot;tagValue&quot;: &quot;A String&quot;, # Required. The friendly short name of the tag value, e.g. &quot;production&quot;.

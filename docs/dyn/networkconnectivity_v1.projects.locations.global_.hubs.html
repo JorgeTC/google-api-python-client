@@ -118,6 +118,12 @@ h1, h2, h3 {
   <code><a href="#patch">patch(name, body=None, requestId=None, updateMask=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Updates the description and/or labels of a Network Connectivity Center hub.</p>
 <p class="toc_element">
+  <code><a href="#queryStatus">queryStatus(name, filter=None, groupBy=None, orderBy=None, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Query the Private Service Connect propagation status of a Network Connectivity Center hub.</p>
+<p class="toc_element">
+  <code><a href="#queryStatus_next">queryStatus_next()</a></code></p>
+<p class="firstline">Retrieves the next page of results.</p>
+<p class="toc_element">
   <code><a href="#rejectSpoke">rejectSpoke(name, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Rejects a Network Connectivity Center spoke from being attached to a hub. If the spoke was previously in the `ACTIVE` state, it transitions to the `INACTIVE` state and is no longer able to connect to other spokes that are attached to the hub.</p>
 <p class="toc_element">
@@ -186,7 +192,7 @@ Args:
 
 { # A Network Connectivity Center hub is a global management resource to which you attach spokes. A single hub can contain spokes from multiple regions. However, if any of a hub&#x27;s spokes use the site-to-site data transfer feature, the resources associated with those spokes must all be in the same VPC network. Spokes that do not use site-to-site data transfer can be associated with any VPC network in your project.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the hub was created.
-  &quot;description&quot;: &quot;A String&quot;, # An optional description of the hub.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the hub.
   &quot;exportPsc&quot;: True or False, # Optional. Whether Private Service Connect transitivity is enabled for the hub. If true, Private Service Connect endpoints in VPC spokes attached to the hub are made accessible to other VPC spokes attached to the hub. The default value is false.
   &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
     &quot;a_key&quot;: &quot;A String&quot;,
@@ -311,7 +317,7 @@ Returns:
 
     { # A Network Connectivity Center hub is a global management resource to which you attach spokes. A single hub can contain spokes from multiple regions. However, if any of a hub&#x27;s spokes use the site-to-site data transfer feature, the resources associated with those spokes must all be in the same VPC network. Spokes that do not use site-to-site data transfer can be associated with any VPC network in your project.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the hub was created.
-  &quot;description&quot;: &quot;A String&quot;, # An optional description of the hub.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the hub.
   &quot;exportPsc&quot;: True or False, # Optional. Whether Private Service Connect transitivity is enabled for the hub. If true, Private Service Connect endpoints in VPC spokes attached to the hub are made accessible to other VPC spokes attached to the hub. The default value is false.
   &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
     &quot;a_key&quot;: &quot;A String&quot;,
@@ -424,7 +430,7 @@ Returns:
   &quot;hubs&quot;: [ # The requested hubs.
     { # A Network Connectivity Center hub is a global management resource to which you attach spokes. A single hub can contain spokes from multiple regions. However, if any of a hub&#x27;s spokes use the site-to-site data transfer feature, the resources associated with those spokes must all be in the same VPC network. Spokes that do not use site-to-site data transfer can be associated with any VPC network in your project.
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the hub was created.
-      &quot;description&quot;: &quot;A String&quot;, # An optional description of the hub.
+      &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the hub.
       &quot;exportPsc&quot;: True or False, # Optional. Whether Private Service Connect transitivity is enabled for the hub. If true, Private Service Connect endpoints in VPC spokes attached to the hub are made accessible to other VPC spokes attached to the hub. The default value is false.
       &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
         &quot;a_key&quot;: &quot;A String&quot;,
@@ -502,20 +508,38 @@ Returns:
   &quot;spokes&quot;: [ # The requested spokes. The spoke fields can be partially populated based on the `view` field in the request message.
     { # A Network Connectivity Center spoke represents one or more network connectivity resources. When you create a spoke, you associate it with a hub. You must also identify a value for exactly one of the following fields: * linked_vpn_tunnels * linked_interconnect_attachments * linked_router_appliance_instances * linked_vpc_network
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the spoke was created.
-      &quot;description&quot;: &quot;A String&quot;, # An optional description of the spoke.
+      &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the spoke.
       &quot;group&quot;: &quot;A String&quot;, # Optional. The name of the group that this spoke is associated with.
       &quot;hub&quot;: &quot;A String&quot;, # Immutable. The name of the hub that this spoke is attached to.
       &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
         &quot;a_key&quot;: &quot;A String&quot;,
       },
-      &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # VLAN attachments that are associated with the spoke.
+      &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # Optional. VLAN attachments that are associated with the spoke.
+        &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+          &quot;A String&quot;,
+        ],
         &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
         &quot;uris&quot;: [ # The URIs of linked interconnect attachment resources
           &quot;A String&quot;,
         ],
         &quot;vpcNetwork&quot;: &quot;A String&quot;, # Output only. The VPC network where these VLAN attachments are located.
       },
-      &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Router appliance instances that are associated with the spoke.
+      &quot;linkedProducerVpcNetwork&quot;: { # Optional. The linked producer VPC that is associated with the spoke.
+        &quot;excludeExportRanges&quot;: [ # Optional. IP ranges encompassing the subnets to be excluded from peering.
+          &quot;A String&quot;,
+        ],
+        &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
+          &quot;A String&quot;,
+        ],
+        &quot;network&quot;: &quot;A String&quot;, # Immutable. The URI of the Service Consumer VPC that the Producer VPC is peered with.
+        &quot;peering&quot;: &quot;A String&quot;, # Immutable. The name of the VPC peering between the Service Consumer VPC and the Producer VPC (defined in the Tenant project) which is added to the NCC hub. This peering must be in ACTIVE state.
+        &quot;producerNetwork&quot;: &quot;A String&quot;, # Output only. The URI of the Producer VPC.
+        &quot;serviceConsumerVpcSpoke&quot;: &quot;A String&quot;, # Output only. The Service Consumer Network spoke.
+      },
+      &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Optional. Router appliance instances that are associated with the spoke.
+        &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+          &quot;A String&quot;,
+        ],
         &quot;instances&quot;: [ # The list of router appliance instances.
           { # A router appliance instance is a Compute Engine virtual machine (VM) instance that acts as a BGP speaker. A router appliance instance is specified by the URI of the VM and the internal IP address of one of the VM&#x27;s network interfaces.
             &quot;ipAddress&quot;: &quot;A String&quot;, # The IP address on the VM to use for peering.
@@ -529,9 +553,18 @@ Returns:
         &quot;excludeExportRanges&quot;: [ # Optional. IP ranges encompassing the subnets to be excluded from peering.
           &quot;A String&quot;,
         ],
+        &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
+          &quot;A String&quot;,
+        ],
+        &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network.
+          &quot;A String&quot;,
+        ],
         &quot;uri&quot;: &quot;A String&quot;, # Required. The URI of the VPC network resource.
       },
-      &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # VPN tunnels that are associated with the spoke.
+      &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # Optional. VPN tunnels that are associated with the spoke.
+        &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+          &quot;A String&quot;,
+        ],
         &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
         &quot;uris&quot;: [ # The URIs of linked VPN tunnel resources.
           &quot;A String&quot;,
@@ -539,7 +572,7 @@ Returns:
         &quot;vpcNetwork&quot;: &quot;A String&quot;, # Output only. The VPC network where these VPN tunnels are located.
       },
       &quot;name&quot;: &quot;A String&quot;, # Immutable. The name of the spoke. Spoke names must be unique. They use the following form: `projects/{project_number}/locations/{region}/spokes/{spoke_id}`
-      &quot;reasons&quot;: [ # Output only. The reasons for current state of the spoke. Only present when the spoke is in the `INACTIVE` state.
+      &quot;reasons&quot;: [ # Output only. The reasons for current state of the spoke.
         { # The reason a spoke is inactive.
           &quot;code&quot;: &quot;A String&quot;, # The code associated with this reason.
           &quot;message&quot;: &quot;A String&quot;, # Human-readable details about this reason.
@@ -597,7 +630,7 @@ Args:
 
 { # A Network Connectivity Center hub is a global management resource to which you attach spokes. A single hub can contain spokes from multiple regions. However, if any of a hub&#x27;s spokes use the site-to-site data transfer feature, the resources associated with those spokes must all be in the same VPC network. Spokes that do not use site-to-site data transfer can be associated with any VPC network in your project.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the hub was created.
-  &quot;description&quot;: &quot;A String&quot;, # An optional description of the hub.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the hub.
   &quot;exportPsc&quot;: True or False, # Optional. Whether Private Service Connect transitivity is enabled for the hub. If true, Private Service Connect endpoints in VPC spokes attached to the hub are made accessible to other VPC spokes attached to the hub. The default value is false.
   &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
     &quot;a_key&quot;: &quot;A String&quot;,
@@ -668,6 +701,59 @@ Returns:
     &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
   },
 }</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="queryStatus">queryStatus(name, filter=None, groupBy=None, orderBy=None, pageSize=None, pageToken=None, x__xgafv=None)</code>
+  <pre>Query the Private Service Connect propagation status of a Network Connectivity Center hub.
+
+Args:
+  name: string, Required. The name of the hub. (required)
+  filter: string, Optional. An expression that filters the list of results. The filter can be used to filter the results by the following fields: * `psc_propagation_status.source_spoke` * `psc_propagation_status.source_group` * `psc_propagation_status.source_forwarding_rule` * `psc_propagation_status.target_spoke` * `psc_propagation_status.target_group` * `psc_propagation_status.code` * `psc_propagation_status.message`
+  groupBy: string, Optional. Aggregate the results by the specified fields. A comma-separated list of any of these fields: * `psc_propagation_status.source_spoke` * `psc_propagation_status.source_group` * `psc_propagation_status.source_forwarding_rule` * `psc_propagation_status.target_spoke` * `psc_propagation_status.target_group` * `psc_propagation_status.code`
+  orderBy: string, Optional. Sort the results in ascending order by the specified fields. A comma-separated list of any of these fields: * `psc_propagation_status.source_spoke` * `psc_propagation_status.source_group` * `psc_propagation_status.source_forwarding_rule` * `psc_propagation_status.target_spoke` * `psc_propagation_status.target_group` * `psc_propagation_status.code` If `group_by` is set, the value of the `order_by` field must be the same as or a subset of the `group_by` field.
+  pageSize: integer, Optional. The maximum number of results to return per page.
+  pageToken: string, Optional. The page token.
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # The response for HubService.QueryHubStatus.
+  &quot;hubStatusEntries&quot;: [ # The list of hub status.
+    { # A hub status entry represents the status of a set of propagated Private Service Connect connections grouped by certain fields.
+      &quot;count&quot;: 42, # The number of propagated Private Service Connect connections with this status. If the `group_by` field was not set in the request message, the value of this field is 1.
+      &quot;groupBy&quot;: &quot;A String&quot;, # The fields that this entry is grouped by. This has the same value as the `group_by` field in the request message.
+      &quot;pscPropagationStatus&quot;: { # The status of one or more propagated Private Service Connect connections in a hub. # The Private Service Connect propagation status.
+        &quot;code&quot;: &quot;A String&quot;, # The propagation status.
+        &quot;message&quot;: &quot;A String&quot;, # The human-readable summary of the Private Service Connect connection propagation status.
+        &quot;sourceForwardingRule&quot;: &quot;A String&quot;, # The name of the forwarding rule exported to the hub.
+        &quot;sourceGroup&quot;: &quot;A String&quot;, # The name of the group that the source spoke belongs to.
+        &quot;sourceSpoke&quot;: &quot;A String&quot;, # The name of the spoke that the source forwarding rule belongs to.
+        &quot;targetGroup&quot;: &quot;A String&quot;, # The name of the group that the target spoke belongs to.
+        &quot;targetSpoke&quot;: &quot;A String&quot;, # The name of the spoke that the source forwarding rule propagates to.
+      },
+    },
+  ],
+  &quot;nextPageToken&quot;: &quot;A String&quot;, # The token for the next page of the response. To see more results, use this value as the page_token for your next request. If this value is empty, there are no more results.
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="queryStatus_next">queryStatus_next()</code>
+  <pre>Retrieves the next page of results.
+
+        Args:
+          previous_request: The request for the previous page. (required)
+          previous_response: The response from the request for the previous page. (required)
+
+        Returns:
+          A request object that you can call &#x27;execute()&#x27; on to request the next
+          page. Returns None if there are no more items in the collection.
+        </pre>
 </div>
 
 <div class="method">

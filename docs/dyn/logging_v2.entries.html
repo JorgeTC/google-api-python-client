@@ -157,7 +157,7 @@ Args:
   &quot;projectIds&quot;: [ # Optional. Deprecated. Use resource_names instead. One or more project identifiers or project numbers from which to retrieve log entries. Example: &quot;my-project-1A&quot;.
     &quot;A String&quot;,
   ],
-  &quot;resourceNames&quot;: [ # Required. Names of one or more parent resources from which to retrieve log entries: projects/[PROJECT_ID] organizations/[ORGANIZATION_ID] billingAccounts/[BILLING_ACCOUNT_ID] folders/[FOLDER_ID]May alternatively be one or more views: projects/[PROJECT_ID]/locations/[LOCATION_ID]/buckets/[BUCKET_ID]/views/[VIEW_ID] organizations/[ORGANIZATION_ID]/locations/[LOCATION_ID]/buckets/[BUCKET_ID]/views/[VIEW_ID] billingAccounts/[BILLING_ACCOUNT_ID]/locations/[LOCATION_ID]/buckets/[BUCKET_ID]/views/[VIEW_ID] folders/[FOLDER_ID]/locations/[LOCATION_ID]/buckets/[BUCKET_ID]/views/[VIEW_ID]Projects listed in the project_ids field are added to this list. A maximum of 100 resources may be specified in a single request.
+  &quot;resourceNames&quot;: [ # Required. Names of one or more parent resources from which to retrieve log entries. Resources may either be resource containers or specific LogViews. For the case of resource containers, all logs ingested into that container will be returned regardless of which LogBuckets they are actually stored in - i.e. these queries may fan out to multiple regions. In the event of region unavailability, specify a specific set of LogViews that do not include the unavailable region. projects/[PROJECT_ID] organizations/[ORGANIZATION_ID] billingAccounts/[BILLING_ACCOUNT_ID] folders/[FOLDER_ID] projects/[PROJECT_ID]/locations/[LOCATION_ID]/buckets/[BUCKET_ID]/views/[VIEW_ID] organizations/[ORGANIZATION_ID]/locations/[LOCATION_ID]/buckets/[BUCKET_ID]/views/[VIEW_ID] billingAccounts/[BILLING_ACCOUNT_ID]/locations/[LOCATION_ID]/buckets/[BUCKET_ID]/views/[VIEW_ID] folders/[FOLDER_ID]/locations/[LOCATION_ID]/buckets/[BUCKET_ID]/views/[VIEW_ID]Projects listed in the project_ids field are added to this list. A maximum of 100 resources may be specified in a single request.
     &quot;A String&quot;,
   ],
 }
@@ -183,8 +183,8 @@ Returns:
         &quot;cacheHit&quot;: True or False, # Whether or not an entity was served from cache (with or without validation).
         &quot;cacheLookup&quot;: True or False, # Whether or not a cache lookup was attempted.
         &quot;cacheValidatedWithOriginServer&quot;: True or False, # Whether or not the response was validated with the origin server before being served from cache. This field is only meaningful if cache_hit is True.
-        &quot;latency&quot;: &quot;A String&quot;, # The request processing latency on the server, from the time the request was received until the response was sent.
-        &quot;protocol&quot;: &quot;A String&quot;, # Protocol used for the request. Examples: &quot;HTTP/1.1&quot;, &quot;HTTP/2&quot;, &quot;websocket&quot;
+        &quot;latency&quot;: &quot;A String&quot;, # The request processing latency on the server, from the time the request was received until the response was sent. For WebSocket connections, this field refers to the entire time duration of the connection.
+        &quot;protocol&quot;: &quot;A String&quot;, # Protocol used for the request. Examples: &quot;HTTP/1.1&quot;, &quot;HTTP/2&quot;
         &quot;referer&quot;: &quot;A String&quot;, # The referer URL of the request, as defined in HTTP/1.1 Header Field Definitions (https://datatracker.ietf.org/doc/html/rfc2616#section-14.36).
         &quot;remoteIp&quot;: &quot;A String&quot;, # The IP address (IPv4 or IPv6) of the client that issued the HTTP request. This field can include port information. Examples: &quot;192.168.1.1&quot;, &quot;10.0.0.1:80&quot;, &quot;FE80::0202:B3FF:FE1E:8329&quot;.
         &quot;requestMethod&quot;: &quot;A String&quot;, # The request method. Examples: &quot;GET&quot;, &quot;HEAD&quot;, &quot;PUT&quot;, &quot;POST&quot;.
@@ -300,8 +300,8 @@ Returns:
         &quot;cacheHit&quot;: True or False, # Whether or not an entity was served from cache (with or without validation).
         &quot;cacheLookup&quot;: True or False, # Whether or not a cache lookup was attempted.
         &quot;cacheValidatedWithOriginServer&quot;: True or False, # Whether or not the response was validated with the origin server before being served from cache. This field is only meaningful if cache_hit is True.
-        &quot;latency&quot;: &quot;A String&quot;, # The request processing latency on the server, from the time the request was received until the response was sent.
-        &quot;protocol&quot;: &quot;A String&quot;, # Protocol used for the request. Examples: &quot;HTTP/1.1&quot;, &quot;HTTP/2&quot;, &quot;websocket&quot;
+        &quot;latency&quot;: &quot;A String&quot;, # The request processing latency on the server, from the time the request was received until the response was sent. For WebSocket connections, this field refers to the entire time duration of the connection.
+        &quot;protocol&quot;: &quot;A String&quot;, # Protocol used for the request. Examples: &quot;HTTP/1.1&quot;, &quot;HTTP/2&quot;
         &quot;referer&quot;: &quot;A String&quot;, # The referer URL of the request, as defined in HTTP/1.1 Header Field Definitions (https://datatracker.ietf.org/doc/html/rfc2616#section-14.36).
         &quot;remoteIp&quot;: &quot;A String&quot;, # The IP address (IPv4 or IPv6) of the client that issued the HTTP request. This field can include port information. Examples: &quot;192.168.1.1&quot;, &quot;10.0.0.1:80&quot;, &quot;FE80::0202:B3FF:FE1E:8329&quot;.
         &quot;requestMethod&quot;: &quot;A String&quot;, # The request method. Examples: &quot;GET&quot;, &quot;HEAD&quot;, &quot;PUT&quot;, &quot;POST&quot;.
@@ -393,8 +393,8 @@ Args:
         &quot;cacheHit&quot;: True or False, # Whether or not an entity was served from cache (with or without validation).
         &quot;cacheLookup&quot;: True or False, # Whether or not a cache lookup was attempted.
         &quot;cacheValidatedWithOriginServer&quot;: True or False, # Whether or not the response was validated with the origin server before being served from cache. This field is only meaningful if cache_hit is True.
-        &quot;latency&quot;: &quot;A String&quot;, # The request processing latency on the server, from the time the request was received until the response was sent.
-        &quot;protocol&quot;: &quot;A String&quot;, # Protocol used for the request. Examples: &quot;HTTP/1.1&quot;, &quot;HTTP/2&quot;, &quot;websocket&quot;
+        &quot;latency&quot;: &quot;A String&quot;, # The request processing latency on the server, from the time the request was received until the response was sent. For WebSocket connections, this field refers to the entire time duration of the connection.
+        &quot;protocol&quot;: &quot;A String&quot;, # Protocol used for the request. Examples: &quot;HTTP/1.1&quot;, &quot;HTTP/2&quot;
         &quot;referer&quot;: &quot;A String&quot;, # The referer URL of the request, as defined in HTTP/1.1 Header Field Definitions (https://datatracker.ietf.org/doc/html/rfc2616#section-14.36).
         &quot;remoteIp&quot;: &quot;A String&quot;, # The IP address (IPv4 or IPv6) of the client that issued the HTTP request. This field can include port information. Examples: &quot;192.168.1.1&quot;, &quot;10.0.0.1:80&quot;, &quot;FE80::0202:B3FF:FE1E:8329&quot;.
         &quot;requestMethod&quot;: &quot;A String&quot;, # The request method. Examples: &quot;GET&quot;, &quot;HEAD&quot;, &quot;PUT&quot;, &quot;POST&quot;.

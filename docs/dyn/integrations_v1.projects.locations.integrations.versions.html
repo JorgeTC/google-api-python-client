@@ -75,6 +75,11 @@ h1, h2, h3 {
 <h1><a href="integrations_v1.html">Application Integration API</a> . <a href="integrations_v1.projects.html">projects</a> . <a href="integrations_v1.projects.locations.html">locations</a> . <a href="integrations_v1.projects.locations.integrations.html">integrations</a> . <a href="integrations_v1.projects.locations.integrations.versions.html">versions</a></h1>
 <h2>Instance Methods</h2>
 <p class="toc_element">
+  <code><a href="integrations_v1.projects.locations.integrations.versions.testCases.html">testCases()</a></code>
+</p>
+<p class="firstline">Returns the testCases Resource.</p>
+
+<p class="toc_element">
   <code><a href="#close">close()</a></code></p>
 <p class="firstline">Close httplib2 connections.</p>
 <p class="toc_element">
@@ -188,6 +193,7 @@ Args:
           },
           &quot;stringValue&quot;: &quot;A String&quot;, # String.
         },
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
         &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
         &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
         &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -257,6 +263,7 @@ Args:
         },
         &quot;stringValue&quot;: &quot;A String&quot;, # String.
       },
+      &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
       &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
       &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
       &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -300,25 +307,8 @@ Args:
           &quot;isSearchable&quot;: True or False, # Used to indicate if a ParameterEntry should be converted to ParamIndexes for ST-Spanner full-text search. DEPRECATED: use searchable.
           &quot;logSettings&quot;: { # The LogSettings define the logging attributes for an event property. These attributes are used to map the property to the parameter in the log proto. Also used to define scrubbing/truncation behavior and PII information. # See
             &quot;logFieldName&quot;: &quot;A String&quot;, # The name of corresponding logging field of the event property. If omitted, assumes the same name as the event property key.
-            &quot;sanitizeOptions&quot;: { # Identifies whether a field contains, or may contain, PII or sensitive data, and how to sanitize the field if it does. If a field&#x27;s privacy type cannot be determined then it is sanitized (e.g., scrubbed). The specific sanitizer implementation is determined by run-time configuration and environment options (e.g., prod vs. qa). next_id: 5 # Contains the scrubbing options, such as whether to scrub, obfuscate, etc.
-              &quot;isAlreadySanitized&quot;: True or False, # If true, the value has already been sanitized and needs no further sanitization. For instance, a D3 customer id is already an obfuscated entity and *might not* need further sanitization.
-              &quot;logType&quot;: [ # To which type(s) of logs the sanitize options apply.
-                &quot;A String&quot;,
-              ],
-              &quot;privacy&quot;: &quot;A String&quot;,
-              &quot;sanitizeType&quot;: &quot;A String&quot;,
-            },
             &quot;seedPeriod&quot;: &quot;A String&quot;,
             &quot;seedScope&quot;: &quot;A String&quot;,
-            &quot;shorteningLimits&quot;: { # Describes string and array limits when writing to logs. When a limit is exceeded the *shortener_type* describes how to shorten the field. next_id: 6 # Contains the field limits for shortening, such as max string length and max array length.
-              &quot;logAction&quot;: &quot;A String&quot;,
-              &quot;logType&quot;: [ # To which type(s) of logs the limits apply.
-                &quot;A String&quot;,
-              ],
-              &quot;maxArraySize&quot;: 42, # maximum array size. If the array exceds this size, the field (list) is truncated.
-              &quot;maxStringLength&quot;: 42, # maximum string length. If the field exceeds this amount the field is shortened.
-              &quot;shortenerType&quot;: &quot;A String&quot;,
-            },
           },
           &quot;masked&quot;: True or False, # True if this workflow parameter should be masked in the logs
           &quot;readOnly&quot;: True or False, # Used to indicate if the ParameterEntry is a read only field or not.
@@ -400,11 +390,28 @@ Args:
   &quot;status&quot;: &quot;A String&quot;, # Output only. Generated by eventbus. User should not set it as an input.
   &quot;taskConfigs&quot;: [ # Optional. Task configuration for the integration. It&#x27;s optional, but the integration doesn&#x27;t do anything without task_configs.
     { # The task configuration details. This is not the implementation of Task. There might be multiple TaskConfigs for the same Task.
+      &quot;conditionalFailurePolicies&quot;: { # Conditional task failur retry strategies # Optional. The list of conditional failure policies that will be applied to the task in order.
+        &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches.
+          &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+          &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+          &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+        },
+        &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+          { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+            &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+            &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+            &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+        ],
+      },
       &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
       &quot;displayName&quot;: &quot;A String&quot;, # Optional. User-provided label that is attached to this TaskConfig in the UI.
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
       &quot;externalTaskType&quot;: &quot;A String&quot;, # Optional. External task type of the task
       &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
+        &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
         &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
         &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -461,6 +468,7 @@ Args:
         &quot;finalState&quot;: &quot;A String&quot;, # State to which the execution snapshot status will be set if the task succeeds.
       },
       &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+        &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
         &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
         &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -503,6 +511,22 @@ Args:
           },
         },
       ],
+      &quot;conditionalFailurePolicies&quot;: { # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+        &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches
+          &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+          &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+          &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+        },
+        &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+          { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+            &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+            &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+        ],
+      },
       &quot;createTime&quot;: &quot;A String&quot;, # Auto-generated.
       &quot;creatorEmail&quot;: &quot;A String&quot;, # The creator&#x27;s email address. Auto-generated from the user&#x27;s email.
       &quot;description&quot;: &quot;A String&quot;, # User-provided description intended to give more business context about the task.
@@ -512,6 +536,7 @@ Args:
       &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
         &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
         &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+        &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
       },
       &quot;incomingEdgeCount&quot;: 42, # The number of edges leading into this TaskConfig.
@@ -676,6 +701,7 @@ Args:
       &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
         &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
         &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+        &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
       },
       &quot;taskEntity&quot;: { # Contains a task&#x27;s metadata and associated information. Next available id: 7 # Copy of the task entity that this task config is an instance of.
@@ -945,8 +971,18 @@ Args:
       },
       &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+      &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;label&quot;: &quot;A String&quot;, # Optional. The user created label for a particular trigger.
       &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Optional. Dictates how next tasks will be executed.
+      &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;position&quot;: { # Configuration detail of coordinate, it used for UI # Optional. Informs the front-end application where to draw this error catcher config on the UI.
         &quot;x&quot;: 42, # Required. X axis of the coordinate
         &quot;y&quot;: 42, # Required. Y axis of the coordinate
@@ -964,13 +1000,13 @@ Args:
         },
       ],
       &quot;trigger&quot;: &quot;A String&quot;, # Optional. Name of the trigger. Example: &quot;API Trigger&quot;, &quot;Cloud Pub Sub Trigger&quot; When set will be sent out to monitoring dashabord for tracking purpose.
-      &quot;triggerId&quot;: &quot;A String&quot;, # Optional. The backend trigger ID.
+      &quot;triggerId&quot;: &quot;A String&quot;, # Optional. Auto-generated trigger ID. The ID is based on the properties that you define in the trigger config. For example, for an API trigger, the trigger ID follows the format: api_trigger/TRIGGER_NAME Where trigger config has properties with value {&quot;Trigger name&quot;: TRIGGER_NAME}
       &quot;triggerNumber&quot;: &quot;A String&quot;, # Required. A number to uniquely identify each trigger config within the integration on UI.
       &quot;triggerType&quot;: &quot;A String&quot;, # Optional. Type of trigger
     },
   ],
   &quot;triggerConfigsInternal&quot;: [ # Optional. Trigger configurations.
-    { # Configuration detail of a trigger. Next available id: 20
+    { # Configuration detail of a trigger. Next available id: 22
       &quot;alertConfig&quot;: [ # An alert threshold configuration for the [trigger + client + workflow] tuple. If these values are not specified in the trigger config, default values will be populated by the system. Note that there must be exactly one alert threshold configured per [client + trigger + workflow] when published.
         { # Message to be used to configure custom alerting in the {@code EventConfig} protos for an event.
           &quot;aggregationPeriod&quot;: &quot;A String&quot;, # For an EXPECTED_MIN threshold, this aggregation_period must be lesser than 24 hours.
@@ -1012,8 +1048,18 @@ Args:
         &quot;A String&quot;,
       ],
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+      &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;label&quot;: &quot;A String&quot;, # The user created label for a particular trigger.
       &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Dictates how next tasks will be executed.
+      &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;pauseWorkflowExecutions&quot;: True or False, # Optional. If set to true, any upcoming requests for this trigger config will be paused and the executions will be resumed later when the flag is reset. The workflow to which this trigger config belongs has to be in ACTIVE status for the executions to be paused or resumed.
       &quot;position&quot;: { # Represents two-dimensional positions. # Optional. Informs the front-end application where to draw this trigger config on the UI.
         &quot;x&quot;: 42,
@@ -1199,6 +1245,7 @@ Returns:
           },
           &quot;stringValue&quot;: &quot;A String&quot;, # String.
         },
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
         &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
         &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
         &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -1268,6 +1315,7 @@ Returns:
         },
         &quot;stringValue&quot;: &quot;A String&quot;, # String.
       },
+      &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
       &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
       &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
       &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -1311,25 +1359,8 @@ Returns:
           &quot;isSearchable&quot;: True or False, # Used to indicate if a ParameterEntry should be converted to ParamIndexes for ST-Spanner full-text search. DEPRECATED: use searchable.
           &quot;logSettings&quot;: { # The LogSettings define the logging attributes for an event property. These attributes are used to map the property to the parameter in the log proto. Also used to define scrubbing/truncation behavior and PII information. # See
             &quot;logFieldName&quot;: &quot;A String&quot;, # The name of corresponding logging field of the event property. If omitted, assumes the same name as the event property key.
-            &quot;sanitizeOptions&quot;: { # Identifies whether a field contains, or may contain, PII or sensitive data, and how to sanitize the field if it does. If a field&#x27;s privacy type cannot be determined then it is sanitized (e.g., scrubbed). The specific sanitizer implementation is determined by run-time configuration and environment options (e.g., prod vs. qa). next_id: 5 # Contains the scrubbing options, such as whether to scrub, obfuscate, etc.
-              &quot;isAlreadySanitized&quot;: True or False, # If true, the value has already been sanitized and needs no further sanitization. For instance, a D3 customer id is already an obfuscated entity and *might not* need further sanitization.
-              &quot;logType&quot;: [ # To which type(s) of logs the sanitize options apply.
-                &quot;A String&quot;,
-              ],
-              &quot;privacy&quot;: &quot;A String&quot;,
-              &quot;sanitizeType&quot;: &quot;A String&quot;,
-            },
             &quot;seedPeriod&quot;: &quot;A String&quot;,
             &quot;seedScope&quot;: &quot;A String&quot;,
-            &quot;shorteningLimits&quot;: { # Describes string and array limits when writing to logs. When a limit is exceeded the *shortener_type* describes how to shorten the field. next_id: 6 # Contains the field limits for shortening, such as max string length and max array length.
-              &quot;logAction&quot;: &quot;A String&quot;,
-              &quot;logType&quot;: [ # To which type(s) of logs the limits apply.
-                &quot;A String&quot;,
-              ],
-              &quot;maxArraySize&quot;: 42, # maximum array size. If the array exceds this size, the field (list) is truncated.
-              &quot;maxStringLength&quot;: 42, # maximum string length. If the field exceeds this amount the field is shortened.
-              &quot;shortenerType&quot;: &quot;A String&quot;,
-            },
           },
           &quot;masked&quot;: True or False, # True if this workflow parameter should be masked in the logs
           &quot;readOnly&quot;: True or False, # Used to indicate if the ParameterEntry is a read only field or not.
@@ -1411,11 +1442,28 @@ Returns:
   &quot;status&quot;: &quot;A String&quot;, # Output only. Generated by eventbus. User should not set it as an input.
   &quot;taskConfigs&quot;: [ # Optional. Task configuration for the integration. It&#x27;s optional, but the integration doesn&#x27;t do anything without task_configs.
     { # The task configuration details. This is not the implementation of Task. There might be multiple TaskConfigs for the same Task.
+      &quot;conditionalFailurePolicies&quot;: { # Conditional task failur retry strategies # Optional. The list of conditional failure policies that will be applied to the task in order.
+        &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches.
+          &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+          &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+          &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+        },
+        &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+          { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+            &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+            &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+            &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+        ],
+      },
       &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
       &quot;displayName&quot;: &quot;A String&quot;, # Optional. User-provided label that is attached to this TaskConfig in the UI.
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
       &quot;externalTaskType&quot;: &quot;A String&quot;, # Optional. External task type of the task
       &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
+        &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
         &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
         &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -1472,6 +1520,7 @@ Returns:
         &quot;finalState&quot;: &quot;A String&quot;, # State to which the execution snapshot status will be set if the task succeeds.
       },
       &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+        &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
         &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
         &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -1514,6 +1563,22 @@ Returns:
           },
         },
       ],
+      &quot;conditionalFailurePolicies&quot;: { # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+        &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches
+          &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+          &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+          &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+        },
+        &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+          { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+            &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+            &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+        ],
+      },
       &quot;createTime&quot;: &quot;A String&quot;, # Auto-generated.
       &quot;creatorEmail&quot;: &quot;A String&quot;, # The creator&#x27;s email address. Auto-generated from the user&#x27;s email.
       &quot;description&quot;: &quot;A String&quot;, # User-provided description intended to give more business context about the task.
@@ -1523,6 +1588,7 @@ Returns:
       &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
         &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
         &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+        &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
       },
       &quot;incomingEdgeCount&quot;: 42, # The number of edges leading into this TaskConfig.
@@ -1687,6 +1753,7 @@ Returns:
       &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
         &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
         &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+        &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
       },
       &quot;taskEntity&quot;: { # Contains a task&#x27;s metadata and associated information. Next available id: 7 # Copy of the task entity that this task config is an instance of.
@@ -1956,8 +2023,18 @@ Returns:
       },
       &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+      &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;label&quot;: &quot;A String&quot;, # Optional. The user created label for a particular trigger.
       &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Optional. Dictates how next tasks will be executed.
+      &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;position&quot;: { # Configuration detail of coordinate, it used for UI # Optional. Informs the front-end application where to draw this error catcher config on the UI.
         &quot;x&quot;: 42, # Required. X axis of the coordinate
         &quot;y&quot;: 42, # Required. Y axis of the coordinate
@@ -1975,13 +2052,13 @@ Returns:
         },
       ],
       &quot;trigger&quot;: &quot;A String&quot;, # Optional. Name of the trigger. Example: &quot;API Trigger&quot;, &quot;Cloud Pub Sub Trigger&quot; When set will be sent out to monitoring dashabord for tracking purpose.
-      &quot;triggerId&quot;: &quot;A String&quot;, # Optional. The backend trigger ID.
+      &quot;triggerId&quot;: &quot;A String&quot;, # Optional. Auto-generated trigger ID. The ID is based on the properties that you define in the trigger config. For example, for an API trigger, the trigger ID follows the format: api_trigger/TRIGGER_NAME Where trigger config has properties with value {&quot;Trigger name&quot;: TRIGGER_NAME}
       &quot;triggerNumber&quot;: &quot;A String&quot;, # Required. A number to uniquely identify each trigger config within the integration on UI.
       &quot;triggerType&quot;: &quot;A String&quot;, # Optional. Type of trigger
     },
   ],
   &quot;triggerConfigsInternal&quot;: [ # Optional. Trigger configurations.
-    { # Configuration detail of a trigger. Next available id: 20
+    { # Configuration detail of a trigger. Next available id: 22
       &quot;alertConfig&quot;: [ # An alert threshold configuration for the [trigger + client + workflow] tuple. If these values are not specified in the trigger config, default values will be populated by the system. Note that there must be exactly one alert threshold configured per [client + trigger + workflow] when published.
         { # Message to be used to configure custom alerting in the {@code EventConfig} protos for an event.
           &quot;aggregationPeriod&quot;: &quot;A String&quot;, # For an EXPECTED_MIN threshold, this aggregation_period must be lesser than 24 hours.
@@ -2023,8 +2100,18 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+      &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;label&quot;: &quot;A String&quot;, # The user created label for a particular trigger.
       &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Dictates how next tasks will be executed.
+      &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;pauseWorkflowExecutions&quot;: True or False, # Optional. If set to true, any upcoming requests for this trigger config will be paused and the executions will be resumed later when the flag is reset. The workflow to which this trigger config belongs has to be in ACTIVE status for the executions to be paused or resumed.
       &quot;position&quot;: { # Represents two-dimensional positions. # Optional. Informs the front-end application where to draw this trigger config on the UI.
         &quot;x&quot;: 42,
@@ -2279,6 +2366,7 @@ Returns:
                 },
                 &quot;stringValue&quot;: &quot;A String&quot;, # String.
               },
+              &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
               &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
               &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
               &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -2348,6 +2436,7 @@ Returns:
               },
               &quot;stringValue&quot;: &quot;A String&quot;, # String.
             },
+            &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
             &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
             &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
             &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -2391,25 +2480,8 @@ Returns:
                 &quot;isSearchable&quot;: True or False, # Used to indicate if a ParameterEntry should be converted to ParamIndexes for ST-Spanner full-text search. DEPRECATED: use searchable.
                 &quot;logSettings&quot;: { # The LogSettings define the logging attributes for an event property. These attributes are used to map the property to the parameter in the log proto. Also used to define scrubbing/truncation behavior and PII information. # See
                   &quot;logFieldName&quot;: &quot;A String&quot;, # The name of corresponding logging field of the event property. If omitted, assumes the same name as the event property key.
-                  &quot;sanitizeOptions&quot;: { # Identifies whether a field contains, or may contain, PII or sensitive data, and how to sanitize the field if it does. If a field&#x27;s privacy type cannot be determined then it is sanitized (e.g., scrubbed). The specific sanitizer implementation is determined by run-time configuration and environment options (e.g., prod vs. qa). next_id: 5 # Contains the scrubbing options, such as whether to scrub, obfuscate, etc.
-                    &quot;isAlreadySanitized&quot;: True or False, # If true, the value has already been sanitized and needs no further sanitization. For instance, a D3 customer id is already an obfuscated entity and *might not* need further sanitization.
-                    &quot;logType&quot;: [ # To which type(s) of logs the sanitize options apply.
-                      &quot;A String&quot;,
-                    ],
-                    &quot;privacy&quot;: &quot;A String&quot;,
-                    &quot;sanitizeType&quot;: &quot;A String&quot;,
-                  },
                   &quot;seedPeriod&quot;: &quot;A String&quot;,
                   &quot;seedScope&quot;: &quot;A String&quot;,
-                  &quot;shorteningLimits&quot;: { # Describes string and array limits when writing to logs. When a limit is exceeded the *shortener_type* describes how to shorten the field. next_id: 6 # Contains the field limits for shortening, such as max string length and max array length.
-                    &quot;logAction&quot;: &quot;A String&quot;,
-                    &quot;logType&quot;: [ # To which type(s) of logs the limits apply.
-                      &quot;A String&quot;,
-                    ],
-                    &quot;maxArraySize&quot;: 42, # maximum array size. If the array exceds this size, the field (list) is truncated.
-                    &quot;maxStringLength&quot;: 42, # maximum string length. If the field exceeds this amount the field is shortened.
-                    &quot;shortenerType&quot;: &quot;A String&quot;,
-                  },
                 },
                 &quot;masked&quot;: True or False, # True if this workflow parameter should be masked in the logs
                 &quot;readOnly&quot;: True or False, # Used to indicate if the ParameterEntry is a read only field or not.
@@ -2491,11 +2563,28 @@ Returns:
         &quot;status&quot;: &quot;A String&quot;, # Output only. Generated by eventbus. User should not set it as an input.
         &quot;taskConfigs&quot;: [ # Optional. Task configuration for the integration. It&#x27;s optional, but the integration doesn&#x27;t do anything without task_configs.
           { # The task configuration details. This is not the implementation of Task. There might be multiple TaskConfigs for the same Task.
+            &quot;conditionalFailurePolicies&quot;: { # Conditional task failur retry strategies # Optional. The list of conditional failure policies that will be applied to the task in order.
+              &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches.
+                &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+                &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+                &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+                &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+              },
+              &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+                { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+                  &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+                  &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+                  &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+                  &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+                },
+              ],
+            },
             &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
             &quot;displayName&quot;: &quot;A String&quot;, # Optional. User-provided label that is attached to this TaskConfig in the UI.
             &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
             &quot;externalTaskType&quot;: &quot;A String&quot;, # Optional. External task type of the task
             &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
+              &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
               &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
               &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
               &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -2552,6 +2641,7 @@ Returns:
               &quot;finalState&quot;: &quot;A String&quot;, # State to which the execution snapshot status will be set if the task succeeds.
             },
             &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+              &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
               &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
               &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
               &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -2594,6 +2684,22 @@ Returns:
                 },
               },
             ],
+            &quot;conditionalFailurePolicies&quot;: { # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+              &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches
+                &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+                &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+                &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+                &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+              },
+              &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+                { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+                  &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+                  &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+                  &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+                  &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+                },
+              ],
+            },
             &quot;createTime&quot;: &quot;A String&quot;, # Auto-generated.
             &quot;creatorEmail&quot;: &quot;A String&quot;, # The creator&#x27;s email address. Auto-generated from the user&#x27;s email.
             &quot;description&quot;: &quot;A String&quot;, # User-provided description intended to give more business context about the task.
@@ -2603,6 +2709,7 @@ Returns:
             &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
               &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
               &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+              &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
               &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
             },
             &quot;incomingEdgeCount&quot;: 42, # The number of edges leading into this TaskConfig.
@@ -2767,6 +2874,7 @@ Returns:
             &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
               &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
               &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+              &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
               &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
             },
             &quot;taskEntity&quot;: { # Contains a task&#x27;s metadata and associated information. Next available id: 7 # Copy of the task entity that this task config is an instance of.
@@ -3036,8 +3144,18 @@ Returns:
             },
             &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
             &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+            &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+              &quot;names&quot;: [ # Optional. List of variable names.
+                &quot;A String&quot;,
+              ],
+            },
             &quot;label&quot;: &quot;A String&quot;, # Optional. The user created label for a particular trigger.
             &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Optional. Dictates how next tasks will be executed.
+            &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+              &quot;names&quot;: [ # Optional. List of variable names.
+                &quot;A String&quot;,
+              ],
+            },
             &quot;position&quot;: { # Configuration detail of coordinate, it used for UI # Optional. Informs the front-end application where to draw this error catcher config on the UI.
               &quot;x&quot;: 42, # Required. X axis of the coordinate
               &quot;y&quot;: 42, # Required. Y axis of the coordinate
@@ -3055,13 +3173,13 @@ Returns:
               },
             ],
             &quot;trigger&quot;: &quot;A String&quot;, # Optional. Name of the trigger. Example: &quot;API Trigger&quot;, &quot;Cloud Pub Sub Trigger&quot; When set will be sent out to monitoring dashabord for tracking purpose.
-            &quot;triggerId&quot;: &quot;A String&quot;, # Optional. The backend trigger ID.
+            &quot;triggerId&quot;: &quot;A String&quot;, # Optional. Auto-generated trigger ID. The ID is based on the properties that you define in the trigger config. For example, for an API trigger, the trigger ID follows the format: api_trigger/TRIGGER_NAME Where trigger config has properties with value {&quot;Trigger name&quot;: TRIGGER_NAME}
             &quot;triggerNumber&quot;: &quot;A String&quot;, # Required. A number to uniquely identify each trigger config within the integration on UI.
             &quot;triggerType&quot;: &quot;A String&quot;, # Optional. Type of trigger
           },
         ],
         &quot;triggerConfigsInternal&quot;: [ # Optional. Trigger configurations.
-          { # Configuration detail of a trigger. Next available id: 20
+          { # Configuration detail of a trigger. Next available id: 22
             &quot;alertConfig&quot;: [ # An alert threshold configuration for the [trigger + client + workflow] tuple. If these values are not specified in the trigger config, default values will be populated by the system. Note that there must be exactly one alert threshold configured per [client + trigger + workflow] when published.
               { # Message to be used to configure custom alerting in the {@code EventConfig} protos for an event.
                 &quot;aggregationPeriod&quot;: &quot;A String&quot;, # For an EXPECTED_MIN threshold, this aggregation_period must be lesser than 24 hours.
@@ -3103,8 +3221,18 @@ Returns:
               &quot;A String&quot;,
             ],
             &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+            &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+              &quot;names&quot;: [ # Optional. List of variable names.
+                &quot;A String&quot;,
+              ],
+            },
             &quot;label&quot;: &quot;A String&quot;, # The user created label for a particular trigger.
             &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Dictates how next tasks will be executed.
+            &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+              &quot;names&quot;: [ # Optional. List of variable names.
+                &quot;A String&quot;,
+              ],
+            },
             &quot;pauseWorkflowExecutions&quot;: True or False, # Optional. If set to true, any upcoming requests for this trigger config will be paused and the executions will be resumed later when the flag is reset. The workflow to which this trigger config belongs has to be in ACTIVE status for the executions to be paused or resumed.
             &quot;position&quot;: { # Represents two-dimensional positions. # Optional. Informs the front-end application where to draw this trigger config on the UI.
               &quot;x&quot;: 42,
@@ -3299,6 +3427,7 @@ Returns:
           },
           &quot;stringValue&quot;: &quot;A String&quot;, # String.
         },
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
         &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
         &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
         &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -3368,6 +3497,7 @@ Returns:
         },
         &quot;stringValue&quot;: &quot;A String&quot;, # String.
       },
+      &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
       &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
       &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
       &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -3411,25 +3541,8 @@ Returns:
           &quot;isSearchable&quot;: True or False, # Used to indicate if a ParameterEntry should be converted to ParamIndexes for ST-Spanner full-text search. DEPRECATED: use searchable.
           &quot;logSettings&quot;: { # The LogSettings define the logging attributes for an event property. These attributes are used to map the property to the parameter in the log proto. Also used to define scrubbing/truncation behavior and PII information. # See
             &quot;logFieldName&quot;: &quot;A String&quot;, # The name of corresponding logging field of the event property. If omitted, assumes the same name as the event property key.
-            &quot;sanitizeOptions&quot;: { # Identifies whether a field contains, or may contain, PII or sensitive data, and how to sanitize the field if it does. If a field&#x27;s privacy type cannot be determined then it is sanitized (e.g., scrubbed). The specific sanitizer implementation is determined by run-time configuration and environment options (e.g., prod vs. qa). next_id: 5 # Contains the scrubbing options, such as whether to scrub, obfuscate, etc.
-              &quot;isAlreadySanitized&quot;: True or False, # If true, the value has already been sanitized and needs no further sanitization. For instance, a D3 customer id is already an obfuscated entity and *might not* need further sanitization.
-              &quot;logType&quot;: [ # To which type(s) of logs the sanitize options apply.
-                &quot;A String&quot;,
-              ],
-              &quot;privacy&quot;: &quot;A String&quot;,
-              &quot;sanitizeType&quot;: &quot;A String&quot;,
-            },
             &quot;seedPeriod&quot;: &quot;A String&quot;,
             &quot;seedScope&quot;: &quot;A String&quot;,
-            &quot;shorteningLimits&quot;: { # Describes string and array limits when writing to logs. When a limit is exceeded the *shortener_type* describes how to shorten the field. next_id: 6 # Contains the field limits for shortening, such as max string length and max array length.
-              &quot;logAction&quot;: &quot;A String&quot;,
-              &quot;logType&quot;: [ # To which type(s) of logs the limits apply.
-                &quot;A String&quot;,
-              ],
-              &quot;maxArraySize&quot;: 42, # maximum array size. If the array exceds this size, the field (list) is truncated.
-              &quot;maxStringLength&quot;: 42, # maximum string length. If the field exceeds this amount the field is shortened.
-              &quot;shortenerType&quot;: &quot;A String&quot;,
-            },
           },
           &quot;masked&quot;: True or False, # True if this workflow parameter should be masked in the logs
           &quot;readOnly&quot;: True or False, # Used to indicate if the ParameterEntry is a read only field or not.
@@ -3511,11 +3624,28 @@ Returns:
   &quot;status&quot;: &quot;A String&quot;, # Output only. Generated by eventbus. User should not set it as an input.
   &quot;taskConfigs&quot;: [ # Optional. Task configuration for the integration. It&#x27;s optional, but the integration doesn&#x27;t do anything without task_configs.
     { # The task configuration details. This is not the implementation of Task. There might be multiple TaskConfigs for the same Task.
+      &quot;conditionalFailurePolicies&quot;: { # Conditional task failur retry strategies # Optional. The list of conditional failure policies that will be applied to the task in order.
+        &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches.
+          &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+          &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+          &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+        },
+        &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+          { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+            &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+            &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+            &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+        ],
+      },
       &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
       &quot;displayName&quot;: &quot;A String&quot;, # Optional. User-provided label that is attached to this TaskConfig in the UI.
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
       &quot;externalTaskType&quot;: &quot;A String&quot;, # Optional. External task type of the task
       &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
+        &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
         &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
         &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -3572,6 +3702,7 @@ Returns:
         &quot;finalState&quot;: &quot;A String&quot;, # State to which the execution snapshot status will be set if the task succeeds.
       },
       &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+        &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
         &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
         &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -3614,6 +3745,22 @@ Returns:
           },
         },
       ],
+      &quot;conditionalFailurePolicies&quot;: { # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+        &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches
+          &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+          &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+          &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+        },
+        &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+          { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+            &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+            &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+        ],
+      },
       &quot;createTime&quot;: &quot;A String&quot;, # Auto-generated.
       &quot;creatorEmail&quot;: &quot;A String&quot;, # The creator&#x27;s email address. Auto-generated from the user&#x27;s email.
       &quot;description&quot;: &quot;A String&quot;, # User-provided description intended to give more business context about the task.
@@ -3623,6 +3770,7 @@ Returns:
       &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
         &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
         &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+        &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
       },
       &quot;incomingEdgeCount&quot;: 42, # The number of edges leading into this TaskConfig.
@@ -3787,6 +3935,7 @@ Returns:
       &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
         &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
         &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+        &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
       },
       &quot;taskEntity&quot;: { # Contains a task&#x27;s metadata and associated information. Next available id: 7 # Copy of the task entity that this task config is an instance of.
@@ -4056,8 +4205,18 @@ Returns:
       },
       &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+      &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;label&quot;: &quot;A String&quot;, # Optional. The user created label for a particular trigger.
       &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Optional. Dictates how next tasks will be executed.
+      &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;position&quot;: { # Configuration detail of coordinate, it used for UI # Optional. Informs the front-end application where to draw this error catcher config on the UI.
         &quot;x&quot;: 42, # Required. X axis of the coordinate
         &quot;y&quot;: 42, # Required. Y axis of the coordinate
@@ -4075,13 +4234,13 @@ Returns:
         },
       ],
       &quot;trigger&quot;: &quot;A String&quot;, # Optional. Name of the trigger. Example: &quot;API Trigger&quot;, &quot;Cloud Pub Sub Trigger&quot; When set will be sent out to monitoring dashabord for tracking purpose.
-      &quot;triggerId&quot;: &quot;A String&quot;, # Optional. The backend trigger ID.
+      &quot;triggerId&quot;: &quot;A String&quot;, # Optional. Auto-generated trigger ID. The ID is based on the properties that you define in the trigger config. For example, for an API trigger, the trigger ID follows the format: api_trigger/TRIGGER_NAME Where trigger config has properties with value {&quot;Trigger name&quot;: TRIGGER_NAME}
       &quot;triggerNumber&quot;: &quot;A String&quot;, # Required. A number to uniquely identify each trigger config within the integration on UI.
       &quot;triggerType&quot;: &quot;A String&quot;, # Optional. Type of trigger
     },
   ],
   &quot;triggerConfigsInternal&quot;: [ # Optional. Trigger configurations.
-    { # Configuration detail of a trigger. Next available id: 20
+    { # Configuration detail of a trigger. Next available id: 22
       &quot;alertConfig&quot;: [ # An alert threshold configuration for the [trigger + client + workflow] tuple. If these values are not specified in the trigger config, default values will be populated by the system. Note that there must be exactly one alert threshold configured per [client + trigger + workflow] when published.
         { # Message to be used to configure custom alerting in the {@code EventConfig} protos for an event.
           &quot;aggregationPeriod&quot;: &quot;A String&quot;, # For an EXPECTED_MIN threshold, this aggregation_period must be lesser than 24 hours.
@@ -4123,8 +4282,18 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+      &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;label&quot;: &quot;A String&quot;, # The user created label for a particular trigger.
       &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Dictates how next tasks will be executed.
+      &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;pauseWorkflowExecutions&quot;: True or False, # Optional. If set to true, any upcoming requests for this trigger config will be paused and the executions will be resumed later when the flag is reset. The workflow to which this trigger config belongs has to be in ACTIVE status for the executions to be paused or resumed.
       &quot;position&quot;: { # Represents two-dimensional positions. # Optional. Informs the front-end application where to draw this trigger config on the UI.
         &quot;x&quot;: 42,
@@ -4243,10 +4412,10 @@ Returns:
   <pre>Returns the list of all integration versions in the specified project.
 
 Args:
-  parent: string, Required. The parent resource where this version will be created. Format: projects/{project}/locations/{location}/integrations/{integration} Specifically, when parent equals: 1. projects//locations//integrations/, Meaning: &quot;List versions (with filter) for a particular integration&quot;. 2. projects//locations//integrations/- Meaning: &quot;List versions (with filter) for a client within a particular region&quot;. 3. projects//locations/-/integrations/- Meaning: &quot;List versions (with filter) for a client&quot;. (required)
+  parent: string, Required. The parent resource where this version will be created. Format: projects/{project}/locations/{location}/integrations/{integration} Specifically, when parent equals: 1. projects//locations//integrations/, Meaning: &quot;List versions (with filter) for a particular integration&quot;. 2. projects//locations//integrations/- Meaning: &quot;List versions (with filter) for a client within a particular region&quot;. (required)
   fieldMask: string, The field mask which specifies the particular data to be returned.
   filter: string, Filter on fields of IntegrationVersion. Fields can be compared with literal values by use of &quot;:&quot; (containment), &quot;=&quot; (equality), &quot;&gt;&quot; (greater), &quot;&lt;&quot; (less than), &gt;=&quot; (greater than or equal to), &quot;&lt;=&quot; (less than or equal to), and &quot;!=&quot; (inequality) operators. Negation, conjunction, and disjunction are written using NOT, AND, and OR keywords. For example, organization_id=\&quot;1\&quot; AND state=ACTIVE AND description:&quot;test&quot;. Filtering cannot be performed on repeated fields like `task_config`.
-  orderBy: string, The results would be returned in order you specified here. Currently supported sort keys are: Descending sort order for &quot;last_modified_time&quot;, &quot;created_time&quot;, &quot;snapshot_number&quot; Ascending sort order for &quot;name&quot;.
+  orderBy: string, The results would be returned in order you specified here. Currently supported sort keys are: Descending sort order for &quot;last\_modified\_time&quot;, &quot;created\_time&quot;, and &quot;snapshot\_number&quot;. Ascending sort order for `name`.
   pageSize: integer, The maximum number of versions to return. The service may return fewer than this value. If unspecified, at most 50 versions will be returned. The maximum value is 1000; values above 1000 will be coerced to 1000.
   pageToken: string, A page token, received from a previous `ListIntegrationVersions` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListIntegrationVersions` must match the call that provided the page token.
   x__xgafv: string, V1 error format.
@@ -4322,6 +4491,7 @@ Returns:
               },
               &quot;stringValue&quot;: &quot;A String&quot;, # String.
             },
+            &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
             &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
             &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
             &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -4391,6 +4561,7 @@ Returns:
             },
             &quot;stringValue&quot;: &quot;A String&quot;, # String.
           },
+          &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
           &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
           &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
           &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -4434,25 +4605,8 @@ Returns:
               &quot;isSearchable&quot;: True or False, # Used to indicate if a ParameterEntry should be converted to ParamIndexes for ST-Spanner full-text search. DEPRECATED: use searchable.
               &quot;logSettings&quot;: { # The LogSettings define the logging attributes for an event property. These attributes are used to map the property to the parameter in the log proto. Also used to define scrubbing/truncation behavior and PII information. # See
                 &quot;logFieldName&quot;: &quot;A String&quot;, # The name of corresponding logging field of the event property. If omitted, assumes the same name as the event property key.
-                &quot;sanitizeOptions&quot;: { # Identifies whether a field contains, or may contain, PII or sensitive data, and how to sanitize the field if it does. If a field&#x27;s privacy type cannot be determined then it is sanitized (e.g., scrubbed). The specific sanitizer implementation is determined by run-time configuration and environment options (e.g., prod vs. qa). next_id: 5 # Contains the scrubbing options, such as whether to scrub, obfuscate, etc.
-                  &quot;isAlreadySanitized&quot;: True or False, # If true, the value has already been sanitized and needs no further sanitization. For instance, a D3 customer id is already an obfuscated entity and *might not* need further sanitization.
-                  &quot;logType&quot;: [ # To which type(s) of logs the sanitize options apply.
-                    &quot;A String&quot;,
-                  ],
-                  &quot;privacy&quot;: &quot;A String&quot;,
-                  &quot;sanitizeType&quot;: &quot;A String&quot;,
-                },
                 &quot;seedPeriod&quot;: &quot;A String&quot;,
                 &quot;seedScope&quot;: &quot;A String&quot;,
-                &quot;shorteningLimits&quot;: { # Describes string and array limits when writing to logs. When a limit is exceeded the *shortener_type* describes how to shorten the field. next_id: 6 # Contains the field limits for shortening, such as max string length and max array length.
-                  &quot;logAction&quot;: &quot;A String&quot;,
-                  &quot;logType&quot;: [ # To which type(s) of logs the limits apply.
-                    &quot;A String&quot;,
-                  ],
-                  &quot;maxArraySize&quot;: 42, # maximum array size. If the array exceds this size, the field (list) is truncated.
-                  &quot;maxStringLength&quot;: 42, # maximum string length. If the field exceeds this amount the field is shortened.
-                  &quot;shortenerType&quot;: &quot;A String&quot;,
-                },
               },
               &quot;masked&quot;: True or False, # True if this workflow parameter should be masked in the logs
               &quot;readOnly&quot;: True or False, # Used to indicate if the ParameterEntry is a read only field or not.
@@ -4534,11 +4688,28 @@ Returns:
       &quot;status&quot;: &quot;A String&quot;, # Output only. Generated by eventbus. User should not set it as an input.
       &quot;taskConfigs&quot;: [ # Optional. Task configuration for the integration. It&#x27;s optional, but the integration doesn&#x27;t do anything without task_configs.
         { # The task configuration details. This is not the implementation of Task. There might be multiple TaskConfigs for the same Task.
+          &quot;conditionalFailurePolicies&quot;: { # Conditional task failur retry strategies # Optional. The list of conditional failure policies that will be applied to the task in order.
+            &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches.
+              &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+              &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+              &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+              &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+            },
+            &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+              { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+                &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+                &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+                &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+                &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+              },
+            ],
+          },
           &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
           &quot;displayName&quot;: &quot;A String&quot;, # Optional. User-provided label that is attached to this TaskConfig in the UI.
           &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
           &quot;externalTaskType&quot;: &quot;A String&quot;, # Optional. External task type of the task
           &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
+            &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
             &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
             &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
             &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -4595,6 +4766,7 @@ Returns:
             &quot;finalState&quot;: &quot;A String&quot;, # State to which the execution snapshot status will be set if the task succeeds.
           },
           &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+            &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
             &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
             &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
             &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -4637,6 +4809,22 @@ Returns:
               },
             },
           ],
+          &quot;conditionalFailurePolicies&quot;: { # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+            &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches
+              &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+              &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+              &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+              &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+            },
+            &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+              { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+                &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+                &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+                &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+                &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+              },
+            ],
+          },
           &quot;createTime&quot;: &quot;A String&quot;, # Auto-generated.
           &quot;creatorEmail&quot;: &quot;A String&quot;, # The creator&#x27;s email address. Auto-generated from the user&#x27;s email.
           &quot;description&quot;: &quot;A String&quot;, # User-provided description intended to give more business context about the task.
@@ -4646,6 +4834,7 @@ Returns:
           &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
             &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
             &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
             &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
           },
           &quot;incomingEdgeCount&quot;: 42, # The number of edges leading into this TaskConfig.
@@ -4810,6 +4999,7 @@ Returns:
           &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
             &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
             &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
             &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
           },
           &quot;taskEntity&quot;: { # Contains a task&#x27;s metadata and associated information. Next available id: 7 # Copy of the task entity that this task config is an instance of.
@@ -5079,8 +5269,18 @@ Returns:
           },
           &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
           &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+          &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+            &quot;names&quot;: [ # Optional. List of variable names.
+              &quot;A String&quot;,
+            ],
+          },
           &quot;label&quot;: &quot;A String&quot;, # Optional. The user created label for a particular trigger.
           &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Optional. Dictates how next tasks will be executed.
+          &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+            &quot;names&quot;: [ # Optional. List of variable names.
+              &quot;A String&quot;,
+            ],
+          },
           &quot;position&quot;: { # Configuration detail of coordinate, it used for UI # Optional. Informs the front-end application where to draw this error catcher config on the UI.
             &quot;x&quot;: 42, # Required. X axis of the coordinate
             &quot;y&quot;: 42, # Required. Y axis of the coordinate
@@ -5098,13 +5298,13 @@ Returns:
             },
           ],
           &quot;trigger&quot;: &quot;A String&quot;, # Optional. Name of the trigger. Example: &quot;API Trigger&quot;, &quot;Cloud Pub Sub Trigger&quot; When set will be sent out to monitoring dashabord for tracking purpose.
-          &quot;triggerId&quot;: &quot;A String&quot;, # Optional. The backend trigger ID.
+          &quot;triggerId&quot;: &quot;A String&quot;, # Optional. Auto-generated trigger ID. The ID is based on the properties that you define in the trigger config. For example, for an API trigger, the trigger ID follows the format: api_trigger/TRIGGER_NAME Where trigger config has properties with value {&quot;Trigger name&quot;: TRIGGER_NAME}
           &quot;triggerNumber&quot;: &quot;A String&quot;, # Required. A number to uniquely identify each trigger config within the integration on UI.
           &quot;triggerType&quot;: &quot;A String&quot;, # Optional. Type of trigger
         },
       ],
       &quot;triggerConfigsInternal&quot;: [ # Optional. Trigger configurations.
-        { # Configuration detail of a trigger. Next available id: 20
+        { # Configuration detail of a trigger. Next available id: 22
           &quot;alertConfig&quot;: [ # An alert threshold configuration for the [trigger + client + workflow] tuple. If these values are not specified in the trigger config, default values will be populated by the system. Note that there must be exactly one alert threshold configured per [client + trigger + workflow] when published.
             { # Message to be used to configure custom alerting in the {@code EventConfig} protos for an event.
               &quot;aggregationPeriod&quot;: &quot;A String&quot;, # For an EXPECTED_MIN threshold, this aggregation_period must be lesser than 24 hours.
@@ -5146,8 +5346,18 @@ Returns:
             &quot;A String&quot;,
           ],
           &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+          &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+            &quot;names&quot;: [ # Optional. List of variable names.
+              &quot;A String&quot;,
+            ],
+          },
           &quot;label&quot;: &quot;A String&quot;, # The user created label for a particular trigger.
           &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Dictates how next tasks will be executed.
+          &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+            &quot;names&quot;: [ # Optional. List of variable names.
+              &quot;A String&quot;,
+            ],
+          },
           &quot;pauseWorkflowExecutions&quot;: True or False, # Optional. If set to true, any upcoming requests for this trigger config will be paused and the executions will be resumed later when the flag is reset. The workflow to which this trigger config belongs has to be in ACTIVE status for the executions to be paused or resumed.
           &quot;position&quot;: { # Represents two-dimensional positions. # Optional. Informs the front-end application where to draw this trigger config on the UI.
             &quot;x&quot;: 42,
@@ -5351,6 +5561,7 @@ Args:
           },
           &quot;stringValue&quot;: &quot;A String&quot;, # String.
         },
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
         &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
         &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
         &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -5420,6 +5631,7 @@ Args:
         },
         &quot;stringValue&quot;: &quot;A String&quot;, # String.
       },
+      &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
       &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
       &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
       &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -5463,25 +5675,8 @@ Args:
           &quot;isSearchable&quot;: True or False, # Used to indicate if a ParameterEntry should be converted to ParamIndexes for ST-Spanner full-text search. DEPRECATED: use searchable.
           &quot;logSettings&quot;: { # The LogSettings define the logging attributes for an event property. These attributes are used to map the property to the parameter in the log proto. Also used to define scrubbing/truncation behavior and PII information. # See
             &quot;logFieldName&quot;: &quot;A String&quot;, # The name of corresponding logging field of the event property. If omitted, assumes the same name as the event property key.
-            &quot;sanitizeOptions&quot;: { # Identifies whether a field contains, or may contain, PII or sensitive data, and how to sanitize the field if it does. If a field&#x27;s privacy type cannot be determined then it is sanitized (e.g., scrubbed). The specific sanitizer implementation is determined by run-time configuration and environment options (e.g., prod vs. qa). next_id: 5 # Contains the scrubbing options, such as whether to scrub, obfuscate, etc.
-              &quot;isAlreadySanitized&quot;: True or False, # If true, the value has already been sanitized and needs no further sanitization. For instance, a D3 customer id is already an obfuscated entity and *might not* need further sanitization.
-              &quot;logType&quot;: [ # To which type(s) of logs the sanitize options apply.
-                &quot;A String&quot;,
-              ],
-              &quot;privacy&quot;: &quot;A String&quot;,
-              &quot;sanitizeType&quot;: &quot;A String&quot;,
-            },
             &quot;seedPeriod&quot;: &quot;A String&quot;,
             &quot;seedScope&quot;: &quot;A String&quot;,
-            &quot;shorteningLimits&quot;: { # Describes string and array limits when writing to logs. When a limit is exceeded the *shortener_type* describes how to shorten the field. next_id: 6 # Contains the field limits for shortening, such as max string length and max array length.
-              &quot;logAction&quot;: &quot;A String&quot;,
-              &quot;logType&quot;: [ # To which type(s) of logs the limits apply.
-                &quot;A String&quot;,
-              ],
-              &quot;maxArraySize&quot;: 42, # maximum array size. If the array exceds this size, the field (list) is truncated.
-              &quot;maxStringLength&quot;: 42, # maximum string length. If the field exceeds this amount the field is shortened.
-              &quot;shortenerType&quot;: &quot;A String&quot;,
-            },
           },
           &quot;masked&quot;: True or False, # True if this workflow parameter should be masked in the logs
           &quot;readOnly&quot;: True or False, # Used to indicate if the ParameterEntry is a read only field or not.
@@ -5563,11 +5758,28 @@ Args:
   &quot;status&quot;: &quot;A String&quot;, # Output only. Generated by eventbus. User should not set it as an input.
   &quot;taskConfigs&quot;: [ # Optional. Task configuration for the integration. It&#x27;s optional, but the integration doesn&#x27;t do anything without task_configs.
     { # The task configuration details. This is not the implementation of Task. There might be multiple TaskConfigs for the same Task.
+      &quot;conditionalFailurePolicies&quot;: { # Conditional task failur retry strategies # Optional. The list of conditional failure policies that will be applied to the task in order.
+        &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches.
+          &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+          &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+          &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+        },
+        &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+          { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+            &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+            &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+            &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+        ],
+      },
       &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
       &quot;displayName&quot;: &quot;A String&quot;, # Optional. User-provided label that is attached to this TaskConfig in the UI.
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
       &quot;externalTaskType&quot;: &quot;A String&quot;, # Optional. External task type of the task
       &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
+        &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
         &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
         &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -5624,6 +5836,7 @@ Args:
         &quot;finalState&quot;: &quot;A String&quot;, # State to which the execution snapshot status will be set if the task succeeds.
       },
       &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+        &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
         &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
         &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -5666,6 +5879,22 @@ Args:
           },
         },
       ],
+      &quot;conditionalFailurePolicies&quot;: { # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+        &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches
+          &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+          &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+          &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+        },
+        &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+          { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+            &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+            &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+        ],
+      },
       &quot;createTime&quot;: &quot;A String&quot;, # Auto-generated.
       &quot;creatorEmail&quot;: &quot;A String&quot;, # The creator&#x27;s email address. Auto-generated from the user&#x27;s email.
       &quot;description&quot;: &quot;A String&quot;, # User-provided description intended to give more business context about the task.
@@ -5675,6 +5904,7 @@ Args:
       &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
         &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
         &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+        &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
       },
       &quot;incomingEdgeCount&quot;: 42, # The number of edges leading into this TaskConfig.
@@ -5839,6 +6069,7 @@ Args:
       &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
         &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
         &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+        &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
       },
       &quot;taskEntity&quot;: { # Contains a task&#x27;s metadata and associated information. Next available id: 7 # Copy of the task entity that this task config is an instance of.
@@ -6108,8 +6339,18 @@ Args:
       },
       &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+      &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;label&quot;: &quot;A String&quot;, # Optional. The user created label for a particular trigger.
       &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Optional. Dictates how next tasks will be executed.
+      &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;position&quot;: { # Configuration detail of coordinate, it used for UI # Optional. Informs the front-end application where to draw this error catcher config on the UI.
         &quot;x&quot;: 42, # Required. X axis of the coordinate
         &quot;y&quot;: 42, # Required. Y axis of the coordinate
@@ -6127,13 +6368,13 @@ Args:
         },
       ],
       &quot;trigger&quot;: &quot;A String&quot;, # Optional. Name of the trigger. Example: &quot;API Trigger&quot;, &quot;Cloud Pub Sub Trigger&quot; When set will be sent out to monitoring dashabord for tracking purpose.
-      &quot;triggerId&quot;: &quot;A String&quot;, # Optional. The backend trigger ID.
+      &quot;triggerId&quot;: &quot;A String&quot;, # Optional. Auto-generated trigger ID. The ID is based on the properties that you define in the trigger config. For example, for an API trigger, the trigger ID follows the format: api_trigger/TRIGGER_NAME Where trigger config has properties with value {&quot;Trigger name&quot;: TRIGGER_NAME}
       &quot;triggerNumber&quot;: &quot;A String&quot;, # Required. A number to uniquely identify each trigger config within the integration on UI.
       &quot;triggerType&quot;: &quot;A String&quot;, # Optional. Type of trigger
     },
   ],
   &quot;triggerConfigsInternal&quot;: [ # Optional. Trigger configurations.
-    { # Configuration detail of a trigger. Next available id: 20
+    { # Configuration detail of a trigger. Next available id: 22
       &quot;alertConfig&quot;: [ # An alert threshold configuration for the [trigger + client + workflow] tuple. If these values are not specified in the trigger config, default values will be populated by the system. Note that there must be exactly one alert threshold configured per [client + trigger + workflow] when published.
         { # Message to be used to configure custom alerting in the {@code EventConfig} protos for an event.
           &quot;aggregationPeriod&quot;: &quot;A String&quot;, # For an EXPECTED_MIN threshold, this aggregation_period must be lesser than 24 hours.
@@ -6175,8 +6416,18 @@ Args:
         &quot;A String&quot;,
       ],
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+      &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;label&quot;: &quot;A String&quot;, # The user created label for a particular trigger.
       &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Dictates how next tasks will be executed.
+      &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;pauseWorkflowExecutions&quot;: True or False, # Optional. If set to true, any upcoming requests for this trigger config will be paused and the executions will be resumed later when the flag is reset. The workflow to which this trigger config belongs has to be in ACTIVE status for the executions to be paused or resumed.
       &quot;position&quot;: { # Represents two-dimensional positions. # Optional. Informs the front-end application where to draw this trigger config on the UI.
         &quot;x&quot;: 42,
@@ -6361,6 +6612,7 @@ Returns:
           },
           &quot;stringValue&quot;: &quot;A String&quot;, # String.
         },
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
         &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
         &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
         &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -6430,6 +6682,7 @@ Returns:
         },
         &quot;stringValue&quot;: &quot;A String&quot;, # String.
       },
+      &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
       &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
       &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
       &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -6473,25 +6726,8 @@ Returns:
           &quot;isSearchable&quot;: True or False, # Used to indicate if a ParameterEntry should be converted to ParamIndexes for ST-Spanner full-text search. DEPRECATED: use searchable.
           &quot;logSettings&quot;: { # The LogSettings define the logging attributes for an event property. These attributes are used to map the property to the parameter in the log proto. Also used to define scrubbing/truncation behavior and PII information. # See
             &quot;logFieldName&quot;: &quot;A String&quot;, # The name of corresponding logging field of the event property. If omitted, assumes the same name as the event property key.
-            &quot;sanitizeOptions&quot;: { # Identifies whether a field contains, or may contain, PII or sensitive data, and how to sanitize the field if it does. If a field&#x27;s privacy type cannot be determined then it is sanitized (e.g., scrubbed). The specific sanitizer implementation is determined by run-time configuration and environment options (e.g., prod vs. qa). next_id: 5 # Contains the scrubbing options, such as whether to scrub, obfuscate, etc.
-              &quot;isAlreadySanitized&quot;: True or False, # If true, the value has already been sanitized and needs no further sanitization. For instance, a D3 customer id is already an obfuscated entity and *might not* need further sanitization.
-              &quot;logType&quot;: [ # To which type(s) of logs the sanitize options apply.
-                &quot;A String&quot;,
-              ],
-              &quot;privacy&quot;: &quot;A String&quot;,
-              &quot;sanitizeType&quot;: &quot;A String&quot;,
-            },
             &quot;seedPeriod&quot;: &quot;A String&quot;,
             &quot;seedScope&quot;: &quot;A String&quot;,
-            &quot;shorteningLimits&quot;: { # Describes string and array limits when writing to logs. When a limit is exceeded the *shortener_type* describes how to shorten the field. next_id: 6 # Contains the field limits for shortening, such as max string length and max array length.
-              &quot;logAction&quot;: &quot;A String&quot;,
-              &quot;logType&quot;: [ # To which type(s) of logs the limits apply.
-                &quot;A String&quot;,
-              ],
-              &quot;maxArraySize&quot;: 42, # maximum array size. If the array exceds this size, the field (list) is truncated.
-              &quot;maxStringLength&quot;: 42, # maximum string length. If the field exceeds this amount the field is shortened.
-              &quot;shortenerType&quot;: &quot;A String&quot;,
-            },
           },
           &quot;masked&quot;: True or False, # True if this workflow parameter should be masked in the logs
           &quot;readOnly&quot;: True or False, # Used to indicate if the ParameterEntry is a read only field or not.
@@ -6573,11 +6809,28 @@ Returns:
   &quot;status&quot;: &quot;A String&quot;, # Output only. Generated by eventbus. User should not set it as an input.
   &quot;taskConfigs&quot;: [ # Optional. Task configuration for the integration. It&#x27;s optional, but the integration doesn&#x27;t do anything without task_configs.
     { # The task configuration details. This is not the implementation of Task. There might be multiple TaskConfigs for the same Task.
+      &quot;conditionalFailurePolicies&quot;: { # Conditional task failur retry strategies # Optional. The list of conditional failure policies that will be applied to the task in order.
+        &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches.
+          &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+          &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+          &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+        },
+        &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+          { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+            &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+            &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+            &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+        ],
+      },
       &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
       &quot;displayName&quot;: &quot;A String&quot;, # Optional. User-provided label that is attached to this TaskConfig in the UI.
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
       &quot;externalTaskType&quot;: &quot;A String&quot;, # Optional. External task type of the task
       &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
+        &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
         &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
         &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -6634,6 +6887,7 @@ Returns:
         &quot;finalState&quot;: &quot;A String&quot;, # State to which the execution snapshot status will be set if the task succeeds.
       },
       &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+        &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
         &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
         &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -6676,6 +6930,22 @@ Returns:
           },
         },
       ],
+      &quot;conditionalFailurePolicies&quot;: { # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+        &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches
+          &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+          &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+          &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+        },
+        &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+          { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+            &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+            &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+        ],
+      },
       &quot;createTime&quot;: &quot;A String&quot;, # Auto-generated.
       &quot;creatorEmail&quot;: &quot;A String&quot;, # The creator&#x27;s email address. Auto-generated from the user&#x27;s email.
       &quot;description&quot;: &quot;A String&quot;, # User-provided description intended to give more business context about the task.
@@ -6685,6 +6955,7 @@ Returns:
       &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
         &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
         &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+        &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
       },
       &quot;incomingEdgeCount&quot;: 42, # The number of edges leading into this TaskConfig.
@@ -6849,6 +7120,7 @@ Returns:
       &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
         &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
         &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+        &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
         &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
       },
       &quot;taskEntity&quot;: { # Contains a task&#x27;s metadata and associated information. Next available id: 7 # Copy of the task entity that this task config is an instance of.
@@ -7118,8 +7390,18 @@ Returns:
       },
       &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+      &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;label&quot;: &quot;A String&quot;, # Optional. The user created label for a particular trigger.
       &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Optional. Dictates how next tasks will be executed.
+      &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;position&quot;: { # Configuration detail of coordinate, it used for UI # Optional. Informs the front-end application where to draw this error catcher config on the UI.
         &quot;x&quot;: 42, # Required. X axis of the coordinate
         &quot;y&quot;: 42, # Required. Y axis of the coordinate
@@ -7137,13 +7419,13 @@ Returns:
         },
       ],
       &quot;trigger&quot;: &quot;A String&quot;, # Optional. Name of the trigger. Example: &quot;API Trigger&quot;, &quot;Cloud Pub Sub Trigger&quot; When set will be sent out to monitoring dashabord for tracking purpose.
-      &quot;triggerId&quot;: &quot;A String&quot;, # Optional. The backend trigger ID.
+      &quot;triggerId&quot;: &quot;A String&quot;, # Optional. Auto-generated trigger ID. The ID is based on the properties that you define in the trigger config. For example, for an API trigger, the trigger ID follows the format: api_trigger/TRIGGER_NAME Where trigger config has properties with value {&quot;Trigger name&quot;: TRIGGER_NAME}
       &quot;triggerNumber&quot;: &quot;A String&quot;, # Required. A number to uniquely identify each trigger config within the integration on UI.
       &quot;triggerType&quot;: &quot;A String&quot;, # Optional. Type of trigger
     },
   ],
   &quot;triggerConfigsInternal&quot;: [ # Optional. Trigger configurations.
-    { # Configuration detail of a trigger. Next available id: 20
+    { # Configuration detail of a trigger. Next available id: 22
       &quot;alertConfig&quot;: [ # An alert threshold configuration for the [trigger + client + workflow] tuple. If these values are not specified in the trigger config, default values will be populated by the system. Note that there must be exactly one alert threshold configured per [client + trigger + workflow] when published.
         { # Message to be used to configure custom alerting in the {@code EventConfig} protos for an event.
           &quot;aggregationPeriod&quot;: &quot;A String&quot;, # For an EXPECTED_MIN threshold, this aggregation_period must be lesser than 24 hours.
@@ -7185,8 +7467,18 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+      &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;label&quot;: &quot;A String&quot;, # The user created label for a particular trigger.
       &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Dictates how next tasks will be executed.
+      &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+        &quot;names&quot;: [ # Optional. List of variable names.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;pauseWorkflowExecutions&quot;: True or False, # Optional. If set to true, any upcoming requests for this trigger config will be paused and the executions will be resumed later when the flag is reset. The workflow to which this trigger config belongs has to be in ACTIVE status for the executions to be paused or resumed.
       &quot;position&quot;: { # Represents two-dimensional positions. # Optional. Informs the front-end application where to draw this trigger config on the UI.
         &quot;x&quot;: 42,
@@ -7361,7 +7653,7 @@ Args:
     The object takes the form of:
 
 { # Request for UploadIntegrationVersion.
-  &quot;content&quot;: &quot;A String&quot;, # The textproto of the integration_version.
+  &quot;content&quot;: &quot;A String&quot;, # The textproto of the IntegrationVersion.
   &quot;fileFormat&quot;: &quot;A String&quot;, # File format for upload request.
 }
 
@@ -7437,6 +7729,7 @@ Returns:
             },
             &quot;stringValue&quot;: &quot;A String&quot;, # String.
           },
+          &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
           &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
           &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
           &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -7506,6 +7799,7 @@ Returns:
           },
           &quot;stringValue&quot;: &quot;A String&quot;, # String.
         },
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the parameter.
         &quot;displayName&quot;: &quot;A String&quot;, # The name (without prefix) to be displayed in the UI for this parameter. E.g. if the key is &quot;foo.bar.myName&quot;, then the name would be &quot;myName&quot;.
         &quot;inputOutputType&quot;: &quot;A String&quot;, # Specifies the input/output type for the parameter.
         &quot;isTransient&quot;: True or False, # Whether this parameter is a transient parameter.
@@ -7549,25 +7843,8 @@ Returns:
             &quot;isSearchable&quot;: True or False, # Used to indicate if a ParameterEntry should be converted to ParamIndexes for ST-Spanner full-text search. DEPRECATED: use searchable.
             &quot;logSettings&quot;: { # The LogSettings define the logging attributes for an event property. These attributes are used to map the property to the parameter in the log proto. Also used to define scrubbing/truncation behavior and PII information. # See
               &quot;logFieldName&quot;: &quot;A String&quot;, # The name of corresponding logging field of the event property. If omitted, assumes the same name as the event property key.
-              &quot;sanitizeOptions&quot;: { # Identifies whether a field contains, or may contain, PII or sensitive data, and how to sanitize the field if it does. If a field&#x27;s privacy type cannot be determined then it is sanitized (e.g., scrubbed). The specific sanitizer implementation is determined by run-time configuration and environment options (e.g., prod vs. qa). next_id: 5 # Contains the scrubbing options, such as whether to scrub, obfuscate, etc.
-                &quot;isAlreadySanitized&quot;: True or False, # If true, the value has already been sanitized and needs no further sanitization. For instance, a D3 customer id is already an obfuscated entity and *might not* need further sanitization.
-                &quot;logType&quot;: [ # To which type(s) of logs the sanitize options apply.
-                  &quot;A String&quot;,
-                ],
-                &quot;privacy&quot;: &quot;A String&quot;,
-                &quot;sanitizeType&quot;: &quot;A String&quot;,
-              },
               &quot;seedPeriod&quot;: &quot;A String&quot;,
               &quot;seedScope&quot;: &quot;A String&quot;,
-              &quot;shorteningLimits&quot;: { # Describes string and array limits when writing to logs. When a limit is exceeded the *shortener_type* describes how to shorten the field. next_id: 6 # Contains the field limits for shortening, such as max string length and max array length.
-                &quot;logAction&quot;: &quot;A String&quot;,
-                &quot;logType&quot;: [ # To which type(s) of logs the limits apply.
-                  &quot;A String&quot;,
-                ],
-                &quot;maxArraySize&quot;: 42, # maximum array size. If the array exceds this size, the field (list) is truncated.
-                &quot;maxStringLength&quot;: 42, # maximum string length. If the field exceeds this amount the field is shortened.
-                &quot;shortenerType&quot;: &quot;A String&quot;,
-              },
             },
             &quot;masked&quot;: True or False, # True if this workflow parameter should be masked in the logs
             &quot;readOnly&quot;: True or False, # Used to indicate if the ParameterEntry is a read only field or not.
@@ -7649,11 +7926,28 @@ Returns:
     &quot;status&quot;: &quot;A String&quot;, # Output only. Generated by eventbus. User should not set it as an input.
     &quot;taskConfigs&quot;: [ # Optional. Task configuration for the integration. It&#x27;s optional, but the integration doesn&#x27;t do anything without task_configs.
       { # The task configuration details. This is not the implementation of Task. There might be multiple TaskConfigs for the same Task.
+        &quot;conditionalFailurePolicies&quot;: { # Conditional task failur retry strategies # Optional. The list of conditional failure policies that will be applied to the task in order.
+          &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches.
+            &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+            &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+            &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+          &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+            { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+              &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
+              &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
+              &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+              &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+            },
+          ],
+        },
         &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
         &quot;displayName&quot;: &quot;A String&quot;, # Optional. User-provided label that is attached to this TaskConfig in the UI.
         &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
         &quot;externalTaskType&quot;: &quot;A String&quot;, # Optional. External task type of the task
         &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
+          &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
           &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
           &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
           &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -7710,6 +8004,7 @@ Returns:
           &quot;finalState&quot;: &quot;A String&quot;, # State to which the execution snapshot status will be set if the task succeeds.
         },
         &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+          &quot;condition&quot;: &quot;A String&quot;, # Optional. The string condition that will be evaluated to determine if the task should be retried with this failure policy.
           &quot;intervalTime&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the initial interval in seconds for backoff.
           &quot;maxRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_INTEGRATION_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
           &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
@@ -7752,6 +8047,22 @@ Returns:
             },
           },
         ],
+        &quot;conditionalFailurePolicies&quot;: { # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
+          &quot;defaultFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # The default failure policy to be applied if no conditional failure policy matches
+            &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+            &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+            &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+            &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+          },
+          &quot;failurePolicies&quot;: [ # The list of failure policies that will be applied to the task in order.
+            { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied).
+              &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
+              &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+              &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
+              &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
+            },
+          ],
+        },
         &quot;createTime&quot;: &quot;A String&quot;, # Auto-generated.
         &quot;creatorEmail&quot;: &quot;A String&quot;, # The creator&#x27;s email address. Auto-generated from the user&#x27;s email.
         &quot;description&quot;: &quot;A String&quot;, # User-provided description intended to give more business context about the task.
@@ -7761,6 +8072,7 @@ Returns:
         &quot;failurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for asynchronous calls to Eventbus alone (Post To Queue, Schedule etc.).
           &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
           &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
           &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
         },
         &quot;incomingEdgeCount&quot;: 42, # The number of edges leading into this TaskConfig.
@@ -7925,6 +8237,7 @@ Returns:
         &quot;synchronousCallFailurePolicy&quot;: { # Policy that defines the task retry logic and failure type. If no FailurePolicy is defined for a task, all its dependent tasks will not be executed (i.e, a `retry_strategy` of NONE will be applied). # Optional. Determines the number of times the task will be retried on failure and with what retry strategy. This is applicable for synchronous calls to Eventbus alone (Post).
           &quot;intervalInSeconds&quot;: &quot;A String&quot;, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the initial interval for backoff.
           &quot;maxNumRetries&quot;: 42, # Required if retry_strategy is FIXED_INTERVAL or LINEAR/EXPONENTIAL_BACKOFF/RESTART_WORKFLOW_WITH_BACKOFF. Defines the number of times the task will be retried if failed.
+          &quot;retryCondition&quot;: &quot;A String&quot;, # Optional. The retry condition that will be evaluated for this failure policy with the corresponding retry strategy.
           &quot;retryStrategy&quot;: &quot;A String&quot;, # Defines what happens to the task upon failure.
         },
         &quot;taskEntity&quot;: { # Contains a task&#x27;s metadata and associated information. Next available id: 7 # Copy of the task entity that this task config is an instance of.
@@ -8194,8 +8507,18 @@ Returns:
         },
         &quot;description&quot;: &quot;A String&quot;, # Optional. User-provided description intended to give additional business context about the task.
         &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional. Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+        &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+          &quot;names&quot;: [ # Optional. List of variable names.
+            &quot;A String&quot;,
+          ],
+        },
         &quot;label&quot;: &quot;A String&quot;, # Optional. The user created label for a particular trigger.
         &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Optional. Dictates how next tasks will be executed.
+        &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+          &quot;names&quot;: [ # Optional. List of variable names.
+            &quot;A String&quot;,
+          ],
+        },
         &quot;position&quot;: { # Configuration detail of coordinate, it used for UI # Optional. Informs the front-end application where to draw this error catcher config on the UI.
           &quot;x&quot;: 42, # Required. X axis of the coordinate
           &quot;y&quot;: 42, # Required. Y axis of the coordinate
@@ -8213,13 +8536,13 @@ Returns:
           },
         ],
         &quot;trigger&quot;: &quot;A String&quot;, # Optional. Name of the trigger. Example: &quot;API Trigger&quot;, &quot;Cloud Pub Sub Trigger&quot; When set will be sent out to monitoring dashabord for tracking purpose.
-        &quot;triggerId&quot;: &quot;A String&quot;, # Optional. The backend trigger ID.
+        &quot;triggerId&quot;: &quot;A String&quot;, # Optional. Auto-generated trigger ID. The ID is based on the properties that you define in the trigger config. For example, for an API trigger, the trigger ID follows the format: api_trigger/TRIGGER_NAME Where trigger config has properties with value {&quot;Trigger name&quot;: TRIGGER_NAME}
         &quot;triggerNumber&quot;: &quot;A String&quot;, # Required. A number to uniquely identify each trigger config within the integration on UI.
         &quot;triggerType&quot;: &quot;A String&quot;, # Optional. Type of trigger
       },
     ],
     &quot;triggerConfigsInternal&quot;: [ # Optional. Trigger configurations.
-      { # Configuration detail of a trigger. Next available id: 20
+      { # Configuration detail of a trigger. Next available id: 22
         &quot;alertConfig&quot;: [ # An alert threshold configuration for the [trigger + client + workflow] tuple. If these values are not specified in the trigger config, default values will be populated by the system. Note that there must be exactly one alert threshold configured per [client + trigger + workflow] when published.
           { # Message to be used to configure custom alerting in the {@code EventConfig} protos for an event.
             &quot;aggregationPeriod&quot;: &quot;A String&quot;, # For an EXPECTED_MIN threshold, this aggregation_period must be lesser than 24 hours.
@@ -8261,8 +8584,18 @@ Returns:
           &quot;A String&quot;,
         ],
         &quot;errorCatcherId&quot;: &quot;A String&quot;, # Optional Error catcher id of the error catch flow which will be executed when execution error happens in the task
+        &quot;inputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of input variables for the api trigger.
+          &quot;names&quot;: [ # Optional. List of variable names.
+            &quot;A String&quot;,
+          ],
+        },
         &quot;label&quot;: &quot;A String&quot;, # The user created label for a particular trigger.
         &quot;nextTasksExecutionPolicy&quot;: &quot;A String&quot;, # Dictates how next tasks will be executed.
+        &quot;outputVariables&quot;: { # Variables names mapped to api trigger. # Optional. List of output variables for the api trigger.
+          &quot;names&quot;: [ # Optional. List of variable names.
+            &quot;A String&quot;,
+          ],
+        },
         &quot;pauseWorkflowExecutions&quot;: True or False, # Optional. If set to true, any upcoming requests for this trigger config will be paused and the executions will be resumed later when the flag is reset. The workflow to which this trigger config belongs has to be in ACTIVE status for the executions to be paused or resumed.
         &quot;position&quot;: { # Represents two-dimensional positions. # Optional. Informs the front-end application where to draw this trigger config on the UI.
           &quot;x&quot;: 42,

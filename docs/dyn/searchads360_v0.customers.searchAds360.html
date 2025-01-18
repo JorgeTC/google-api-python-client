@@ -185,6 +185,9 @@ Returns:
         &quot;adRotationMode&quot;: &quot;A String&quot;, # The ad rotation mode of the ad group.
         &quot;cpcBidMicros&quot;: &quot;A String&quot;, # The maximum CPC (cost-per-click) bid.
         &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this ad_group was created. The timestamp is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss&quot; format.
+        &quot;effectiveLabels&quot;: [ # Output only. The resource names of effective labels attached to this ad group. An effective label is a label inherited or directly assigned to this ad group.
+          &quot;A String&quot;,
+        ],
         &quot;endDate&quot;: &quot;A String&quot;, # Output only. Date when the ad group ends serving ads. By default, the ad group ends on the ad group&#x27;s end date. If this field is set, then the ad group ends at the end of the specified date in the customer&#x27;s time zone. This field is only available for Microsoft Advertising and Facebook gateway accounts. Format: YYYY-MM-DD Example: 2019-03-14
         &quot;engineId&quot;: &quot;A String&quot;, # Output only. ID of the ad group in the external engine account. This field is for non-Google Ads account only, for example, Yahoo Japan, Microsoft, Baidu etc. For Google Ads entity, use &quot;ad_group.id&quot; instead.
         &quot;engineStatus&quot;: &quot;A String&quot;, # Output only. The Engine Status for ad group.
@@ -236,6 +239,16 @@ Returns:
           &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad. Ad resource names have the form: `customers/{customer_id}/ads/{ad_id}`
           &quot;responsiveSearchAd&quot;: { # A Search Ads 360 responsive search ad. # Immutable. Details pertaining to a responsive search ad.
             &quot;adTrackingId&quot;: &quot;A String&quot;, # The tracking id of the ad.
+            &quot;descriptions&quot;: [ # List of text assets for descriptions. When the ad serves the descriptions will be selected from this list.
+              { # A text asset used inside an ad.
+                &quot;text&quot;: &quot;A String&quot;, # Asset text.
+              },
+            ],
+            &quot;headlines&quot;: [ # List of text assets for headlines. When the ad serves the headlines will be selected from this list.
+              { # A text asset used inside an ad.
+                &quot;text&quot;: &quot;A String&quot;, # Asset text.
+              },
+            ],
             &quot;path1&quot;: &quot;A String&quot;, # Text appended to the auto-generated visible URL with a delimiter.
             &quot;path2&quot;: &quot;A String&quot;, # Text appended to path1 with a delimiter.
           },
@@ -250,7 +263,10 @@ Returns:
           &quot;type&quot;: &quot;A String&quot;, # Output only. The type of ad.
         },
         &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this ad_group_ad was created. The datetime is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss.ssssss&quot; format.
-        &quot;engineId&quot;: &quot;A String&quot;, # Output only. ID of the ad in the external engine account. This field is for SearchAds 360 account only, for example, Yahoo Japan, Microsoft, Baidu etc. For non-SearchAds 360 entity, use &quot;ad_group_ad.ad.id&quot; instead.
+        &quot;effectiveLabels&quot;: [ # Output only. The resource names of effective labels attached to this ad. An effective label is a label inherited or directly assigned to this ad.
+          &quot;A String&quot;,
+        ],
+        &quot;engineId&quot;: &quot;A String&quot;, # Output only. ID of the ad in the external engine account. This field is for Search Ads 360 account only, for example, Yahoo Japan, Microsoft, Baidu etc. For non-Search Ads 360 entity, use &quot;ad_group_ad.ad.id&quot; instead.
         &quot;engineStatus&quot;: &quot;A String&quot;, # Output only. Additional status of the ad in the external engine account. Possible statuses (depending on the type of external account) include active, eligible, pending review, etc.
         &quot;labels&quot;: [ # Output only. The resource names of labels attached to this ad group ad.
           &quot;A String&quot;,
@@ -259,9 +275,16 @@ Returns:
         &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad. Ad group ad resource names have the form: `customers/{customer_id}/adGroupAds/{ad_group_id}~{ad_id}`
         &quot;status&quot;: &quot;A String&quot;, # The status of the ad.
       },
+      &quot;adGroupAdEffectiveLabel&quot;: { # A relationship between an ad group ad and an effective label. An effective label is a label inherited or directly assigned to this ad group ad. # The ad group ad effective label referenced in the query.
+        &quot;adGroupAd&quot;: &quot;A String&quot;, # Immutable. The ad group ad to which the effective label is attached.
+        &quot;label&quot;: &quot;A String&quot;, # Immutable. The effective label assigned to the ad group ad.
+        &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the effective label.
+        &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group ad effective label. Ad group ad effective label resource names have the form: `customers/{customer_id}/adGroupAdEffectiveLabels/{ad_group_id}~{ad_id}~{label_id}`
+      },
       &quot;adGroupAdLabel&quot;: { # A relationship between an ad group ad and a label. # The ad group ad label referenced in the query.
         &quot;adGroupAd&quot;: &quot;A String&quot;, # Immutable. The ad group ad to which the label is attached.
         &quot;label&quot;: &quot;A String&quot;, # Immutable. The label assigned to the ad group ad.
+        &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the label.
         &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group ad label. Ad group ad label resource names have the form: `customers/{customer_id}/adGroupAdLabels/{ad_group_id}~{ad_id}~{label_id}`
       },
       &quot;adGroupAsset&quot;: { # A link between an ad group and an asset. # The ad group asset referenced in the query.
@@ -296,6 +319,9 @@ Returns:
         &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this ad group criterion was created. The timestamp is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss&quot; format.
         &quot;criterionId&quot;: &quot;A String&quot;, # Output only. The ID of the criterion.
         &quot;effectiveCpcBidMicros&quot;: &quot;A String&quot;, # Output only. The effective CPC (cost-per-click) bid.
+        &quot;effectiveLabels&quot;: [ # Output only. The resource names of effective labels attached to this ad group criterion. An effective label is a label inherited or directly assigned to this ad group criterion.
+          &quot;A String&quot;,
+        ],
         &quot;engineId&quot;: &quot;A String&quot;, # Output only. ID of the ad group criterion in the external engine account. This field is for non-Google Ads account only, for example, Yahoo Japan, Microsoft, Baidu etc. For Google Ads entity, use &quot;ad_group_criterion.criterion_id&quot; instead.
         &quot;engineStatus&quot;: &quot;A String&quot;, # Output only. The Engine Status for ad group criterion.
         &quot;finalUrlSuffix&quot;: &quot;A String&quot;, # URL template for appending params to final URL.
@@ -345,14 +371,28 @@ Returns:
           &quot;criterionName&quot;: &quot;A String&quot;, # The name of the criterion that is defined by this parameter. The name value will be used for identifying, sorting and filtering criteria with this type of parameters. This field is required for CREATE operations and is prohibited on UPDATE operations.
         },
       },
+      &quot;adGroupCriterionEffectiveLabel&quot;: { # A relationship between an ad group criterion and an effective label. An effective label is a label inherited or directly assigned to this ad group criterion. # The ad group criterion effective label referenced in the query.
+        &quot;adGroupCriterion&quot;: &quot;A String&quot;, # Immutable. The ad group criterion to which the effective label is attached.
+        &quot;label&quot;: &quot;A String&quot;, # Immutable. The effective label assigned to the ad group criterion.
+        &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the effective label.
+        &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group criterion effective label. Ad group criterion effective label resource names have the form: `customers/{customer_id}/adGroupCriterionEffectiveLabels/{ad_group_id}~{criterion_id}~{label_id}`
+      },
       &quot;adGroupCriterionLabel&quot;: { # A relationship between an ad group criterion and a label. # The ad group criterion label referenced in the query.
         &quot;adGroupCriterion&quot;: &quot;A String&quot;, # Immutable. The ad group criterion to which the label is attached.
         &quot;label&quot;: &quot;A String&quot;, # Immutable. The label assigned to the ad group criterion.
+        &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the label.
         &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group criterion label. Ad group criterion label resource names have the form: `customers/{customer_id}/adGroupCriterionLabels/{ad_group_id}~{criterion_id}~{label_id}`
+      },
+      &quot;adGroupEffectiveLabel&quot;: { # A relationship between an ad group and an effective label. An effective label is a label inherited or directly assigned to this ad group. # The ad group effective label referenced in the query.
+        &quot;adGroup&quot;: &quot;A String&quot;, # Immutable. The ad group to which the effective label is attached.
+        &quot;label&quot;: &quot;A String&quot;, # Immutable. The effective label assigned to the ad group.
+        &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the effective label.
+        &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group effective label. Ad group effective label resource names have the form: `customers/{customer_id}/adGroupEffectiveLabels/{ad_group_id}~{label_id}`
       },
       &quot;adGroupLabel&quot;: { # A relationship between an ad group and a label. # The ad group label referenced in the query.
         &quot;adGroup&quot;: &quot;A String&quot;, # Immutable. The ad group to which the label is attached.
         &quot;label&quot;: &quot;A String&quot;, # Immutable. The label assigned to the ad group.
+        &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the label.
         &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group label. Ad group label resource names have the form: `customers/{customer_id}/adGroupLabels/{ad_group_id}~{label_id}`
       },
       &quot;ageRangeView&quot;: { # An age range view. # The age range view referenced in the query.
@@ -632,7 +672,7 @@ Returns:
         },
         &quot;targetSpend&quot;: { # An automated bid strategy that sets your bids to help get as many clicks as possible within your budget. # A bid strategy that sets your bids to help get as many clicks as possible within your budget.
           &quot;cpcBidCeilingMicros&quot;: &quot;A String&quot;, # Maximum bid limit that can be set by the bid strategy. The limit applies to all keywords managed by the strategy.
-          &quot;targetSpendMicros&quot;: &quot;A String&quot;, # The spend target under which to maximize clicks. A TargetSpend bidder will attempt to spend the smaller of this value or the natural throttling spend amount. If not specified, the budget is used as the spend target. This field is deprecated and should no longer be used. See https://ads-developers.googleblog.com/2020/05/reminder-about-sunset-creation-of.html for details.
+          &quot;targetSpendMicros&quot;: &quot;A String&quot;, # Deprecated: The spend target under which to maximize clicks. A TargetSpend bidder will attempt to spend the smaller of this value or the natural throttling spend amount. If not specified, the budget is used as the spend target. This field is deprecated and should no longer be used. See https://ads-developers.googleblog.com/2020/05/reminder-about-sunset-creation-of.html for details.
         },
         &quot;type&quot;: &quot;A String&quot;, # Output only. The type of the bidding strategy. Create a bidding strategy by setting the bidding scheme. This field is read-only.
       },
@@ -641,10 +681,10 @@ Returns:
         &quot;adServingOptimizationStatus&quot;: &quot;A String&quot;, # The ad serving optimization status of the campaign.
         &quot;advertisingChannelSubType&quot;: &quot;A String&quot;, # Immutable. Optional refinement to `advertising_channel_type`. Must be a valid sub-type of the parent channel type. Can be set only when creating campaigns. After campaign is created, the field can not be changed.
         &quot;advertisingChannelType&quot;: &quot;A String&quot;, # Immutable. The primary serving target for ads within the campaign. The targeting options can be refined in `network_settings`. This field is required and should not be empty when creating new campaigns. Can be set only when creating campaigns. After the campaign is created, the field can not be changed.
-        &quot;biddingStrategy&quot;: &quot;A String&quot;, # Portfolio bidding strategy used by campaign.
+        &quot;biddingStrategy&quot;: &quot;A String&quot;, # The resource name of the portfolio bidding strategy used by the campaign.
         &quot;biddingStrategySystemStatus&quot;: &quot;A String&quot;, # Output only. The system status of the campaign&#x27;s bidding strategy.
         &quot;biddingStrategyType&quot;: &quot;A String&quot;, # Output only. The type of bidding strategy. A bidding strategy can be created by setting either the bidding scheme to create a standard bidding strategy or the `bidding_strategy` field to create a portfolio bidding strategy. This field is read-only.
-        &quot;campaignBudget&quot;: &quot;A String&quot;, # The budget of the campaign.
+        &quot;campaignBudget&quot;: &quot;A String&quot;, # The resource name of the campaign budget of the campaign.
         &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this campaign was created. The timestamp is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss&quot; format. create_time will be deprecated in v1. Use creation_time instead.
         &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this campaign was created. The timestamp is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss&quot; format.
         &quot;dynamicSearchAdsSetting&quot;: { # The setting for controlling Dynamic Search Ads (DSA). # The setting for controlling Dynamic Search Ads (DSA).
@@ -652,6 +692,9 @@ Returns:
           &quot;languageCode&quot;: &quot;A String&quot;, # Required. The language code specifying the language of the domain, for example, &quot;en&quot;.
           &quot;useSuppliedUrlsOnly&quot;: True or False, # Whether the campaign uses advertiser supplied URLs exclusively.
         },
+        &quot;effectiveLabels&quot;: [ # Output only. The resource names of effective labels attached to this campaign. An effective label is a label inherited or directly assigned to this campaign.
+          &quot;A String&quot;,
+        ],
         &quot;endDate&quot;: &quot;A String&quot;, # The last day of the campaign in serving customer&#x27;s timezone in YYYY-MM-DD format. On create, defaults to 2037-12-30, which means the campaign will run indefinitely. To set an existing campaign to run indefinitely, set this field to 2037-12-30.
         &quot;engineId&quot;: &quot;A String&quot;, # Output only. ID of the campaign in the external engine account. This field is for non-Google Ads account only, for example, Yahoo Japan, Microsoft, Baidu etc. For Google Ads entity, use &quot;campaign.id&quot; instead.
         &quot;excludedParentAssetFieldTypes&quot;: [ # The asset field types that should be excluded from this campaign. Asset links with these field types will not be inherited by this campaign from the upper level.
@@ -709,7 +752,7 @@ Returns:
         },
         &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the campaign. Campaign resource names have the form: `customers/{customer_id}/campaigns/{campaign_id}`
         &quot;selectiveOptimization&quot;: { # Selective optimization setting for this campaign, which includes a set of conversion actions to optimize this campaign towards. This feature only applies to app campaigns that use MULTI_CHANNEL as AdvertisingChannelType and APP_CAMPAIGN or APP_CAMPAIGN_FOR_ENGAGEMENT as AdvertisingChannelSubType. # Selective optimization setting for this campaign, which includes a set of conversion actions to optimize this campaign towards. This feature only applies to app campaigns that use MULTI_CHANNEL as AdvertisingChannelType and APP_CAMPAIGN or APP_CAMPAIGN_FOR_ENGAGEMENT as AdvertisingChannelSubType.
-          &quot;conversionActions&quot;: [ # The selected set of conversion actions for optimizing this campaign.
+          &quot;conversionActions&quot;: [ # The selected set of resource names for conversion actions for optimizing this campaign.
             &quot;A String&quot;,
           ],
         },
@@ -743,7 +786,7 @@ Returns:
         },
         &quot;targetSpend&quot;: { # An automated bid strategy that sets your bids to help get as many clicks as possible within your budget. # Standard Target Spend bidding strategy that automatically sets your bids to help get as many clicks as possible within your budget.
           &quot;cpcBidCeilingMicros&quot;: &quot;A String&quot;, # Maximum bid limit that can be set by the bid strategy. The limit applies to all keywords managed by the strategy.
-          &quot;targetSpendMicros&quot;: &quot;A String&quot;, # The spend target under which to maximize clicks. A TargetSpend bidder will attempt to spend the smaller of this value or the natural throttling spend amount. If not specified, the budget is used as the spend target. This field is deprecated and should no longer be used. See https://ads-developers.googleblog.com/2020/05/reminder-about-sunset-creation-of.html for details.
+          &quot;targetSpendMicros&quot;: &quot;A String&quot;, # Deprecated: The spend target under which to maximize clicks. A TargetSpend bidder will attempt to spend the smaller of this value or the natural throttling spend amount. If not specified, the budget is used as the spend target. This field is deprecated and should no longer be used. See https://ads-developers.googleblog.com/2020/05/reminder-about-sunset-creation-of.html for details.
         },
         &quot;trackingSetting&quot;: { # Campaign-level settings for tracking information. # Output only. Campaign-level settings for tracking information.
           &quot;trackingUrl&quot;: &quot;A String&quot;, # Output only. The url used for dynamic tracking.
@@ -831,9 +874,16 @@ Returns:
           &quot;criterionName&quot;: &quot;A String&quot;, # The name of the criterion that is defined by this parameter. The name value will be used for identifying, sorting and filtering criteria with this type of parameters. This field is required for CREATE operations and is prohibited on UPDATE operations.
         },
       },
+      &quot;campaignEffectiveLabel&quot;: { # Represents a relationship between a campaign and an effective label. An effective label is a label inherited or directly assigned to this campaign. # The campaign effective label referenced in the query.
+        &quot;campaign&quot;: &quot;A String&quot;, # Immutable. The campaign to which the effective label is attached.
+        &quot;label&quot;: &quot;A String&quot;, # Immutable. The effective label assigned to the campaign.
+        &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the effective label.
+        &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. Name of the resource. CampaignEffectivelabel resource names have the form: `customers/{customer_id}/campaignEffectiveLabels/{campaign_id}~{label_id}`
+      },
       &quot;campaignLabel&quot;: { # Represents a relationship between a campaign and a label. # The campaign label referenced in the query.
         &quot;campaign&quot;: &quot;A String&quot;, # Immutable. The campaign to which the label is attached.
         &quot;label&quot;: &quot;A String&quot;, # Immutable. The label assigned to the campaign.
+        &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the label.
         &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. Name of the resource. Campaign label resource names have the form: `customers/{customer_id}/campaignLabels/{campaign_id}~{label_id}`
       },
       &quot;cartDataSalesView&quot;: { # Cart data sales view. # The cart data sales view referenced in the query.
@@ -855,7 +905,7 @@ Returns:
         &quot;floodlightOrderId&quot;: &quot;A String&quot;, # Output only. The Floodlight order ID provided by the advertiser for the conversion.
         &quot;floodlightOriginalRevenue&quot;: &quot;A String&quot;, # Output only. The original, unchanged revenue associated with the Floodlight event (in the currency of the current report), before Floodlight currency instruction modifications.
         &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the conversion
-        &quot;merchantId&quot;: &quot;A String&quot;, # Output only. The SearchAds360 inventory account ID containing the product that was clicked on. SearchAds360 generates this ID when you link an inventory account in SearchAds360.
+        &quot;merchantId&quot;: &quot;A String&quot;, # Output only. The Search Ads 360 inventory account ID containing the product that was clicked on. Search Ads 360 generates this ID when you link an inventory account in Search Ads 360.
         &quot;productChannel&quot;: &quot;A String&quot;, # Output only. The sales channel of the product that was clicked on: Online or Local.
         &quot;productCountryCode&quot;: &quot;A String&quot;, # Output only. The country (ISO-3166-format) registered for the inventory feed that contains the product clicked on.
         &quot;productId&quot;: &quot;A String&quot;, # Output only. The ID of the product clicked on.
@@ -863,7 +913,7 @@ Returns:
         &quot;productStoreId&quot;: &quot;A String&quot;, # Output only. The store in the Local Inventory Ad that was clicked on. This should match the store IDs used in your local products feed.
         &quot;resourceName&quot;: &quot;A String&quot;, # Output only. The resource name of the conversion. Conversion resource names have the form: `customers/{customer_id}/conversions/{ad_group_id}~{criterion_id}~{ds_conversion_id}`
         &quot;status&quot;: &quot;A String&quot;, # Output only. The status of the conversion, either ENABLED or REMOVED..
-        &quot;visitId&quot;: &quot;A String&quot;, # Output only. The SearchAds360 visit ID that the conversion is attributed to.
+        &quot;visitId&quot;: &quot;A String&quot;, # Output only. The Search Ads 360 visit ID that the conversion is attributed to.
       },
       &quot;conversionAction&quot;: { # A conversion action. # The conversion action referenced in the query.
         &quot;appId&quot;: &quot;A String&quot;, # App ID for an app conversion action.
@@ -982,6 +1032,7 @@ Returns:
         &quot;managerCustomer&quot;: &quot;A String&quot;, # Output only. The manager customer linked to the customer.
         &quot;managerLinkId&quot;: &quot;A String&quot;, # Output only. ID of the customer-manager link. This field is read only.
         &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. Name of the resource. CustomerManagerLink resource names have the form: `customers/{customer_id}/customerManagerLinks/{manager_customer_id}~{manager_link_id}`
+        &quot;startTime&quot;: &quot;A String&quot;, # Output only. The timestamp when the CustomerManagerLink was created. The timestamp is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss&quot; format.
         &quot;status&quot;: &quot;A String&quot;, # Status of the link between the customer and the manager.
       },
       &quot;dynamicSearchAdsSearchTermView&quot;: { # A dynamic search ads search term view. # The dynamic search ads search term view referenced in the query.
@@ -1010,7 +1061,7 @@ Returns:
         &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. Name of the resource. Label resource names have the form: `customers/{customer_id}/labels/{label_id}`
         &quot;status&quot;: &quot;A String&quot;, # Output only. Status of the label. Read only.
         &quot;textLabel&quot;: { # A type of label displaying text on a colored background. # A type of label displaying text on a colored background.
-          &quot;backgroundColor&quot;: &quot;A String&quot;, # Background color of the label in RGB format. This string must match the regular expression &#x27;^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$&#x27;. Note: The background color may not be visible for manager accounts.
+          &quot;backgroundColor&quot;: &quot;A String&quot;, # Background color of the label in HEX format. This string must match the regular expression &#x27;^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$&#x27;. Note: The background color may not be visible for manager accounts.
           &quot;description&quot;: &quot;A String&quot;, # A short description of the label. The length must be no more than 200 characters.
         },
       },
@@ -1043,6 +1094,7 @@ Returns:
         &quot;averageCost&quot;: 3.14, # The average amount you pay per interaction. This amount is the total cost of your ads divided by the total number of interactions.
         &quot;averageCpc&quot;: 3.14, # The total cost of all clicks divided by the total number of clicks received. This metric is a monetary value and returned in the customer&#x27;s currency by default. See the metrics_currency parameter at https://developers.google.com/search-ads/reporting/query/query-structure#parameters_clause
         &quot;averageCpm&quot;: 3.14, # Average cost-per-thousand impressions (CPM). This metric is a monetary value and returned in the customer&#x27;s currency by default. See the metrics_currency parameter at https://developers.google.com/search-ads/reporting/query/query-structure#parameters_clause
+        &quot;averageQualityScore&quot;: 3.14, # The average quality score.
         &quot;clicks&quot;: &quot;A String&quot;, # The number of clicks.
         &quot;clientAccountConversions&quot;: 3.14, # The number of client account conversions. This only includes conversion actions which include_in_client_account_conversions_metric attribute is set to true. If you use conversion-based bidding, your bid strategies will optimize for these conversions.
         &quot;clientAccountConversionsValue&quot;: 3.14, # The value of client account conversions. This only includes conversion actions which include_in_client_account_conversions_metric attribute is set to true. If you use conversion-based bidding, your bid strategies will optimize for these conversions.
@@ -1079,12 +1131,16 @@ Returns:
         &quot;costPerConversion&quot;: 3.14, # Average conversion eligible cost per biddable conversion.
         &quot;costPerCurrentModelAttributedConversion&quot;: 3.14, # The cost of ad interactions divided by current model attributed conversions. This only includes conversion actions which include_in_conversions_metric attribute is set to true. If you use conversion-based bidding, your bid strategies will optimize for these conversions.
         &quot;crossDeviceConversions&quot;: 3.14, # Conversions from when a customer clicks on an ad on one device, then converts on a different device or browser. Cross-device conversions are already included in all_conversions.
+        &quot;crossDeviceConversionsByConversionDate&quot;: 3.14, # The number of cross-device conversions by conversion date. Details for the by_conversion_date columns are available at https://support.google.com/sa360/answer/9250611.
         &quot;crossDeviceConversionsValue&quot;: 3.14, # The sum of the value of cross-device conversions.
+        &quot;crossDeviceConversionsValueByConversionDate&quot;: 3.14, # The sum of cross-device conversions value by conversion date. Details for the by_conversion_date columns are available at https://support.google.com/sa360/answer/9250611.
         &quot;crossSellCostOfGoodsSoldMicros&quot;: &quot;A String&quot;, # Cross-sell cost of goods sold (COGS) is the total cost of products sold as a result of advertising a different product. How it works: You report conversions with cart data for completed purchases on your website. If the ad that was interacted with before the purchase has an associated product (see Shopping Ads) then this product is considered the advertised product. Any product included in the order the customer places is a sold product. If these products don&#x27;t match then this is considered cross-sell. Cross-sell cost of goods sold is the total cost of the products sold that weren&#x27;t advertised. Example: Someone clicked on a Shopping ad for a hat then bought the same hat and a shirt. The hat has a cost of goods sold value of $3, the shirt has a cost of goods sold value of $5. The cross-sell cost of goods sold for this order is $5. This metric is only available if you report conversions with cart data. This metric is a monetary value and returned in the customer&#x27;s currency by default. See the metrics_currency parameter at https://developers.google.com/search-ads/reporting/query/query-structure#parameters_clause
         &quot;crossSellGrossProfitMicros&quot;: &quot;A String&quot;, # Cross-sell gross profit is the profit you made from products sold as a result of advertising a different product, minus cost of goods sold (COGS). How it works: You report conversions with cart data for completed purchases on your website. If the ad that was interacted with before the purchase has an associated product (see Shopping Ads) then this product is considered the advertised product. Any product included in the purchase is a sold product. If these products don&#x27;t match then this is considered cross-sell. Cross-sell gross profit is the revenue you made from cross-sell attributed to your ads minus the cost of the goods sold. Example: Someone clicked on a Shopping ad for a hat then bought the same hat and a shirt. The shirt is priced $20 and has a cost of goods sold value of $5. The cross-sell gross profit of this order is $15 = $20 - $5. This metric is only available if you report conversions with cart data. This metric is a monetary value and returned in the customer&#x27;s currency by default. See the metrics_currency parameter at https://developers.google.com/search-ads/reporting/query/query-structure#parameters_clause
         &quot;crossSellRevenueMicros&quot;: &quot;A String&quot;, # Cross-sell revenue is the total amount you made from products sold as a result of advertising a different product. How it works: You report conversions with cart data for completed purchases on your website. If the ad that was interacted with before the purchase has an associated product (see Shopping Ads) then this product is considered the advertised product. Any product included in the order the customer places is a sold product. If these products don&#x27;t match then this is considered cross-sell. Cross-sell revenue is the total value you made from cross-sell attributed to your ads. Example: Someone clicked on a Shopping ad for a hat then bought the same hat and a shirt. The hat is priced $10 and the shirt is priced $20. The cross-sell revenue of this order is $20. This metric is only available if you report conversions with cart data. This metric is a monetary value and returned in the customer&#x27;s currency by default. See the metrics_currency parameter at https://developers.google.com/search-ads/reporting/query/query-structure#parameters_clause
         &quot;crossSellUnitsSold&quot;: 3.14, # Cross-sell units sold is the total number of products sold as a result of advertising a different product. How it works: You report conversions with cart data for completed purchases on your website. If the ad that was interacted with before the purchase has an associated product (see Shopping Ads) then this product is considered the advertised product. Any product included in the order the customer places is a sold product. If these products don&#x27;t match then this is considered cross-sell. Cross-sell units sold is the total number of cross-sold products from all orders attributed to your ads. Example: Someone clicked on a Shopping ad for a hat then bought the same hat, a shirt and a jacket. The cross-sell units sold in this order is 2. This metric is only available if you report conversions with cart data.
         &quot;ctr&quot;: 3.14, # The number of clicks your ad receives (Clicks) divided by the number of times your ad is shown (Impressions).
+        &quot;generalInvalidClickRate&quot;: 3.14, # The percentage of clicks that have been filtered out of your total number of clicks (filtered + non-filtered clicks) due to being general invalid clicks. These are clicks Google considers illegitimate that are detected through routine means of filtration (that is, known invalid data-center traffic, bots and spiders or other crawlers, irregular patterns, etc). You&#x27;re not charged for them, and they don&#x27;t affect your account statistics. See the help page at https://support.google.com/campaignmanager/answer/6076504 for details.
+        &quot;generalInvalidClicks&quot;: &quot;A String&quot;, # Number of general invalid clicks. These are a subset of your invalid clicks that are detected through routine means of filtration (such as known invalid data-center traffic, bots and spiders or other crawlers, irregular patterns, etc.). You&#x27;re not charged for them, and they don&#x27;t affect your account statistics. See the help page at https://support.google.com/campaignmanager/answer/6076504 for details.
         &quot;historicalCreativeQualityScore&quot;: &quot;A String&quot;, # The creative historical quality score.
         &quot;historicalLandingPageQualityScore&quot;: &quot;A String&quot;, # The quality of historical landing page experience.
         &quot;historicalQualityScore&quot;: &quot;A String&quot;, # The historical quality score.
@@ -1163,6 +1219,11 @@ Returns:
         &quot;date&quot;: &quot;A String&quot;, # Date to which metrics apply. yyyy-MM-dd format, for example, 2018-04-17.
         &quot;dayOfWeek&quot;: &quot;A String&quot;, # Day of the week, for example, MONDAY.
         &quot;device&quot;: &quot;A String&quot;, # Device to which metrics apply.
+        &quot;geoTargetCity&quot;: &quot;A String&quot;, # Resource name of the geo target constant that represents a city.
+        &quot;geoTargetCountry&quot;: &quot;A String&quot;, # Resource name of the geo target constant that represents a country.
+        &quot;geoTargetMetro&quot;: &quot;A String&quot;, # Resource name of the geo target constant that represents a metro.
+        &quot;geoTargetRegion&quot;: &quot;A String&quot;, # Resource name of the geo target constant that represents a region.
+        &quot;hour&quot;: 42, # Hour of day as a number between 0 and 23, inclusive.
         &quot;keyword&quot;: { # A Keyword criterion segment. # Keyword criterion.
           &quot;adGroupCriterion&quot;: &quot;A String&quot;, # The AdGroupCriterion resource name.
           &quot;info&quot;: { # A keyword criterion. # Keyword info.
@@ -1236,6 +1297,11 @@ Returns:
         &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the user list. User list resource names have the form: `customers/{customer_id}/userLists/{user_list_id}`
         &quot;type&quot;: &quot;A String&quot;, # Output only. Type of this list. This field is read-only.
       },
+      &quot;userLocationView&quot;: { # A user location view. User Location View includes all metrics aggregated at the country level, one row per country. It reports metrics at the actual physical location of the user by targeted or not targeted location. If other segment fields are used, you may get more than one row per country. # The user location view referenced in the query.
+        &quot;countryCriterionId&quot;: &quot;A String&quot;, # Output only. Criterion Id for the country.
+        &quot;resourceName&quot;: &quot;A String&quot;, # Output only. The resource name of the user location view. UserLocation view resource names have the form: `customers/{customer_id}/userLocationViews/{country_criterion_id}~{targeting_location}`
+        &quot;targetingLocation&quot;: True or False, # Output only. Indicates whether location was targeted or not.
+      },
       &quot;visit&quot;: { # A visit. # The event level visit referenced in the query.
         &quot;adId&quot;: &quot;A String&quot;, # Output only. Ad ID. A value of 0 indicates that the ad is unattributed.
         &quot;assetFieldType&quot;: &quot;A String&quot;, # Output only. Asset field type of the visit event.
@@ -1292,6 +1358,9 @@ Returns:
       &quot;adRotationMode&quot;: &quot;A String&quot;, # The ad rotation mode of the ad group.
       &quot;cpcBidMicros&quot;: &quot;A String&quot;, # The maximum CPC (cost-per-click) bid.
       &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this ad_group was created. The timestamp is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss&quot; format.
+      &quot;effectiveLabels&quot;: [ # Output only. The resource names of effective labels attached to this ad group. An effective label is a label inherited or directly assigned to this ad group.
+        &quot;A String&quot;,
+      ],
       &quot;endDate&quot;: &quot;A String&quot;, # Output only. Date when the ad group ends serving ads. By default, the ad group ends on the ad group&#x27;s end date. If this field is set, then the ad group ends at the end of the specified date in the customer&#x27;s time zone. This field is only available for Microsoft Advertising and Facebook gateway accounts. Format: YYYY-MM-DD Example: 2019-03-14
       &quot;engineId&quot;: &quot;A String&quot;, # Output only. ID of the ad group in the external engine account. This field is for non-Google Ads account only, for example, Yahoo Japan, Microsoft, Baidu etc. For Google Ads entity, use &quot;ad_group.id&quot; instead.
       &quot;engineStatus&quot;: &quot;A String&quot;, # Output only. The Engine Status for ad group.
@@ -1343,6 +1412,16 @@ Returns:
         &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad. Ad resource names have the form: `customers/{customer_id}/ads/{ad_id}`
         &quot;responsiveSearchAd&quot;: { # A Search Ads 360 responsive search ad. # Immutable. Details pertaining to a responsive search ad.
           &quot;adTrackingId&quot;: &quot;A String&quot;, # The tracking id of the ad.
+          &quot;descriptions&quot;: [ # List of text assets for descriptions. When the ad serves the descriptions will be selected from this list.
+            { # A text asset used inside an ad.
+              &quot;text&quot;: &quot;A String&quot;, # Asset text.
+            },
+          ],
+          &quot;headlines&quot;: [ # List of text assets for headlines. When the ad serves the headlines will be selected from this list.
+            { # A text asset used inside an ad.
+              &quot;text&quot;: &quot;A String&quot;, # Asset text.
+            },
+          ],
           &quot;path1&quot;: &quot;A String&quot;, # Text appended to the auto-generated visible URL with a delimiter.
           &quot;path2&quot;: &quot;A String&quot;, # Text appended to path1 with a delimiter.
         },
@@ -1357,7 +1436,10 @@ Returns:
         &quot;type&quot;: &quot;A String&quot;, # Output only. The type of ad.
       },
       &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this ad_group_ad was created. The datetime is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss.ssssss&quot; format.
-      &quot;engineId&quot;: &quot;A String&quot;, # Output only. ID of the ad in the external engine account. This field is for SearchAds 360 account only, for example, Yahoo Japan, Microsoft, Baidu etc. For non-SearchAds 360 entity, use &quot;ad_group_ad.ad.id&quot; instead.
+      &quot;effectiveLabels&quot;: [ # Output only. The resource names of effective labels attached to this ad. An effective label is a label inherited or directly assigned to this ad.
+        &quot;A String&quot;,
+      ],
+      &quot;engineId&quot;: &quot;A String&quot;, # Output only. ID of the ad in the external engine account. This field is for Search Ads 360 account only, for example, Yahoo Japan, Microsoft, Baidu etc. For non-Search Ads 360 entity, use &quot;ad_group_ad.ad.id&quot; instead.
       &quot;engineStatus&quot;: &quot;A String&quot;, # Output only. Additional status of the ad in the external engine account. Possible statuses (depending on the type of external account) include active, eligible, pending review, etc.
       &quot;labels&quot;: [ # Output only. The resource names of labels attached to this ad group ad.
         &quot;A String&quot;,
@@ -1366,9 +1448,16 @@ Returns:
       &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad. Ad group ad resource names have the form: `customers/{customer_id}/adGroupAds/{ad_group_id}~{ad_id}`
       &quot;status&quot;: &quot;A String&quot;, # The status of the ad.
     },
+    &quot;adGroupAdEffectiveLabel&quot;: { # A relationship between an ad group ad and an effective label. An effective label is a label inherited or directly assigned to this ad group ad. # The ad group ad effective label referenced in the query.
+      &quot;adGroupAd&quot;: &quot;A String&quot;, # Immutable. The ad group ad to which the effective label is attached.
+      &quot;label&quot;: &quot;A String&quot;, # Immutable. The effective label assigned to the ad group ad.
+      &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the effective label.
+      &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group ad effective label. Ad group ad effective label resource names have the form: `customers/{customer_id}/adGroupAdEffectiveLabels/{ad_group_id}~{ad_id}~{label_id}`
+    },
     &quot;adGroupAdLabel&quot;: { # A relationship between an ad group ad and a label. # The ad group ad label referenced in the query.
       &quot;adGroupAd&quot;: &quot;A String&quot;, # Immutable. The ad group ad to which the label is attached.
       &quot;label&quot;: &quot;A String&quot;, # Immutable. The label assigned to the ad group ad.
+      &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the label.
       &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group ad label. Ad group ad label resource names have the form: `customers/{customer_id}/adGroupAdLabels/{ad_group_id}~{ad_id}~{label_id}`
     },
     &quot;adGroupAsset&quot;: { # A link between an ad group and an asset. # The ad group asset referenced in the query.
@@ -1403,6 +1492,9 @@ Returns:
       &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this ad group criterion was created. The timestamp is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss&quot; format.
       &quot;criterionId&quot;: &quot;A String&quot;, # Output only. The ID of the criterion.
       &quot;effectiveCpcBidMicros&quot;: &quot;A String&quot;, # Output only. The effective CPC (cost-per-click) bid.
+      &quot;effectiveLabels&quot;: [ # Output only. The resource names of effective labels attached to this ad group criterion. An effective label is a label inherited or directly assigned to this ad group criterion.
+        &quot;A String&quot;,
+      ],
       &quot;engineId&quot;: &quot;A String&quot;, # Output only. ID of the ad group criterion in the external engine account. This field is for non-Google Ads account only, for example, Yahoo Japan, Microsoft, Baidu etc. For Google Ads entity, use &quot;ad_group_criterion.criterion_id&quot; instead.
       &quot;engineStatus&quot;: &quot;A String&quot;, # Output only. The Engine Status for ad group criterion.
       &quot;finalUrlSuffix&quot;: &quot;A String&quot;, # URL template for appending params to final URL.
@@ -1452,14 +1544,28 @@ Returns:
         &quot;criterionName&quot;: &quot;A String&quot;, # The name of the criterion that is defined by this parameter. The name value will be used for identifying, sorting and filtering criteria with this type of parameters. This field is required for CREATE operations and is prohibited on UPDATE operations.
       },
     },
+    &quot;adGroupCriterionEffectiveLabel&quot;: { # A relationship between an ad group criterion and an effective label. An effective label is a label inherited or directly assigned to this ad group criterion. # The ad group criterion effective label referenced in the query.
+      &quot;adGroupCriterion&quot;: &quot;A String&quot;, # Immutable. The ad group criterion to which the effective label is attached.
+      &quot;label&quot;: &quot;A String&quot;, # Immutable. The effective label assigned to the ad group criterion.
+      &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the effective label.
+      &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group criterion effective label. Ad group criterion effective label resource names have the form: `customers/{customer_id}/adGroupCriterionEffectiveLabels/{ad_group_id}~{criterion_id}~{label_id}`
+    },
     &quot;adGroupCriterionLabel&quot;: { # A relationship between an ad group criterion and a label. # The ad group criterion label referenced in the query.
       &quot;adGroupCriterion&quot;: &quot;A String&quot;, # Immutable. The ad group criterion to which the label is attached.
       &quot;label&quot;: &quot;A String&quot;, # Immutable. The label assigned to the ad group criterion.
+      &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the label.
       &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group criterion label. Ad group criterion label resource names have the form: `customers/{customer_id}/adGroupCriterionLabels/{ad_group_id}~{criterion_id}~{label_id}`
+    },
+    &quot;adGroupEffectiveLabel&quot;: { # A relationship between an ad group and an effective label. An effective label is a label inherited or directly assigned to this ad group. # The ad group effective label referenced in the query.
+      &quot;adGroup&quot;: &quot;A String&quot;, # Immutable. The ad group to which the effective label is attached.
+      &quot;label&quot;: &quot;A String&quot;, # Immutable. The effective label assigned to the ad group.
+      &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the effective label.
+      &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group effective label. Ad group effective label resource names have the form: `customers/{customer_id}/adGroupEffectiveLabels/{ad_group_id}~{label_id}`
     },
     &quot;adGroupLabel&quot;: { # A relationship between an ad group and a label. # The ad group label referenced in the query.
       &quot;adGroup&quot;: &quot;A String&quot;, # Immutable. The ad group to which the label is attached.
       &quot;label&quot;: &quot;A String&quot;, # Immutable. The label assigned to the ad group.
+      &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the label.
       &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the ad group label. Ad group label resource names have the form: `customers/{customer_id}/adGroupLabels/{ad_group_id}~{label_id}`
     },
     &quot;ageRangeView&quot;: { # An age range view. # The age range view referenced in the query.
@@ -1739,7 +1845,7 @@ Returns:
       },
       &quot;targetSpend&quot;: { # An automated bid strategy that sets your bids to help get as many clicks as possible within your budget. # A bid strategy that sets your bids to help get as many clicks as possible within your budget.
         &quot;cpcBidCeilingMicros&quot;: &quot;A String&quot;, # Maximum bid limit that can be set by the bid strategy. The limit applies to all keywords managed by the strategy.
-        &quot;targetSpendMicros&quot;: &quot;A String&quot;, # The spend target under which to maximize clicks. A TargetSpend bidder will attempt to spend the smaller of this value or the natural throttling spend amount. If not specified, the budget is used as the spend target. This field is deprecated and should no longer be used. See https://ads-developers.googleblog.com/2020/05/reminder-about-sunset-creation-of.html for details.
+        &quot;targetSpendMicros&quot;: &quot;A String&quot;, # Deprecated: The spend target under which to maximize clicks. A TargetSpend bidder will attempt to spend the smaller of this value or the natural throttling spend amount. If not specified, the budget is used as the spend target. This field is deprecated and should no longer be used. See https://ads-developers.googleblog.com/2020/05/reminder-about-sunset-creation-of.html for details.
       },
       &quot;type&quot;: &quot;A String&quot;, # Output only. The type of the bidding strategy. Create a bidding strategy by setting the bidding scheme. This field is read-only.
     },
@@ -1748,10 +1854,10 @@ Returns:
       &quot;adServingOptimizationStatus&quot;: &quot;A String&quot;, # The ad serving optimization status of the campaign.
       &quot;advertisingChannelSubType&quot;: &quot;A String&quot;, # Immutable. Optional refinement to `advertising_channel_type`. Must be a valid sub-type of the parent channel type. Can be set only when creating campaigns. After campaign is created, the field can not be changed.
       &quot;advertisingChannelType&quot;: &quot;A String&quot;, # Immutable. The primary serving target for ads within the campaign. The targeting options can be refined in `network_settings`. This field is required and should not be empty when creating new campaigns. Can be set only when creating campaigns. After the campaign is created, the field can not be changed.
-      &quot;biddingStrategy&quot;: &quot;A String&quot;, # Portfolio bidding strategy used by campaign.
+      &quot;biddingStrategy&quot;: &quot;A String&quot;, # The resource name of the portfolio bidding strategy used by the campaign.
       &quot;biddingStrategySystemStatus&quot;: &quot;A String&quot;, # Output only. The system status of the campaign&#x27;s bidding strategy.
       &quot;biddingStrategyType&quot;: &quot;A String&quot;, # Output only. The type of bidding strategy. A bidding strategy can be created by setting either the bidding scheme to create a standard bidding strategy or the `bidding_strategy` field to create a portfolio bidding strategy. This field is read-only.
-      &quot;campaignBudget&quot;: &quot;A String&quot;, # The budget of the campaign.
+      &quot;campaignBudget&quot;: &quot;A String&quot;, # The resource name of the campaign budget of the campaign.
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this campaign was created. The timestamp is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss&quot; format. create_time will be deprecated in v1. Use creation_time instead.
       &quot;creationTime&quot;: &quot;A String&quot;, # Output only. The timestamp when this campaign was created. The timestamp is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss&quot; format.
       &quot;dynamicSearchAdsSetting&quot;: { # The setting for controlling Dynamic Search Ads (DSA). # The setting for controlling Dynamic Search Ads (DSA).
@@ -1759,6 +1865,9 @@ Returns:
         &quot;languageCode&quot;: &quot;A String&quot;, # Required. The language code specifying the language of the domain, for example, &quot;en&quot;.
         &quot;useSuppliedUrlsOnly&quot;: True or False, # Whether the campaign uses advertiser supplied URLs exclusively.
       },
+      &quot;effectiveLabels&quot;: [ # Output only. The resource names of effective labels attached to this campaign. An effective label is a label inherited or directly assigned to this campaign.
+        &quot;A String&quot;,
+      ],
       &quot;endDate&quot;: &quot;A String&quot;, # The last day of the campaign in serving customer&#x27;s timezone in YYYY-MM-DD format. On create, defaults to 2037-12-30, which means the campaign will run indefinitely. To set an existing campaign to run indefinitely, set this field to 2037-12-30.
       &quot;engineId&quot;: &quot;A String&quot;, # Output only. ID of the campaign in the external engine account. This field is for non-Google Ads account only, for example, Yahoo Japan, Microsoft, Baidu etc. For Google Ads entity, use &quot;campaign.id&quot; instead.
       &quot;excludedParentAssetFieldTypes&quot;: [ # The asset field types that should be excluded from this campaign. Asset links with these field types will not be inherited by this campaign from the upper level.
@@ -1816,7 +1925,7 @@ Returns:
       },
       &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the campaign. Campaign resource names have the form: `customers/{customer_id}/campaigns/{campaign_id}`
       &quot;selectiveOptimization&quot;: { # Selective optimization setting for this campaign, which includes a set of conversion actions to optimize this campaign towards. This feature only applies to app campaigns that use MULTI_CHANNEL as AdvertisingChannelType and APP_CAMPAIGN or APP_CAMPAIGN_FOR_ENGAGEMENT as AdvertisingChannelSubType. # Selective optimization setting for this campaign, which includes a set of conversion actions to optimize this campaign towards. This feature only applies to app campaigns that use MULTI_CHANNEL as AdvertisingChannelType and APP_CAMPAIGN or APP_CAMPAIGN_FOR_ENGAGEMENT as AdvertisingChannelSubType.
-        &quot;conversionActions&quot;: [ # The selected set of conversion actions for optimizing this campaign.
+        &quot;conversionActions&quot;: [ # The selected set of resource names for conversion actions for optimizing this campaign.
           &quot;A String&quot;,
         ],
       },
@@ -1850,7 +1959,7 @@ Returns:
       },
       &quot;targetSpend&quot;: { # An automated bid strategy that sets your bids to help get as many clicks as possible within your budget. # Standard Target Spend bidding strategy that automatically sets your bids to help get as many clicks as possible within your budget.
         &quot;cpcBidCeilingMicros&quot;: &quot;A String&quot;, # Maximum bid limit that can be set by the bid strategy. The limit applies to all keywords managed by the strategy.
-        &quot;targetSpendMicros&quot;: &quot;A String&quot;, # The spend target under which to maximize clicks. A TargetSpend bidder will attempt to spend the smaller of this value or the natural throttling spend amount. If not specified, the budget is used as the spend target. This field is deprecated and should no longer be used. See https://ads-developers.googleblog.com/2020/05/reminder-about-sunset-creation-of.html for details.
+        &quot;targetSpendMicros&quot;: &quot;A String&quot;, # Deprecated: The spend target under which to maximize clicks. A TargetSpend bidder will attempt to spend the smaller of this value or the natural throttling spend amount. If not specified, the budget is used as the spend target. This field is deprecated and should no longer be used. See https://ads-developers.googleblog.com/2020/05/reminder-about-sunset-creation-of.html for details.
       },
       &quot;trackingSetting&quot;: { # Campaign-level settings for tracking information. # Output only. Campaign-level settings for tracking information.
         &quot;trackingUrl&quot;: &quot;A String&quot;, # Output only. The url used for dynamic tracking.
@@ -1938,9 +2047,16 @@ Returns:
         &quot;criterionName&quot;: &quot;A String&quot;, # The name of the criterion that is defined by this parameter. The name value will be used for identifying, sorting and filtering criteria with this type of parameters. This field is required for CREATE operations and is prohibited on UPDATE operations.
       },
     },
+    &quot;campaignEffectiveLabel&quot;: { # Represents a relationship between a campaign and an effective label. An effective label is a label inherited or directly assigned to this campaign. # The campaign effective label referenced in the query.
+      &quot;campaign&quot;: &quot;A String&quot;, # Immutable. The campaign to which the effective label is attached.
+      &quot;label&quot;: &quot;A String&quot;, # Immutable. The effective label assigned to the campaign.
+      &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the effective label.
+      &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. Name of the resource. CampaignEffectivelabel resource names have the form: `customers/{customer_id}/campaignEffectiveLabels/{campaign_id}~{label_id}`
+    },
     &quot;campaignLabel&quot;: { # Represents a relationship between a campaign and a label. # The campaign label referenced in the query.
       &quot;campaign&quot;: &quot;A String&quot;, # Immutable. The campaign to which the label is attached.
       &quot;label&quot;: &quot;A String&quot;, # Immutable. The label assigned to the campaign.
+      &quot;ownerCustomerId&quot;: &quot;A String&quot;, # Output only. The ID of the Customer which owns the label.
       &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. Name of the resource. Campaign label resource names have the form: `customers/{customer_id}/campaignLabels/{campaign_id}~{label_id}`
     },
     &quot;cartDataSalesView&quot;: { # Cart data sales view. # The cart data sales view referenced in the query.
@@ -1962,7 +2078,7 @@ Returns:
       &quot;floodlightOrderId&quot;: &quot;A String&quot;, # Output only. The Floodlight order ID provided by the advertiser for the conversion.
       &quot;floodlightOriginalRevenue&quot;: &quot;A String&quot;, # Output only. The original, unchanged revenue associated with the Floodlight event (in the currency of the current report), before Floodlight currency instruction modifications.
       &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the conversion
-      &quot;merchantId&quot;: &quot;A String&quot;, # Output only. The SearchAds360 inventory account ID containing the product that was clicked on. SearchAds360 generates this ID when you link an inventory account in SearchAds360.
+      &quot;merchantId&quot;: &quot;A String&quot;, # Output only. The Search Ads 360 inventory account ID containing the product that was clicked on. Search Ads 360 generates this ID when you link an inventory account in Search Ads 360.
       &quot;productChannel&quot;: &quot;A String&quot;, # Output only. The sales channel of the product that was clicked on: Online or Local.
       &quot;productCountryCode&quot;: &quot;A String&quot;, # Output only. The country (ISO-3166-format) registered for the inventory feed that contains the product clicked on.
       &quot;productId&quot;: &quot;A String&quot;, # Output only. The ID of the product clicked on.
@@ -1970,7 +2086,7 @@ Returns:
       &quot;productStoreId&quot;: &quot;A String&quot;, # Output only. The store in the Local Inventory Ad that was clicked on. This should match the store IDs used in your local products feed.
       &quot;resourceName&quot;: &quot;A String&quot;, # Output only. The resource name of the conversion. Conversion resource names have the form: `customers/{customer_id}/conversions/{ad_group_id}~{criterion_id}~{ds_conversion_id}`
       &quot;status&quot;: &quot;A String&quot;, # Output only. The status of the conversion, either ENABLED or REMOVED..
-      &quot;visitId&quot;: &quot;A String&quot;, # Output only. The SearchAds360 visit ID that the conversion is attributed to.
+      &quot;visitId&quot;: &quot;A String&quot;, # Output only. The Search Ads 360 visit ID that the conversion is attributed to.
     },
     &quot;conversionAction&quot;: { # A conversion action. # The conversion action referenced in the query.
       &quot;appId&quot;: &quot;A String&quot;, # App ID for an app conversion action.
@@ -2089,6 +2205,7 @@ Returns:
       &quot;managerCustomer&quot;: &quot;A String&quot;, # Output only. The manager customer linked to the customer.
       &quot;managerLinkId&quot;: &quot;A String&quot;, # Output only. ID of the customer-manager link. This field is read only.
       &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. Name of the resource. CustomerManagerLink resource names have the form: `customers/{customer_id}/customerManagerLinks/{manager_customer_id}~{manager_link_id}`
+      &quot;startTime&quot;: &quot;A String&quot;, # Output only. The timestamp when the CustomerManagerLink was created. The timestamp is in the customer&#x27;s time zone and in &quot;yyyy-MM-dd HH:mm:ss&quot; format.
       &quot;status&quot;: &quot;A String&quot;, # Status of the link between the customer and the manager.
     },
     &quot;dynamicSearchAdsSearchTermView&quot;: { # A dynamic search ads search term view. # The dynamic search ads search term view referenced in the query.
@@ -2117,7 +2234,7 @@ Returns:
       &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. Name of the resource. Label resource names have the form: `customers/{customer_id}/labels/{label_id}`
       &quot;status&quot;: &quot;A String&quot;, # Output only. Status of the label. Read only.
       &quot;textLabel&quot;: { # A type of label displaying text on a colored background. # A type of label displaying text on a colored background.
-        &quot;backgroundColor&quot;: &quot;A String&quot;, # Background color of the label in RGB format. This string must match the regular expression &#x27;^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$&#x27;. Note: The background color may not be visible for manager accounts.
+        &quot;backgroundColor&quot;: &quot;A String&quot;, # Background color of the label in HEX format. This string must match the regular expression &#x27;^\#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$&#x27;. Note: The background color may not be visible for manager accounts.
         &quot;description&quot;: &quot;A String&quot;, # A short description of the label. The length must be no more than 200 characters.
       },
     },
@@ -2150,6 +2267,7 @@ Returns:
       &quot;averageCost&quot;: 3.14, # The average amount you pay per interaction. This amount is the total cost of your ads divided by the total number of interactions.
       &quot;averageCpc&quot;: 3.14, # The total cost of all clicks divided by the total number of clicks received. This metric is a monetary value and returned in the customer&#x27;s currency by default. See the metrics_currency parameter at https://developers.google.com/search-ads/reporting/query/query-structure#parameters_clause
       &quot;averageCpm&quot;: 3.14, # Average cost-per-thousand impressions (CPM). This metric is a monetary value and returned in the customer&#x27;s currency by default. See the metrics_currency parameter at https://developers.google.com/search-ads/reporting/query/query-structure#parameters_clause
+      &quot;averageQualityScore&quot;: 3.14, # The average quality score.
       &quot;clicks&quot;: &quot;A String&quot;, # The number of clicks.
       &quot;clientAccountConversions&quot;: 3.14, # The number of client account conversions. This only includes conversion actions which include_in_client_account_conversions_metric attribute is set to true. If you use conversion-based bidding, your bid strategies will optimize for these conversions.
       &quot;clientAccountConversionsValue&quot;: 3.14, # The value of client account conversions. This only includes conversion actions which include_in_client_account_conversions_metric attribute is set to true. If you use conversion-based bidding, your bid strategies will optimize for these conversions.
@@ -2186,12 +2304,16 @@ Returns:
       &quot;costPerConversion&quot;: 3.14, # Average conversion eligible cost per biddable conversion.
       &quot;costPerCurrentModelAttributedConversion&quot;: 3.14, # The cost of ad interactions divided by current model attributed conversions. This only includes conversion actions which include_in_conversions_metric attribute is set to true. If you use conversion-based bidding, your bid strategies will optimize for these conversions.
       &quot;crossDeviceConversions&quot;: 3.14, # Conversions from when a customer clicks on an ad on one device, then converts on a different device or browser. Cross-device conversions are already included in all_conversions.
+      &quot;crossDeviceConversionsByConversionDate&quot;: 3.14, # The number of cross-device conversions by conversion date. Details for the by_conversion_date columns are available at https://support.google.com/sa360/answer/9250611.
       &quot;crossDeviceConversionsValue&quot;: 3.14, # The sum of the value of cross-device conversions.
+      &quot;crossDeviceConversionsValueByConversionDate&quot;: 3.14, # The sum of cross-device conversions value by conversion date. Details for the by_conversion_date columns are available at https://support.google.com/sa360/answer/9250611.
       &quot;crossSellCostOfGoodsSoldMicros&quot;: &quot;A String&quot;, # Cross-sell cost of goods sold (COGS) is the total cost of products sold as a result of advertising a different product. How it works: You report conversions with cart data for completed purchases on your website. If the ad that was interacted with before the purchase has an associated product (see Shopping Ads) then this product is considered the advertised product. Any product included in the order the customer places is a sold product. If these products don&#x27;t match then this is considered cross-sell. Cross-sell cost of goods sold is the total cost of the products sold that weren&#x27;t advertised. Example: Someone clicked on a Shopping ad for a hat then bought the same hat and a shirt. The hat has a cost of goods sold value of $3, the shirt has a cost of goods sold value of $5. The cross-sell cost of goods sold for this order is $5. This metric is only available if you report conversions with cart data. This metric is a monetary value and returned in the customer&#x27;s currency by default. See the metrics_currency parameter at https://developers.google.com/search-ads/reporting/query/query-structure#parameters_clause
       &quot;crossSellGrossProfitMicros&quot;: &quot;A String&quot;, # Cross-sell gross profit is the profit you made from products sold as a result of advertising a different product, minus cost of goods sold (COGS). How it works: You report conversions with cart data for completed purchases on your website. If the ad that was interacted with before the purchase has an associated product (see Shopping Ads) then this product is considered the advertised product. Any product included in the purchase is a sold product. If these products don&#x27;t match then this is considered cross-sell. Cross-sell gross profit is the revenue you made from cross-sell attributed to your ads minus the cost of the goods sold. Example: Someone clicked on a Shopping ad for a hat then bought the same hat and a shirt. The shirt is priced $20 and has a cost of goods sold value of $5. The cross-sell gross profit of this order is $15 = $20 - $5. This metric is only available if you report conversions with cart data. This metric is a monetary value and returned in the customer&#x27;s currency by default. See the metrics_currency parameter at https://developers.google.com/search-ads/reporting/query/query-structure#parameters_clause
       &quot;crossSellRevenueMicros&quot;: &quot;A String&quot;, # Cross-sell revenue is the total amount you made from products sold as a result of advertising a different product. How it works: You report conversions with cart data for completed purchases on your website. If the ad that was interacted with before the purchase has an associated product (see Shopping Ads) then this product is considered the advertised product. Any product included in the order the customer places is a sold product. If these products don&#x27;t match then this is considered cross-sell. Cross-sell revenue is the total value you made from cross-sell attributed to your ads. Example: Someone clicked on a Shopping ad for a hat then bought the same hat and a shirt. The hat is priced $10 and the shirt is priced $20. The cross-sell revenue of this order is $20. This metric is only available if you report conversions with cart data. This metric is a monetary value and returned in the customer&#x27;s currency by default. See the metrics_currency parameter at https://developers.google.com/search-ads/reporting/query/query-structure#parameters_clause
       &quot;crossSellUnitsSold&quot;: 3.14, # Cross-sell units sold is the total number of products sold as a result of advertising a different product. How it works: You report conversions with cart data for completed purchases on your website. If the ad that was interacted with before the purchase has an associated product (see Shopping Ads) then this product is considered the advertised product. Any product included in the order the customer places is a sold product. If these products don&#x27;t match then this is considered cross-sell. Cross-sell units sold is the total number of cross-sold products from all orders attributed to your ads. Example: Someone clicked on a Shopping ad for a hat then bought the same hat, a shirt and a jacket. The cross-sell units sold in this order is 2. This metric is only available if you report conversions with cart data.
       &quot;ctr&quot;: 3.14, # The number of clicks your ad receives (Clicks) divided by the number of times your ad is shown (Impressions).
+      &quot;generalInvalidClickRate&quot;: 3.14, # The percentage of clicks that have been filtered out of your total number of clicks (filtered + non-filtered clicks) due to being general invalid clicks. These are clicks Google considers illegitimate that are detected through routine means of filtration (that is, known invalid data-center traffic, bots and spiders or other crawlers, irregular patterns, etc). You&#x27;re not charged for them, and they don&#x27;t affect your account statistics. See the help page at https://support.google.com/campaignmanager/answer/6076504 for details.
+      &quot;generalInvalidClicks&quot;: &quot;A String&quot;, # Number of general invalid clicks. These are a subset of your invalid clicks that are detected through routine means of filtration (such as known invalid data-center traffic, bots and spiders or other crawlers, irregular patterns, etc.). You&#x27;re not charged for them, and they don&#x27;t affect your account statistics. See the help page at https://support.google.com/campaignmanager/answer/6076504 for details.
       &quot;historicalCreativeQualityScore&quot;: &quot;A String&quot;, # The creative historical quality score.
       &quot;historicalLandingPageQualityScore&quot;: &quot;A String&quot;, # The quality of historical landing page experience.
       &quot;historicalQualityScore&quot;: &quot;A String&quot;, # The historical quality score.
@@ -2270,6 +2392,11 @@ Returns:
       &quot;date&quot;: &quot;A String&quot;, # Date to which metrics apply. yyyy-MM-dd format, for example, 2018-04-17.
       &quot;dayOfWeek&quot;: &quot;A String&quot;, # Day of the week, for example, MONDAY.
       &quot;device&quot;: &quot;A String&quot;, # Device to which metrics apply.
+      &quot;geoTargetCity&quot;: &quot;A String&quot;, # Resource name of the geo target constant that represents a city.
+      &quot;geoTargetCountry&quot;: &quot;A String&quot;, # Resource name of the geo target constant that represents a country.
+      &quot;geoTargetMetro&quot;: &quot;A String&quot;, # Resource name of the geo target constant that represents a metro.
+      &quot;geoTargetRegion&quot;: &quot;A String&quot;, # Resource name of the geo target constant that represents a region.
+      &quot;hour&quot;: 42, # Hour of day as a number between 0 and 23, inclusive.
       &quot;keyword&quot;: { # A Keyword criterion segment. # Keyword criterion.
         &quot;adGroupCriterion&quot;: &quot;A String&quot;, # The AdGroupCriterion resource name.
         &quot;info&quot;: { # A keyword criterion. # Keyword info.
@@ -2342,6 +2469,11 @@ Returns:
       &quot;name&quot;: &quot;A String&quot;, # Name of this user list. Depending on its access_reason, the user list name may not be unique (for example, if access_reason=SHARED)
       &quot;resourceName&quot;: &quot;A String&quot;, # Immutable. The resource name of the user list. User list resource names have the form: `customers/{customer_id}/userLists/{user_list_id}`
       &quot;type&quot;: &quot;A String&quot;, # Output only. Type of this list. This field is read-only.
+    },
+    &quot;userLocationView&quot;: { # A user location view. User Location View includes all metrics aggregated at the country level, one row per country. It reports metrics at the actual physical location of the user by targeted or not targeted location. If other segment fields are used, you may get more than one row per country. # The user location view referenced in the query.
+      &quot;countryCriterionId&quot;: &quot;A String&quot;, # Output only. Criterion Id for the country.
+      &quot;resourceName&quot;: &quot;A String&quot;, # Output only. The resource name of the user location view. UserLocation view resource names have the form: `customers/{customer_id}/userLocationViews/{country_criterion_id}~{targeting_location}`
+      &quot;targetingLocation&quot;: True or False, # Output only. Indicates whether location was targeted or not.
     },
     &quot;visit&quot;: { # A visit. # The event level visit referenced in the query.
       &quot;adId&quot;: &quot;A String&quot;, # Output only. Ad ID. A value of 0 indicates that the ad is unattributed.

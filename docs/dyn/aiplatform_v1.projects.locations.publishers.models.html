@@ -84,11 +84,17 @@ h1, h2, h3 {
   <code><a href="#countTokens">countTokens(endpoint, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Perform a token counting.</p>
 <p class="toc_element">
+  <code><a href="#fetchPredictOperation">fetchPredictOperation(endpoint, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Fetch an asynchronous online prediction operation.</p>
+<p class="toc_element">
   <code><a href="#generateContent">generateContent(model, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Generate content with multimodal inputs.</p>
 <p class="toc_element">
   <code><a href="#predict">predict(endpoint, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Perform an online prediction.</p>
+<p class="toc_element">
+  <code><a href="#predictLongRunning">predictLongRunning(endpoint, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline"></p>
 <p class="toc_element">
   <code><a href="#rawPredict">rawPredict(endpoint, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Perform an online prediction with an arbitrary HTTP payload. The response includes the following HTTP headers: * `X-Vertex-AI-Endpoint-Id`: ID of the Endpoint that served this prediction. * `X-Vertex-AI-Deployed-Model-Id`: ID of the Endpoint's DeployedModel that served this prediction.</p>
@@ -117,9 +123,44 @@ Args:
     The object takes the form of:
 
 { # Request message for ComputeTokens RPC call.
-  &quot;instances&quot;: [ # Required. The instances that are the input to token computing API call. Schema is identical to the prediction schema of the text model, even for the non-text models, like chat models, or Codey models.
+  &quot;contents&quot;: [ # Optional. Input content.
+    { # The base structured datatype containing multi-part content of a message. A `Content` includes a `role` field designating the producer of the `Content` and a `parts` field containing multi-part data that contains the content of the message turn.
+      &quot;parts&quot;: [ # Required. Ordered `Parts` that constitute a single message. Parts may have different IANA MIME types.
+        { # A datatype containing media that is part of a multi-part `Content` message. A `Part` consists of data which has an associated datatype. A `Part` can only contain one of the accepted types in `Part.data`. A `Part` must have a fixed IANA MIME type identifying the type and subtype of the media if `inline_data` or `file_data` field is filled with raw bytes.
+          &quot;fileData&quot;: { # URI based data. # Optional. URI based data.
+            &quot;fileUri&quot;: &quot;A String&quot;, # Required. URI.
+            &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
+          },
+          &quot;functionCall&quot;: { # A predicted [FunctionCall] returned from the model that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing the parameters and their values. # Optional. A predicted [FunctionCall] returned from the model that contains a string representing the [FunctionDeclaration.name] with the parameters and their values.
+            &quot;args&quot;: { # Optional. Required. The function parameters and values in JSON object format. See [FunctionDeclaration.parameters] for parameter details.
+              &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+            },
+            &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name].
+          },
+          &quot;functionResponse&quot;: { # The result output from a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function is used as context to the model. This should contain the result of a [FunctionCall] made based on model prediction. # Optional. The result output of a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function call. It is used as context to the model.
+            &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name].
+            &quot;response&quot;: { # Required. The function response in JSON object format. Use &quot;output&quot; key to specify function output and &quot;error&quot; key to specify error details (if any). If &quot;output&quot; and &quot;error&quot; keys are not specified, then whole &quot;response&quot; is treated as function output.
+              &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+            },
+          },
+          &quot;inlineData&quot;: { # Content blob. # Optional. Inlined bytes data.
+            &quot;data&quot;: &quot;A String&quot;, # Required. Raw bytes.
+            &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
+          },
+          &quot;text&quot;: &quot;A String&quot;, # Optional. Text part (can be code).
+          &quot;videoMetadata&quot;: { # Metadata describes the input video content. # Optional. Video metadata. The metadata should only be specified while the video data is presented in inline_data or file_data.
+            &quot;endOffset&quot;: &quot;A String&quot;, # Optional. The end offset of the video.
+            &quot;startOffset&quot;: &quot;A String&quot;, # Optional. The start offset of the video.
+          },
+        },
+      ],
+      &quot;role&quot;: &quot;A String&quot;, # Optional. The producer of the content. Must be either &#x27;user&#x27; or &#x27;model&#x27;. Useful to set for multi-turn conversations, otherwise can be left blank or unset.
+    },
+  ],
+  &quot;instances&quot;: [ # Optional. The instances that are the input to token computing API call. Schema is identical to the prediction schema of the text model, even for the non-text models, like chat models, or Codey models.
     &quot;&quot;,
   ],
+  &quot;model&quot;: &quot;A String&quot;, # Optional. The name of the publisher model requested to serve the prediction. Format: projects/{project}/locations/{location}/publishers/*/models/*
 }
 
   x__xgafv: string, V1 error format.
@@ -133,6 +174,7 @@ Returns:
     { # Response message for ComputeTokens RPC call.
   &quot;tokensInfo&quot;: [ # Lists of tokens info from the input. A ComputeTokensRequest could have multiple instances with a prompt in each instance. We also need to return lists of tokens info for the request with multiple instances.
     { # Tokens info with a list of tokens and the corresponding list of token ids.
+      &quot;role&quot;: &quot;A String&quot;, # Optional. Optional fields for the role from the corresponding Content.
       &quot;tokenIds&quot;: [ # A list of token ids from the input.
         &quot;A String&quot;,
       ],
@@ -154,7 +196,7 @@ Args:
     The object takes the form of:
 
 { # Request message for PredictionService.CountTokens.
-  &quot;contents&quot;: [ # Required. Input content.
+  &quot;contents&quot;: [ # Optional. Input content.
     { # The base structured datatype containing multi-part content of a message. A `Content` includes a `role` field designating the producer of the `Content` and a `parts` field containing multi-part data that contains the content of the message turn.
       &quot;parts&quot;: [ # Required. Ordered `Parts` that constitute a single message. Parts may have different IANA MIME types.
         { # A datatype containing media that is part of a multi-part `Content` message. A `Part` consists of data which has an associated datatype. A `Part` can only contain one of the accepted types in `Part.data`. A `Part` must have a fixed IANA MIME type identifying the type and subtype of the media if `inline_data` or `file_data` field is filled with raw bytes.
@@ -170,11 +212,11 @@ Args:
           },
           &quot;functionResponse&quot;: { # The result output from a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function is used as context to the model. This should contain the result of a [FunctionCall] made based on model prediction. # Optional. The result output of a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function call. It is used as context to the model.
             &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name].
-            &quot;response&quot;: { # Required. The function response in JSON object format.
+            &quot;response&quot;: { # Required. The function response in JSON object format. Use &quot;output&quot; key to specify function output and &quot;error&quot; key to specify error details (if any). If &quot;output&quot; and &quot;error&quot; keys are not specified, then whole &quot;response&quot; is treated as function output.
               &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
             },
           },
-          &quot;inlineData&quot;: { # Content blob. It&#x27;s preferred to send as text directly rather than raw bytes. # Optional. Inlined bytes data.
+          &quot;inlineData&quot;: { # Content blob. # Optional. Inlined bytes data.
             &quot;data&quot;: &quot;A String&quot;, # Required. Raw bytes.
             &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
           },
@@ -188,10 +230,224 @@ Args:
       &quot;role&quot;: &quot;A String&quot;, # Optional. The producer of the content. Must be either &#x27;user&#x27; or &#x27;model&#x27;. Useful to set for multi-turn conversations, otherwise can be left blank or unset.
     },
   ],
-  &quot;instances&quot;: [ # Required. The instances that are the input to token counting call. Schema is identical to the prediction schema of the underlying model.
+  &quot;generationConfig&quot;: { # Generation config. # Optional. Generation config that the model will use to generate the response.
+    &quot;audioTimestamp&quot;: True or False, # Optional. If enabled, audio timestamp will be included in the request to the model.
+    &quot;candidateCount&quot;: 42, # Optional. Number of candidates to generate.
+    &quot;frequencyPenalty&quot;: 3.14, # Optional. Frequency penalties.
+    &quot;logprobs&quot;: 42, # Optional. Logit probabilities.
+    &quot;maxOutputTokens&quot;: 42, # Optional. The maximum number of output tokens to generate per message.
+    &quot;mediaResolution&quot;: &quot;A String&quot;, # Optional. If specified, the media resolution specified will be used.
+    &quot;presencePenalty&quot;: 3.14, # Optional. Positive penalties.
+    &quot;responseLogprobs&quot;: True or False, # Optional. If true, export the logprobs results in response.
+    &quot;responseMimeType&quot;: &quot;A String&quot;, # Optional. Output response mimetype of the generated candidate text. Supported mimetype: - `text/plain`: (default) Text output. - `application/json`: JSON response in the candidates. The model needs to be prompted to output the appropriate response type, otherwise the behavior is undefined. This is a preview feature.
+    &quot;responseModalities&quot;: [ # Optional. The modalities of the response.
+      &quot;A String&quot;,
+    ],
+    &quot;responseSchema&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. The `Schema` object allows the definition of input and output data types. These types can be objects, but also primitives and arrays. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). If set, a compatible response_mime_type must also be set. Compatible mimetypes: `application/json`: Schema for JSON response.
+      &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+        # Object with schema name: GoogleCloudAiplatformV1Schema
+      ],
+      &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
+      &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
+      &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
+        &quot;A String&quot;,
+      ],
+      &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
+      &quot;format&quot;: &quot;A String&quot;, # Optional. The format of the data. Supported formats: for NUMBER type: &quot;float&quot;, &quot;double&quot; for INTEGER type: &quot;int32&quot;, &quot;int64&quot; for STRING type: &quot;email&quot;, &quot;byte&quot;, etc
+      &quot;items&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema # Optional. SCHEMA FIELDS FOR TYPE ARRAY Schema of the elements of Type.ARRAY.
+      &quot;maxItems&quot;: &quot;A String&quot;, # Optional. Maximum number of the elements for Type.ARRAY.
+      &quot;maxLength&quot;: &quot;A String&quot;, # Optional. Maximum length of the Type.STRING
+      &quot;maxProperties&quot;: &quot;A String&quot;, # Optional. Maximum number of the properties for Type.OBJECT.
+      &quot;maximum&quot;: 3.14, # Optional. Maximum value of the Type.INTEGER and Type.NUMBER
+      &quot;minItems&quot;: &quot;A String&quot;, # Optional. Minimum number of the elements for Type.ARRAY.
+      &quot;minLength&quot;: &quot;A String&quot;, # Optional. SCHEMA FIELDS FOR TYPE STRING Minimum length of the Type.STRING
+      &quot;minProperties&quot;: &quot;A String&quot;, # Optional. Minimum number of the properties for Type.OBJECT.
+      &quot;minimum&quot;: 3.14, # Optional. SCHEMA FIELDS FOR TYPE INTEGER and NUMBER Minimum value of the Type.INTEGER and Type.NUMBER
+      &quot;nullable&quot;: True or False, # Optional. Indicates if the value may be null.
+      &quot;pattern&quot;: &quot;A String&quot;, # Optional. Pattern of the Type.STRING to restrict a string to a regular expression.
+      &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
+        &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema
+      },
+      &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+        &quot;A String&quot;,
+      ],
+      &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
+        &quot;A String&quot;,
+      ],
+      &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
+    },
+    &quot;routingConfig&quot;: { # The configuration for routing the request to a specific model. # Optional. Routing configuration.
+      &quot;autoMode&quot;: { # When automated routing is specified, the routing will be determined by the pretrained routing model and customer provided model routing preference. # Automated routing.
+        &quot;modelRoutingPreference&quot;: &quot;A String&quot;, # The model routing preference.
+      },
+      &quot;manualMode&quot;: { # When manual routing is set, the specified model will be used directly. # Manual routing.
+        &quot;modelName&quot;: &quot;A String&quot;, # The model name to use. Only the public LLM models are accepted. e.g. &#x27;gemini-1.5-pro-001&#x27;.
+      },
+    },
+    &quot;seed&quot;: 42, # Optional. Seed.
+    &quot;speechConfig&quot;: { # The speech generation config. # Optional. The speech generation config.
+      &quot;voiceConfig&quot;: { # The configuration for the voice to use. # The configuration for the speaker to use.
+        &quot;prebuiltVoiceConfig&quot;: { # The configuration for the prebuilt speaker to use. # The configuration for the prebuilt voice to use.
+          &quot;voiceName&quot;: &quot;A String&quot;, # The name of the preset voice to use.
+        },
+      },
+    },
+    &quot;stopSequences&quot;: [ # Optional. Stop sequences.
+      &quot;A String&quot;,
+    ],
+    &quot;temperature&quot;: 3.14, # Optional. Controls the randomness of predictions.
+    &quot;topK&quot;: 3.14, # Optional. If specified, top-k sampling will be used.
+    &quot;topP&quot;: 3.14, # Optional. If specified, nucleus sampling will be used.
+  },
+  &quot;instances&quot;: [ # Optional. The instances that are the input to token counting call. Schema is identical to the prediction schema of the underlying model.
     &quot;&quot;,
   ],
-  &quot;model&quot;: &quot;A String&quot;, # Required. The name of the publisher model requested to serve the prediction. Format: `projects/{project}/locations/{location}/publishers/*/models/*`
+  &quot;model&quot;: &quot;A String&quot;, # Optional. The name of the publisher model requested to serve the prediction. Format: `projects/{project}/locations/{location}/publishers/*/models/*`
+  &quot;systemInstruction&quot;: { # The base structured datatype containing multi-part content of a message. A `Content` includes a `role` field designating the producer of the `Content` and a `parts` field containing multi-part data that contains the content of the message turn. # Optional. The user provided system instructions for the model. Note: only text should be used in parts and content in each part will be in a separate paragraph.
+    &quot;parts&quot;: [ # Required. Ordered `Parts` that constitute a single message. Parts may have different IANA MIME types.
+      { # A datatype containing media that is part of a multi-part `Content` message. A `Part` consists of data which has an associated datatype. A `Part` can only contain one of the accepted types in `Part.data`. A `Part` must have a fixed IANA MIME type identifying the type and subtype of the media if `inline_data` or `file_data` field is filled with raw bytes.
+        &quot;fileData&quot;: { # URI based data. # Optional. URI based data.
+          &quot;fileUri&quot;: &quot;A String&quot;, # Required. URI.
+          &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
+        },
+        &quot;functionCall&quot;: { # A predicted [FunctionCall] returned from the model that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing the parameters and their values. # Optional. A predicted [FunctionCall] returned from the model that contains a string representing the [FunctionDeclaration.name] with the parameters and their values.
+          &quot;args&quot;: { # Optional. Required. The function parameters and values in JSON object format. See [FunctionDeclaration.parameters] for parameter details.
+            &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+          },
+          &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name].
+        },
+        &quot;functionResponse&quot;: { # The result output from a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function is used as context to the model. This should contain the result of a [FunctionCall] made based on model prediction. # Optional. The result output of a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function call. It is used as context to the model.
+          &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name].
+          &quot;response&quot;: { # Required. The function response in JSON object format. Use &quot;output&quot; key to specify function output and &quot;error&quot; key to specify error details (if any). If &quot;output&quot; and &quot;error&quot; keys are not specified, then whole &quot;response&quot; is treated as function output.
+            &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+          },
+        },
+        &quot;inlineData&quot;: { # Content blob. # Optional. Inlined bytes data.
+          &quot;data&quot;: &quot;A String&quot;, # Required. Raw bytes.
+          &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
+        },
+        &quot;text&quot;: &quot;A String&quot;, # Optional. Text part (can be code).
+        &quot;videoMetadata&quot;: { # Metadata describes the input video content. # Optional. Video metadata. The metadata should only be specified while the video data is presented in inline_data or file_data.
+          &quot;endOffset&quot;: &quot;A String&quot;, # Optional. The end offset of the video.
+          &quot;startOffset&quot;: &quot;A String&quot;, # Optional. The start offset of the video.
+        },
+      },
+    ],
+    &quot;role&quot;: &quot;A String&quot;, # Optional. The producer of the content. Must be either &#x27;user&#x27; or &#x27;model&#x27;. Useful to set for multi-turn conversations, otherwise can be left blank or unset.
+  },
+  &quot;tools&quot;: [ # Optional. A list of `Tools` the model may use to generate the next response. A `Tool` is a piece of code that enables the system to interact with external systems to perform an action, or set of actions, outside of knowledge and scope of the model.
+    { # Tool details that the model may use to generate response. A `Tool` is a piece of code that enables the system to interact with external systems to perform an action, or set of actions, outside of knowledge and scope of the model. A Tool object should contain exactly one type of Tool (e.g FunctionDeclaration, Retrieval or GoogleSearchRetrieval).
+      &quot;functionDeclarations&quot;: [ # Optional. Function tool type. One or more function declarations to be passed to the model along with the current user query. Model may decide to call a subset of these functions by populating FunctionCall in the response. User should provide a FunctionResponse for each function call in the next turn. Based on the function responses, Model will generate the final response back to the user. Maximum 128 function declarations can be provided.
+        { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name, description, parameters and response type. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client.
+          &quot;description&quot;: &quot;A String&quot;, # Optional. Description and purpose of the function. Model uses it to decide how and whether to call the function.
+          &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots and dashes, with a maximum length of 64.
+          &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+            &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+              # Object with schema name: GoogleCloudAiplatformV1Schema
+            ],
+            &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
+            &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
+            &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
+              &quot;A String&quot;,
+            ],
+            &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
+            &quot;format&quot;: &quot;A String&quot;, # Optional. The format of the data. Supported formats: for NUMBER type: &quot;float&quot;, &quot;double&quot; for INTEGER type: &quot;int32&quot;, &quot;int64&quot; for STRING type: &quot;email&quot;, &quot;byte&quot;, etc
+            &quot;items&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema # Optional. SCHEMA FIELDS FOR TYPE ARRAY Schema of the elements of Type.ARRAY.
+            &quot;maxItems&quot;: &quot;A String&quot;, # Optional. Maximum number of the elements for Type.ARRAY.
+            &quot;maxLength&quot;: &quot;A String&quot;, # Optional. Maximum length of the Type.STRING
+            &quot;maxProperties&quot;: &quot;A String&quot;, # Optional. Maximum number of the properties for Type.OBJECT.
+            &quot;maximum&quot;: 3.14, # Optional. Maximum value of the Type.INTEGER and Type.NUMBER
+            &quot;minItems&quot;: &quot;A String&quot;, # Optional. Minimum number of the elements for Type.ARRAY.
+            &quot;minLength&quot;: &quot;A String&quot;, # Optional. SCHEMA FIELDS FOR TYPE STRING Minimum length of the Type.STRING
+            &quot;minProperties&quot;: &quot;A String&quot;, # Optional. Minimum number of the properties for Type.OBJECT.
+            &quot;minimum&quot;: 3.14, # Optional. SCHEMA FIELDS FOR TYPE INTEGER and NUMBER Minimum value of the Type.INTEGER and Type.NUMBER
+            &quot;nullable&quot;: True or False, # Optional. Indicates if the value may be null.
+            &quot;pattern&quot;: &quot;A String&quot;, # Optional. Pattern of the Type.STRING to restrict a string to a regular expression.
+            &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
+              &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema
+            },
+            &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+              &quot;A String&quot;,
+            ],
+            &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
+              &quot;A String&quot;,
+            ],
+            &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
+            &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
+          },
+          &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+            &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+              # Object with schema name: GoogleCloudAiplatformV1Schema
+            ],
+            &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
+            &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
+            &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
+              &quot;A String&quot;,
+            ],
+            &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
+            &quot;format&quot;: &quot;A String&quot;, # Optional. The format of the data. Supported formats: for NUMBER type: &quot;float&quot;, &quot;double&quot; for INTEGER type: &quot;int32&quot;, &quot;int64&quot; for STRING type: &quot;email&quot;, &quot;byte&quot;, etc
+            &quot;items&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema # Optional. SCHEMA FIELDS FOR TYPE ARRAY Schema of the elements of Type.ARRAY.
+            &quot;maxItems&quot;: &quot;A String&quot;, # Optional. Maximum number of the elements for Type.ARRAY.
+            &quot;maxLength&quot;: &quot;A String&quot;, # Optional. Maximum length of the Type.STRING
+            &quot;maxProperties&quot;: &quot;A String&quot;, # Optional. Maximum number of the properties for Type.OBJECT.
+            &quot;maximum&quot;: 3.14, # Optional. Maximum value of the Type.INTEGER and Type.NUMBER
+            &quot;minItems&quot;: &quot;A String&quot;, # Optional. Minimum number of the elements for Type.ARRAY.
+            &quot;minLength&quot;: &quot;A String&quot;, # Optional. SCHEMA FIELDS FOR TYPE STRING Minimum length of the Type.STRING
+            &quot;minProperties&quot;: &quot;A String&quot;, # Optional. Minimum number of the properties for Type.OBJECT.
+            &quot;minimum&quot;: 3.14, # Optional. SCHEMA FIELDS FOR TYPE INTEGER and NUMBER Minimum value of the Type.INTEGER and Type.NUMBER
+            &quot;nullable&quot;: True or False, # Optional. Indicates if the value may be null.
+            &quot;pattern&quot;: &quot;A String&quot;, # Optional. Pattern of the Type.STRING to restrict a string to a regular expression.
+            &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
+              &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema
+            },
+            &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+              &quot;A String&quot;,
+            ],
+            &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
+              &quot;A String&quot;,
+            ],
+            &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
+            &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
+          },
+        },
+      ],
+      &quot;googleSearch&quot;: { # GoogleSearch tool type. Tool to support Google Search in Model. Powered by Google. # Optional. GoogleSearch tool type. Tool to support Google Search in Model. Powered by Google.
+      },
+      &quot;googleSearchRetrieval&quot;: { # Tool to retrieve public web data for grounding, powered by Google. # Optional. GoogleSearchRetrieval tool type. Specialized retrieval tool that is powered by Google search.
+        &quot;dynamicRetrievalConfig&quot;: { # Describes the options to customize dynamic retrieval. # Specifies the dynamic retrieval configuration for the given source.
+          &quot;dynamicThreshold&quot;: 3.14, # Optional. The threshold to be used in dynamic retrieval. If not set, a system default value is used.
+          &quot;mode&quot;: &quot;A String&quot;, # The mode of the predictor to be used in dynamic retrieval.
+        },
+      },
+      &quot;retrieval&quot;: { # Defines a retrieval tool that model can call to access external knowledge. # Optional. Retrieval tool type. System will always execute the provided retrieval tool(s) to get external knowledge to answer the prompt. Retrieval results are presented to the model for generation.
+        &quot;disableAttribution&quot;: True or False, # Optional. Deprecated. This option is no longer supported.
+        &quot;vertexAiSearch&quot;: { # Retrieve from Vertex AI Search datastore for grounding. See https://cloud.google.com/products/agent-builder # Set to use data source powered by Vertex AI Search.
+          &quot;datastore&quot;: &quot;A String&quot;, # Required. Fully-qualified Vertex AI Search data store resource ID. Format: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{dataStore}`
+        },
+        &quot;vertexRagStore&quot;: { # Retrieve from Vertex RAG Store for grounding. # Set to use data source powered by Vertex RAG store. User data is uploaded via the VertexRagDataService.
+          &quot;ragResources&quot;: [ # Optional. The representation of the rag source. It can be used to specify corpus only or ragfiles. Currently only support one corpus or multiple files from one corpus. In the future we may open up multiple corpora support.
+            { # The definition of the Rag resource.
+              &quot;ragCorpus&quot;: &quot;A String&quot;, # Optional. RagCorpora resource name. Format: `projects/{project}/locations/{location}/ragCorpora/{rag_corpus}`
+              &quot;ragFileIds&quot;: [ # Optional. rag_file_id. The files should be in the same rag_corpus set in rag_corpus field.
+                &quot;A String&quot;,
+              ],
+            },
+          ],
+          &quot;ragRetrievalConfig&quot;: { # Specifies the context retrieval config. # Optional. The retrieval config for the Rag query.
+            &quot;filter&quot;: { # Config for filters. # Optional. Config for filters.
+              &quot;metadataFilter&quot;: &quot;A String&quot;, # Optional. String for metadata filtering.
+              &quot;vectorDistanceThreshold&quot;: 3.14, # Optional. Only returns contexts with vector distance smaller than the threshold.
+              &quot;vectorSimilarityThreshold&quot;: 3.14, # Optional. Only returns contexts with vector similarity larger than the threshold.
+            },
+            &quot;topK&quot;: 42, # Optional. The number of contexts to retrieve.
+          },
+          &quot;similarityTopK&quot;: 42, # Optional. Number of top k results to return from the selected corpora.
+          &quot;vectorDistanceThreshold&quot;: 3.14, # Optional. Only return results with vector distance smaller than the threshold.
+        },
+      },
+    },
+  ],
 }
 
   x__xgafv: string, V1 error format.
@@ -209,15 +465,58 @@ Returns:
 </div>
 
 <div class="method">
+    <code class="details" id="fetchPredictOperation">fetchPredictOperation(endpoint, body=None, x__xgafv=None)</code>
+  <pre>Fetch an asynchronous online prediction operation.
+
+Args:
+  endpoint: string, Required. The name of the Endpoint requested to serve the prediction. Format: `projects/{project}/locations/{location}/endpoints/{endpoint}` or `projects/{project}/locations/{location}/publishers/{publisher}/models/{model}` (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # Request message for PredictionService.FetchPredictOperation.
+  &quot;operationName&quot;: &quot;A String&quot;, # Required. The server-assigned name for the operation.
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # This resource represents a long-running operation that is the result of a network API call.
+  &quot;done&quot;: True or False, # If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.
+  &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The error result of the operation in case of failure or cancellation.
+    &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+    &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+      {
+        &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+      },
+    ],
+    &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;metadata&quot;: { # Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+  &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+}</pre>
+</div>
+
+<div class="method">
     <code class="details" id="generateContent">generateContent(model, body=None, x__xgafv=None)</code>
   <pre>Generate content with multimodal inputs.
 
 Args:
-  model: string, Required. The name of the publisher model requested to serve the prediction. Format: `projects/{project}/locations/{location}/publishers/*/models/*` (required)
+  model: string, Required. The fully qualified name of the publisher model or tuned model endpoint to use. Publisher model format: `projects/{project}/locations/{location}/publishers/*/models/*` Tuned model endpoint format: `projects/{project}/locations/{location}/endpoints/{endpoint}` (required)
   body: object, The request body.
     The object takes the form of:
 
 { # Request message for [PredictionService.GenerateContent].
+  &quot;cachedContent&quot;: &quot;A String&quot;, # Optional. The name of the cached content used as context to serve the prediction. Note: only used in explicit caching, where users can have control over caching (e.g. what content to cache) and enjoy guaranteed cost savings. Format: `projects/{project}/locations/{location}/cachedContents/{cachedContent}`
   &quot;contents&quot;: [ # Required. The content of the current conversation with the model. For single-turn queries, this is a single instance. For multi-turn queries, this is a repeated field that contains conversation history + latest request.
     { # The base structured datatype containing multi-part content of a message. A `Content` includes a `role` field designating the producer of the `Content` and a `parts` field containing multi-part data that contains the content of the message turn.
       &quot;parts&quot;: [ # Required. Ordered `Parts` that constitute a single message. Parts may have different IANA MIME types.
@@ -234,11 +533,11 @@ Args:
           },
           &quot;functionResponse&quot;: { # The result output from a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function is used as context to the model. This should contain the result of a [FunctionCall] made based on model prediction. # Optional. The result output of a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function call. It is used as context to the model.
             &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name].
-            &quot;response&quot;: { # Required. The function response in JSON object format.
+            &quot;response&quot;: { # Required. The function response in JSON object format. Use &quot;output&quot; key to specify function output and &quot;error&quot; key to specify error details (if any). If &quot;output&quot; and &quot;error&quot; keys are not specified, then whole &quot;response&quot; is treated as function output.
               &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
             },
           },
-          &quot;inlineData&quot;: { # Content blob. It&#x27;s preferred to send as text directly rather than raw bytes. # Optional. Inlined bytes data.
+          &quot;inlineData&quot;: { # Content blob. # Optional. Inlined bytes data.
             &quot;data&quot;: &quot;A String&quot;, # Required. Raw bytes.
             &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
           },
@@ -253,18 +552,77 @@ Args:
     },
   ],
   &quot;generationConfig&quot;: { # Generation config. # Optional. Generation config.
+    &quot;audioTimestamp&quot;: True or False, # Optional. If enabled, audio timestamp will be included in the request to the model.
     &quot;candidateCount&quot;: 42, # Optional. Number of candidates to generate.
     &quot;frequencyPenalty&quot;: 3.14, # Optional. Frequency penalties.
+    &quot;logprobs&quot;: 42, # Optional. Logit probabilities.
     &quot;maxOutputTokens&quot;: 42, # Optional. The maximum number of output tokens to generate per message.
+    &quot;mediaResolution&quot;: &quot;A String&quot;, # Optional. If specified, the media resolution specified will be used.
     &quot;presencePenalty&quot;: 3.14, # Optional. Positive penalties.
+    &quot;responseLogprobs&quot;: True or False, # Optional. If true, export the logprobs results in response.
     &quot;responseMimeType&quot;: &quot;A String&quot;, # Optional. Output response mimetype of the generated candidate text. Supported mimetype: - `text/plain`: (default) Text output. - `application/json`: JSON response in the candidates. The model needs to be prompted to output the appropriate response type, otherwise the behavior is undefined. This is a preview feature.
-    &quot;responseStyle&quot;: &quot;A String&quot;, # Optional. Control Three levels of creativity in the model output. Default: RESPONSE_STYLE_BALANCED
+    &quot;responseModalities&quot;: [ # Optional. The modalities of the response.
+      &quot;A String&quot;,
+    ],
+    &quot;responseSchema&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. The `Schema` object allows the definition of input and output data types. These types can be objects, but also primitives and arrays. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). If set, a compatible response_mime_type must also be set. Compatible mimetypes: `application/json`: Schema for JSON response.
+      &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+        # Object with schema name: GoogleCloudAiplatformV1Schema
+      ],
+      &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
+      &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
+      &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
+        &quot;A String&quot;,
+      ],
+      &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
+      &quot;format&quot;: &quot;A String&quot;, # Optional. The format of the data. Supported formats: for NUMBER type: &quot;float&quot;, &quot;double&quot; for INTEGER type: &quot;int32&quot;, &quot;int64&quot; for STRING type: &quot;email&quot;, &quot;byte&quot;, etc
+      &quot;items&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema # Optional. SCHEMA FIELDS FOR TYPE ARRAY Schema of the elements of Type.ARRAY.
+      &quot;maxItems&quot;: &quot;A String&quot;, # Optional. Maximum number of the elements for Type.ARRAY.
+      &quot;maxLength&quot;: &quot;A String&quot;, # Optional. Maximum length of the Type.STRING
+      &quot;maxProperties&quot;: &quot;A String&quot;, # Optional. Maximum number of the properties for Type.OBJECT.
+      &quot;maximum&quot;: 3.14, # Optional. Maximum value of the Type.INTEGER and Type.NUMBER
+      &quot;minItems&quot;: &quot;A String&quot;, # Optional. Minimum number of the elements for Type.ARRAY.
+      &quot;minLength&quot;: &quot;A String&quot;, # Optional. SCHEMA FIELDS FOR TYPE STRING Minimum length of the Type.STRING
+      &quot;minProperties&quot;: &quot;A String&quot;, # Optional. Minimum number of the properties for Type.OBJECT.
+      &quot;minimum&quot;: 3.14, # Optional. SCHEMA FIELDS FOR TYPE INTEGER and NUMBER Minimum value of the Type.INTEGER and Type.NUMBER
+      &quot;nullable&quot;: True or False, # Optional. Indicates if the value may be null.
+      &quot;pattern&quot;: &quot;A String&quot;, # Optional. Pattern of the Type.STRING to restrict a string to a regular expression.
+      &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
+        &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema
+      },
+      &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+        &quot;A String&quot;,
+      ],
+      &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
+        &quot;A String&quot;,
+      ],
+      &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
+    },
+    &quot;routingConfig&quot;: { # The configuration for routing the request to a specific model. # Optional. Routing configuration.
+      &quot;autoMode&quot;: { # When automated routing is specified, the routing will be determined by the pretrained routing model and customer provided model routing preference. # Automated routing.
+        &quot;modelRoutingPreference&quot;: &quot;A String&quot;, # The model routing preference.
+      },
+      &quot;manualMode&quot;: { # When manual routing is set, the specified model will be used directly. # Manual routing.
+        &quot;modelName&quot;: &quot;A String&quot;, # The model name to use. Only the public LLM models are accepted. e.g. &#x27;gemini-1.5-pro-001&#x27;.
+      },
+    },
+    &quot;seed&quot;: 42, # Optional. Seed.
+    &quot;speechConfig&quot;: { # The speech generation config. # Optional. The speech generation config.
+      &quot;voiceConfig&quot;: { # The configuration for the voice to use. # The configuration for the speaker to use.
+        &quot;prebuiltVoiceConfig&quot;: { # The configuration for the prebuilt speaker to use. # The configuration for the prebuilt voice to use.
+          &quot;voiceName&quot;: &quot;A String&quot;, # The name of the preset voice to use.
+        },
+      },
+    },
     &quot;stopSequences&quot;: [ # Optional. Stop sequences.
       &quot;A String&quot;,
     ],
     &quot;temperature&quot;: 3.14, # Optional. Controls the randomness of predictions.
     &quot;topK&quot;: 3.14, # Optional. If specified, top-k sampling will be used.
     &quot;topP&quot;: 3.14, # Optional. If specified, nucleus sampling will be used.
+  },
+  &quot;labels&quot;: { # Optional. The labels with user-defined metadata for the request. It is used for billing and reporting only. Label keys and values can be no longer than 63 characters (Unicode codepoints) and can only contain lowercase letters, numeric characters, underscores, and dashes. International characters are allowed. Label values are optional. Label keys must start with a letter.
+    &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;safetySettings&quot;: [ # Optional. Per request settings for blocking unsafe content. Enforced on GenerateContentResponse.candidates.
     { # Safety settings.
@@ -288,11 +646,11 @@ Args:
         },
         &quot;functionResponse&quot;: { # The result output from a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function is used as context to the model. This should contain the result of a [FunctionCall] made based on model prediction. # Optional. The result output of a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function call. It is used as context to the model.
           &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name].
-          &quot;response&quot;: { # Required. The function response in JSON object format.
+          &quot;response&quot;: { # Required. The function response in JSON object format. Use &quot;output&quot; key to specify function output and &quot;error&quot; key to specify error details (if any). If &quot;output&quot; and &quot;error&quot; keys are not specified, then whole &quot;response&quot; is treated as function output.
             &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
           },
         },
-        &quot;inlineData&quot;: { # Content blob. It&#x27;s preferred to send as text directly rather than raw bytes. # Optional. Inlined bytes data.
+        &quot;inlineData&quot;: { # Content blob. # Optional. Inlined bytes data.
           &quot;data&quot;: &quot;A String&quot;, # Required. Raw bytes.
           &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
         },
@@ -305,16 +663,27 @@ Args:
     ],
     &quot;role&quot;: &quot;A String&quot;, # Optional. The producer of the content. Must be either &#x27;user&#x27; or &#x27;model&#x27;. Useful to set for multi-turn conversations, otherwise can be left blank or unset.
   },
+  &quot;toolConfig&quot;: { # Tool config. This config is shared for all tools provided in the request. # Optional. Tool config. This config is shared for all tools provided in the request.
+    &quot;functionCallingConfig&quot;: { # Function calling config. # Optional. Function calling config.
+      &quot;allowedFunctionNames&quot;: [ # Optional. Function names to call. Only set when the Mode is ANY. Function names should match [FunctionDeclaration.name]. With mode set to ANY, model will predict a function call from the set of function names provided.
+        &quot;A String&quot;,
+      ],
+      &quot;mode&quot;: &quot;A String&quot;, # Optional. Function calling mode.
+    },
+  },
   &quot;tools&quot;: [ # Optional. A list of `Tools` the model may use to generate the next response. A `Tool` is a piece of code that enables the system to interact with external systems to perform an action, or set of actions, outside of knowledge and scope of the model.
     { # Tool details that the model may use to generate response. A `Tool` is a piece of code that enables the system to interact with external systems to perform an action, or set of actions, outside of knowledge and scope of the model. A Tool object should contain exactly one type of Tool (e.g FunctionDeclaration, Retrieval or GoogleSearchRetrieval).
-      &quot;functionDeclarations&quot;: [ # Optional. Function tool type. One or more function declarations to be passed to the model along with the current user query. Model may decide to call a subset of these functions by populating FunctionCall in the response. User should provide a FunctionResponse for each function call in the next turn. Based on the function responses, Model will generate the final response back to the user. Maximum 64 function declarations can be provided.
-        { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name and parameters. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client.
+      &quot;functionDeclarations&quot;: [ # Optional. Function tool type. One or more function declarations to be passed to the model along with the current user query. Model may decide to call a subset of these functions by populating FunctionCall in the response. User should provide a FunctionResponse for each function call in the next turn. Based on the function responses, Model will generate the final response back to the user. Maximum 128 function declarations can be provided.
+        { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name, description, parameters and response type. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client.
           &quot;description&quot;: &quot;A String&quot;, # Optional. Description and purpose of the function. Model uses it to decide how and whether to call the function.
           &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots and dashes, with a maximum length of 64.
-          &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+          &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+            &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+              # Object with schema name: GoogleCloudAiplatformV1Schema
+            ],
             &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
             &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-            &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+            &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
               &quot;A String&quot;,
             ],
             &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -333,6 +702,43 @@ Args:
             &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
               &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema
             },
+            &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+              &quot;A String&quot;,
+            ],
+            &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
+              &quot;A String&quot;,
+            ],
+            &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
+            &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
+          },
+          &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+            &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+              # Object with schema name: GoogleCloudAiplatformV1Schema
+            ],
+            &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
+            &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
+            &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
+              &quot;A String&quot;,
+            ],
+            &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
+            &quot;format&quot;: &quot;A String&quot;, # Optional. The format of the data. Supported formats: for NUMBER type: &quot;float&quot;, &quot;double&quot; for INTEGER type: &quot;int32&quot;, &quot;int64&quot; for STRING type: &quot;email&quot;, &quot;byte&quot;, etc
+            &quot;items&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema # Optional. SCHEMA FIELDS FOR TYPE ARRAY Schema of the elements of Type.ARRAY.
+            &quot;maxItems&quot;: &quot;A String&quot;, # Optional. Maximum number of the elements for Type.ARRAY.
+            &quot;maxLength&quot;: &quot;A String&quot;, # Optional. Maximum length of the Type.STRING
+            &quot;maxProperties&quot;: &quot;A String&quot;, # Optional. Maximum number of the properties for Type.OBJECT.
+            &quot;maximum&quot;: 3.14, # Optional. Maximum value of the Type.INTEGER and Type.NUMBER
+            &quot;minItems&quot;: &quot;A String&quot;, # Optional. Minimum number of the elements for Type.ARRAY.
+            &quot;minLength&quot;: &quot;A String&quot;, # Optional. SCHEMA FIELDS FOR TYPE STRING Minimum length of the Type.STRING
+            &quot;minProperties&quot;: &quot;A String&quot;, # Optional. Minimum number of the properties for Type.OBJECT.
+            &quot;minimum&quot;: 3.14, # Optional. SCHEMA FIELDS FOR TYPE INTEGER and NUMBER Minimum value of the Type.INTEGER and Type.NUMBER
+            &quot;nullable&quot;: True or False, # Optional. Indicates if the value may be null.
+            &quot;pattern&quot;: &quot;A String&quot;, # Optional. Pattern of the Type.STRING to restrict a string to a regular expression.
+            &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
+              &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema
+            },
+            &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+              &quot;A String&quot;,
+            ],
             &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
               &quot;A String&quot;,
             ],
@@ -341,10 +747,38 @@ Args:
           },
         },
       ],
+      &quot;googleSearch&quot;: { # GoogleSearch tool type. Tool to support Google Search in Model. Powered by Google. # Optional. GoogleSearch tool type. Tool to support Google Search in Model. Powered by Google.
+      },
+      &quot;googleSearchRetrieval&quot;: { # Tool to retrieve public web data for grounding, powered by Google. # Optional. GoogleSearchRetrieval tool type. Specialized retrieval tool that is powered by Google search.
+        &quot;dynamicRetrievalConfig&quot;: { # Describes the options to customize dynamic retrieval. # Specifies the dynamic retrieval configuration for the given source.
+          &quot;dynamicThreshold&quot;: 3.14, # Optional. The threshold to be used in dynamic retrieval. If not set, a system default value is used.
+          &quot;mode&quot;: &quot;A String&quot;, # The mode of the predictor to be used in dynamic retrieval.
+        },
+      },
       &quot;retrieval&quot;: { # Defines a retrieval tool that model can call to access external knowledge. # Optional. Retrieval tool type. System will always execute the provided retrieval tool(s) to get external knowledge to answer the prompt. Retrieval results are presented to the model for generation.
-        &quot;disableAttribution&quot;: True or False, # Optional. Disable using the result from this tool in detecting grounding attribution. This does not affect how the result is given to the model for generation.
-        &quot;vertexAiSearch&quot;: { # Retrieve from Vertex AI Search datastore for grounding. See https://cloud.google.com/vertex-ai-search-and-conversation # Set to use data source powered by Vertex AI Search.
-          &quot;datastore&quot;: &quot;A String&quot;, # Required. Fully-qualified Vertex AI Search&#x27;s datastore resource ID. Format: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{dataStore}`
+        &quot;disableAttribution&quot;: True or False, # Optional. Deprecated. This option is no longer supported.
+        &quot;vertexAiSearch&quot;: { # Retrieve from Vertex AI Search datastore for grounding. See https://cloud.google.com/products/agent-builder # Set to use data source powered by Vertex AI Search.
+          &quot;datastore&quot;: &quot;A String&quot;, # Required. Fully-qualified Vertex AI Search data store resource ID. Format: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{dataStore}`
+        },
+        &quot;vertexRagStore&quot;: { # Retrieve from Vertex RAG Store for grounding. # Set to use data source powered by Vertex RAG store. User data is uploaded via the VertexRagDataService.
+          &quot;ragResources&quot;: [ # Optional. The representation of the rag source. It can be used to specify corpus only or ragfiles. Currently only support one corpus or multiple files from one corpus. In the future we may open up multiple corpora support.
+            { # The definition of the Rag resource.
+              &quot;ragCorpus&quot;: &quot;A String&quot;, # Optional. RagCorpora resource name. Format: `projects/{project}/locations/{location}/ragCorpora/{rag_corpus}`
+              &quot;ragFileIds&quot;: [ # Optional. rag_file_id. The files should be in the same rag_corpus set in rag_corpus field.
+                &quot;A String&quot;,
+              ],
+            },
+          ],
+          &quot;ragRetrievalConfig&quot;: { # Specifies the context retrieval config. # Optional. The retrieval config for the Rag query.
+            &quot;filter&quot;: { # Config for filters. # Optional. Config for filters.
+              &quot;metadataFilter&quot;: &quot;A String&quot;, # Optional. String for metadata filtering.
+              &quot;vectorDistanceThreshold&quot;: 3.14, # Optional. Only returns contexts with vector distance smaller than the threshold.
+              &quot;vectorSimilarityThreshold&quot;: 3.14, # Optional. Only returns contexts with vector similarity larger than the threshold.
+            },
+            &quot;topK&quot;: 42, # Optional. The number of contexts to retrieve.
+          },
+          &quot;similarityTopK&quot;: 42, # Optional. Number of top k results to return from the selected corpora.
+          &quot;vectorDistanceThreshold&quot;: 3.14, # Optional. Only return results with vector distance smaller than the threshold.
         },
       },
     },
@@ -362,6 +796,7 @@ Returns:
     { # Response message for [PredictionService.GenerateContent].
   &quot;candidates&quot;: [ # Output only. Generated candidates.
     { # A response candidate generated from the model.
+      &quot;avgLogprobs&quot;: 3.14, # Output only. Average log probability score of the candidate.
       &quot;citationMetadata&quot;: { # A collection of source attributions for a piece of content. # Output only. Source attribution of the generated content.
         &quot;citations&quot;: [ # Output only. List of citations.
           { # Source attributions for content.
@@ -393,11 +828,11 @@ Returns:
             },
             &quot;functionResponse&quot;: { # The result output from a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function is used as context to the model. This should contain the result of a [FunctionCall] made based on model prediction. # Optional. The result output of a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function call. It is used as context to the model.
               &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name].
-              &quot;response&quot;: { # Required. The function response in JSON object format.
+              &quot;response&quot;: { # Required. The function response in JSON object format. Use &quot;output&quot; key to specify function output and &quot;error&quot; key to specify error details (if any). If &quot;output&quot; and &quot;error&quot; keys are not specified, then whole &quot;response&quot; is treated as function output.
                 &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
               },
             },
-            &quot;inlineData&quot;: { # Content blob. It&#x27;s preferred to send as text directly rather than raw bytes. # Optional. Inlined bytes data.
+            &quot;inlineData&quot;: { # Content blob. # Optional. Inlined bytes data.
               &quot;data&quot;: &quot;A String&quot;, # Required. Raw bytes.
               &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
             },
@@ -413,6 +848,38 @@ Returns:
       &quot;finishMessage&quot;: &quot;A String&quot;, # Output only. Describes the reason the mode stopped generating tokens in more detail. This is only filled when `finish_reason` is set.
       &quot;finishReason&quot;: &quot;A String&quot;, # Output only. The reason why the model stopped generating tokens. If empty, the model has not stopped generating the tokens.
       &quot;groundingMetadata&quot;: { # Metadata returned to client when grounding is enabled. # Output only. Metadata specifies sources used to ground generated content.
+        &quot;groundingChunks&quot;: [ # List of supporting references retrieved from specified grounding source.
+          { # Grounding chunk.
+            &quot;retrievedContext&quot;: { # Chunk from context retrieved by the retrieval tools. # Grounding chunk from context retrieved by the retrieval tools.
+              &quot;text&quot;: &quot;A String&quot;, # Text of the attribution.
+              &quot;title&quot;: &quot;A String&quot;, # Title of the attribution.
+              &quot;uri&quot;: &quot;A String&quot;, # URI reference of the attribution.
+            },
+            &quot;web&quot;: { # Chunk from the web. # Grounding chunk from the web.
+              &quot;title&quot;: &quot;A String&quot;, # Title of the chunk.
+              &quot;uri&quot;: &quot;A String&quot;, # URI reference of the chunk.
+            },
+          },
+        ],
+        &quot;groundingSupports&quot;: [ # Optional. List of grounding support.
+          { # Grounding support.
+            &quot;confidenceScores&quot;: [ # Confidence score of the support references. Ranges from 0 to 1. 1 is the most confident. This list must have the same size as the grounding_chunk_indices.
+              3.14,
+            ],
+            &quot;groundingChunkIndices&quot;: [ # A list of indices (into &#x27;grounding_chunk&#x27;) specifying the citations associated with the claim. For instance [1,3,4] means that grounding_chunk[1], grounding_chunk[3], grounding_chunk[4] are the retrieved content attributed to the claim.
+              42,
+            ],
+            &quot;segment&quot;: { # Segment of the content. # Segment of the content this support belongs to.
+              &quot;endIndex&quot;: 42, # Output only. End index in the given Part, measured in bytes. Offset from the start of the Part, exclusive, starting at zero.
+              &quot;partIndex&quot;: 42, # Output only. The index of a Part object within its parent Content object.
+              &quot;startIndex&quot;: 42, # Output only. Start index in the given Part, measured in bytes. Offset from the start of the Part, inclusive, starting at zero.
+              &quot;text&quot;: &quot;A String&quot;, # Output only. The text corresponding to the segment from the response.
+            },
+          },
+        ],
+        &quot;retrievalMetadata&quot;: { # Metadata related to retrieval in the grounding flow. # Optional. Output only. Retrieval metadata.
+          &quot;googleSearchDynamicRetrievalScore&quot;: 3.14, # Optional. Score indicating how likely information from Google Search could help answer the prompt. The score is in the range `[0, 1]`, where 0 is the least likely and 1 is the most likely. This score is only populated when Google Search grounding and dynamic retrieval is enabled. It will be compared to the threshold to determine whether to trigger Google Search.
+        },
         &quot;searchEntryPoint&quot;: { # Google search entry point. # Optional. Google search entry for the following-up web searches.
           &quot;renderedContent&quot;: &quot;A String&quot;, # Optional. Web content snippet that can be embedded in a web page or an app webview.
           &quot;sdkBlob&quot;: &quot;A String&quot;, # Optional. Base64 encoded JSON representing array of tuple.
@@ -422,6 +889,26 @@ Returns:
         ],
       },
       &quot;index&quot;: 42, # Output only. Index of the candidate.
+      &quot;logprobsResult&quot;: { # Logprobs Result # Output only. Log-likelihood scores for the response tokens and top tokens
+        &quot;chosenCandidates&quot;: [ # Length = total number of decoding steps. The chosen candidates may or may not be in top_candidates.
+          { # Candidate for the logprobs token and score.
+            &quot;logProbability&quot;: 3.14, # The candidate&#x27;s log probability.
+            &quot;token&quot;: &quot;A String&quot;, # The candidate&#x27;s token string value.
+            &quot;tokenId&quot;: 42, # The candidate&#x27;s token id value.
+          },
+        ],
+        &quot;topCandidates&quot;: [ # Length = total number of decoding steps.
+          { # Candidates with top log probabilities at each decoding step.
+            &quot;candidates&quot;: [ # Sorted by log probability in descending order.
+              { # Candidate for the logprobs token and score.
+                &quot;logProbability&quot;: 3.14, # The candidate&#x27;s log probability.
+                &quot;token&quot;: &quot;A String&quot;, # The candidate&#x27;s token string value.
+                &quot;tokenId&quot;: 42, # The candidate&#x27;s token id value.
+              },
+            ],
+          },
+        ],
+      },
       &quot;safetyRatings&quot;: [ # Output only. List of ratings for the safety of a response candidate. There is at most one rating per category.
         { # Safety rating corresponding to the generated content.
           &quot;blocked&quot;: True or False, # Output only. Indicates whether the content was filtered out because of this rating.
@@ -434,6 +921,7 @@ Returns:
       ],
     },
   ],
+  &quot;modelVersion&quot;: &quot;A String&quot;, # Output only. The model version used to generate the response.
   &quot;promptFeedback&quot;: { # Content filter results for a prompt sent in the request. # Output only. Content filter results for a prompt sent in the request. Note: Sent only in the first stream chunk. Only happens when no candidates were generated due to content violations.
     &quot;blockReason&quot;: &quot;A String&quot;, # Output only. Blocked reason.
     &quot;blockReasonMessage&quot;: &quot;A String&quot;, # Output only. A readable block reason message.
@@ -449,9 +937,10 @@ Returns:
     ],
   },
   &quot;usageMetadata&quot;: { # Usage metadata about response(s). # Usage metadata about the response(s).
+    &quot;cachedContentTokenCount&quot;: 42, # Output only. Number of tokens in the cached part in the input (the cached content).
     &quot;candidatesTokenCount&quot;: 42, # Number of tokens in the response(s).
-    &quot;promptTokenCount&quot;: 42, # Number of tokens in the request.
-    &quot;totalTokenCount&quot;: 42,
+    &quot;promptTokenCount&quot;: 42, # Number of tokens in the request. When `cached_content` is set, this is still the total effective prompt size meaning this includes the number of tokens in the cached content.
+    &quot;totalTokenCount&quot;: 42, # Total token count for prompt and response candidates.
   },
 }</pre>
 </div>
@@ -489,6 +978,51 @@ Returns:
   &quot;predictions&quot;: [ # The predictions that are the output of the predictions call. The schema of any single prediction may be specified via Endpoint&#x27;s DeployedModels&#x27; Model&#x27;s PredictSchemata&#x27;s prediction_schema_uri.
     &quot;&quot;,
   ],
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="predictLongRunning">predictLongRunning(endpoint, body=None, x__xgafv=None)</code>
+  <pre>
+
+Args:
+  endpoint: string, Required. The name of the Endpoint requested to serve the prediction. Format: `projects/{project}/locations/{location}/endpoints/{endpoint}` or `projects/{project}/locations/{location}/publishers/{publisher}/models/{model}` (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # Request message for PredictionService.PredictLongRunning.
+  &quot;instances&quot;: [ # Required. The instances that are the input to the prediction call. A DeployedModel may have an upper limit on the number of instances it supports per request, and when it is exceeded the prediction call errors in case of AutoML Models, or, in case of customer created Models, the behaviour is as documented by that Model. The schema of any single instance may be specified via Endpoint&#x27;s DeployedModels&#x27; Model&#x27;s PredictSchemata&#x27;s instance_schema_uri.
+    &quot;&quot;,
+  ],
+  &quot;parameters&quot;: &quot;&quot;, # Optional. The parameters that govern the prediction. The schema of the parameters may be specified via Endpoint&#x27;s DeployedModels&#x27; Model&#x27;s PredictSchemata&#x27;s parameters_schema_uri.
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # This resource represents a long-running operation that is the result of a network API call.
+  &quot;done&quot;: True or False, # If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.
+  &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The error result of the operation in case of failure or cancellation.
+    &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+    &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+      {
+        &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+      },
+    ],
+    &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;metadata&quot;: { # Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+  &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
 }</pre>
 </div>
 
@@ -725,11 +1259,12 @@ Returns:
   <pre>Generate content with multimodal inputs with streaming support.
 
 Args:
-  model: string, Required. The name of the publisher model requested to serve the prediction. Format: `projects/{project}/locations/{location}/publishers/*/models/*` (required)
+  model: string, Required. The fully qualified name of the publisher model or tuned model endpoint to use. Publisher model format: `projects/{project}/locations/{location}/publishers/*/models/*` Tuned model endpoint format: `projects/{project}/locations/{location}/endpoints/{endpoint}` (required)
   body: object, The request body.
     The object takes the form of:
 
 { # Request message for [PredictionService.GenerateContent].
+  &quot;cachedContent&quot;: &quot;A String&quot;, # Optional. The name of the cached content used as context to serve the prediction. Note: only used in explicit caching, where users can have control over caching (e.g. what content to cache) and enjoy guaranteed cost savings. Format: `projects/{project}/locations/{location}/cachedContents/{cachedContent}`
   &quot;contents&quot;: [ # Required. The content of the current conversation with the model. For single-turn queries, this is a single instance. For multi-turn queries, this is a repeated field that contains conversation history + latest request.
     { # The base structured datatype containing multi-part content of a message. A `Content` includes a `role` field designating the producer of the `Content` and a `parts` field containing multi-part data that contains the content of the message turn.
       &quot;parts&quot;: [ # Required. Ordered `Parts` that constitute a single message. Parts may have different IANA MIME types.
@@ -746,11 +1281,11 @@ Args:
           },
           &quot;functionResponse&quot;: { # The result output from a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function is used as context to the model. This should contain the result of a [FunctionCall] made based on model prediction. # Optional. The result output of a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function call. It is used as context to the model.
             &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name].
-            &quot;response&quot;: { # Required. The function response in JSON object format.
+            &quot;response&quot;: { # Required. The function response in JSON object format. Use &quot;output&quot; key to specify function output and &quot;error&quot; key to specify error details (if any). If &quot;output&quot; and &quot;error&quot; keys are not specified, then whole &quot;response&quot; is treated as function output.
               &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
             },
           },
-          &quot;inlineData&quot;: { # Content blob. It&#x27;s preferred to send as text directly rather than raw bytes. # Optional. Inlined bytes data.
+          &quot;inlineData&quot;: { # Content blob. # Optional. Inlined bytes data.
             &quot;data&quot;: &quot;A String&quot;, # Required. Raw bytes.
             &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
           },
@@ -765,18 +1300,77 @@ Args:
     },
   ],
   &quot;generationConfig&quot;: { # Generation config. # Optional. Generation config.
+    &quot;audioTimestamp&quot;: True or False, # Optional. If enabled, audio timestamp will be included in the request to the model.
     &quot;candidateCount&quot;: 42, # Optional. Number of candidates to generate.
     &quot;frequencyPenalty&quot;: 3.14, # Optional. Frequency penalties.
+    &quot;logprobs&quot;: 42, # Optional. Logit probabilities.
     &quot;maxOutputTokens&quot;: 42, # Optional. The maximum number of output tokens to generate per message.
+    &quot;mediaResolution&quot;: &quot;A String&quot;, # Optional. If specified, the media resolution specified will be used.
     &quot;presencePenalty&quot;: 3.14, # Optional. Positive penalties.
+    &quot;responseLogprobs&quot;: True or False, # Optional. If true, export the logprobs results in response.
     &quot;responseMimeType&quot;: &quot;A String&quot;, # Optional. Output response mimetype of the generated candidate text. Supported mimetype: - `text/plain`: (default) Text output. - `application/json`: JSON response in the candidates. The model needs to be prompted to output the appropriate response type, otherwise the behavior is undefined. This is a preview feature.
-    &quot;responseStyle&quot;: &quot;A String&quot;, # Optional. Control Three levels of creativity in the model output. Default: RESPONSE_STYLE_BALANCED
+    &quot;responseModalities&quot;: [ # Optional. The modalities of the response.
+      &quot;A String&quot;,
+    ],
+    &quot;responseSchema&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. The `Schema` object allows the definition of input and output data types. These types can be objects, but also primitives and arrays. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). If set, a compatible response_mime_type must also be set. Compatible mimetypes: `application/json`: Schema for JSON response.
+      &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+        # Object with schema name: GoogleCloudAiplatformV1Schema
+      ],
+      &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
+      &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
+      &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
+        &quot;A String&quot;,
+      ],
+      &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
+      &quot;format&quot;: &quot;A String&quot;, # Optional. The format of the data. Supported formats: for NUMBER type: &quot;float&quot;, &quot;double&quot; for INTEGER type: &quot;int32&quot;, &quot;int64&quot; for STRING type: &quot;email&quot;, &quot;byte&quot;, etc
+      &quot;items&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema # Optional. SCHEMA FIELDS FOR TYPE ARRAY Schema of the elements of Type.ARRAY.
+      &quot;maxItems&quot;: &quot;A String&quot;, # Optional. Maximum number of the elements for Type.ARRAY.
+      &quot;maxLength&quot;: &quot;A String&quot;, # Optional. Maximum length of the Type.STRING
+      &quot;maxProperties&quot;: &quot;A String&quot;, # Optional. Maximum number of the properties for Type.OBJECT.
+      &quot;maximum&quot;: 3.14, # Optional. Maximum value of the Type.INTEGER and Type.NUMBER
+      &quot;minItems&quot;: &quot;A String&quot;, # Optional. Minimum number of the elements for Type.ARRAY.
+      &quot;minLength&quot;: &quot;A String&quot;, # Optional. SCHEMA FIELDS FOR TYPE STRING Minimum length of the Type.STRING
+      &quot;minProperties&quot;: &quot;A String&quot;, # Optional. Minimum number of the properties for Type.OBJECT.
+      &quot;minimum&quot;: 3.14, # Optional. SCHEMA FIELDS FOR TYPE INTEGER and NUMBER Minimum value of the Type.INTEGER and Type.NUMBER
+      &quot;nullable&quot;: True or False, # Optional. Indicates if the value may be null.
+      &quot;pattern&quot;: &quot;A String&quot;, # Optional. Pattern of the Type.STRING to restrict a string to a regular expression.
+      &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
+        &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema
+      },
+      &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+        &quot;A String&quot;,
+      ],
+      &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
+        &quot;A String&quot;,
+      ],
+      &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
+    },
+    &quot;routingConfig&quot;: { # The configuration for routing the request to a specific model. # Optional. Routing configuration.
+      &quot;autoMode&quot;: { # When automated routing is specified, the routing will be determined by the pretrained routing model and customer provided model routing preference. # Automated routing.
+        &quot;modelRoutingPreference&quot;: &quot;A String&quot;, # The model routing preference.
+      },
+      &quot;manualMode&quot;: { # When manual routing is set, the specified model will be used directly. # Manual routing.
+        &quot;modelName&quot;: &quot;A String&quot;, # The model name to use. Only the public LLM models are accepted. e.g. &#x27;gemini-1.5-pro-001&#x27;.
+      },
+    },
+    &quot;seed&quot;: 42, # Optional. Seed.
+    &quot;speechConfig&quot;: { # The speech generation config. # Optional. The speech generation config.
+      &quot;voiceConfig&quot;: { # The configuration for the voice to use. # The configuration for the speaker to use.
+        &quot;prebuiltVoiceConfig&quot;: { # The configuration for the prebuilt speaker to use. # The configuration for the prebuilt voice to use.
+          &quot;voiceName&quot;: &quot;A String&quot;, # The name of the preset voice to use.
+        },
+      },
+    },
     &quot;stopSequences&quot;: [ # Optional. Stop sequences.
       &quot;A String&quot;,
     ],
     &quot;temperature&quot;: 3.14, # Optional. Controls the randomness of predictions.
     &quot;topK&quot;: 3.14, # Optional. If specified, top-k sampling will be used.
     &quot;topP&quot;: 3.14, # Optional. If specified, nucleus sampling will be used.
+  },
+  &quot;labels&quot;: { # Optional. The labels with user-defined metadata for the request. It is used for billing and reporting only. Label keys and values can be no longer than 63 characters (Unicode codepoints) and can only contain lowercase letters, numeric characters, underscores, and dashes. International characters are allowed. Label values are optional. Label keys must start with a letter.
+    &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;safetySettings&quot;: [ # Optional. Per request settings for blocking unsafe content. Enforced on GenerateContentResponse.candidates.
     { # Safety settings.
@@ -800,11 +1394,11 @@ Args:
         },
         &quot;functionResponse&quot;: { # The result output from a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function is used as context to the model. This should contain the result of a [FunctionCall] made based on model prediction. # Optional. The result output of a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function call. It is used as context to the model.
           &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name].
-          &quot;response&quot;: { # Required. The function response in JSON object format.
+          &quot;response&quot;: { # Required. The function response in JSON object format. Use &quot;output&quot; key to specify function output and &quot;error&quot; key to specify error details (if any). If &quot;output&quot; and &quot;error&quot; keys are not specified, then whole &quot;response&quot; is treated as function output.
             &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
           },
         },
-        &quot;inlineData&quot;: { # Content blob. It&#x27;s preferred to send as text directly rather than raw bytes. # Optional. Inlined bytes data.
+        &quot;inlineData&quot;: { # Content blob. # Optional. Inlined bytes data.
           &quot;data&quot;: &quot;A String&quot;, # Required. Raw bytes.
           &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
         },
@@ -817,16 +1411,27 @@ Args:
     ],
     &quot;role&quot;: &quot;A String&quot;, # Optional. The producer of the content. Must be either &#x27;user&#x27; or &#x27;model&#x27;. Useful to set for multi-turn conversations, otherwise can be left blank or unset.
   },
+  &quot;toolConfig&quot;: { # Tool config. This config is shared for all tools provided in the request. # Optional. Tool config. This config is shared for all tools provided in the request.
+    &quot;functionCallingConfig&quot;: { # Function calling config. # Optional. Function calling config.
+      &quot;allowedFunctionNames&quot;: [ # Optional. Function names to call. Only set when the Mode is ANY. Function names should match [FunctionDeclaration.name]. With mode set to ANY, model will predict a function call from the set of function names provided.
+        &quot;A String&quot;,
+      ],
+      &quot;mode&quot;: &quot;A String&quot;, # Optional. Function calling mode.
+    },
+  },
   &quot;tools&quot;: [ # Optional. A list of `Tools` the model may use to generate the next response. A `Tool` is a piece of code that enables the system to interact with external systems to perform an action, or set of actions, outside of knowledge and scope of the model.
     { # Tool details that the model may use to generate response. A `Tool` is a piece of code that enables the system to interact with external systems to perform an action, or set of actions, outside of knowledge and scope of the model. A Tool object should contain exactly one type of Tool (e.g FunctionDeclaration, Retrieval or GoogleSearchRetrieval).
-      &quot;functionDeclarations&quot;: [ # Optional. Function tool type. One or more function declarations to be passed to the model along with the current user query. Model may decide to call a subset of these functions by populating FunctionCall in the response. User should provide a FunctionResponse for each function call in the next turn. Based on the function responses, Model will generate the final response back to the user. Maximum 64 function declarations can be provided.
-        { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name and parameters. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client.
+      &quot;functionDeclarations&quot;: [ # Optional. Function tool type. One or more function declarations to be passed to the model along with the current user query. Model may decide to call a subset of these functions by populating FunctionCall in the response. User should provide a FunctionResponse for each function call in the next turn. Based on the function responses, Model will generate the final response back to the user. Maximum 128 function declarations can be provided.
+        { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name, description, parameters and response type. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client.
           &quot;description&quot;: &quot;A String&quot;, # Optional. Description and purpose of the function. Model uses it to decide how and whether to call the function.
           &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots and dashes, with a maximum length of 64.
-          &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+          &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+            &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+              # Object with schema name: GoogleCloudAiplatformV1Schema
+            ],
             &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
             &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-            &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+            &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
               &quot;A String&quot;,
             ],
             &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -845,6 +1450,43 @@ Args:
             &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
               &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema
             },
+            &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+              &quot;A String&quot;,
+            ],
+            &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
+              &quot;A String&quot;,
+            ],
+            &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
+            &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
+          },
+          &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+            &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+              # Object with schema name: GoogleCloudAiplatformV1Schema
+            ],
+            &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
+            &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
+            &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
+              &quot;A String&quot;,
+            ],
+            &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
+            &quot;format&quot;: &quot;A String&quot;, # Optional. The format of the data. Supported formats: for NUMBER type: &quot;float&quot;, &quot;double&quot; for INTEGER type: &quot;int32&quot;, &quot;int64&quot; for STRING type: &quot;email&quot;, &quot;byte&quot;, etc
+            &quot;items&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema # Optional. SCHEMA FIELDS FOR TYPE ARRAY Schema of the elements of Type.ARRAY.
+            &quot;maxItems&quot;: &quot;A String&quot;, # Optional. Maximum number of the elements for Type.ARRAY.
+            &quot;maxLength&quot;: &quot;A String&quot;, # Optional. Maximum length of the Type.STRING
+            &quot;maxProperties&quot;: &quot;A String&quot;, # Optional. Maximum number of the properties for Type.OBJECT.
+            &quot;maximum&quot;: 3.14, # Optional. Maximum value of the Type.INTEGER and Type.NUMBER
+            &quot;minItems&quot;: &quot;A String&quot;, # Optional. Minimum number of the elements for Type.ARRAY.
+            &quot;minLength&quot;: &quot;A String&quot;, # Optional. SCHEMA FIELDS FOR TYPE STRING Minimum length of the Type.STRING
+            &quot;minProperties&quot;: &quot;A String&quot;, # Optional. Minimum number of the properties for Type.OBJECT.
+            &quot;minimum&quot;: 3.14, # Optional. SCHEMA FIELDS FOR TYPE INTEGER and NUMBER Minimum value of the Type.INTEGER and Type.NUMBER
+            &quot;nullable&quot;: True or False, # Optional. Indicates if the value may be null.
+            &quot;pattern&quot;: &quot;A String&quot;, # Optional. Pattern of the Type.STRING to restrict a string to a regular expression.
+            &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
+              &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1Schema
+            },
+            &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+              &quot;A String&quot;,
+            ],
             &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
               &quot;A String&quot;,
             ],
@@ -853,10 +1495,38 @@ Args:
           },
         },
       ],
+      &quot;googleSearch&quot;: { # GoogleSearch tool type. Tool to support Google Search in Model. Powered by Google. # Optional. GoogleSearch tool type. Tool to support Google Search in Model. Powered by Google.
+      },
+      &quot;googleSearchRetrieval&quot;: { # Tool to retrieve public web data for grounding, powered by Google. # Optional. GoogleSearchRetrieval tool type. Specialized retrieval tool that is powered by Google search.
+        &quot;dynamicRetrievalConfig&quot;: { # Describes the options to customize dynamic retrieval. # Specifies the dynamic retrieval configuration for the given source.
+          &quot;dynamicThreshold&quot;: 3.14, # Optional. The threshold to be used in dynamic retrieval. If not set, a system default value is used.
+          &quot;mode&quot;: &quot;A String&quot;, # The mode of the predictor to be used in dynamic retrieval.
+        },
+      },
       &quot;retrieval&quot;: { # Defines a retrieval tool that model can call to access external knowledge. # Optional. Retrieval tool type. System will always execute the provided retrieval tool(s) to get external knowledge to answer the prompt. Retrieval results are presented to the model for generation.
-        &quot;disableAttribution&quot;: True or False, # Optional. Disable using the result from this tool in detecting grounding attribution. This does not affect how the result is given to the model for generation.
-        &quot;vertexAiSearch&quot;: { # Retrieve from Vertex AI Search datastore for grounding. See https://cloud.google.com/vertex-ai-search-and-conversation # Set to use data source powered by Vertex AI Search.
-          &quot;datastore&quot;: &quot;A String&quot;, # Required. Fully-qualified Vertex AI Search&#x27;s datastore resource ID. Format: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{dataStore}`
+        &quot;disableAttribution&quot;: True or False, # Optional. Deprecated. This option is no longer supported.
+        &quot;vertexAiSearch&quot;: { # Retrieve from Vertex AI Search datastore for grounding. See https://cloud.google.com/products/agent-builder # Set to use data source powered by Vertex AI Search.
+          &quot;datastore&quot;: &quot;A String&quot;, # Required. Fully-qualified Vertex AI Search data store resource ID. Format: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{dataStore}`
+        },
+        &quot;vertexRagStore&quot;: { # Retrieve from Vertex RAG Store for grounding. # Set to use data source powered by Vertex RAG store. User data is uploaded via the VertexRagDataService.
+          &quot;ragResources&quot;: [ # Optional. The representation of the rag source. It can be used to specify corpus only or ragfiles. Currently only support one corpus or multiple files from one corpus. In the future we may open up multiple corpora support.
+            { # The definition of the Rag resource.
+              &quot;ragCorpus&quot;: &quot;A String&quot;, # Optional. RagCorpora resource name. Format: `projects/{project}/locations/{location}/ragCorpora/{rag_corpus}`
+              &quot;ragFileIds&quot;: [ # Optional. rag_file_id. The files should be in the same rag_corpus set in rag_corpus field.
+                &quot;A String&quot;,
+              ],
+            },
+          ],
+          &quot;ragRetrievalConfig&quot;: { # Specifies the context retrieval config. # Optional. The retrieval config for the Rag query.
+            &quot;filter&quot;: { # Config for filters. # Optional. Config for filters.
+              &quot;metadataFilter&quot;: &quot;A String&quot;, # Optional. String for metadata filtering.
+              &quot;vectorDistanceThreshold&quot;: 3.14, # Optional. Only returns contexts with vector distance smaller than the threshold.
+              &quot;vectorSimilarityThreshold&quot;: 3.14, # Optional. Only returns contexts with vector similarity larger than the threshold.
+            },
+            &quot;topK&quot;: 42, # Optional. The number of contexts to retrieve.
+          },
+          &quot;similarityTopK&quot;: 42, # Optional. Number of top k results to return from the selected corpora.
+          &quot;vectorDistanceThreshold&quot;: 3.14, # Optional. Only return results with vector distance smaller than the threshold.
         },
       },
     },
@@ -874,6 +1544,7 @@ Returns:
     { # Response message for [PredictionService.GenerateContent].
   &quot;candidates&quot;: [ # Output only. Generated candidates.
     { # A response candidate generated from the model.
+      &quot;avgLogprobs&quot;: 3.14, # Output only. Average log probability score of the candidate.
       &quot;citationMetadata&quot;: { # A collection of source attributions for a piece of content. # Output only. Source attribution of the generated content.
         &quot;citations&quot;: [ # Output only. List of citations.
           { # Source attributions for content.
@@ -905,11 +1576,11 @@ Returns:
             },
             &quot;functionResponse&quot;: { # The result output from a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function is used as context to the model. This should contain the result of a [FunctionCall] made based on model prediction. # Optional. The result output of a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function call. It is used as context to the model.
               &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name].
-              &quot;response&quot;: { # Required. The function response in JSON object format.
+              &quot;response&quot;: { # Required. The function response in JSON object format. Use &quot;output&quot; key to specify function output and &quot;error&quot; key to specify error details (if any). If &quot;output&quot; and &quot;error&quot; keys are not specified, then whole &quot;response&quot; is treated as function output.
                 &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
               },
             },
-            &quot;inlineData&quot;: { # Content blob. It&#x27;s preferred to send as text directly rather than raw bytes. # Optional. Inlined bytes data.
+            &quot;inlineData&quot;: { # Content blob. # Optional. Inlined bytes data.
               &quot;data&quot;: &quot;A String&quot;, # Required. Raw bytes.
               &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
             },
@@ -925,6 +1596,38 @@ Returns:
       &quot;finishMessage&quot;: &quot;A String&quot;, # Output only. Describes the reason the mode stopped generating tokens in more detail. This is only filled when `finish_reason` is set.
       &quot;finishReason&quot;: &quot;A String&quot;, # Output only. The reason why the model stopped generating tokens. If empty, the model has not stopped generating the tokens.
       &quot;groundingMetadata&quot;: { # Metadata returned to client when grounding is enabled. # Output only. Metadata specifies sources used to ground generated content.
+        &quot;groundingChunks&quot;: [ # List of supporting references retrieved from specified grounding source.
+          { # Grounding chunk.
+            &quot;retrievedContext&quot;: { # Chunk from context retrieved by the retrieval tools. # Grounding chunk from context retrieved by the retrieval tools.
+              &quot;text&quot;: &quot;A String&quot;, # Text of the attribution.
+              &quot;title&quot;: &quot;A String&quot;, # Title of the attribution.
+              &quot;uri&quot;: &quot;A String&quot;, # URI reference of the attribution.
+            },
+            &quot;web&quot;: { # Chunk from the web. # Grounding chunk from the web.
+              &quot;title&quot;: &quot;A String&quot;, # Title of the chunk.
+              &quot;uri&quot;: &quot;A String&quot;, # URI reference of the chunk.
+            },
+          },
+        ],
+        &quot;groundingSupports&quot;: [ # Optional. List of grounding support.
+          { # Grounding support.
+            &quot;confidenceScores&quot;: [ # Confidence score of the support references. Ranges from 0 to 1. 1 is the most confident. This list must have the same size as the grounding_chunk_indices.
+              3.14,
+            ],
+            &quot;groundingChunkIndices&quot;: [ # A list of indices (into &#x27;grounding_chunk&#x27;) specifying the citations associated with the claim. For instance [1,3,4] means that grounding_chunk[1], grounding_chunk[3], grounding_chunk[4] are the retrieved content attributed to the claim.
+              42,
+            ],
+            &quot;segment&quot;: { # Segment of the content. # Segment of the content this support belongs to.
+              &quot;endIndex&quot;: 42, # Output only. End index in the given Part, measured in bytes. Offset from the start of the Part, exclusive, starting at zero.
+              &quot;partIndex&quot;: 42, # Output only. The index of a Part object within its parent Content object.
+              &quot;startIndex&quot;: 42, # Output only. Start index in the given Part, measured in bytes. Offset from the start of the Part, inclusive, starting at zero.
+              &quot;text&quot;: &quot;A String&quot;, # Output only. The text corresponding to the segment from the response.
+            },
+          },
+        ],
+        &quot;retrievalMetadata&quot;: { # Metadata related to retrieval in the grounding flow. # Optional. Output only. Retrieval metadata.
+          &quot;googleSearchDynamicRetrievalScore&quot;: 3.14, # Optional. Score indicating how likely information from Google Search could help answer the prompt. The score is in the range `[0, 1]`, where 0 is the least likely and 1 is the most likely. This score is only populated when Google Search grounding and dynamic retrieval is enabled. It will be compared to the threshold to determine whether to trigger Google Search.
+        },
         &quot;searchEntryPoint&quot;: { # Google search entry point. # Optional. Google search entry for the following-up web searches.
           &quot;renderedContent&quot;: &quot;A String&quot;, # Optional. Web content snippet that can be embedded in a web page or an app webview.
           &quot;sdkBlob&quot;: &quot;A String&quot;, # Optional. Base64 encoded JSON representing array of tuple.
@@ -934,6 +1637,26 @@ Returns:
         ],
       },
       &quot;index&quot;: 42, # Output only. Index of the candidate.
+      &quot;logprobsResult&quot;: { # Logprobs Result # Output only. Log-likelihood scores for the response tokens and top tokens
+        &quot;chosenCandidates&quot;: [ # Length = total number of decoding steps. The chosen candidates may or may not be in top_candidates.
+          { # Candidate for the logprobs token and score.
+            &quot;logProbability&quot;: 3.14, # The candidate&#x27;s log probability.
+            &quot;token&quot;: &quot;A String&quot;, # The candidate&#x27;s token string value.
+            &quot;tokenId&quot;: 42, # The candidate&#x27;s token id value.
+          },
+        ],
+        &quot;topCandidates&quot;: [ # Length = total number of decoding steps.
+          { # Candidates with top log probabilities at each decoding step.
+            &quot;candidates&quot;: [ # Sorted by log probability in descending order.
+              { # Candidate for the logprobs token and score.
+                &quot;logProbability&quot;: 3.14, # The candidate&#x27;s log probability.
+                &quot;token&quot;: &quot;A String&quot;, # The candidate&#x27;s token string value.
+                &quot;tokenId&quot;: 42, # The candidate&#x27;s token id value.
+              },
+            ],
+          },
+        ],
+      },
       &quot;safetyRatings&quot;: [ # Output only. List of ratings for the safety of a response candidate. There is at most one rating per category.
         { # Safety rating corresponding to the generated content.
           &quot;blocked&quot;: True or False, # Output only. Indicates whether the content was filtered out because of this rating.
@@ -946,6 +1669,7 @@ Returns:
       ],
     },
   ],
+  &quot;modelVersion&quot;: &quot;A String&quot;, # Output only. The model version used to generate the response.
   &quot;promptFeedback&quot;: { # Content filter results for a prompt sent in the request. # Output only. Content filter results for a prompt sent in the request. Note: Sent only in the first stream chunk. Only happens when no candidates were generated due to content violations.
     &quot;blockReason&quot;: &quot;A String&quot;, # Output only. Blocked reason.
     &quot;blockReasonMessage&quot;: &quot;A String&quot;, # Output only. A readable block reason message.
@@ -961,9 +1685,10 @@ Returns:
     ],
   },
   &quot;usageMetadata&quot;: { # Usage metadata about response(s). # Usage metadata about the response(s).
+    &quot;cachedContentTokenCount&quot;: 42, # Output only. Number of tokens in the cached part in the input (the cached content).
     &quot;candidatesTokenCount&quot;: 42, # Number of tokens in the response(s).
-    &quot;promptTokenCount&quot;: 42, # Number of tokens in the request.
-    &quot;totalTokenCount&quot;: 42,
+    &quot;promptTokenCount&quot;: 42, # Number of tokens in the request. When `cached_content` is set, this is still the total effective prompt size meaning this includes the number of tokens in the cached content.
+    &quot;totalTokenCount&quot;: 42, # Total token count for prompt and response candidates.
   },
 }</pre>
 </div>

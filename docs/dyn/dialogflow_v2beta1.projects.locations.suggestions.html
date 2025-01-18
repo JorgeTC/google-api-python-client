@@ -108,6 +108,7 @@ Args:
     &quot;displayName&quot;: &quot;A String&quot;, # Required. Human readable name for this profile. Max length 1024 bytes.
     &quot;humanAgentAssistantConfig&quot;: { # Defines the Human Agent Assistant to connect to a conversation. # Configuration for agent assistance to use with this profile.
       &quot;endUserSuggestionConfig&quot;: { # Detail human agent assistant config. # Configuration for agent assistance of end user participant. Currently, this feature is not general available, please contact Google to get access.
+        &quot;disableHighLatencyFeaturesSyncDelivery&quot;: True or False, # Optional. When disable_high_latency_features_sync_delivery is true and using the AnalyzeContent API, we will not deliver the responses from high latency features in the API response. The human_agent_assistant_config.notification_config must be configured and enable_event_based_suggestion must be set to true to receive the responses from high latency features in Pub/Sub. High latency feature(s): KNOWLEDGE_ASSIST
         &quot;featureConfigs&quot;: [ # Configuration of different suggestion features. One feature can have only one config.
           { # Config for suggestion features.
             &quot;conversationModelConfig&quot;: { # Custom conversation models used in agent assist feature. Supported feature: ARTICLE_SUGGESTION, SMART_COMPOSE, SMART_REPLY, CONVERSATION_SUMMARIZATION. # Configs of custom conversation model.
@@ -120,6 +121,8 @@ Args:
             &quot;disableAgentQueryLogging&quot;: True or False, # Optional. Disable the logging of search queries sent by human agents. It can prevent those queries from being stored at answer records. Supported features: KNOWLEDGE_SEARCH.
             &quot;enableConversationAugmentedQuery&quot;: True or False, # Optional. Enable including conversation context during query answer generation. Supported features: KNOWLEDGE_SEARCH.
             &quot;enableEventBasedSuggestion&quot;: True or False, # Automatically iterates all participants and tries to compile suggestions. Supported features: ARTICLE_SUGGESTION, FAQ, DIALOGFLOW_ASSIST, ENTITY_EXTRACTION, KNOWLEDGE_ASSIST.
+            &quot;enableQuerySuggestionOnly&quot;: True or False, # Optional. Enable query suggestion only. Supported features: KNOWLEDGE_ASSIST
+            &quot;enableQuerySuggestionWhenNoAnswer&quot;: True or False, # Optional. Enable query suggestion even if we can&#x27;t find its answer. By default, queries are suggested only if we find its answer. Supported features: KNOWLEDGE_ASSIST
             &quot;queryConfig&quot;: { # Config for suggestion query. # Configs of query.
               &quot;confidenceThreshold&quot;: 3.14, # Confidence threshold of query result. Agent Assist gives each suggestion a score in the range [0.0, 1.0], based on the relevance between the suggestion and the current conversation context. A score of 0.0 has no relevance, while a score of 1.0 has high relevance. Only suggestions with a score greater than or equal to the value of this field are included in the results. For a baseline model (the default), the recommended value is in the range [0.05, 0.1]. For a custom model, there is no recommended value. Tune this value by starting from a very low value and slowly increasing until you have desired results. If this field is not set, it is default to 0.0, which means that all suggestions are returned. Supported features: ARTICLE_SUGGESTION, FAQ, SMART_REPLY, SMART_COMPOSE, KNOWLEDGE_SEARCH, KNOWLEDGE_ASSIST, ENTITY_EXTRACTION.
               &quot;contextFilterSettings&quot;: { # Settings that determine how to filter recent conversation context when generating suggestions. # Determines how recent conversation context is filtered when generating suggestions. If unspecified, no messages will be dropped.
@@ -127,6 +130,7 @@ Args:
                 &quot;dropIvrMessages&quot;: True or False, # If set to true, all messages from ivr stage are dropped.
                 &quot;dropVirtualAgentMessages&quot;: True or False, # If set to true, all messages from virtual agent are dropped.
               },
+              &quot;contextSize&quot;: 42, # Optional. The number of recent messages to include in the context. Supported features: KNOWLEDGE_ASSIST.
               &quot;dialogflowQuerySource&quot;: { # Dialogflow source setting. Supported feature: DIALOGFLOW_ASSIST, ENTITY_EXTRACTION. # Query from Dialogflow agent. It is used by DIALOGFLOW_ASSIST, ENTITY_EXTRACTION.
                 &quot;agent&quot;: &quot;A String&quot;, # Required. The name of a dialogflow virtual agent used for end user side intent detection and suggestion. Format: `projects//locations//agent`. When multiple agents are allowed in the same Dialogflow project.
                 &quot;humanAgentSideConfig&quot;: { # The configuration used for human agent side Dialogflow assist suggestion. # The Dialogflow assist configuration for human agent.
@@ -159,9 +163,13 @@ Args:
             },
           },
         ],
+        &quot;generators&quot;: [ # Optional. List of various generator resource names used in the conversation profile.
+          &quot;A String&quot;,
+        ],
         &quot;groupSuggestionResponses&quot;: True or False, # If `group_suggestion_responses` is false, and there are multiple `feature_configs` in `event based suggestion` or StreamingAnalyzeContent, we will try to deliver suggestions to customers as soon as we get new suggestion. Different type of suggestions based on the same context will be in separate Pub/Sub event or `StreamingAnalyzeContentResponse`. If `group_suggestion_responses` set to true. All the suggestions to the same participant based on the same context will be grouped into a single Pub/Sub event or StreamingAnalyzeContentResponse.
       },
       &quot;humanAgentSuggestionConfig&quot;: { # Detail human agent assistant config. # Configuration for agent assistance of human agent participant.
+        &quot;disableHighLatencyFeaturesSyncDelivery&quot;: True or False, # Optional. When disable_high_latency_features_sync_delivery is true and using the AnalyzeContent API, we will not deliver the responses from high latency features in the API response. The human_agent_assistant_config.notification_config must be configured and enable_event_based_suggestion must be set to true to receive the responses from high latency features in Pub/Sub. High latency feature(s): KNOWLEDGE_ASSIST
         &quot;featureConfigs&quot;: [ # Configuration of different suggestion features. One feature can have only one config.
           { # Config for suggestion features.
             &quot;conversationModelConfig&quot;: { # Custom conversation models used in agent assist feature. Supported feature: ARTICLE_SUGGESTION, SMART_COMPOSE, SMART_REPLY, CONVERSATION_SUMMARIZATION. # Configs of custom conversation model.
@@ -174,6 +182,8 @@ Args:
             &quot;disableAgentQueryLogging&quot;: True or False, # Optional. Disable the logging of search queries sent by human agents. It can prevent those queries from being stored at answer records. Supported features: KNOWLEDGE_SEARCH.
             &quot;enableConversationAugmentedQuery&quot;: True or False, # Optional. Enable including conversation context during query answer generation. Supported features: KNOWLEDGE_SEARCH.
             &quot;enableEventBasedSuggestion&quot;: True or False, # Automatically iterates all participants and tries to compile suggestions. Supported features: ARTICLE_SUGGESTION, FAQ, DIALOGFLOW_ASSIST, ENTITY_EXTRACTION, KNOWLEDGE_ASSIST.
+            &quot;enableQuerySuggestionOnly&quot;: True or False, # Optional. Enable query suggestion only. Supported features: KNOWLEDGE_ASSIST
+            &quot;enableQuerySuggestionWhenNoAnswer&quot;: True or False, # Optional. Enable query suggestion even if we can&#x27;t find its answer. By default, queries are suggested only if we find its answer. Supported features: KNOWLEDGE_ASSIST
             &quot;queryConfig&quot;: { # Config for suggestion query. # Configs of query.
               &quot;confidenceThreshold&quot;: 3.14, # Confidence threshold of query result. Agent Assist gives each suggestion a score in the range [0.0, 1.0], based on the relevance between the suggestion and the current conversation context. A score of 0.0 has no relevance, while a score of 1.0 has high relevance. Only suggestions with a score greater than or equal to the value of this field are included in the results. For a baseline model (the default), the recommended value is in the range [0.05, 0.1]. For a custom model, there is no recommended value. Tune this value by starting from a very low value and slowly increasing until you have desired results. If this field is not set, it is default to 0.0, which means that all suggestions are returned. Supported features: ARTICLE_SUGGESTION, FAQ, SMART_REPLY, SMART_COMPOSE, KNOWLEDGE_SEARCH, KNOWLEDGE_ASSIST, ENTITY_EXTRACTION.
               &quot;contextFilterSettings&quot;: { # Settings that determine how to filter recent conversation context when generating suggestions. # Determines how recent conversation context is filtered when generating suggestions. If unspecified, no messages will be dropped.
@@ -181,6 +191,7 @@ Args:
                 &quot;dropIvrMessages&quot;: True or False, # If set to true, all messages from ivr stage are dropped.
                 &quot;dropVirtualAgentMessages&quot;: True or False, # If set to true, all messages from virtual agent are dropped.
               },
+              &quot;contextSize&quot;: 42, # Optional. The number of recent messages to include in the context. Supported features: KNOWLEDGE_ASSIST.
               &quot;dialogflowQuerySource&quot;: { # Dialogflow source setting. Supported feature: DIALOGFLOW_ASSIST, ENTITY_EXTRACTION. # Query from Dialogflow agent. It is used by DIALOGFLOW_ASSIST, ENTITY_EXTRACTION.
                 &quot;agent&quot;: &quot;A String&quot;, # Required. The name of a dialogflow virtual agent used for end user side intent detection and suggestion. Format: `projects//locations//agent`. When multiple agents are allowed in the same Dialogflow project.
                 &quot;humanAgentSideConfig&quot;: { # The configuration used for human agent side Dialogflow assist suggestion. # The Dialogflow assist configuration for human agent.
@@ -212,6 +223,9 @@ Args:
               &quot;onlyEndUser&quot;: True or False, # Only trigger suggestion if participant role of last utterance is END_USER.
             },
           },
+        ],
+        &quot;generators&quot;: [ # Optional. List of various generator resource names used in the conversation profile.
+          &quot;A String&quot;,
         ],
         &quot;groupSuggestionResponses&quot;: True or False, # If `group_suggestion_responses` is false, and there are multiple `feature_configs` in `event based suggestion` or StreamingAnalyzeContent, we will try to deliver suggestions to customers as soon as we get new suggestion. Different type of suggestions based on the same context will be in separate Pub/Sub event or `StreamingAnalyzeContentResponse`. If `group_suggestion_responses` set to true. All the suggestions to the same participant based on the same context will be grouped into a single Pub/Sub event or StreamingAnalyzeContentResponse.
       },
@@ -225,7 +239,7 @@ Args:
       },
     },
     &quot;humanAgentHandoffConfig&quot;: { # Defines the hand off to a live agent, typically on which external agent service provider to connect to a conversation. Currently, this feature is not general available, please contact Google to get access. # Configuration for connecting to a live agent. Currently, this feature is not general available, please contact Google to get access.
-      &quot;livePersonConfig&quot;: { # Configuration specific to LivePerson (https://www.liveperson.com). # Uses LivePerson (https://www.liveperson.com).
+      &quot;livePersonConfig&quot;: { # Configuration specific to [LivePerson](https://www.liveperson.com). # Uses [LivePerson](https://www.liveperson.com).
         &quot;accountNumber&quot;: &quot;A String&quot;, # Required. Account number of the LivePerson account to connect. This is the account number you input at the login page.
       },
       &quot;salesforceLiveAgentConfig&quot;: { # Configuration specific to Salesforce Live Agent. # Uses Salesforce Live Agent.
@@ -244,13 +258,24 @@ Args:
       &quot;messageFormat&quot;: &quot;A String&quot;, # Format of message.
       &quot;topic&quot;: &quot;A String&quot;, # Name of the Pub/Sub topic to publish conversation events like CONVERSATION_STARTED as serialized ConversationEvent protos. For telephony integration to receive notification, make sure either this topic is in the same project as the conversation or you grant `service-@gcp-sa-dialogflow.iam.gserviceaccount.com` the `Dialogflow Service Agent` role in the topic project. For chat integration to receive notification, make sure API caller has been granted the `Dialogflow Service Agent` role for the topic. Format: `projects//locations//topics/`.
     },
+    &quot;newRecognitionResultNotificationConfig&quot;: { # Defines notification behavior. # Optional. Configuration for publishing transcription intermediate results. Event will be sent in format of ConversationEvent. If configured, the following information will be populated as ConversationEvent Pub/Sub message attributes: - &quot;participant_id&quot; - &quot;participant_role&quot; - &quot;message_id&quot;
+      &quot;messageFormat&quot;: &quot;A String&quot;, # Format of message.
+      &quot;topic&quot;: &quot;A String&quot;, # Name of the Pub/Sub topic to publish conversation events like CONVERSATION_STARTED as serialized ConversationEvent protos. For telephony integration to receive notification, make sure either this topic is in the same project as the conversation or you grant `service-@gcp-sa-dialogflow.iam.gserviceaccount.com` the `Dialogflow Service Agent` role in the topic project. For chat integration to receive notification, make sure API caller has been granted the `Dialogflow Service Agent` role for the topic. Format: `projects//locations//topics/`.
+    },
     &quot;notificationConfig&quot;: { # Defines notification behavior. # Configuration for publishing conversation lifecycle events.
       &quot;messageFormat&quot;: &quot;A String&quot;, # Format of message.
       &quot;topic&quot;: &quot;A String&quot;, # Name of the Pub/Sub topic to publish conversation events like CONVERSATION_STARTED as serialized ConversationEvent protos. For telephony integration to receive notification, make sure either this topic is in the same project as the conversation or you grant `service-@gcp-sa-dialogflow.iam.gserviceaccount.com` the `Dialogflow Service Agent` role in the topic project. For chat integration to receive notification, make sure API caller has been granted the `Dialogflow Service Agent` role for the topic. Format: `projects//locations//topics/`.
     },
     &quot;securitySettings&quot;: &quot;A String&quot;, # Name of the CX SecuritySettings reference for the agent. Format: `projects//locations//securitySettings/`.
     &quot;sttConfig&quot;: { # Configures speech transcription for ConversationProfile. # Settings for speech transcription.
+      &quot;audioEncoding&quot;: &quot;A String&quot;, # Audio encoding of the audio content to process.
+      &quot;enableWordInfo&quot;: True or False, # If `true`, Dialogflow returns SpeechWordInfo in StreamingRecognitionResult with information about the recognized speech words, e.g. start and end time offsets. If false or unspecified, Speech doesn&#x27;t return any word-level information.
+      &quot;languageCode&quot;: &quot;A String&quot;, # The language of the supplied audio. Dialogflow does not do translations. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes. Note that queries in the same session do not necessarily need to specify the same language.
       &quot;model&quot;: &quot;A String&quot;, # Which Speech model to select. Select the model best suited to your domain to get best results. If a model is not explicitly specified, then Dialogflow auto-selects a model based on other parameters in the SpeechToTextConfig and Agent settings. If enhanced speech model is enabled for the agent and an enhanced version of the specified model for the language does not exist, then the speech is recognized using the standard version of the specified model. Refer to [Cloud Speech API documentation](https://cloud.google.com/speech-to-text/docs/basics#select-model) for more details. If you specify a model, the following models typically have the best performance: - phone_call (best for Agent Assist and telephony) - latest_short (best for Dialogflow non-telephony) - command_and_search Leave this field unspecified to use [Agent Speech settings](https://cloud.google.com/dialogflow/cx/docs/concept/agent#settings-speech) for model selection.
+      &quot;phraseSets&quot;: [ # List of names of Cloud Speech phrase sets that are used for transcription.
+        &quot;A String&quot;,
+      ],
+      &quot;sampleRateHertz&quot;: 42, # Sample rate (in Hertz) of the audio content sent in the query. Refer to [Cloud Speech API documentation](https://cloud.google.com/speech-to-text/docs/basics) for more details.
       &quot;speechModelVariant&quot;: &quot;A String&quot;, # The speech model used in speech to text. `SPEECH_MODEL_VARIANT_UNSPECIFIED`, `USE_BEST_AVAILABLE` will be treated as `USE_ENHANCED`. It can be overridden in AnalyzeContentRequest and StreamingAnalyzeContentRequest request. If enhanced model variant is specified and an enhanced version of the specified model for the language does not exist, then it would emit an error.
       &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
     },
@@ -269,8 +294,8 @@ Args:
     },
     &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Update time of the conversation profile.
   },
-  &quot;latestMessage&quot;: &quot;A String&quot;, # The name of the latest conversation message used as context for generating a Summary. If empty, the latest message of the conversation will be used. The format is specific to the user and the names of the messages provided.
-  &quot;maxContextSize&quot;: 42, # Max number of messages prior to and including [latest_message] to use as context when compiling the suggestion. By default 500 and at most 1000.
+  &quot;latestMessage&quot;: &quot;A String&quot;, # Optional. The name of the latest conversation message used as context for generating a Summary. If empty, the latest message of the conversation will be used. The format is specific to the user and the names of the messages provided.
+  &quot;maxContextSize&quot;: 42, # Optional. Max number of messages prior to and including [latest_message] to use as context when compiling the suggestion. By default 500 and at most 1000.
   &quot;statelessConversation&quot;: { # The minimum amount of information required to generate a Summary without having a Conversation resource created. # Required. The conversation to suggest a summary for.
     &quot;messages&quot;: [ # Required. The messages that the Summary will be generated from. It is expected that this message content is already redacted and does not contain any PII. Required fields: {content, language_code, participant, participant_role} Optional fields: {send_time} If send_time is not provided, then the messages must be provided in chronological order.
       { # Represents a message posted into a conversation.
@@ -290,6 +315,38 @@ Args:
         &quot;name&quot;: &quot;A String&quot;, # Optional. The unique identifier of the message. Format: `projects//locations//conversations//messages/`.
         &quot;participant&quot;: &quot;A String&quot;, # Output only. The participant that sends this message.
         &quot;participantRole&quot;: &quot;A String&quot;, # Output only. The role of the participant.
+        &quot;responseMessages&quot;: [ # Optional. Automated agent responses.
+          { # Response messages from an automated agent.
+            &quot;endInteraction&quot;: { # Indicates that interaction with the Dialogflow agent has ended. # A signal that indicates the interaction with the Dialogflow agent has ended.
+            },
+            &quot;liveAgentHandoff&quot;: { # Indicates that the conversation should be handed off to a human agent. Dialogflow only uses this to determine which conversations were handed off to a human agent for measurement purposes. What else to do with this signal is up to you and your handoff procedures. You may set this, for example: * In the entry fulfillment of a CX Page if entering the page indicates something went extremely wrong in the conversation. * In a webhook response when you determine that the customer issue can only be handled by a human. # Hands off conversation to a live agent.
+              &quot;metadata&quot;: { # Custom metadata for your handoff procedure. Dialogflow doesn&#x27;t impose any structure on this.
+                &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+              },
+            },
+            &quot;mixedAudio&quot;: { # Represents an audio message that is composed of both segments synthesized from the Dialogflow agent prompts and ones hosted externally at the specified URIs. # An audio response message composed of both the synthesized Dialogflow agent responses and the audios hosted in places known to the client.
+              &quot;segments&quot;: [ # Segments this audio response is composed of.
+                { # Represents one segment of audio.
+                  &quot;allowPlaybackInterruption&quot;: True or False, # Whether the playback of this segment can be interrupted by the end user&#x27;s speech and the client should then start the next Dialogflow request.
+                  &quot;audio&quot;: &quot;A String&quot;, # Raw audio synthesized from the Dialogflow agent&#x27;s response using the output config specified in the request.
+                  &quot;uri&quot;: &quot;A String&quot;, # Client-specific URI that points to an audio clip accessible to the client.
+                },
+              ],
+            },
+            &quot;payload&quot;: { # Returns a response containing a custom, platform-specific payload.
+              &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+            },
+            &quot;telephonyTransferCall&quot;: { # Represents the signal that telles the client to transfer the phone call connected to the agent to a third-party endpoint. # A signal that the client should transfer the phone call connected to this agent to a third-party endpoint.
+              &quot;phoneNumber&quot;: &quot;A String&quot;, # Transfer the call to a phone number in [E.164 format](https://en.wikipedia.org/wiki/E.164).
+              &quot;sipUri&quot;: &quot;A String&quot;, # Transfer the call to a SIP endpoint.
+            },
+            &quot;text&quot;: { # The text response message. # Returns a text response.
+              &quot;text&quot;: [ # A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
+                &quot;A String&quot;,
+              ],
+            },
+          },
+        ],
         &quot;sendTime&quot;: &quot;A String&quot;, # Optional. The time when the message was sent.
         &quot;sentimentAnalysis&quot;: { # The result of sentiment analysis. Sentiment analysis inspects user input and identifies the prevailing subjective opinion, especially to determine a user&#x27;s attitude as positive, negative, or neutral. For Participants.DetectIntent, it needs to be configured in DetectIntentRequest.query_params. For Participants.StreamingDetectIntent, it needs to be configured in StreamingDetectIntentRequest.query_params. And for Participants.AnalyzeContent and Participants.StreamingAnalyzeContent, it needs to be configured in ConversationProfile.human_agent_assistant_config # Output only. The sentiment analysis result for the message.
           &quot;queryTextSentiment&quot;: { # The sentiment, such as positive/negative feeling or association, for a unit of analysis, such as the query text. See: https://cloud.google.com/natural-language/docs/basics#interpreting_sentiment_analysis_values for how to interpret the result. # The sentiment analysis result for `query_text`.
@@ -328,20 +385,63 @@ Returns:
   <pre>Get answers for the given query based on knowledge documents.
 
 Args:
-  parent: string, The parent resource contains the conversation profile Format: &#x27;projects/&#x27; or `projects//locations/`. (required)
+  parent: string, Required. The parent resource contains the conversation profile Format: &#x27;projects/&#x27; or `projects//locations/`. (required)
   body: object, The request body.
     The object takes the form of:
 
 { # The request message for Conversations.SearchKnowledge.
-  &quot;conversation&quot;: &quot;A String&quot;, # The conversation (between human agent and end user) where the search request is triggered. Format: `projects//locations//conversations/`.
+  &quot;conversation&quot;: &quot;A String&quot;, # Optional. The conversation (between human agent and end user) where the search request is triggered. Format: `projects//locations//conversations/`.
   &quot;conversationProfile&quot;: &quot;A String&quot;, # Required. The conversation profile used to configure the search. Format: `projects//locations//conversationProfiles/`.
-  &quot;latestMessage&quot;: &quot;A String&quot;, # The name of the latest conversation message when the request is triggered. Format: `projects//locations//conversations//messages/`.
-  &quot;parent&quot;: &quot;A String&quot;, # The parent resource contains the conversation profile Format: &#x27;projects/&#x27; or `projects//locations/`.
+  &quot;endUserMetadata&quot;: { # Optional. Information about the end-user to improve the relevance and accuracy of generative answers. This will be interpreted and used by a language model, so, for good results, the data should be self-descriptive, and in a simple structure. Example: ```json { &quot;subscription plan&quot;: &quot;Business Premium Plus&quot;, &quot;devices owned&quot;: [ {&quot;model&quot;: &quot;Google Pixel 7&quot;}, {&quot;model&quot;: &quot;Google Pixel Tablet&quot;} ] } ```
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+  },
+  &quot;exactSearch&quot;: True or False, # Optional. Whether to search the query exactly without query rewrite.
+  &quot;latestMessage&quot;: &quot;A String&quot;, # Optional. The name of the latest conversation message when the request is triggered. Format: `projects//locations//conversations//messages/`.
+  &quot;parent&quot;: &quot;A String&quot;, # Required. The parent resource contains the conversation profile Format: &#x27;projects/&#x27; or `projects//locations/`.
   &quot;query&quot;: { # Represents the natural language text to be processed. # Required. The natural language text query for knowledge search.
     &quot;languageCode&quot;: &quot;A String&quot;, # Required. The language of this conversational query. See [Language Support](https://cloud.google.com/dialogflow/docs/reference/language) for a list of the currently supported language codes. Note that queries in the same session do not necessarily need to specify the same language.
     &quot;text&quot;: &quot;A String&quot;, # Required. The UTF-8 encoded natural language text to be processed. Text length must not exceed 256 characters for virtual agent interactions.
   },
-  &quot;sessionId&quot;: &quot;A String&quot;, # The ID of the search session. The session_id can be combined with Dialogflow V3 Agent ID retrieved from conversation profile or on its own to identify a search session. The search history of the same session will impact the search result. It&#x27;s up to the API caller to choose an appropriate `Session ID`. It can be a random number or some type of session identifiers (preferably hashed). The length must not exceed 36 characters.
+  &quot;querySource&quot;: &quot;A String&quot;, # Optional. The source of the query in the request.
+  &quot;searchConfig&quot;: { # Configuration specific to search queries with data stores. # Optional. Configuration specific to search queries with data stores.
+    &quot;boostSpecs&quot;: [ # Optional. Boost specifications for data stores.
+      { # Boost specifications for data stores.
+        &quot;dataStores&quot;: [ # Optional. Data Stores where the boosting configuration is applied. The full names of the referenced data stores. Formats: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{data_store}` `projects/{project}/locations/{location}/dataStores/{data_store}`
+          &quot;A String&quot;,
+        ],
+        &quot;spec&quot;: [ # Optional. A list of boosting specifications.
+          { # Boost specification to boost certain documents. A copy of google.cloud.discoveryengine.v1main.BoostSpec, field documentation is available at https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1alpha/BoostSpec
+            &quot;conditionBoostSpecs&quot;: [ # Optional. Condition boost specifications. If a document matches multiple conditions in the specifictions, boost scores from these specifications are all applied and combined in a non-linear way. Maximum number of specifications is 20.
+              { # Boost applies to documents which match a condition.
+                &quot;boost&quot;: 3.14, # Optional. Strength of the condition boost, which should be in [-1, 1]. Negative boost means demotion. Default is 0.0. Setting to 1.0 gives the document a big promotion. However, it does not necessarily mean that the boosted document will be the top result at all times, nor that other documents will be excluded. Results could still be shown even when none of them matches the condition. And results that are significantly more relevant to the search query can still trump your heavily favored but irrelevant documents. Setting to -1.0 gives the document a big demotion. However, results that are deeply relevant might still be shown. The document will have an upstream battle to get a fairly high ranking, but it is not blocked out completely. Setting to 0.0 means no boost applied. The boosting condition is ignored.
+                &quot;boostControlSpec&quot;: { # Specification for custom ranking based on customer specified attribute value. It provides more controls for customized ranking than the simple (condition, boost) combination above. # Optional. Complex specification for custom ranking based on customer defined attribute value.
+                  &quot;attributeType&quot;: &quot;A String&quot;, # Optional. The attribute type to be used to determine the boost amount. The attribute value can be derived from the field value of the specified field_name. In the case of numerical it is straightforward i.e. attribute_value = numerical_field_value. In the case of freshness however, attribute_value = (time.now() - datetime_field_value).
+                  &quot;controlPoints&quot;: [ # Optional. The control points used to define the curve. The monotonic function (defined through the interpolation_type above) passes through the control points listed here.
+                    { # The control points used to define the curve. The curve defined through these control points can only be monotonically increasing or decreasing(constant values are acceptable).
+                      &quot;attributeValue&quot;: &quot;A String&quot;, # Optional. Can be one of: 1. The numerical field value. 2. The duration spec for freshness: The value must be formatted as an XSD `dayTimeDuration` value (a restricted subset of an ISO 8601 duration value). The pattern for this is: `nDnM]`.
+                      &quot;boostAmount&quot;: 3.14, # Optional. The value between -1 to 1 by which to boost the score if the attribute_value evaluates to the value specified above.
+                    },
+                  ],
+                  &quot;fieldName&quot;: &quot;A String&quot;, # Optional. The name of the field whose value will be used to determine the boost amount.
+                  &quot;interpolationType&quot;: &quot;A String&quot;, # Optional. The interpolation type to be applied to connect the control points listed below.
+                },
+                &quot;condition&quot;: &quot;A String&quot;, # Optional. An expression which specifies a boost condition. The syntax and supported fields are the same as a filter expression. Examples: * To boost documents with document ID &quot;doc_1&quot; or &quot;doc_2&quot;, and color &quot;Red&quot; or &quot;Blue&quot;: * (id: ANY(&quot;doc_1&quot;, &quot;doc_2&quot;)) AND (color: ANY(&quot;Red&quot;,&quot;Blue&quot;))
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    &quot;filterSpecs&quot;: [ # Optional. Filter specification for data store queries.
+      { # Filter specification for data store queries.
+        &quot;dataStores&quot;: [ # Optional. The data store where the filter configuration is applied. Full resource name of data store, such as projects/{project}/locations/{location}/collections/{collectionId}/ dataStores/{dataStoreId}.
+          &quot;A String&quot;,
+        ],
+        &quot;filter&quot;: &quot;A String&quot;, # Optional. The filter expression to be applied. Expression syntax is documented at https://cloud.google.com/generative-ai-app-builder/docs/filter-search-metadata#filter-expression-syntax
+      },
+    ],
+  },
+  &quot;sessionId&quot;: &quot;A String&quot;, # Required. The ID of the search session. The session_id can be combined with Dialogflow V3 Agent ID retrieved from conversation profile or on its own to identify a search session. The search history of the same session will impact the search result. It&#x27;s up to the API caller to choose an appropriate `Session ID`. It can be a random number or some type of session identifiers (preferably hashed). The length must not exceed 36 characters.
 }
 
   x__xgafv: string, V1 error format.
@@ -359,6 +459,9 @@ Returns:
       &quot;answerRecord&quot;: &quot;A String&quot;, # The name of the answer record. Format: `projects//locations//answer Records/`
       &quot;answerSources&quot;: [ # All sources used to generate the answer.
         { # The sources of the answers.
+          &quot;metadata&quot;: { # Metadata associated with the article.
+            &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+          },
           &quot;snippet&quot;: &quot;A String&quot;, # The relevant snippet of the article.
           &quot;title&quot;: &quot;A String&quot;, # The title of the article.
           &quot;uri&quot;: &quot;A String&quot;, # The URI of the article.

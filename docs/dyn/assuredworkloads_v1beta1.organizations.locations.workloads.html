@@ -75,6 +75,11 @@ h1, h2, h3 {
 <h1><a href="assuredworkloads_v1beta1.html">Assured Workloads API</a> . <a href="assuredworkloads_v1beta1.organizations.html">organizations</a> . <a href="assuredworkloads_v1beta1.organizations.locations.html">locations</a> . <a href="assuredworkloads_v1beta1.organizations.locations.workloads.html">workloads</a></h1>
 <h2>Instance Methods</h2>
 <p class="toc_element">
+  <code><a href="assuredworkloads_v1beta1.organizations.locations.workloads.updates.html">updates()</a></code>
+</p>
+<p class="firstline">Returns the updates Resource.</p>
+
+<p class="toc_element">
   <code><a href="assuredworkloads_v1beta1.organizations.locations.workloads.violations.html">violations()</a></code>
 </p>
 <p class="firstline">Returns the violations Resource.</p>
@@ -94,6 +99,9 @@ h1, h2, h3 {
 <p class="toc_element">
   <code><a href="#delete">delete(name, etag=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Deletes the workload. Make sure that workload's direct children are already in a deleted state, otherwise the request will fail with a FAILED_PRECONDITION error. In addition to assuredworkloads.workload.delete permission, the user should also have orgpolicy.policy.set permission on the deleted folder to remove Assured Workloads OrgPolicies.</p>
+<p class="toc_element">
+  <code><a href="#enableComplianceUpdates">enableComplianceUpdates(name, x__xgafv=None)</a></code></p>
+<p class="firstline">This endpoint enables Assured Workloads service to offer compliance updates for the folder based assured workload. It sets up an Assured Workloads Service Agent, having permissions to read compliance controls (for example: Org Policies) applied on the workload. The caller must have `resourcemanager.folders.getIamPolicy` and `resourcemanager.folders.setIamPolicy` permissions on the assured workload folder.</p>
 <p class="toc_element">
   <code><a href="#enableResourceMonitoring">enableResourceMonitoring(name, x__xgafv=None)</a></code></p>
 <p class="firstline">Enable resource violation monitoring for a workload.</p>
@@ -197,6 +205,7 @@ Args:
     The object takes the form of:
 
 { # A Workload object for managing highly regulated workloads of cloud customers.
+  &quot;availableUpdates&quot;: 42, # Output only. The number of updates available for the workload.
   &quot;billingAccount&quot;: &quot;A String&quot;, # Optional. The billing account used for the resources which are direct children of workload. This billing account is initially associated with the resources created as part of Workload creation. After the initial creation of these resources, the customer can change the assigned billing account. The resource name has the form `billingAccounts/{billing_account_id}`. For example, `billingAccounts/012345-567890-ABCDEF`.
   &quot;cjisSettings&quot;: { # Settings specific to resources needed for CJIS. # Input only. Immutable. Settings specific to resources needed for CJIS.
     &quot;kmsSettings&quot;: { # Settings specific to the Key Management Service. # Input only. Immutable. Settings used to create a CMEK crypto key.
@@ -211,6 +220,7 @@ Args:
     &quot;activeResourceViolationCount&quot;: 42, # Number of current resource violations which are acknowledged.
     &quot;activeViolationCount&quot;: 42, # Number of current orgPolicy violations which are not acknowledged.
   },
+  &quot;complianceUpdatesEnabled&quot;: True or False, # Output only. Indicates whether the compliance updates feature is enabled for a workload. The compliance updates feature can be enabled via the EnableComplianceUpdates endpoint.
   &quot;compliantButDisallowedServices&quot;: [ # Output only. Urls for services which are compliant for this Assured Workload, but which are currently disallowed by the ResourceUsageRestriction org policy. Invoke RestrictAllowedResources endpoint to allow your project developers to use these services in their environment.
     &quot;A String&quot;,
   ],
@@ -219,7 +229,7 @@ Args:
   &quot;ekmProvisioningResponse&quot;: { # External key management systems(EKM) Provisioning response # Output only. Represents the Ekm Provisioning State of the given workload.
     &quot;ekmProvisioningErrorDomain&quot;: &quot;A String&quot;, # Indicates Ekm provisioning error if any.
     &quot;ekmProvisioningErrorMapping&quot;: &quot;A String&quot;, # Detailed error message if Ekm provisioning fails
-    &quot;ekmProvisioningState&quot;: &quot;A String&quot;, # Indicates Ekm enrollment Provisioning of a given workload.
+    &quot;ekmProvisioningState&quot;: &quot;A String&quot;, # Output only. Indicates Ekm enrollment Provisioning of a given workload.
   },
   &quot;enableSovereignControls&quot;: True or False, # Optional. Indicates the sovereignty status of the given workload. Currently meant to be used by Europe/Canada customers.
   &quot;etag&quot;: &quot;A String&quot;, # Optional. ETag of the workload, it is calculated on the basis of the Workload contents. It will be used in Update &amp; Delete operations.
@@ -252,10 +262,12 @@ Args:
   &quot;name&quot;: &quot;A String&quot;, # Optional. The resource name of the workload. Format: organizations/{organization}/locations/{location}/workloads/{workload} Read-only.
   &quot;partner&quot;: &quot;A String&quot;, # Optional. Partner regime associated with this workload.
   &quot;partnerPermissions&quot;: { # Permissions granted to the AW Partner SA account for the customer workload # Optional. Permissions granted to the AW Partner SA account for the customer workload
+    &quot;accessTransparencyLogsSupportCaseViewer&quot;: True or False, # Optional. Allow partner to view support case details for an AXT log
     &quot;assuredWorkloadsMonitoring&quot;: True or False, # Optional. Allow partner to view violation alerts.
-    &quot;dataLogsViewer&quot;: True or False, # Allow the partner to view inspectability logs and monitoring violations.
+    &quot;dataLogsViewer&quot;: True or False, # Optional. Allow the partner to view inspectability logs and monitoring violations.
     &quot;serviceAccessApprover&quot;: True or False, # Optional. Allow partner to view access approval logs.
   },
+  &quot;partnerServicesBillingAccount&quot;: &quot;A String&quot;, # Optional. Billing account necessary for purchasing services from Sovereign Partners. This field is required for creating SIA/PSN/CNTXT partner workloads. The caller should have &#x27;billing.resourceAssociations.create&#x27; IAM permission on this billing-account. The format of this string is billingAccounts/AAAAAA-BBBBBB-CCCCCC
   &quot;provisionedResourcesParent&quot;: &quot;A String&quot;, # Input only. The parent resource for the resources managed by this Assured Workload. May be either empty or a folder resource which is a child of the Workload parent. If not specified all resources are created under the parent organization. Format: folders/{folder_id}
   &quot;resourceMonitoringEnabled&quot;: True or False, # Output only. Indicates whether resource monitoring is enabled for workload or not. It is true when Resource feed is subscribed to AWM topic and AWM Service Agent Role is binded to AW Service Account for resource Assured workload.
   &quot;resourceSettings&quot;: [ # Input only. Resource properties that are used to customize workload resources. These properties (such as custom project id) will be used to create workload resources if possible. This field is optional.
@@ -267,7 +279,7 @@ Args:
   ],
   &quot;resources&quot;: [ # Output only. The resources associated with this workload. These resources will be created when creating the workload. If any of the projects already exist, the workload creation will fail. Always read only.
     { # Represent the resources that are children of this Workload.
-      &quot;resourceId&quot;: &quot;A String&quot;, # Resource identifier. For a project this represents project_number.
+      &quot;resourceId&quot;: &quot;A String&quot;, # Output only. Resource identifier. For a project this represents project_number.
       &quot;resourceType&quot;: &quot;A String&quot;, # Indicates the type of resource.
     },
   ],
@@ -275,9 +287,12 @@ Args:
     &quot;setupErrors&quot;: [ # Indicates SAA enrollment setup error if any.
       &quot;A String&quot;,
     ],
-    &quot;setupStatus&quot;: &quot;A String&quot;, # Indicates SAA enrollment status of a given workload.
+    &quot;setupStatus&quot;: &quot;A String&quot;, # Output only. Indicates SAA enrollment status of a given workload.
   },
   &quot;violationNotificationsEnabled&quot;: True or False, # Optional. Indicates whether the e-mail notification for a violation is enabled for a workload. This value will be by default True, and if not present will be considered as true. This should only be updated via updateWorkload call. Any Changes to this field during the createWorkload call will not be honored. This will always be true while creating the workload.
+  &quot;workloadOptions&quot;: { # Options to be set for the given created workload. # Optional. Options to be set for the given created workload.
+    &quot;kajEnrollmentType&quot;: &quot;A String&quot;, # Optional. Specifies type of KAJ Enrollment if provided.
+  },
 }
 
   externalId: string, Optional. A identifier associated with the workload and underlying projects which allows for the break down of billing costs for a workload. The value provided for the identifier will add a label to the workload and contained projects with the identifier as the value.
@@ -330,6 +345,24 @@ Returns:
 </div>
 
 <div class="method">
+    <code class="details" id="enableComplianceUpdates">enableComplianceUpdates(name, x__xgafv=None)</code>
+  <pre>This endpoint enables Assured Workloads service to offer compliance updates for the folder based assured workload. It sets up an Assured Workloads Service Agent, having permissions to read compliance controls (for example: Org Policies) applied on the workload. The caller must have `resourcemanager.folders.getIamPolicy` and `resourcemanager.folders.setIamPolicy` permissions on the assured workload folder.
+
+Args:
+  name: string, Required. The `name` field is used to identify the workload. Format: organizations/{org_id}/locations/{location_id}/workloads/{workload_id} (required)
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # Response for EnableComplianceUpdates endpoint.
+}</pre>
+</div>
+
+<div class="method">
     <code class="details" id="enableResourceMonitoring">enableResourceMonitoring(name, x__xgafv=None)</code>
   <pre>Enable resource violation monitoring for a workload.
 
@@ -362,6 +395,7 @@ Returns:
   An object of the form:
 
     { # A Workload object for managing highly regulated workloads of cloud customers.
+  &quot;availableUpdates&quot;: 42, # Output only. The number of updates available for the workload.
   &quot;billingAccount&quot;: &quot;A String&quot;, # Optional. The billing account used for the resources which are direct children of workload. This billing account is initially associated with the resources created as part of Workload creation. After the initial creation of these resources, the customer can change the assigned billing account. The resource name has the form `billingAccounts/{billing_account_id}`. For example, `billingAccounts/012345-567890-ABCDEF`.
   &quot;cjisSettings&quot;: { # Settings specific to resources needed for CJIS. # Input only. Immutable. Settings specific to resources needed for CJIS.
     &quot;kmsSettings&quot;: { # Settings specific to the Key Management Service. # Input only. Immutable. Settings used to create a CMEK crypto key.
@@ -376,6 +410,7 @@ Returns:
     &quot;activeResourceViolationCount&quot;: 42, # Number of current resource violations which are acknowledged.
     &quot;activeViolationCount&quot;: 42, # Number of current orgPolicy violations which are not acknowledged.
   },
+  &quot;complianceUpdatesEnabled&quot;: True or False, # Output only. Indicates whether the compliance updates feature is enabled for a workload. The compliance updates feature can be enabled via the EnableComplianceUpdates endpoint.
   &quot;compliantButDisallowedServices&quot;: [ # Output only. Urls for services which are compliant for this Assured Workload, but which are currently disallowed by the ResourceUsageRestriction org policy. Invoke RestrictAllowedResources endpoint to allow your project developers to use these services in their environment.
     &quot;A String&quot;,
   ],
@@ -384,7 +419,7 @@ Returns:
   &quot;ekmProvisioningResponse&quot;: { # External key management systems(EKM) Provisioning response # Output only. Represents the Ekm Provisioning State of the given workload.
     &quot;ekmProvisioningErrorDomain&quot;: &quot;A String&quot;, # Indicates Ekm provisioning error if any.
     &quot;ekmProvisioningErrorMapping&quot;: &quot;A String&quot;, # Detailed error message if Ekm provisioning fails
-    &quot;ekmProvisioningState&quot;: &quot;A String&quot;, # Indicates Ekm enrollment Provisioning of a given workload.
+    &quot;ekmProvisioningState&quot;: &quot;A String&quot;, # Output only. Indicates Ekm enrollment Provisioning of a given workload.
   },
   &quot;enableSovereignControls&quot;: True or False, # Optional. Indicates the sovereignty status of the given workload. Currently meant to be used by Europe/Canada customers.
   &quot;etag&quot;: &quot;A String&quot;, # Optional. ETag of the workload, it is calculated on the basis of the Workload contents. It will be used in Update &amp; Delete operations.
@@ -417,10 +452,12 @@ Returns:
   &quot;name&quot;: &quot;A String&quot;, # Optional. The resource name of the workload. Format: organizations/{organization}/locations/{location}/workloads/{workload} Read-only.
   &quot;partner&quot;: &quot;A String&quot;, # Optional. Partner regime associated with this workload.
   &quot;partnerPermissions&quot;: { # Permissions granted to the AW Partner SA account for the customer workload # Optional. Permissions granted to the AW Partner SA account for the customer workload
+    &quot;accessTransparencyLogsSupportCaseViewer&quot;: True or False, # Optional. Allow partner to view support case details for an AXT log
     &quot;assuredWorkloadsMonitoring&quot;: True or False, # Optional. Allow partner to view violation alerts.
-    &quot;dataLogsViewer&quot;: True or False, # Allow the partner to view inspectability logs and monitoring violations.
+    &quot;dataLogsViewer&quot;: True or False, # Optional. Allow the partner to view inspectability logs and monitoring violations.
     &quot;serviceAccessApprover&quot;: True or False, # Optional. Allow partner to view access approval logs.
   },
+  &quot;partnerServicesBillingAccount&quot;: &quot;A String&quot;, # Optional. Billing account necessary for purchasing services from Sovereign Partners. This field is required for creating SIA/PSN/CNTXT partner workloads. The caller should have &#x27;billing.resourceAssociations.create&#x27; IAM permission on this billing-account. The format of this string is billingAccounts/AAAAAA-BBBBBB-CCCCCC
   &quot;provisionedResourcesParent&quot;: &quot;A String&quot;, # Input only. The parent resource for the resources managed by this Assured Workload. May be either empty or a folder resource which is a child of the Workload parent. If not specified all resources are created under the parent organization. Format: folders/{folder_id}
   &quot;resourceMonitoringEnabled&quot;: True or False, # Output only. Indicates whether resource monitoring is enabled for workload or not. It is true when Resource feed is subscribed to AWM topic and AWM Service Agent Role is binded to AW Service Account for resource Assured workload.
   &quot;resourceSettings&quot;: [ # Input only. Resource properties that are used to customize workload resources. These properties (such as custom project id) will be used to create workload resources if possible. This field is optional.
@@ -432,7 +469,7 @@ Returns:
   ],
   &quot;resources&quot;: [ # Output only. The resources associated with this workload. These resources will be created when creating the workload. If any of the projects already exist, the workload creation will fail. Always read only.
     { # Represent the resources that are children of this Workload.
-      &quot;resourceId&quot;: &quot;A String&quot;, # Resource identifier. For a project this represents project_number.
+      &quot;resourceId&quot;: &quot;A String&quot;, # Output only. Resource identifier. For a project this represents project_number.
       &quot;resourceType&quot;: &quot;A String&quot;, # Indicates the type of resource.
     },
   ],
@@ -440,9 +477,12 @@ Returns:
     &quot;setupErrors&quot;: [ # Indicates SAA enrollment setup error if any.
       &quot;A String&quot;,
     ],
-    &quot;setupStatus&quot;: &quot;A String&quot;, # Indicates SAA enrollment status of a given workload.
+    &quot;setupStatus&quot;: &quot;A String&quot;, # Output only. Indicates SAA enrollment status of a given workload.
   },
   &quot;violationNotificationsEnabled&quot;: True or False, # Optional. Indicates whether the e-mail notification for a violation is enabled for a workload. This value will be by default True, and if not present will be considered as true. This should only be updated via updateWorkload call. Any Changes to this field during the createWorkload call will not be honored. This will always be true while creating the workload.
+  &quot;workloadOptions&quot;: { # Options to be set for the given created workload. # Optional. Options to be set for the given created workload.
+    &quot;kajEnrollmentType&quot;: &quot;A String&quot;, # Optional. Specifies type of KAJ Enrollment if provided.
+  },
 }</pre>
 </div>
 
@@ -467,6 +507,7 @@ Returns:
   &quot;nextPageToken&quot;: &quot;A String&quot;, # The next page token. Return empty if reached the last page.
   &quot;workloads&quot;: [ # List of Workloads under a given parent.
     { # A Workload object for managing highly regulated workloads of cloud customers.
+      &quot;availableUpdates&quot;: 42, # Output only. The number of updates available for the workload.
       &quot;billingAccount&quot;: &quot;A String&quot;, # Optional. The billing account used for the resources which are direct children of workload. This billing account is initially associated with the resources created as part of Workload creation. After the initial creation of these resources, the customer can change the assigned billing account. The resource name has the form `billingAccounts/{billing_account_id}`. For example, `billingAccounts/012345-567890-ABCDEF`.
       &quot;cjisSettings&quot;: { # Settings specific to resources needed for CJIS. # Input only. Immutable. Settings specific to resources needed for CJIS.
         &quot;kmsSettings&quot;: { # Settings specific to the Key Management Service. # Input only. Immutable. Settings used to create a CMEK crypto key.
@@ -481,6 +522,7 @@ Returns:
         &quot;activeResourceViolationCount&quot;: 42, # Number of current resource violations which are acknowledged.
         &quot;activeViolationCount&quot;: 42, # Number of current orgPolicy violations which are not acknowledged.
       },
+      &quot;complianceUpdatesEnabled&quot;: True or False, # Output only. Indicates whether the compliance updates feature is enabled for a workload. The compliance updates feature can be enabled via the EnableComplianceUpdates endpoint.
       &quot;compliantButDisallowedServices&quot;: [ # Output only. Urls for services which are compliant for this Assured Workload, but which are currently disallowed by the ResourceUsageRestriction org policy. Invoke RestrictAllowedResources endpoint to allow your project developers to use these services in their environment.
         &quot;A String&quot;,
       ],
@@ -489,7 +531,7 @@ Returns:
       &quot;ekmProvisioningResponse&quot;: { # External key management systems(EKM) Provisioning response # Output only. Represents the Ekm Provisioning State of the given workload.
         &quot;ekmProvisioningErrorDomain&quot;: &quot;A String&quot;, # Indicates Ekm provisioning error if any.
         &quot;ekmProvisioningErrorMapping&quot;: &quot;A String&quot;, # Detailed error message if Ekm provisioning fails
-        &quot;ekmProvisioningState&quot;: &quot;A String&quot;, # Indicates Ekm enrollment Provisioning of a given workload.
+        &quot;ekmProvisioningState&quot;: &quot;A String&quot;, # Output only. Indicates Ekm enrollment Provisioning of a given workload.
       },
       &quot;enableSovereignControls&quot;: True or False, # Optional. Indicates the sovereignty status of the given workload. Currently meant to be used by Europe/Canada customers.
       &quot;etag&quot;: &quot;A String&quot;, # Optional. ETag of the workload, it is calculated on the basis of the Workload contents. It will be used in Update &amp; Delete operations.
@@ -522,10 +564,12 @@ Returns:
       &quot;name&quot;: &quot;A String&quot;, # Optional. The resource name of the workload. Format: organizations/{organization}/locations/{location}/workloads/{workload} Read-only.
       &quot;partner&quot;: &quot;A String&quot;, # Optional. Partner regime associated with this workload.
       &quot;partnerPermissions&quot;: { # Permissions granted to the AW Partner SA account for the customer workload # Optional. Permissions granted to the AW Partner SA account for the customer workload
+        &quot;accessTransparencyLogsSupportCaseViewer&quot;: True or False, # Optional. Allow partner to view support case details for an AXT log
         &quot;assuredWorkloadsMonitoring&quot;: True or False, # Optional. Allow partner to view violation alerts.
-        &quot;dataLogsViewer&quot;: True or False, # Allow the partner to view inspectability logs and monitoring violations.
+        &quot;dataLogsViewer&quot;: True or False, # Optional. Allow the partner to view inspectability logs and monitoring violations.
         &quot;serviceAccessApprover&quot;: True or False, # Optional. Allow partner to view access approval logs.
       },
+      &quot;partnerServicesBillingAccount&quot;: &quot;A String&quot;, # Optional. Billing account necessary for purchasing services from Sovereign Partners. This field is required for creating SIA/PSN/CNTXT partner workloads. The caller should have &#x27;billing.resourceAssociations.create&#x27; IAM permission on this billing-account. The format of this string is billingAccounts/AAAAAA-BBBBBB-CCCCCC
       &quot;provisionedResourcesParent&quot;: &quot;A String&quot;, # Input only. The parent resource for the resources managed by this Assured Workload. May be either empty or a folder resource which is a child of the Workload parent. If not specified all resources are created under the parent organization. Format: folders/{folder_id}
       &quot;resourceMonitoringEnabled&quot;: True or False, # Output only. Indicates whether resource monitoring is enabled for workload or not. It is true when Resource feed is subscribed to AWM topic and AWM Service Agent Role is binded to AW Service Account for resource Assured workload.
       &quot;resourceSettings&quot;: [ # Input only. Resource properties that are used to customize workload resources. These properties (such as custom project id) will be used to create workload resources if possible. This field is optional.
@@ -537,7 +581,7 @@ Returns:
       ],
       &quot;resources&quot;: [ # Output only. The resources associated with this workload. These resources will be created when creating the workload. If any of the projects already exist, the workload creation will fail. Always read only.
         { # Represent the resources that are children of this Workload.
-          &quot;resourceId&quot;: &quot;A String&quot;, # Resource identifier. For a project this represents project_number.
+          &quot;resourceId&quot;: &quot;A String&quot;, # Output only. Resource identifier. For a project this represents project_number.
           &quot;resourceType&quot;: &quot;A String&quot;, # Indicates the type of resource.
         },
       ],
@@ -545,9 +589,12 @@ Returns:
         &quot;setupErrors&quot;: [ # Indicates SAA enrollment setup error if any.
           &quot;A String&quot;,
         ],
-        &quot;setupStatus&quot;: &quot;A String&quot;, # Indicates SAA enrollment status of a given workload.
+        &quot;setupStatus&quot;: &quot;A String&quot;, # Output only. Indicates SAA enrollment status of a given workload.
       },
       &quot;violationNotificationsEnabled&quot;: True or False, # Optional. Indicates whether the e-mail notification for a violation is enabled for a workload. This value will be by default True, and if not present will be considered as true. This should only be updated via updateWorkload call. Any Changes to this field during the createWorkload call will not be honored. This will always be true while creating the workload.
+      &quot;workloadOptions&quot;: { # Options to be set for the given created workload. # Optional. Options to be set for the given created workload.
+        &quot;kajEnrollmentType&quot;: &quot;A String&quot;, # Optional. Specifies type of KAJ Enrollment if provided.
+      },
     },
   ],
 }</pre>
@@ -577,6 +624,7 @@ Args:
     The object takes the form of:
 
 { # A Workload object for managing highly regulated workloads of cloud customers.
+  &quot;availableUpdates&quot;: 42, # Output only. The number of updates available for the workload.
   &quot;billingAccount&quot;: &quot;A String&quot;, # Optional. The billing account used for the resources which are direct children of workload. This billing account is initially associated with the resources created as part of Workload creation. After the initial creation of these resources, the customer can change the assigned billing account. The resource name has the form `billingAccounts/{billing_account_id}`. For example, `billingAccounts/012345-567890-ABCDEF`.
   &quot;cjisSettings&quot;: { # Settings specific to resources needed for CJIS. # Input only. Immutable. Settings specific to resources needed for CJIS.
     &quot;kmsSettings&quot;: { # Settings specific to the Key Management Service. # Input only. Immutable. Settings used to create a CMEK crypto key.
@@ -591,6 +639,7 @@ Args:
     &quot;activeResourceViolationCount&quot;: 42, # Number of current resource violations which are acknowledged.
     &quot;activeViolationCount&quot;: 42, # Number of current orgPolicy violations which are not acknowledged.
   },
+  &quot;complianceUpdatesEnabled&quot;: True or False, # Output only. Indicates whether the compliance updates feature is enabled for a workload. The compliance updates feature can be enabled via the EnableComplianceUpdates endpoint.
   &quot;compliantButDisallowedServices&quot;: [ # Output only. Urls for services which are compliant for this Assured Workload, but which are currently disallowed by the ResourceUsageRestriction org policy. Invoke RestrictAllowedResources endpoint to allow your project developers to use these services in their environment.
     &quot;A String&quot;,
   ],
@@ -599,7 +648,7 @@ Args:
   &quot;ekmProvisioningResponse&quot;: { # External key management systems(EKM) Provisioning response # Output only. Represents the Ekm Provisioning State of the given workload.
     &quot;ekmProvisioningErrorDomain&quot;: &quot;A String&quot;, # Indicates Ekm provisioning error if any.
     &quot;ekmProvisioningErrorMapping&quot;: &quot;A String&quot;, # Detailed error message if Ekm provisioning fails
-    &quot;ekmProvisioningState&quot;: &quot;A String&quot;, # Indicates Ekm enrollment Provisioning of a given workload.
+    &quot;ekmProvisioningState&quot;: &quot;A String&quot;, # Output only. Indicates Ekm enrollment Provisioning of a given workload.
   },
   &quot;enableSovereignControls&quot;: True or False, # Optional. Indicates the sovereignty status of the given workload. Currently meant to be used by Europe/Canada customers.
   &quot;etag&quot;: &quot;A String&quot;, # Optional. ETag of the workload, it is calculated on the basis of the Workload contents. It will be used in Update &amp; Delete operations.
@@ -632,10 +681,12 @@ Args:
   &quot;name&quot;: &quot;A String&quot;, # Optional. The resource name of the workload. Format: organizations/{organization}/locations/{location}/workloads/{workload} Read-only.
   &quot;partner&quot;: &quot;A String&quot;, # Optional. Partner regime associated with this workload.
   &quot;partnerPermissions&quot;: { # Permissions granted to the AW Partner SA account for the customer workload # Optional. Permissions granted to the AW Partner SA account for the customer workload
+    &quot;accessTransparencyLogsSupportCaseViewer&quot;: True or False, # Optional. Allow partner to view support case details for an AXT log
     &quot;assuredWorkloadsMonitoring&quot;: True or False, # Optional. Allow partner to view violation alerts.
-    &quot;dataLogsViewer&quot;: True or False, # Allow the partner to view inspectability logs and monitoring violations.
+    &quot;dataLogsViewer&quot;: True or False, # Optional. Allow the partner to view inspectability logs and monitoring violations.
     &quot;serviceAccessApprover&quot;: True or False, # Optional. Allow partner to view access approval logs.
   },
+  &quot;partnerServicesBillingAccount&quot;: &quot;A String&quot;, # Optional. Billing account necessary for purchasing services from Sovereign Partners. This field is required for creating SIA/PSN/CNTXT partner workloads. The caller should have &#x27;billing.resourceAssociations.create&#x27; IAM permission on this billing-account. The format of this string is billingAccounts/AAAAAA-BBBBBB-CCCCCC
   &quot;provisionedResourcesParent&quot;: &quot;A String&quot;, # Input only. The parent resource for the resources managed by this Assured Workload. May be either empty or a folder resource which is a child of the Workload parent. If not specified all resources are created under the parent organization. Format: folders/{folder_id}
   &quot;resourceMonitoringEnabled&quot;: True or False, # Output only. Indicates whether resource monitoring is enabled for workload or not. It is true when Resource feed is subscribed to AWM topic and AWM Service Agent Role is binded to AW Service Account for resource Assured workload.
   &quot;resourceSettings&quot;: [ # Input only. Resource properties that are used to customize workload resources. These properties (such as custom project id) will be used to create workload resources if possible. This field is optional.
@@ -647,7 +698,7 @@ Args:
   ],
   &quot;resources&quot;: [ # Output only. The resources associated with this workload. These resources will be created when creating the workload. If any of the projects already exist, the workload creation will fail. Always read only.
     { # Represent the resources that are children of this Workload.
-      &quot;resourceId&quot;: &quot;A String&quot;, # Resource identifier. For a project this represents project_number.
+      &quot;resourceId&quot;: &quot;A String&quot;, # Output only. Resource identifier. For a project this represents project_number.
       &quot;resourceType&quot;: &quot;A String&quot;, # Indicates the type of resource.
     },
   ],
@@ -655,9 +706,12 @@ Args:
     &quot;setupErrors&quot;: [ # Indicates SAA enrollment setup error if any.
       &quot;A String&quot;,
     ],
-    &quot;setupStatus&quot;: &quot;A String&quot;, # Indicates SAA enrollment status of a given workload.
+    &quot;setupStatus&quot;: &quot;A String&quot;, # Output only. Indicates SAA enrollment status of a given workload.
   },
   &quot;violationNotificationsEnabled&quot;: True or False, # Optional. Indicates whether the e-mail notification for a violation is enabled for a workload. This value will be by default True, and if not present will be considered as true. This should only be updated via updateWorkload call. Any Changes to this field during the createWorkload call will not be honored. This will always be true while creating the workload.
+  &quot;workloadOptions&quot;: { # Options to be set for the given created workload. # Optional. Options to be set for the given created workload.
+    &quot;kajEnrollmentType&quot;: &quot;A String&quot;, # Optional. Specifies type of KAJ Enrollment if provided.
+  },
 }
 
   updateMask: string, Required. The list of fields to be updated.
@@ -670,6 +724,7 @@ Returns:
   An object of the form:
 
     { # A Workload object for managing highly regulated workloads of cloud customers.
+  &quot;availableUpdates&quot;: 42, # Output only. The number of updates available for the workload.
   &quot;billingAccount&quot;: &quot;A String&quot;, # Optional. The billing account used for the resources which are direct children of workload. This billing account is initially associated with the resources created as part of Workload creation. After the initial creation of these resources, the customer can change the assigned billing account. The resource name has the form `billingAccounts/{billing_account_id}`. For example, `billingAccounts/012345-567890-ABCDEF`.
   &quot;cjisSettings&quot;: { # Settings specific to resources needed for CJIS. # Input only. Immutable. Settings specific to resources needed for CJIS.
     &quot;kmsSettings&quot;: { # Settings specific to the Key Management Service. # Input only. Immutable. Settings used to create a CMEK crypto key.
@@ -684,6 +739,7 @@ Returns:
     &quot;activeResourceViolationCount&quot;: 42, # Number of current resource violations which are acknowledged.
     &quot;activeViolationCount&quot;: 42, # Number of current orgPolicy violations which are not acknowledged.
   },
+  &quot;complianceUpdatesEnabled&quot;: True or False, # Output only. Indicates whether the compliance updates feature is enabled for a workload. The compliance updates feature can be enabled via the EnableComplianceUpdates endpoint.
   &quot;compliantButDisallowedServices&quot;: [ # Output only. Urls for services which are compliant for this Assured Workload, but which are currently disallowed by the ResourceUsageRestriction org policy. Invoke RestrictAllowedResources endpoint to allow your project developers to use these services in their environment.
     &quot;A String&quot;,
   ],
@@ -692,7 +748,7 @@ Returns:
   &quot;ekmProvisioningResponse&quot;: { # External key management systems(EKM) Provisioning response # Output only. Represents the Ekm Provisioning State of the given workload.
     &quot;ekmProvisioningErrorDomain&quot;: &quot;A String&quot;, # Indicates Ekm provisioning error if any.
     &quot;ekmProvisioningErrorMapping&quot;: &quot;A String&quot;, # Detailed error message if Ekm provisioning fails
-    &quot;ekmProvisioningState&quot;: &quot;A String&quot;, # Indicates Ekm enrollment Provisioning of a given workload.
+    &quot;ekmProvisioningState&quot;: &quot;A String&quot;, # Output only. Indicates Ekm enrollment Provisioning of a given workload.
   },
   &quot;enableSovereignControls&quot;: True or False, # Optional. Indicates the sovereignty status of the given workload. Currently meant to be used by Europe/Canada customers.
   &quot;etag&quot;: &quot;A String&quot;, # Optional. ETag of the workload, it is calculated on the basis of the Workload contents. It will be used in Update &amp; Delete operations.
@@ -725,10 +781,12 @@ Returns:
   &quot;name&quot;: &quot;A String&quot;, # Optional. The resource name of the workload. Format: organizations/{organization}/locations/{location}/workloads/{workload} Read-only.
   &quot;partner&quot;: &quot;A String&quot;, # Optional. Partner regime associated with this workload.
   &quot;partnerPermissions&quot;: { # Permissions granted to the AW Partner SA account for the customer workload # Optional. Permissions granted to the AW Partner SA account for the customer workload
+    &quot;accessTransparencyLogsSupportCaseViewer&quot;: True or False, # Optional. Allow partner to view support case details for an AXT log
     &quot;assuredWorkloadsMonitoring&quot;: True or False, # Optional. Allow partner to view violation alerts.
-    &quot;dataLogsViewer&quot;: True or False, # Allow the partner to view inspectability logs and monitoring violations.
+    &quot;dataLogsViewer&quot;: True or False, # Optional. Allow the partner to view inspectability logs and monitoring violations.
     &quot;serviceAccessApprover&quot;: True or False, # Optional. Allow partner to view access approval logs.
   },
+  &quot;partnerServicesBillingAccount&quot;: &quot;A String&quot;, # Optional. Billing account necessary for purchasing services from Sovereign Partners. This field is required for creating SIA/PSN/CNTXT partner workloads. The caller should have &#x27;billing.resourceAssociations.create&#x27; IAM permission on this billing-account. The format of this string is billingAccounts/AAAAAA-BBBBBB-CCCCCC
   &quot;provisionedResourcesParent&quot;: &quot;A String&quot;, # Input only. The parent resource for the resources managed by this Assured Workload. May be either empty or a folder resource which is a child of the Workload parent. If not specified all resources are created under the parent organization. Format: folders/{folder_id}
   &quot;resourceMonitoringEnabled&quot;: True or False, # Output only. Indicates whether resource monitoring is enabled for workload or not. It is true when Resource feed is subscribed to AWM topic and AWM Service Agent Role is binded to AW Service Account for resource Assured workload.
   &quot;resourceSettings&quot;: [ # Input only. Resource properties that are used to customize workload resources. These properties (such as custom project id) will be used to create workload resources if possible. This field is optional.
@@ -740,7 +798,7 @@ Returns:
   ],
   &quot;resources&quot;: [ # Output only. The resources associated with this workload. These resources will be created when creating the workload. If any of the projects already exist, the workload creation will fail. Always read only.
     { # Represent the resources that are children of this Workload.
-      &quot;resourceId&quot;: &quot;A String&quot;, # Resource identifier. For a project this represents project_number.
+      &quot;resourceId&quot;: &quot;A String&quot;, # Output only. Resource identifier. For a project this represents project_number.
       &quot;resourceType&quot;: &quot;A String&quot;, # Indicates the type of resource.
     },
   ],
@@ -748,9 +806,12 @@ Returns:
     &quot;setupErrors&quot;: [ # Indicates SAA enrollment setup error if any.
       &quot;A String&quot;,
     ],
-    &quot;setupStatus&quot;: &quot;A String&quot;, # Indicates SAA enrollment status of a given workload.
+    &quot;setupStatus&quot;: &quot;A String&quot;, # Output only. Indicates SAA enrollment status of a given workload.
   },
   &quot;violationNotificationsEnabled&quot;: True or False, # Optional. Indicates whether the e-mail notification for a violation is enabled for a workload. This value will be by default True, and if not present will be considered as true. This should only be updated via updateWorkload call. Any Changes to this field during the createWorkload call will not be honored. This will always be true while creating the workload.
+  &quot;workloadOptions&quot;: { # Options to be set for the given created workload. # Optional. Options to be set for the given created workload.
+    &quot;kajEnrollmentType&quot;: &quot;A String&quot;, # Optional. Specifies type of KAJ Enrollment if provided.
+  },
 }</pre>
 </div>
 

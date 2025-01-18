@@ -1757,7 +1757,7 @@
 },
 "maxResults": {
 "default": "500",
-"description": "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set.",
+"description": "The *maxResults* parameter specifies the maximum number of items that should be returned in the result set. Not used in the streaming RPC.",
 "format": "uint32",
 "location": "query",
 "maximum": "2000",
@@ -1770,7 +1770,7 @@
 "type": "string"
 },
 "part": {
-"description": "The *part* parameter specifies the liveChatComment resource parts that the API response will include. Supported values are id and snippet.",
+"description": "The *part* parameter specifies the liveChatComment resource parts that the API response will include. Supported values are id, snippet, and authorDetails.",
 "location": "query",
 "repeated": true,
 "required": true,
@@ -1793,6 +1793,41 @@
 "https://www.googleapis.com/auth/youtube",
 "https://www.googleapis.com/auth/youtube.force-ssl",
 "https://www.googleapis.com/auth/youtube.readonly"
+]
+},
+"transition": {
+"description": "Transition a durable chat event.",
+"flatPath": "youtube/v3/liveChat/messages/transition",
+"httpMethod": "POST",
+"id": "youtube.liveChatMessages.transition",
+"parameterOrder": [],
+"parameters": {
+"id": {
+"description": "The ID that uniquely identify the chat message event to transition.",
+"location": "query",
+"type": "string"
+},
+"status": {
+"description": "The status to which the chat event is going to transition.",
+"enum": [
+"statusUnspecified",
+"closed"
+],
+"enumDescriptions": [
+"Default unknown enum value.",
+"The durable chat event is over."
+],
+"location": "query",
+"type": "string"
+}
+},
+"path": "youtube/v3/liveChat/messages/transition",
+"response": {
+"$ref": "LiveChatMessage"
+},
+"scopes": [
+"https://www.googleapis.com/auth/youtube",
+"https://www.googleapis.com/auth/youtube.force-ssl"
 ]
 }
 }
@@ -4032,53 +4067,12 @@
 "$ref": "CommentThread"
 }
 }
-},
-"resources": {
-"liveChat": {
-"resources": {
-"messages": {
-"methods": {
-"transition": {
-"description": "Transition a durable chat event.",
-"flatPath": "youtube/v3/liveChat/messages/transition",
-"httpMethod": "POST",
-"id": "youtube.youtube.v3.liveChat.messages.transition",
-"parameterOrder": [],
-"parameters": {
-"id": {
-"description": "The ID that uniquely identify the chat message event to transition.",
-"location": "query",
-"type": "string"
-},
-"status": {
-"description": "The status to which the chat event is going to transition.",
-"enum": [
-"statusUnspecified",
-"closed"
-],
-"enumDescriptions": [
-"Default unknown enum value.",
-"The durable chat event is over."
-],
-"location": "query",
-"type": "string"
-}
-},
-"path": "youtube/v3/liveChat/messages/transition",
-"response": {
-"$ref": "LiveChatMessage"
-}
-}
-}
-}
-}
-}
 }
 }
 }
 }
 },
-"revision": "20240512",
+"revision": "20250101",
 "rootUrl": "https://youtube.googleapis.com/",
 "schemas": {
 "AbuseReport": {
@@ -5557,6 +5551,10 @@ false
 "$ref": "ChannelToStoreLinkDetailsBillingDetails",
 "description": "Information specific to billing (read-only)."
 },
+"merchantAffiliateProgramDetails": {
+"$ref": "ChannelToStoreLinkDetailsMerchantAffiliateProgramDetails",
+"description": "Information specific to merchant affiliate program (read-only)."
+},
 "merchantId": {
 "description": "Google Merchant Center id of the store.",
 "format": "uint64",
@@ -5590,6 +5588,29 @@ false
 "",
 "",
 ""
+],
+"type": "string"
+}
+},
+"type": "object"
+},
+"ChannelToStoreLinkDetailsMerchantAffiliateProgramDetails": {
+"description": "Information specific to merchant affiliate program.",
+"id": "ChannelToStoreLinkDetailsMerchantAffiliateProgramDetails",
+"properties": {
+"status": {
+"description": "The current merchant affiliate program status.",
+"enum": [
+"merchantAffiliateProgramStatusUnspecified",
+"merchantAffiliateProgramStatusEligible",
+"merchantAffiliateProgramStatusActive",
+"merchantAffiliateProgramStatusPaused"
+],
+"enumDescriptions": [
+"Unspecified status.",
+"Merchant is eligible for the merchant affiliate program.",
+"Merchant affiliate program is active.",
+"Merchant affiliate program is paused."
 ],
 "type": "string"
 }
@@ -8063,7 +8084,7 @@ true
 "type": "object"
 },
 "InvideoBranding": {
-"description": "LINT.IfChange Describes an invideo branding.",
+"description": "Describes an invideo branding.",
 "id": "InvideoBranding",
 "properties": {
 "imageBytes": {
@@ -8077,6 +8098,7 @@ true
 },
 "position": {
 "$ref": "InvideoPosition",
+"deprecated": true,
 "description": "The spatial position within the video where the branding watermark will be displayed."
 },
 "targetChannelId": {
@@ -10020,7 +10042,7 @@ true
 },
 "kind": {
 "default": "youtube#playlistItemListResponse",
-"description": "Identifies what kind of resource this is. Value: the fixed string \"youtube#playlistItemListResponse\". Etag of this resource.",
+"description": "Identifies what kind of resource this is. Value: the fixed string \"youtube#playlistItemListResponse\".",
 "type": "string"
 },
 "nextPageToken": {
@@ -10265,6 +10287,18 @@ true
 "PlaylistStatus": {
 "id": "PlaylistStatus",
 "properties": {
+"podcastStatus": {
+"description": "The playlist's podcast status.",
+"enum": [
+"enabled",
+"disabled"
+],
+"enumDescriptions": [
+"",
+""
+],
+"type": "string"
+},
 "privacyStatus": {
 "description": "The playlist's privacy status.",
 "enum": [
@@ -10567,10 +10601,6 @@ true
 "description": "The ID that YouTube uses to uniquely identify the subscriber's channel.",
 "type": "string"
 },
-"channelTitle": {
-"description": "Channel title for the channel that the subscription belongs to.",
-"type": "string"
-},
 "description": {
 "description": "The subscription's details.",
 "type": "string"
@@ -10760,6 +10790,10 @@ true
 "TestItem": {
 "id": "TestItem",
 "properties": {
+"etag": {
+"description": "Etag for the resource. See https://en.wikipedia.org/wiki/HTTP_ETag.",
+"type": "string"
+},
 "featuredPart": {
 "type": "boolean"
 },
@@ -11009,6 +11043,9 @@ true
 "monetizationDetails": {
 "$ref": "VideoMonetizationDetails",
 "description": "The monetizationDetails object encapsulates information about the monetization status of the video."
+},
+"paidProductPlacementDetails": {
+"$ref": "VideoPaidProductPlacementDetails"
 },
 "player": {
 "$ref": "VideoPlayer",
@@ -11634,7 +11671,7 @@ true
 "type": "string"
 },
 "scheduledEndTime": {
-"description": "The time that the broadcast is scheduled to end. If the value is empty or the property is not present, then the broadcast is scheduled to contiue indefinitely.",
+"description": "The time that the broadcast is scheduled to end. If the value is empty or the property is not present, then the broadcast is scheduled to continue indefinitely.",
 "format": "date-time",
 "type": "string"
 },
@@ -11668,6 +11705,17 @@ true
 "access": {
 "$ref": "AccessPolicy",
 "description": "The value of access indicates whether the video can be monetized or not."
+}
+},
+"type": "object"
+},
+"VideoPaidProductPlacementDetails": {
+"description": "Details about paid content, such as paid product placement, sponsorships or endorsement, contained in a YouTube video and a method to inform viewers of paid promotion. This data can only be retrieved by the video owner.",
+"id": "VideoPaidProductPlacementDetails",
+"properties": {
+"hasPaidProductPlacement": {
+"description": "This boolean represents whether the video contains Paid Product Placement, Studio equivalent: https://screenshot.googleplex.com/4Me79DE6AfT2ktp.png",
+"type": "boolean"
 }
 },
 "type": "object"
@@ -11933,9 +11981,13 @@ true
 "type": "object"
 },
 "VideoStatus": {
-"description": "Basic details about a video category, such as its localized title. Next Id: 18",
+"description": "Basic details about a video category, such as its localized title. Next Id: 19",
 "id": "VideoStatus",
 "properties": {
+"containsSyntheticMedia": {
+"description": "Indicates if the video contains altered or synthetic media.",
+"type": "boolean"
+},
 "embeddable": {
 "description": "This value indicates if the video can be embedded on another website. @mutable youtube.videos.insert youtube.videos.update",
 "type": "boolean"
@@ -12167,7 +12219,7 @@ true
 "type": "object"
 },
 "VideoSuggestionsTagSuggestion": {
-"description": "A single tag suggestion with it's relevance information.",
+"description": "A single tag suggestion with its relevance information.",
 "id": "VideoSuggestionsTagSuggestion",
 "properties": {
 "categoryRestricts": {

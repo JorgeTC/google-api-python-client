@@ -121,20 +121,38 @@ Args:
 
 { # A Network Connectivity Center spoke represents one or more network connectivity resources. When you create a spoke, you associate it with a hub. You must also identify a value for exactly one of the following fields: * linked_vpn_tunnels * linked_interconnect_attachments * linked_router_appliance_instances * linked_vpc_network
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the spoke was created.
-  &quot;description&quot;: &quot;A String&quot;, # An optional description of the spoke.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the spoke.
   &quot;group&quot;: &quot;A String&quot;, # Optional. The name of the group that this spoke is associated with.
   &quot;hub&quot;: &quot;A String&quot;, # Immutable. The name of the hub that this spoke is attached to.
   &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
     &quot;a_key&quot;: &quot;A String&quot;,
   },
-  &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # VLAN attachments that are associated with the spoke.
+  &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # Optional. VLAN attachments that are associated with the spoke.
+    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+      &quot;A String&quot;,
+    ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
     &quot;uris&quot;: [ # The URIs of linked interconnect attachment resources
       &quot;A String&quot;,
     ],
     &quot;vpcNetwork&quot;: &quot;A String&quot;, # Output only. The VPC network where these VLAN attachments are located.
   },
-  &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Router appliance instances that are associated with the spoke.
+  &quot;linkedProducerVpcNetwork&quot;: { # Optional. The linked producer VPC that is associated with the spoke.
+    &quot;excludeExportRanges&quot;: [ # Optional. IP ranges encompassing the subnets to be excluded from peering.
+      &quot;A String&quot;,
+    ],
+    &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
+      &quot;A String&quot;,
+    ],
+    &quot;network&quot;: &quot;A String&quot;, # Immutable. The URI of the Service Consumer VPC that the Producer VPC is peered with.
+    &quot;peering&quot;: &quot;A String&quot;, # Immutable. The name of the VPC peering between the Service Consumer VPC and the Producer VPC (defined in the Tenant project) which is added to the NCC hub. This peering must be in ACTIVE state.
+    &quot;producerNetwork&quot;: &quot;A String&quot;, # Output only. The URI of the Producer VPC.
+    &quot;serviceConsumerVpcSpoke&quot;: &quot;A String&quot;, # Output only. The Service Consumer Network spoke.
+  },
+  &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Optional. Router appliance instances that are associated with the spoke.
+    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+      &quot;A String&quot;,
+    ],
     &quot;instances&quot;: [ # The list of router appliance instances.
       { # A router appliance instance is a Compute Engine virtual machine (VM) instance that acts as a BGP speaker. A router appliance instance is specified by the URI of the VM and the internal IP address of one of the VM&#x27;s network interfaces.
         &quot;ipAddress&quot;: &quot;A String&quot;, # The IP address on the VM to use for peering.
@@ -148,9 +166,18 @@ Args:
     &quot;excludeExportRanges&quot;: [ # Optional. IP ranges encompassing the subnets to be excluded from peering.
       &quot;A String&quot;,
     ],
+    &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
+      &quot;A String&quot;,
+    ],
+    &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network.
+      &quot;A String&quot;,
+    ],
     &quot;uri&quot;: &quot;A String&quot;, # Required. The URI of the VPC network resource.
   },
-  &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # VPN tunnels that are associated with the spoke.
+  &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # Optional. VPN tunnels that are associated with the spoke.
+    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+      &quot;A String&quot;,
+    ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
     &quot;uris&quot;: [ # The URIs of linked VPN tunnel resources.
       &quot;A String&quot;,
@@ -158,7 +185,7 @@ Args:
     &quot;vpcNetwork&quot;: &quot;A String&quot;, # Output only. The VPC network where these VPN tunnels are located.
   },
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The name of the spoke. Spoke names must be unique. They use the following form: `projects/{project_number}/locations/{region}/spokes/{spoke_id}`
-  &quot;reasons&quot;: [ # Output only. The reasons for current state of the spoke. Only present when the spoke is in the `INACTIVE` state.
+  &quot;reasons&quot;: [ # Output only. The reasons for current state of the spoke.
     { # The reason a spoke is inactive.
       &quot;code&quot;: &quot;A String&quot;, # The code associated with this reason.
       &quot;message&quot;: &quot;A String&quot;, # Human-readable details about this reason.
@@ -254,20 +281,38 @@ Returns:
 
     { # A Network Connectivity Center spoke represents one or more network connectivity resources. When you create a spoke, you associate it with a hub. You must also identify a value for exactly one of the following fields: * linked_vpn_tunnels * linked_interconnect_attachments * linked_router_appliance_instances * linked_vpc_network
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the spoke was created.
-  &quot;description&quot;: &quot;A String&quot;, # An optional description of the spoke.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the spoke.
   &quot;group&quot;: &quot;A String&quot;, # Optional. The name of the group that this spoke is associated with.
   &quot;hub&quot;: &quot;A String&quot;, # Immutable. The name of the hub that this spoke is attached to.
   &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
     &quot;a_key&quot;: &quot;A String&quot;,
   },
-  &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # VLAN attachments that are associated with the spoke.
+  &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # Optional. VLAN attachments that are associated with the spoke.
+    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+      &quot;A String&quot;,
+    ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
     &quot;uris&quot;: [ # The URIs of linked interconnect attachment resources
       &quot;A String&quot;,
     ],
     &quot;vpcNetwork&quot;: &quot;A String&quot;, # Output only. The VPC network where these VLAN attachments are located.
   },
-  &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Router appliance instances that are associated with the spoke.
+  &quot;linkedProducerVpcNetwork&quot;: { # Optional. The linked producer VPC that is associated with the spoke.
+    &quot;excludeExportRanges&quot;: [ # Optional. IP ranges encompassing the subnets to be excluded from peering.
+      &quot;A String&quot;,
+    ],
+    &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
+      &quot;A String&quot;,
+    ],
+    &quot;network&quot;: &quot;A String&quot;, # Immutable. The URI of the Service Consumer VPC that the Producer VPC is peered with.
+    &quot;peering&quot;: &quot;A String&quot;, # Immutable. The name of the VPC peering between the Service Consumer VPC and the Producer VPC (defined in the Tenant project) which is added to the NCC hub. This peering must be in ACTIVE state.
+    &quot;producerNetwork&quot;: &quot;A String&quot;, # Output only. The URI of the Producer VPC.
+    &quot;serviceConsumerVpcSpoke&quot;: &quot;A String&quot;, # Output only. The Service Consumer Network spoke.
+  },
+  &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Optional. Router appliance instances that are associated with the spoke.
+    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+      &quot;A String&quot;,
+    ],
     &quot;instances&quot;: [ # The list of router appliance instances.
       { # A router appliance instance is a Compute Engine virtual machine (VM) instance that acts as a BGP speaker. A router appliance instance is specified by the URI of the VM and the internal IP address of one of the VM&#x27;s network interfaces.
         &quot;ipAddress&quot;: &quot;A String&quot;, # The IP address on the VM to use for peering.
@@ -281,9 +326,18 @@ Returns:
     &quot;excludeExportRanges&quot;: [ # Optional. IP ranges encompassing the subnets to be excluded from peering.
       &quot;A String&quot;,
     ],
+    &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
+      &quot;A String&quot;,
+    ],
+    &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network.
+      &quot;A String&quot;,
+    ],
     &quot;uri&quot;: &quot;A String&quot;, # Required. The URI of the VPC network resource.
   },
-  &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # VPN tunnels that are associated with the spoke.
+  &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # Optional. VPN tunnels that are associated with the spoke.
+    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+      &quot;A String&quot;,
+    ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
     &quot;uris&quot;: [ # The URIs of linked VPN tunnel resources.
       &quot;A String&quot;,
@@ -291,7 +345,7 @@ Returns:
     &quot;vpcNetwork&quot;: &quot;A String&quot;, # Output only. The VPC network where these VPN tunnels are located.
   },
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The name of the spoke. Spoke names must be unique. They use the following form: `projects/{project_number}/locations/{region}/spokes/{spoke_id}`
-  &quot;reasons&quot;: [ # Output only. The reasons for current state of the spoke. Only present when the spoke is in the `INACTIVE` state.
+  &quot;reasons&quot;: [ # Output only. The reasons for current state of the spoke.
     { # The reason a spoke is inactive.
       &quot;code&quot;: &quot;A String&quot;, # The code associated with this reason.
       &quot;message&quot;: &quot;A String&quot;, # Human-readable details about this reason.
@@ -376,20 +430,38 @@ Returns:
   &quot;spokes&quot;: [ # The requested spokes.
     { # A Network Connectivity Center spoke represents one or more network connectivity resources. When you create a spoke, you associate it with a hub. You must also identify a value for exactly one of the following fields: * linked_vpn_tunnels * linked_interconnect_attachments * linked_router_appliance_instances * linked_vpc_network
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the spoke was created.
-      &quot;description&quot;: &quot;A String&quot;, # An optional description of the spoke.
+      &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the spoke.
       &quot;group&quot;: &quot;A String&quot;, # Optional. The name of the group that this spoke is associated with.
       &quot;hub&quot;: &quot;A String&quot;, # Immutable. The name of the hub that this spoke is attached to.
       &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
         &quot;a_key&quot;: &quot;A String&quot;,
       },
-      &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # VLAN attachments that are associated with the spoke.
+      &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # Optional. VLAN attachments that are associated with the spoke.
+        &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+          &quot;A String&quot;,
+        ],
         &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
         &quot;uris&quot;: [ # The URIs of linked interconnect attachment resources
           &quot;A String&quot;,
         ],
         &quot;vpcNetwork&quot;: &quot;A String&quot;, # Output only. The VPC network where these VLAN attachments are located.
       },
-      &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Router appliance instances that are associated with the spoke.
+      &quot;linkedProducerVpcNetwork&quot;: { # Optional. The linked producer VPC that is associated with the spoke.
+        &quot;excludeExportRanges&quot;: [ # Optional. IP ranges encompassing the subnets to be excluded from peering.
+          &quot;A String&quot;,
+        ],
+        &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
+          &quot;A String&quot;,
+        ],
+        &quot;network&quot;: &quot;A String&quot;, # Immutable. The URI of the Service Consumer VPC that the Producer VPC is peered with.
+        &quot;peering&quot;: &quot;A String&quot;, # Immutable. The name of the VPC peering between the Service Consumer VPC and the Producer VPC (defined in the Tenant project) which is added to the NCC hub. This peering must be in ACTIVE state.
+        &quot;producerNetwork&quot;: &quot;A String&quot;, # Output only. The URI of the Producer VPC.
+        &quot;serviceConsumerVpcSpoke&quot;: &quot;A String&quot;, # Output only. The Service Consumer Network spoke.
+      },
+      &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Optional. Router appliance instances that are associated with the spoke.
+        &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+          &quot;A String&quot;,
+        ],
         &quot;instances&quot;: [ # The list of router appliance instances.
           { # A router appliance instance is a Compute Engine virtual machine (VM) instance that acts as a BGP speaker. A router appliance instance is specified by the URI of the VM and the internal IP address of one of the VM&#x27;s network interfaces.
             &quot;ipAddress&quot;: &quot;A String&quot;, # The IP address on the VM to use for peering.
@@ -403,9 +475,18 @@ Returns:
         &quot;excludeExportRanges&quot;: [ # Optional. IP ranges encompassing the subnets to be excluded from peering.
           &quot;A String&quot;,
         ],
+        &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
+          &quot;A String&quot;,
+        ],
+        &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network.
+          &quot;A String&quot;,
+        ],
         &quot;uri&quot;: &quot;A String&quot;, # Required. The URI of the VPC network resource.
       },
-      &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # VPN tunnels that are associated with the spoke.
+      &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # Optional. VPN tunnels that are associated with the spoke.
+        &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+          &quot;A String&quot;,
+        ],
         &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
         &quot;uris&quot;: [ # The URIs of linked VPN tunnel resources.
           &quot;A String&quot;,
@@ -413,7 +494,7 @@ Returns:
         &quot;vpcNetwork&quot;: &quot;A String&quot;, # Output only. The VPC network where these VPN tunnels are located.
       },
       &quot;name&quot;: &quot;A String&quot;, # Immutable. The name of the spoke. Spoke names must be unique. They use the following form: `projects/{project_number}/locations/{region}/spokes/{spoke_id}`
-      &quot;reasons&quot;: [ # Output only. The reasons for current state of the spoke. Only present when the spoke is in the `INACTIVE` state.
+      &quot;reasons&quot;: [ # Output only. The reasons for current state of the spoke.
         { # The reason a spoke is inactive.
           &quot;code&quot;: &quot;A String&quot;, # The code associated with this reason.
           &quot;message&quot;: &quot;A String&quot;, # Human-readable details about this reason.
@@ -457,20 +538,38 @@ Args:
 
 { # A Network Connectivity Center spoke represents one or more network connectivity resources. When you create a spoke, you associate it with a hub. You must also identify a value for exactly one of the following fields: * linked_vpn_tunnels * linked_interconnect_attachments * linked_router_appliance_instances * linked_vpc_network
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the spoke was created.
-  &quot;description&quot;: &quot;A String&quot;, # An optional description of the spoke.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the spoke.
   &quot;group&quot;: &quot;A String&quot;, # Optional. The name of the group that this spoke is associated with.
   &quot;hub&quot;: &quot;A String&quot;, # Immutable. The name of the hub that this spoke is attached to.
   &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
     &quot;a_key&quot;: &quot;A String&quot;,
   },
-  &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # VLAN attachments that are associated with the spoke.
+  &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # Optional. VLAN attachments that are associated with the spoke.
+    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+      &quot;A String&quot;,
+    ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
     &quot;uris&quot;: [ # The URIs of linked interconnect attachment resources
       &quot;A String&quot;,
     ],
     &quot;vpcNetwork&quot;: &quot;A String&quot;, # Output only. The VPC network where these VLAN attachments are located.
   },
-  &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Router appliance instances that are associated with the spoke.
+  &quot;linkedProducerVpcNetwork&quot;: { # Optional. The linked producer VPC that is associated with the spoke.
+    &quot;excludeExportRanges&quot;: [ # Optional. IP ranges encompassing the subnets to be excluded from peering.
+      &quot;A String&quot;,
+    ],
+    &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
+      &quot;A String&quot;,
+    ],
+    &quot;network&quot;: &quot;A String&quot;, # Immutable. The URI of the Service Consumer VPC that the Producer VPC is peered with.
+    &quot;peering&quot;: &quot;A String&quot;, # Immutable. The name of the VPC peering between the Service Consumer VPC and the Producer VPC (defined in the Tenant project) which is added to the NCC hub. This peering must be in ACTIVE state.
+    &quot;producerNetwork&quot;: &quot;A String&quot;, # Output only. The URI of the Producer VPC.
+    &quot;serviceConsumerVpcSpoke&quot;: &quot;A String&quot;, # Output only. The Service Consumer Network spoke.
+  },
+  &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Optional. Router appliance instances that are associated with the spoke.
+    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+      &quot;A String&quot;,
+    ],
     &quot;instances&quot;: [ # The list of router appliance instances.
       { # A router appliance instance is a Compute Engine virtual machine (VM) instance that acts as a BGP speaker. A router appliance instance is specified by the URI of the VM and the internal IP address of one of the VM&#x27;s network interfaces.
         &quot;ipAddress&quot;: &quot;A String&quot;, # The IP address on the VM to use for peering.
@@ -484,9 +583,18 @@ Args:
     &quot;excludeExportRanges&quot;: [ # Optional. IP ranges encompassing the subnets to be excluded from peering.
       &quot;A String&quot;,
     ],
+    &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
+      &quot;A String&quot;,
+    ],
+    &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network.
+      &quot;A String&quot;,
+    ],
     &quot;uri&quot;: &quot;A String&quot;, # Required. The URI of the VPC network resource.
   },
-  &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # VPN tunnels that are associated with the spoke.
+  &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # Optional. VPN tunnels that are associated with the spoke.
+    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+      &quot;A String&quot;,
+    ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
     &quot;uris&quot;: [ # The URIs of linked VPN tunnel resources.
       &quot;A String&quot;,
@@ -494,7 +602,7 @@ Args:
     &quot;vpcNetwork&quot;: &quot;A String&quot;, # Output only. The VPC network where these VPN tunnels are located.
   },
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The name of the spoke. Spoke names must be unique. They use the following form: `projects/{project_number}/locations/{region}/spokes/{spoke_id}`
-  &quot;reasons&quot;: [ # Output only. The reasons for current state of the spoke. Only present when the spoke is in the `INACTIVE` state.
+  &quot;reasons&quot;: [ # Output only. The reasons for current state of the spoke.
     { # The reason a spoke is inactive.
       &quot;code&quot;: &quot;A String&quot;, # The code associated with this reason.
       &quot;message&quot;: &quot;A String&quot;, # Human-readable details about this reason.

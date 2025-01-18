@@ -80,6 +80,11 @@ h1, h2, h3 {
 <p class="firstline">Returns the analyses Resource.</p>
 
 <p class="toc_element">
+  <code><a href="contactcenterinsights_v1.projects.locations.conversations.feedbackLabels.html">feedbackLabels()</a></code>
+</p>
+<p class="firstline">Returns the feedbackLabels Resource.</p>
+
+<p class="toc_element">
   <code><a href="#bulkAnalyze">bulkAnalyze(parent, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Analyzes multiple conversations in a single request.</p>
 <p class="toc_element">
@@ -93,7 +98,7 @@ h1, h2, h3 {
 <p class="firstline">Close httplib2 connections.</p>
 <p class="toc_element">
   <code><a href="#create">create(parent, body=None, conversationId=None, x__xgafv=None)</a></code></p>
-<p class="firstline">Creates a conversation. DEPRECATED: Use UploadConversation instead. CreateConversation does not support audio transcription or DLP redaction.</p>
+<p class="firstline">Creates a conversation. Note that this method does not support audio transcription or redaction. Use `conversations.upload` instead.</p>
 <p class="toc_element">
   <code><a href="#delete">delete(name, force=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Deletes a conversation.</p>
@@ -114,7 +119,7 @@ h1, h2, h3 {
 <p class="firstline">Updates a conversation.</p>
 <p class="toc_element">
   <code><a href="#upload">upload(parent, body=None, x__xgafv=None)</a></code></p>
-<p class="firstline">Create a longrunning conversation upload operation. This method differs from CreateConversation by allowing audio transcription and optional DLP redaction.</p>
+<p class="firstline">Create a long-running conversation upload operation. This method differs from `CreateConversation` by allowing audio transcription and optional DLP redaction.</p>
 <h3>Method Details</h3>
 <div class="method">
     <code class="details" id="bulkAnalyze">bulkAnalyze(parent, body=None, x__xgafv=None)</code>
@@ -134,11 +139,19 @@ Args:
     &quot;phraseMatchers&quot;: [ # The list of phrase matchers to run. If not provided, all active phrase matchers will be used. If inactive phrase matchers are provided, they will not be used. Phrase matchers will be run only if run_phrase_matcher_annotator is set to true. Format: projects/{project}/locations/{location}/phraseMatchers/{phrase_matcher}
       &quot;A String&quot;,
     ],
+    &quot;qaConfig&quot;: { # Configuration for the QA feature. # Configuration for the QA annotator.
+      &quot;scorecardList&quot;: { # Container for a list of scorecards. # A manual list of scorecards to score.
+        &quot;qaScorecardRevisions&quot;: [ # List of QaScorecardRevisions.
+          &quot;A String&quot;,
+        ],
+      },
+    },
     &quot;runEntityAnnotator&quot;: True or False, # Whether to run the entity annotator.
     &quot;runIntentAnnotator&quot;: True or False, # Whether to run the intent annotator.
     &quot;runInterruptionAnnotator&quot;: True or False, # Whether to run the interruption annotator.
     &quot;runIssueModelAnnotator&quot;: True or False, # Whether to run the issue model annotator. A model should have already been deployed for this to take effect.
     &quot;runPhraseMatcherAnnotator&quot;: True or False, # Whether to run the active phrase matcher annotator(s).
+    &quot;runQaAnnotator&quot;: True or False, # Whether to run the QA annotator.
     &quot;runSentimentAnnotator&quot;: True or False, # Whether to run the sentiment annotator.
     &quot;runSilenceAnnotator&quot;: True or False, # Whether to run the silence annotator.
     &quot;runSummarizationAnnotator&quot;: True or False, # Whether to run the summarization annotator.
@@ -279,7 +292,7 @@ Returns:
 
 <div class="method">
     <code class="details" id="create">create(parent, body=None, conversationId=None, x__xgafv=None)</code>
-  <pre>Creates a conversation. DEPRECATED: Use UploadConversation instead. CreateConversation does not support audio transcription or DLP redaction.
+  <pre>Creates a conversation. Note that this method does not support audio transcription or redaction. Use `conversations.upload` instead.
 
 Args:
   parent: string, Required. The parent resource of the conversation. (required)
@@ -310,7 +323,7 @@ Args:
   },
   &quot;duration&quot;: &quot;A String&quot;, # Output only. The duration of the conversation.
   &quot;expireTime&quot;: &quot;A String&quot;, # The time at which this conversation should expire. After this time, the conversation data and any associated analyses will be deleted.
-  &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 20 labels per conversation is allowed, with a maximum of 256 characters per entry.
+  &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 100 labels per conversation is allowed, with a maximum of 256 characters per entry.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;languageCode&quot;: &quot;A String&quot;, # A user-specified language code for the conversation.
@@ -398,6 +411,77 @@ Args:
             &quot;phraseMatcher&quot;: &quot;A String&quot;, # The unique identifier (the resource name) of the phrase matcher.
           },
         },
+        &quot;qaScorecardResults&quot;: [ # Results of scoring QaScorecards.
+          { # The results of scoring a single conversation against a QaScorecard. Contains a collection of QaAnswers and aggregate score.
+            &quot;agentId&quot;: &quot;A String&quot;, # ID of the agent that handled the conversation.
+            &quot;conversation&quot;: &quot;A String&quot;, # The conversation scored by this result.
+            &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp that the revision was created.
+            &quot;name&quot;: &quot;A String&quot;, # Identifier. The name of the scorecard result. Format: projects/{project}/locations/{location}/qaScorecardResults/{qa_scorecard_result}
+            &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score. Any manual edits are included if they exist.
+            &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+            &quot;qaAnswers&quot;: [ # Set of QaAnswers represented in the result.
+              { # An answer to a QaQuestion.
+                &quot;answerSources&quot;: [ # List of all individual answers given to the question.
+                  { # A question may have multiple answers from varying sources, one of which becomes the &quot;main&quot; answer above. AnswerSource represents each individual answer.
+                    &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The answer value from this source.
+                      &quot;boolValue&quot;: True or False, # Boolean value.
+                      &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                      &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                      &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                      &quot;numValue&quot;: 3.14, # Numerical value.
+                      &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                      &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                      &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                    },
+                    &quot;sourceType&quot;: &quot;A String&quot;, # What created the answer.
+                  },
+                ],
+                &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The main answer value, incorporating any manual edits if they exist.
+                  &quot;boolValue&quot;: True or False, # Boolean value.
+                  &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                  &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                  &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                  &quot;numValue&quot;: 3.14, # Numerical value.
+                  &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                  &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                  &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                },
+                &quot;conversation&quot;: &quot;A String&quot;, # The conversation the answer applies to.
+                &quot;qaQuestion&quot;: &quot;A String&quot;, # The QaQuestion answered by this answer.
+                &quot;questionBody&quot;: &quot;A String&quot;, # Question text. E.g., &quot;Did the agent greet the customer?&quot;
+                &quot;tags&quot;: [ # User-defined list of arbitrary tags. Matches the value from QaScorecard.ScorecardQuestion.tags. Used for grouping/organization and for weighting the score of each answer.
+                  &quot;A String&quot;,
+                ],
+              },
+            ],
+            &quot;qaScorecardRevision&quot;: &quot;A String&quot;, # The QaScorecardRevision scored by this result.
+            &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+              { # Tags and their corresponding results.
+                &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                &quot;score&quot;: 3.14, # The score the tag applies to.
+                &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+              },
+            ],
+            &quot;score&quot;: 3.14, # The overall numerical score of the result, incorporating any manual edits if they exist.
+            &quot;scoreSources&quot;: [ # List of all individual score sets.
+              { # A scorecard result may have multiple sets of scores from varying sources, one of which becomes the &quot;main&quot; answer above. A ScoreSource represents each individual set of scores.
+                &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score.
+                &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+                &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+                  { # Tags and their corresponding results.
+                    &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                    &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                    &quot;score&quot;: 3.14, # The score the tag applies to.
+                    &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+                  },
+                ],
+                &quot;score&quot;: 3.14, # The overall numerical score of the result.
+                &quot;sourceType&quot;: &quot;A String&quot;, # What created the score.
+              },
+            ],
+          },
+        ],
         &quot;sentiments&quot;: [ # Overall conversation-level sentiment for each channel of the call.
           { # One channel of conversation-level sentiment data.
             &quot;channelTag&quot;: 42, # The channel of the audio that the data applies to.
@@ -421,11 +505,19 @@ Args:
       &quot;phraseMatchers&quot;: [ # The list of phrase matchers to run. If not provided, all active phrase matchers will be used. If inactive phrase matchers are provided, they will not be used. Phrase matchers will be run only if run_phrase_matcher_annotator is set to true. Format: projects/{project}/locations/{location}/phraseMatchers/{phrase_matcher}
         &quot;A String&quot;,
       ],
+      &quot;qaConfig&quot;: { # Configuration for the QA feature. # Configuration for the QA annotator.
+        &quot;scorecardList&quot;: { # Container for a list of scorecards. # A manual list of scorecards to score.
+          &quot;qaScorecardRevisions&quot;: [ # List of QaScorecardRevisions.
+            &quot;A String&quot;,
+          ],
+        },
+      },
       &quot;runEntityAnnotator&quot;: True or False, # Whether to run the entity annotator.
       &quot;runIntentAnnotator&quot;: True or False, # Whether to run the intent annotator.
       &quot;runInterruptionAnnotator&quot;: True or False, # Whether to run the interruption annotator.
       &quot;runIssueModelAnnotator&quot;: True or False, # Whether to run the issue model annotator. A model should have already been deployed for this to take effect.
       &quot;runPhraseMatcherAnnotator&quot;: True or False, # Whether to run the active phrase matcher annotator(s).
+      &quot;runQaAnnotator&quot;: True or False, # Whether to run the QA annotator.
       &quot;runSentimentAnnotator&quot;: True or False, # Whether to run the sentiment annotator.
       &quot;runSilenceAnnotator&quot;: True or False, # Whether to run the silence annotator.
       &quot;runSummarizationAnnotator&quot;: True or False, # Whether to run the summarization annotator.
@@ -451,15 +543,21 @@ Args:
     },
   },
   &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
+  &quot;metadataJson&quot;: &quot;A String&quot;, # Input only. JSON metadata encoded as a string. This field is primarily used by Insights integrations with various telphony systems and must be in one of Insight&#x27;s supported formats.
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
   &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
   &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
     &quot;agentInfo&quot;: [ # Information about agents involved in the call.
       { # Information about an agent involved in the conversation.
         &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+        &quot;agentType&quot;: &quot;A String&quot;, # The agent type, e.g. HUMAN_AGENT.
         &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
         &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
-        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+        &quot;location&quot;: &quot;A String&quot;, # The agent&#x27;s location.
+        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team. Deprecated in favor of the `teams` field.
+        &quot;teams&quot;: [ # User-specified strings representing the agent&#x27;s teams.
+          &quot;A String&quot;,
+        ],
       },
     ],
     &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
@@ -515,98 +613,6 @@ Args:
         &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
         &quot;source&quot;: &quot;A String&quot;, # The knowledge document that this answer was extracted from. Format: projects/{project}/knowledgeBases/{knowledge_base}/documents/{document}.
       },
-      &quot;generatorSuggestionResult&quot;: { # Represents response from generators. # The generator suggestion result.
-        &quot;generatorSuggestion&quot;: { # Suggestion generated using a Generator. # The suggestion generated from the Generator.
-          &quot;agentCoachingSuggestion&quot;: { # Suggestion for coaching agents. # Optional. Suggestion to coach the agent.
-            &quot;agentActionSuggestions&quot;: [ # Optional. Suggested actions for the agent to take.
-              { # Actions suggested for the agent. This is based on applicable instructions.
-                &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The suggested action for the agent.
-              },
-            ],
-            &quot;applicableInstructions&quot;: [ # Optional. Instructions applicable based on the current context.
-              { # Agent Coaching instructions that customer can configure.
-                &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The action that human agent should take. For example, &quot;apologize for the slow shipping&quot;. If the users only want to use agent coaching for intent detection, agent_action can be empty
-                &quot;condition&quot;: &quot;A String&quot;, # Optional. The condition of the instruction. For example, &quot;the customer wants to cancel an order&quot;. If the users want the instruction to be triggered unconditionally, the condition can be empty.
-                &quot;description&quot;: &quot;A String&quot;, # Optional. The detailed description of this instruction.
-                &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name for the instruction.
-                &quot;metadata&quot;: { # Optional. Additional information attached to this instruction.
-                  &quot;a_key&quot;: &quot;A String&quot;,
-                },
-                &quot;systemAction&quot;: &quot;A String&quot;, # Optional. The action that system should take. For example, &quot;call GetOrderTime with order_number={order number provided by the customer}&quot;. If the users don&#x27;t have plugins or don&#x27;t want to trigger plugins, the system_action can be empty
-              },
-            ],
-            &quot;sampleResponses&quot;: [ # Optional. Sample response for the Agent.
-              { # Sample response that the agent can use. This could be based on applicable instructions and ingested data from other systems.
-                &quot;responseText&quot;: &quot;A String&quot;, # Optional. Sample response for Agent in text.
-              },
-            ],
-            &quot;suggestionEval&quot;: { # Self evaluations of the suggestion. # Self evaluation of the suggestion.
-              &quot;actionActionSuggestionEval&quot;: &quot;A String&quot;, # Optional. Eval for Agent action suggestion.
-              &quot;sampleResponseEval&quot;: &quot;A String&quot;, # Optional. Eval for sample response.
-            },
-            &quot;suggestionReasoning&quot;: { # Reasoning for the suggestion. # Reasoning for the suggestion.
-              &quot;agentActionTaken&quot;: &quot;A String&quot;, # Optional. The actions that the agent has taken already.
-              &quot;issueSummary&quot;: &quot;A String&quot;, # Optional. Summary of the issue.
-            },
-          },
-          &quot;freeFormSuggestion&quot;: { # Suggestion generated using free form generator. # Optional. Free form suggestion.
-            &quot;labels&quot;: [ # Optional. Labels for the generator.
-              &quot;A String&quot;,
-            ],
-            &quot;response&quot;: &quot;A String&quot;, # Required. Free form suggestion.
-          },
-          &quot;summarySuggestion&quot;: { # Suggested summary of the conversation. # Optional. Suggested summary.
-            &quot;summarySections&quot;: [ # Required. All the parts of generated summary.
-              { # A component of the generated summary.
-                &quot;section&quot;: &quot;A String&quot;, # Required. Name of the section.
-                &quot;summary&quot;: &quot;A String&quot;, # Required. Summary text for the section.
-              },
-            ],
-          },
-        },
-      },
-      &quot;knowledgeAssistResult&quot;: { # Response for Knowledge Assist. Contains suggested query and optionally includes an answer for the query. # The Knowledge Assist result.
-        &quot;suggestedQuery&quot;: { # Represents a suggested query. # The query suggested based on the context. Suggestion is made only if it is different from the previous suggestion.
-          &quot;queryText&quot;: &quot;A String&quot;, # Suggested query text.
-          &quot;score&quot;: 3.14, # Suggested query score.
-        },
-        &quot;suggestedQueryAnswer&quot;: { # Represents an answer from Knowledge. Cuurently supports FAQ and Generative answers. # The answer generated for the suggested query. Whether or not an answer is generated depends on how confident we are about the generated query.
-          &quot;answerText&quot;: &quot;A String&quot;, # The piece of text from the `source` that answers this suggested query.
-          &quot;faqSource&quot;: { # Details about source of FAQ answer. # Populated if the prediction came from FAQ.
-            &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this answer was extracted from. Format: `projects//knowledgeBases//documents/`.
-            &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
-          },
-          &quot;generativeSource&quot;: { # Details about source of Generative answer. # Populated if the prediction was Generative.
-            &quot;snippets&quot;: [ # All snippets used for this Generative Prediction, with their source URI and data.
-              { # Snippet Source for a Generative Prediction.
-                &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this snippet was extracted from. Format: `projects//knowledgeBases//documents/`.
-                &quot;text&quot;: &quot;A String&quot;, # text taken from that URI.
-                &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-                &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-              },
-            ],
-          },
-          &quot;intentMatchingSource&quot;: { # Details about source of Intent Matching answer. # Populated if the prediction was from intent matching.
-            &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-            &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-          },
-          &quot;matchConfidence&quot;: 3.14, # The system&#x27;s confidence score that this answer is a good match for this conversational query. The range is from 0.0 (completely uncertain) to 1.0 (completely certain).
-        },
-      },
-      &quot;knowledgeSearchResult&quot;: { # Represents a SearchKnowledge answer. # The Knowledge Search result.
-        &quot;answer&quot;: &quot;A String&quot;, # The piece of text from the knowledge base documents that answers the search query
-        &quot;answerRecord&quot;: &quot;A String&quot;, # The name of the answer record. Format: `projects//locations//answer Records/`
-        &quot;answerSources&quot;: [ # All sources used to generate the answer.
-          { # The sources of the answers.
-            &quot;document&quot;: &quot;A String&quot;, # The document from which the snippet was extracted. Format: `projects//knowledgeBases//documents/`
-            &quot;snippet&quot;: &quot;A String&quot;, # The relevant snippet of the article.
-            &quot;title&quot;: &quot;A String&quot;, # The title of the article.
-            &quot;uri&quot;: &quot;A String&quot;, # The URI of the article.
-          },
-        ],
-        &quot;answerType&quot;: &quot;A String&quot;, # The type of the answer.
-        &quot;confidenceScore&quot;: 3.14, # The confidence score in [0.0, 1.0] range.
-      },
       &quot;smartComposeSuggestion&quot;: { # Agent Assist Smart Compose suggestion data. # Agent Assist Smart Compose suggestion data.
         &quot;confidenceScore&quot;: 3.14, # The system&#x27;s confidence score that this suggestion is a good match for this conversation, ranging from 0.0 (completely uncertain) to 1.0 (completely certain).
         &quot;metadata&quot;: { # Map that contains metadata about the Smart Compose suggestion and the document from which it originates.
@@ -626,6 +632,11 @@ Args:
       &quot;startBoundary&quot;: { # A point in a conversation that marks the start or the end of an annotation. # The boundary in the conversation where the annotation starts, inclusive.
         &quot;transcriptIndex&quot;: 42, # The index in the sequence of transcribed pieces of the conversation where the boundary is located. This index starts at zero.
         &quot;wordIndex&quot;: 42, # The word index of this boundary with respect to the first word in the transcript piece. This index starts at zero.
+      },
+      &quot;userInput&quot;: { # Explicit input used for generating the answer # Explicit input used for generating the answer
+        &quot;generatorName&quot;: &quot;A String&quot;, # The resource name of associated generator. Format: `projects//locations//generators/`
+        &quot;query&quot;: &quot;A String&quot;, # Query text. Article Search uses this to store the input query used to generate the search results.
+        &quot;querySource&quot;: &quot;A String&quot;, # Query source for the answer.
       },
     },
   ],
@@ -701,7 +712,7 @@ Returns:
   },
   &quot;duration&quot;: &quot;A String&quot;, # Output only. The duration of the conversation.
   &quot;expireTime&quot;: &quot;A String&quot;, # The time at which this conversation should expire. After this time, the conversation data and any associated analyses will be deleted.
-  &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 20 labels per conversation is allowed, with a maximum of 256 characters per entry.
+  &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 100 labels per conversation is allowed, with a maximum of 256 characters per entry.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;languageCode&quot;: &quot;A String&quot;, # A user-specified language code for the conversation.
@@ -789,6 +800,77 @@ Returns:
             &quot;phraseMatcher&quot;: &quot;A String&quot;, # The unique identifier (the resource name) of the phrase matcher.
           },
         },
+        &quot;qaScorecardResults&quot;: [ # Results of scoring QaScorecards.
+          { # The results of scoring a single conversation against a QaScorecard. Contains a collection of QaAnswers and aggregate score.
+            &quot;agentId&quot;: &quot;A String&quot;, # ID of the agent that handled the conversation.
+            &quot;conversation&quot;: &quot;A String&quot;, # The conversation scored by this result.
+            &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp that the revision was created.
+            &quot;name&quot;: &quot;A String&quot;, # Identifier. The name of the scorecard result. Format: projects/{project}/locations/{location}/qaScorecardResults/{qa_scorecard_result}
+            &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score. Any manual edits are included if they exist.
+            &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+            &quot;qaAnswers&quot;: [ # Set of QaAnswers represented in the result.
+              { # An answer to a QaQuestion.
+                &quot;answerSources&quot;: [ # List of all individual answers given to the question.
+                  { # A question may have multiple answers from varying sources, one of which becomes the &quot;main&quot; answer above. AnswerSource represents each individual answer.
+                    &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The answer value from this source.
+                      &quot;boolValue&quot;: True or False, # Boolean value.
+                      &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                      &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                      &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                      &quot;numValue&quot;: 3.14, # Numerical value.
+                      &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                      &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                      &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                    },
+                    &quot;sourceType&quot;: &quot;A String&quot;, # What created the answer.
+                  },
+                ],
+                &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The main answer value, incorporating any manual edits if they exist.
+                  &quot;boolValue&quot;: True or False, # Boolean value.
+                  &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                  &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                  &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                  &quot;numValue&quot;: 3.14, # Numerical value.
+                  &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                  &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                  &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                },
+                &quot;conversation&quot;: &quot;A String&quot;, # The conversation the answer applies to.
+                &quot;qaQuestion&quot;: &quot;A String&quot;, # The QaQuestion answered by this answer.
+                &quot;questionBody&quot;: &quot;A String&quot;, # Question text. E.g., &quot;Did the agent greet the customer?&quot;
+                &quot;tags&quot;: [ # User-defined list of arbitrary tags. Matches the value from QaScorecard.ScorecardQuestion.tags. Used for grouping/organization and for weighting the score of each answer.
+                  &quot;A String&quot;,
+                ],
+              },
+            ],
+            &quot;qaScorecardRevision&quot;: &quot;A String&quot;, # The QaScorecardRevision scored by this result.
+            &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+              { # Tags and their corresponding results.
+                &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                &quot;score&quot;: 3.14, # The score the tag applies to.
+                &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+              },
+            ],
+            &quot;score&quot;: 3.14, # The overall numerical score of the result, incorporating any manual edits if they exist.
+            &quot;scoreSources&quot;: [ # List of all individual score sets.
+              { # A scorecard result may have multiple sets of scores from varying sources, one of which becomes the &quot;main&quot; answer above. A ScoreSource represents each individual set of scores.
+                &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score.
+                &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+                &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+                  { # Tags and their corresponding results.
+                    &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                    &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                    &quot;score&quot;: 3.14, # The score the tag applies to.
+                    &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+                  },
+                ],
+                &quot;score&quot;: 3.14, # The overall numerical score of the result.
+                &quot;sourceType&quot;: &quot;A String&quot;, # What created the score.
+              },
+            ],
+          },
+        ],
         &quot;sentiments&quot;: [ # Overall conversation-level sentiment for each channel of the call.
           { # One channel of conversation-level sentiment data.
             &quot;channelTag&quot;: 42, # The channel of the audio that the data applies to.
@@ -812,11 +894,19 @@ Returns:
       &quot;phraseMatchers&quot;: [ # The list of phrase matchers to run. If not provided, all active phrase matchers will be used. If inactive phrase matchers are provided, they will not be used. Phrase matchers will be run only if run_phrase_matcher_annotator is set to true. Format: projects/{project}/locations/{location}/phraseMatchers/{phrase_matcher}
         &quot;A String&quot;,
       ],
+      &quot;qaConfig&quot;: { # Configuration for the QA feature. # Configuration for the QA annotator.
+        &quot;scorecardList&quot;: { # Container for a list of scorecards. # A manual list of scorecards to score.
+          &quot;qaScorecardRevisions&quot;: [ # List of QaScorecardRevisions.
+            &quot;A String&quot;,
+          ],
+        },
+      },
       &quot;runEntityAnnotator&quot;: True or False, # Whether to run the entity annotator.
       &quot;runIntentAnnotator&quot;: True or False, # Whether to run the intent annotator.
       &quot;runInterruptionAnnotator&quot;: True or False, # Whether to run the interruption annotator.
       &quot;runIssueModelAnnotator&quot;: True or False, # Whether to run the issue model annotator. A model should have already been deployed for this to take effect.
       &quot;runPhraseMatcherAnnotator&quot;: True or False, # Whether to run the active phrase matcher annotator(s).
+      &quot;runQaAnnotator&quot;: True or False, # Whether to run the QA annotator.
       &quot;runSentimentAnnotator&quot;: True or False, # Whether to run the sentiment annotator.
       &quot;runSilenceAnnotator&quot;: True or False, # Whether to run the silence annotator.
       &quot;runSummarizationAnnotator&quot;: True or False, # Whether to run the summarization annotator.
@@ -842,15 +932,21 @@ Returns:
     },
   },
   &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
+  &quot;metadataJson&quot;: &quot;A String&quot;, # Input only. JSON metadata encoded as a string. This field is primarily used by Insights integrations with various telphony systems and must be in one of Insight&#x27;s supported formats.
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
   &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
   &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
     &quot;agentInfo&quot;: [ # Information about agents involved in the call.
       { # Information about an agent involved in the conversation.
         &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+        &quot;agentType&quot;: &quot;A String&quot;, # The agent type, e.g. HUMAN_AGENT.
         &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
         &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
-        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+        &quot;location&quot;: &quot;A String&quot;, # The agent&#x27;s location.
+        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team. Deprecated in favor of the `teams` field.
+        &quot;teams&quot;: [ # User-specified strings representing the agent&#x27;s teams.
+          &quot;A String&quot;,
+        ],
       },
     ],
     &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
@@ -906,98 +1002,6 @@ Returns:
         &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
         &quot;source&quot;: &quot;A String&quot;, # The knowledge document that this answer was extracted from. Format: projects/{project}/knowledgeBases/{knowledge_base}/documents/{document}.
       },
-      &quot;generatorSuggestionResult&quot;: { # Represents response from generators. # The generator suggestion result.
-        &quot;generatorSuggestion&quot;: { # Suggestion generated using a Generator. # The suggestion generated from the Generator.
-          &quot;agentCoachingSuggestion&quot;: { # Suggestion for coaching agents. # Optional. Suggestion to coach the agent.
-            &quot;agentActionSuggestions&quot;: [ # Optional. Suggested actions for the agent to take.
-              { # Actions suggested for the agent. This is based on applicable instructions.
-                &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The suggested action for the agent.
-              },
-            ],
-            &quot;applicableInstructions&quot;: [ # Optional. Instructions applicable based on the current context.
-              { # Agent Coaching instructions that customer can configure.
-                &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The action that human agent should take. For example, &quot;apologize for the slow shipping&quot;. If the users only want to use agent coaching for intent detection, agent_action can be empty
-                &quot;condition&quot;: &quot;A String&quot;, # Optional. The condition of the instruction. For example, &quot;the customer wants to cancel an order&quot;. If the users want the instruction to be triggered unconditionally, the condition can be empty.
-                &quot;description&quot;: &quot;A String&quot;, # Optional. The detailed description of this instruction.
-                &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name for the instruction.
-                &quot;metadata&quot;: { # Optional. Additional information attached to this instruction.
-                  &quot;a_key&quot;: &quot;A String&quot;,
-                },
-                &quot;systemAction&quot;: &quot;A String&quot;, # Optional. The action that system should take. For example, &quot;call GetOrderTime with order_number={order number provided by the customer}&quot;. If the users don&#x27;t have plugins or don&#x27;t want to trigger plugins, the system_action can be empty
-              },
-            ],
-            &quot;sampleResponses&quot;: [ # Optional. Sample response for the Agent.
-              { # Sample response that the agent can use. This could be based on applicable instructions and ingested data from other systems.
-                &quot;responseText&quot;: &quot;A String&quot;, # Optional. Sample response for Agent in text.
-              },
-            ],
-            &quot;suggestionEval&quot;: { # Self evaluations of the suggestion. # Self evaluation of the suggestion.
-              &quot;actionActionSuggestionEval&quot;: &quot;A String&quot;, # Optional. Eval for Agent action suggestion.
-              &quot;sampleResponseEval&quot;: &quot;A String&quot;, # Optional. Eval for sample response.
-            },
-            &quot;suggestionReasoning&quot;: { # Reasoning for the suggestion. # Reasoning for the suggestion.
-              &quot;agentActionTaken&quot;: &quot;A String&quot;, # Optional. The actions that the agent has taken already.
-              &quot;issueSummary&quot;: &quot;A String&quot;, # Optional. Summary of the issue.
-            },
-          },
-          &quot;freeFormSuggestion&quot;: { # Suggestion generated using free form generator. # Optional. Free form suggestion.
-            &quot;labels&quot;: [ # Optional. Labels for the generator.
-              &quot;A String&quot;,
-            ],
-            &quot;response&quot;: &quot;A String&quot;, # Required. Free form suggestion.
-          },
-          &quot;summarySuggestion&quot;: { # Suggested summary of the conversation. # Optional. Suggested summary.
-            &quot;summarySections&quot;: [ # Required. All the parts of generated summary.
-              { # A component of the generated summary.
-                &quot;section&quot;: &quot;A String&quot;, # Required. Name of the section.
-                &quot;summary&quot;: &quot;A String&quot;, # Required. Summary text for the section.
-              },
-            ],
-          },
-        },
-      },
-      &quot;knowledgeAssistResult&quot;: { # Response for Knowledge Assist. Contains suggested query and optionally includes an answer for the query. # The Knowledge Assist result.
-        &quot;suggestedQuery&quot;: { # Represents a suggested query. # The query suggested based on the context. Suggestion is made only if it is different from the previous suggestion.
-          &quot;queryText&quot;: &quot;A String&quot;, # Suggested query text.
-          &quot;score&quot;: 3.14, # Suggested query score.
-        },
-        &quot;suggestedQueryAnswer&quot;: { # Represents an answer from Knowledge. Cuurently supports FAQ and Generative answers. # The answer generated for the suggested query. Whether or not an answer is generated depends on how confident we are about the generated query.
-          &quot;answerText&quot;: &quot;A String&quot;, # The piece of text from the `source` that answers this suggested query.
-          &quot;faqSource&quot;: { # Details about source of FAQ answer. # Populated if the prediction came from FAQ.
-            &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this answer was extracted from. Format: `projects//knowledgeBases//documents/`.
-            &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
-          },
-          &quot;generativeSource&quot;: { # Details about source of Generative answer. # Populated if the prediction was Generative.
-            &quot;snippets&quot;: [ # All snippets used for this Generative Prediction, with their source URI and data.
-              { # Snippet Source for a Generative Prediction.
-                &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this snippet was extracted from. Format: `projects//knowledgeBases//documents/`.
-                &quot;text&quot;: &quot;A String&quot;, # text taken from that URI.
-                &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-                &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-              },
-            ],
-          },
-          &quot;intentMatchingSource&quot;: { # Details about source of Intent Matching answer. # Populated if the prediction was from intent matching.
-            &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-            &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-          },
-          &quot;matchConfidence&quot;: 3.14, # The system&#x27;s confidence score that this answer is a good match for this conversational query. The range is from 0.0 (completely uncertain) to 1.0 (completely certain).
-        },
-      },
-      &quot;knowledgeSearchResult&quot;: { # Represents a SearchKnowledge answer. # The Knowledge Search result.
-        &quot;answer&quot;: &quot;A String&quot;, # The piece of text from the knowledge base documents that answers the search query
-        &quot;answerRecord&quot;: &quot;A String&quot;, # The name of the answer record. Format: `projects//locations//answer Records/`
-        &quot;answerSources&quot;: [ # All sources used to generate the answer.
-          { # The sources of the answers.
-            &quot;document&quot;: &quot;A String&quot;, # The document from which the snippet was extracted. Format: `projects//knowledgeBases//documents/`
-            &quot;snippet&quot;: &quot;A String&quot;, # The relevant snippet of the article.
-            &quot;title&quot;: &quot;A String&quot;, # The title of the article.
-            &quot;uri&quot;: &quot;A String&quot;, # The URI of the article.
-          },
-        ],
-        &quot;answerType&quot;: &quot;A String&quot;, # The type of the answer.
-        &quot;confidenceScore&quot;: 3.14, # The confidence score in [0.0, 1.0] range.
-      },
       &quot;smartComposeSuggestion&quot;: { # Agent Assist Smart Compose suggestion data. # Agent Assist Smart Compose suggestion data.
         &quot;confidenceScore&quot;: 3.14, # The system&#x27;s confidence score that this suggestion is a good match for this conversation, ranging from 0.0 (completely uncertain) to 1.0 (completely certain).
         &quot;metadata&quot;: { # Map that contains metadata about the Smart Compose suggestion and the document from which it originates.
@@ -1017,6 +1021,11 @@ Returns:
       &quot;startBoundary&quot;: { # A point in a conversation that marks the start or the end of an annotation. # The boundary in the conversation where the annotation starts, inclusive.
         &quot;transcriptIndex&quot;: 42, # The index in the sequence of transcribed pieces of the conversation where the boundary is located. This index starts at zero.
         &quot;wordIndex&quot;: 42, # The word index of this boundary with respect to the first word in the transcript piece. This index starts at zero.
+      },
+      &quot;userInput&quot;: { # Explicit input used for generating the answer # Explicit input used for generating the answer
+        &quot;generatorName&quot;: &quot;A String&quot;, # The resource name of associated generator. Format: `projects//locations//generators/`
+        &quot;query&quot;: &quot;A String&quot;, # Query text. Article Search uses this to store the input query used to generate the search results.
+        &quot;querySource&quot;: &quot;A String&quot;, # Query source for the answer.
       },
     },
   ],
@@ -1122,7 +1131,7 @@ Returns:
   },
   &quot;duration&quot;: &quot;A String&quot;, # Output only. The duration of the conversation.
   &quot;expireTime&quot;: &quot;A String&quot;, # The time at which this conversation should expire. After this time, the conversation data and any associated analyses will be deleted.
-  &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 20 labels per conversation is allowed, with a maximum of 256 characters per entry.
+  &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 100 labels per conversation is allowed, with a maximum of 256 characters per entry.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;languageCode&quot;: &quot;A String&quot;, # A user-specified language code for the conversation.
@@ -1210,6 +1219,77 @@ Returns:
             &quot;phraseMatcher&quot;: &quot;A String&quot;, # The unique identifier (the resource name) of the phrase matcher.
           },
         },
+        &quot;qaScorecardResults&quot;: [ # Results of scoring QaScorecards.
+          { # The results of scoring a single conversation against a QaScorecard. Contains a collection of QaAnswers and aggregate score.
+            &quot;agentId&quot;: &quot;A String&quot;, # ID of the agent that handled the conversation.
+            &quot;conversation&quot;: &quot;A String&quot;, # The conversation scored by this result.
+            &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp that the revision was created.
+            &quot;name&quot;: &quot;A String&quot;, # Identifier. The name of the scorecard result. Format: projects/{project}/locations/{location}/qaScorecardResults/{qa_scorecard_result}
+            &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score. Any manual edits are included if they exist.
+            &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+            &quot;qaAnswers&quot;: [ # Set of QaAnswers represented in the result.
+              { # An answer to a QaQuestion.
+                &quot;answerSources&quot;: [ # List of all individual answers given to the question.
+                  { # A question may have multiple answers from varying sources, one of which becomes the &quot;main&quot; answer above. AnswerSource represents each individual answer.
+                    &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The answer value from this source.
+                      &quot;boolValue&quot;: True or False, # Boolean value.
+                      &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                      &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                      &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                      &quot;numValue&quot;: 3.14, # Numerical value.
+                      &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                      &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                      &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                    },
+                    &quot;sourceType&quot;: &quot;A String&quot;, # What created the answer.
+                  },
+                ],
+                &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The main answer value, incorporating any manual edits if they exist.
+                  &quot;boolValue&quot;: True or False, # Boolean value.
+                  &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                  &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                  &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                  &quot;numValue&quot;: 3.14, # Numerical value.
+                  &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                  &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                  &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                },
+                &quot;conversation&quot;: &quot;A String&quot;, # The conversation the answer applies to.
+                &quot;qaQuestion&quot;: &quot;A String&quot;, # The QaQuestion answered by this answer.
+                &quot;questionBody&quot;: &quot;A String&quot;, # Question text. E.g., &quot;Did the agent greet the customer?&quot;
+                &quot;tags&quot;: [ # User-defined list of arbitrary tags. Matches the value from QaScorecard.ScorecardQuestion.tags. Used for grouping/organization and for weighting the score of each answer.
+                  &quot;A String&quot;,
+                ],
+              },
+            ],
+            &quot;qaScorecardRevision&quot;: &quot;A String&quot;, # The QaScorecardRevision scored by this result.
+            &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+              { # Tags and their corresponding results.
+                &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                &quot;score&quot;: 3.14, # The score the tag applies to.
+                &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+              },
+            ],
+            &quot;score&quot;: 3.14, # The overall numerical score of the result, incorporating any manual edits if they exist.
+            &quot;scoreSources&quot;: [ # List of all individual score sets.
+              { # A scorecard result may have multiple sets of scores from varying sources, one of which becomes the &quot;main&quot; answer above. A ScoreSource represents each individual set of scores.
+                &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score.
+                &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+                &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+                  { # Tags and their corresponding results.
+                    &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                    &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                    &quot;score&quot;: 3.14, # The score the tag applies to.
+                    &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+                  },
+                ],
+                &quot;score&quot;: 3.14, # The overall numerical score of the result.
+                &quot;sourceType&quot;: &quot;A String&quot;, # What created the score.
+              },
+            ],
+          },
+        ],
         &quot;sentiments&quot;: [ # Overall conversation-level sentiment for each channel of the call.
           { # One channel of conversation-level sentiment data.
             &quot;channelTag&quot;: 42, # The channel of the audio that the data applies to.
@@ -1233,11 +1313,19 @@ Returns:
       &quot;phraseMatchers&quot;: [ # The list of phrase matchers to run. If not provided, all active phrase matchers will be used. If inactive phrase matchers are provided, they will not be used. Phrase matchers will be run only if run_phrase_matcher_annotator is set to true. Format: projects/{project}/locations/{location}/phraseMatchers/{phrase_matcher}
         &quot;A String&quot;,
       ],
+      &quot;qaConfig&quot;: { # Configuration for the QA feature. # Configuration for the QA annotator.
+        &quot;scorecardList&quot;: { # Container for a list of scorecards. # A manual list of scorecards to score.
+          &quot;qaScorecardRevisions&quot;: [ # List of QaScorecardRevisions.
+            &quot;A String&quot;,
+          ],
+        },
+      },
       &quot;runEntityAnnotator&quot;: True or False, # Whether to run the entity annotator.
       &quot;runIntentAnnotator&quot;: True or False, # Whether to run the intent annotator.
       &quot;runInterruptionAnnotator&quot;: True or False, # Whether to run the interruption annotator.
       &quot;runIssueModelAnnotator&quot;: True or False, # Whether to run the issue model annotator. A model should have already been deployed for this to take effect.
       &quot;runPhraseMatcherAnnotator&quot;: True or False, # Whether to run the active phrase matcher annotator(s).
+      &quot;runQaAnnotator&quot;: True or False, # Whether to run the QA annotator.
       &quot;runSentimentAnnotator&quot;: True or False, # Whether to run the sentiment annotator.
       &quot;runSilenceAnnotator&quot;: True or False, # Whether to run the silence annotator.
       &quot;runSummarizationAnnotator&quot;: True or False, # Whether to run the summarization annotator.
@@ -1263,15 +1351,21 @@ Returns:
     },
   },
   &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
+  &quot;metadataJson&quot;: &quot;A String&quot;, # Input only. JSON metadata encoded as a string. This field is primarily used by Insights integrations with various telphony systems and must be in one of Insight&#x27;s supported formats.
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
   &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
   &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
     &quot;agentInfo&quot;: [ # Information about agents involved in the call.
       { # Information about an agent involved in the conversation.
         &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+        &quot;agentType&quot;: &quot;A String&quot;, # The agent type, e.g. HUMAN_AGENT.
         &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
         &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
-        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+        &quot;location&quot;: &quot;A String&quot;, # The agent&#x27;s location.
+        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team. Deprecated in favor of the `teams` field.
+        &quot;teams&quot;: [ # User-specified strings representing the agent&#x27;s teams.
+          &quot;A String&quot;,
+        ],
       },
     ],
     &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
@@ -1327,98 +1421,6 @@ Returns:
         &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
         &quot;source&quot;: &quot;A String&quot;, # The knowledge document that this answer was extracted from. Format: projects/{project}/knowledgeBases/{knowledge_base}/documents/{document}.
       },
-      &quot;generatorSuggestionResult&quot;: { # Represents response from generators. # The generator suggestion result.
-        &quot;generatorSuggestion&quot;: { # Suggestion generated using a Generator. # The suggestion generated from the Generator.
-          &quot;agentCoachingSuggestion&quot;: { # Suggestion for coaching agents. # Optional. Suggestion to coach the agent.
-            &quot;agentActionSuggestions&quot;: [ # Optional. Suggested actions for the agent to take.
-              { # Actions suggested for the agent. This is based on applicable instructions.
-                &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The suggested action for the agent.
-              },
-            ],
-            &quot;applicableInstructions&quot;: [ # Optional. Instructions applicable based on the current context.
-              { # Agent Coaching instructions that customer can configure.
-                &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The action that human agent should take. For example, &quot;apologize for the slow shipping&quot;. If the users only want to use agent coaching for intent detection, agent_action can be empty
-                &quot;condition&quot;: &quot;A String&quot;, # Optional. The condition of the instruction. For example, &quot;the customer wants to cancel an order&quot;. If the users want the instruction to be triggered unconditionally, the condition can be empty.
-                &quot;description&quot;: &quot;A String&quot;, # Optional. The detailed description of this instruction.
-                &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name for the instruction.
-                &quot;metadata&quot;: { # Optional. Additional information attached to this instruction.
-                  &quot;a_key&quot;: &quot;A String&quot;,
-                },
-                &quot;systemAction&quot;: &quot;A String&quot;, # Optional. The action that system should take. For example, &quot;call GetOrderTime with order_number={order number provided by the customer}&quot;. If the users don&#x27;t have plugins or don&#x27;t want to trigger plugins, the system_action can be empty
-              },
-            ],
-            &quot;sampleResponses&quot;: [ # Optional. Sample response for the Agent.
-              { # Sample response that the agent can use. This could be based on applicable instructions and ingested data from other systems.
-                &quot;responseText&quot;: &quot;A String&quot;, # Optional. Sample response for Agent in text.
-              },
-            ],
-            &quot;suggestionEval&quot;: { # Self evaluations of the suggestion. # Self evaluation of the suggestion.
-              &quot;actionActionSuggestionEval&quot;: &quot;A String&quot;, # Optional. Eval for Agent action suggestion.
-              &quot;sampleResponseEval&quot;: &quot;A String&quot;, # Optional. Eval for sample response.
-            },
-            &quot;suggestionReasoning&quot;: { # Reasoning for the suggestion. # Reasoning for the suggestion.
-              &quot;agentActionTaken&quot;: &quot;A String&quot;, # Optional. The actions that the agent has taken already.
-              &quot;issueSummary&quot;: &quot;A String&quot;, # Optional. Summary of the issue.
-            },
-          },
-          &quot;freeFormSuggestion&quot;: { # Suggestion generated using free form generator. # Optional. Free form suggestion.
-            &quot;labels&quot;: [ # Optional. Labels for the generator.
-              &quot;A String&quot;,
-            ],
-            &quot;response&quot;: &quot;A String&quot;, # Required. Free form suggestion.
-          },
-          &quot;summarySuggestion&quot;: { # Suggested summary of the conversation. # Optional. Suggested summary.
-            &quot;summarySections&quot;: [ # Required. All the parts of generated summary.
-              { # A component of the generated summary.
-                &quot;section&quot;: &quot;A String&quot;, # Required. Name of the section.
-                &quot;summary&quot;: &quot;A String&quot;, # Required. Summary text for the section.
-              },
-            ],
-          },
-        },
-      },
-      &quot;knowledgeAssistResult&quot;: { # Response for Knowledge Assist. Contains suggested query and optionally includes an answer for the query. # The Knowledge Assist result.
-        &quot;suggestedQuery&quot;: { # Represents a suggested query. # The query suggested based on the context. Suggestion is made only if it is different from the previous suggestion.
-          &quot;queryText&quot;: &quot;A String&quot;, # Suggested query text.
-          &quot;score&quot;: 3.14, # Suggested query score.
-        },
-        &quot;suggestedQueryAnswer&quot;: { # Represents an answer from Knowledge. Cuurently supports FAQ and Generative answers. # The answer generated for the suggested query. Whether or not an answer is generated depends on how confident we are about the generated query.
-          &quot;answerText&quot;: &quot;A String&quot;, # The piece of text from the `source` that answers this suggested query.
-          &quot;faqSource&quot;: { # Details about source of FAQ answer. # Populated if the prediction came from FAQ.
-            &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this answer was extracted from. Format: `projects//knowledgeBases//documents/`.
-            &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
-          },
-          &quot;generativeSource&quot;: { # Details about source of Generative answer. # Populated if the prediction was Generative.
-            &quot;snippets&quot;: [ # All snippets used for this Generative Prediction, with their source URI and data.
-              { # Snippet Source for a Generative Prediction.
-                &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this snippet was extracted from. Format: `projects//knowledgeBases//documents/`.
-                &quot;text&quot;: &quot;A String&quot;, # text taken from that URI.
-                &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-                &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-              },
-            ],
-          },
-          &quot;intentMatchingSource&quot;: { # Details about source of Intent Matching answer. # Populated if the prediction was from intent matching.
-            &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-            &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-          },
-          &quot;matchConfidence&quot;: 3.14, # The system&#x27;s confidence score that this answer is a good match for this conversational query. The range is from 0.0 (completely uncertain) to 1.0 (completely certain).
-        },
-      },
-      &quot;knowledgeSearchResult&quot;: { # Represents a SearchKnowledge answer. # The Knowledge Search result.
-        &quot;answer&quot;: &quot;A String&quot;, # The piece of text from the knowledge base documents that answers the search query
-        &quot;answerRecord&quot;: &quot;A String&quot;, # The name of the answer record. Format: `projects//locations//answer Records/`
-        &quot;answerSources&quot;: [ # All sources used to generate the answer.
-          { # The sources of the answers.
-            &quot;document&quot;: &quot;A String&quot;, # The document from which the snippet was extracted. Format: `projects//knowledgeBases//documents/`
-            &quot;snippet&quot;: &quot;A String&quot;, # The relevant snippet of the article.
-            &quot;title&quot;: &quot;A String&quot;, # The title of the article.
-            &quot;uri&quot;: &quot;A String&quot;, # The URI of the article.
-          },
-        ],
-        &quot;answerType&quot;: &quot;A String&quot;, # The type of the answer.
-        &quot;confidenceScore&quot;: 3.14, # The confidence score in [0.0, 1.0] range.
-      },
       &quot;smartComposeSuggestion&quot;: { # Agent Assist Smart Compose suggestion data. # Agent Assist Smart Compose suggestion data.
         &quot;confidenceScore&quot;: 3.14, # The system&#x27;s confidence score that this suggestion is a good match for this conversation, ranging from 0.0 (completely uncertain) to 1.0 (completely certain).
         &quot;metadata&quot;: { # Map that contains metadata about the Smart Compose suggestion and the document from which it originates.
@@ -1438,6 +1440,11 @@ Returns:
       &quot;startBoundary&quot;: { # A point in a conversation that marks the start or the end of an annotation. # The boundary in the conversation where the annotation starts, inclusive.
         &quot;transcriptIndex&quot;: 42, # The index in the sequence of transcribed pieces of the conversation where the boundary is located. This index starts at zero.
         &quot;wordIndex&quot;: 42, # The word index of this boundary with respect to the first word in the transcript piece. This index starts at zero.
+      },
+      &quot;userInput&quot;: { # Explicit input used for generating the answer # Explicit input used for generating the answer
+        &quot;generatorName&quot;: &quot;A String&quot;, # The resource name of associated generator. Format: `projects//locations//generators/`
+        &quot;query&quot;: &quot;A String&quot;, # Query text. Article Search uses this to store the input query used to generate the search results.
+        &quot;querySource&quot;: &quot;A String&quot;, # Query source for the answer.
       },
     },
   ],
@@ -1493,24 +1500,24 @@ Args:
 { # The request to ingest conversations.
   &quot;conversationConfig&quot;: { # Configuration that applies to all conversations. # Configuration that applies to all conversations.
     &quot;agentChannel&quot;: 42, # Optional. Indicates which of the channels, 1 or 2, contains the agent. Note that this must be set for conversations to be properly displayed and analyzed.
-    &quot;agentId&quot;: &quot;A String&quot;, # Optional. An opaque, user-specified string representing a human agent who handled all conversations in the import. Note that this will be overridden if per-conversation metadata is provided via the `metadata_bucket_uri`.
+    &quot;agentId&quot;: &quot;A String&quot;, # Optional. An opaque, user-specified string representing a human agent who handled all conversations in the import. Note that this will be overridden if per-conversation metadata is provided through the `metadata_bucket_uri`.
     &quot;customerChannel&quot;: 42, # Optional. Indicates which of the channels, 1 or 2, contains the agent. Note that this must be set for conversations to be properly displayed and analyzed.
   },
   &quot;gcsSource&quot;: { # Configuration for Cloud Storage bucket sources. # A cloud storage bucket source. Note that any previously ingested objects from the source will be skipped to avoid duplication.
     &quot;bucketObjectType&quot;: &quot;A String&quot;, # Optional. Specifies the type of the objects in `bucket_uri`.
     &quot;bucketUri&quot;: &quot;A String&quot;, # Required. The Cloud Storage bucket containing source objects.
-    &quot;customMetadataKeys&quot;: [ # Optional. Custom keys to extract as conversation labels from metadata files in `metadata_bucket_uri`. Keys not included in this field will be ignored. Note that there is a limit of 20 labels per conversation.
+    &quot;customMetadataKeys&quot;: [ # Optional. Custom keys to extract as conversation labels from metadata files in `metadata_bucket_uri`. Keys not included in this field will be ignored. Note that there is a limit of 100 labels per conversation.
       &quot;A String&quot;,
     ],
-    &quot;metadataBucketUri&quot;: &quot;A String&quot;, # Optional. The Cloud Storage path to the source object metadata. Note that: [1] metadata files are expected to be in JSON format [2] metadata and source objects must be in separate buckets [3] a source object&#x27;s metadata object must share the same name to be properly ingested
+    &quot;metadataBucketUri&quot;: &quot;A String&quot;, # Optional. The Cloud Storage path to the conversation metadata. Note that: [1] Metadata files are expected to be in JSON format. [2] Metadata and source files (transcripts or audio) must be in separate buckets. [3] A source file and its corresponding metadata file must share the same name to be properly ingested, E.g. `gs://bucket/audio/conversation1.mp3` and `gs://bucket/metadata/conversation1.json`.
   },
   &quot;parent&quot;: &quot;A String&quot;, # Required. The parent resource for new conversations.
-  &quot;redactionConfig&quot;: { # DLP resources used for redaction while ingesting conversations. DLP settings are applied to conversations ingested from the UploadConversation and IngestConversations endpoints, including conversation coming from CCAI Platform. They are not applied to conversations ingested from the CreateConversation endpoint or the Dialogflow / Agent Assist runtime integrations. When using Dialogflow / Agent Assist runtime integrations redaction should be performed in Dialogflow / Agent Assist. # Optional. DLP settings for transcript redaction. Optional, will default to the config specified in Settings.
+  &quot;redactionConfig&quot;: { # DLP resources used for redaction while ingesting conversations. DLP settings are applied to conversations ingested from the `UploadConversation` and `IngestConversations` endpoints, including conversation coming from CCAI Platform. They are not applied to conversations ingested from the `CreateConversation` endpoint or the Dialogflow / Agent Assist runtime integrations. When using Dialogflow / Agent Assist runtime integrations, redaction should be performed in Dialogflow / Agent Assist. # Optional. DLP settings for transcript redaction. Optional, will default to the config specified in Settings.
     &quot;deidentifyTemplate&quot;: &quot;A String&quot;, # The fully-qualified DLP deidentify template resource name. Format: `projects/{project}/deidentifyTemplates/{template}`
     &quot;inspectTemplate&quot;: &quot;A String&quot;, # The fully-qualified DLP inspect template resource name. Format: `projects/{project}/locations/{location}/inspectTemplates/{template}`
   },
-  &quot;sampleSize&quot;: 42, # Optional. If set, this fields indicates the number of objects to ingest from the Cloud Storage bucket. If empty, the entire bucket will be ingested. Note that conversations produced via sampling will not be ingested by subsequent ingest requests unless they are first deleted.
-  &quot;speechConfig&quot;: { # Speech-to-Text configuration. Speech-to-Text settings are applied to conversations ingested from the UploadConversation and IngestConversations endpoints, including conversation coming from CCAI Platform. They are not applied to conversations ingested from the CreateConversation endpoint. # Optional. Default Speech-to-Text configuration. Optional, will default to the config specified in Settings.
+  &quot;sampleSize&quot;: 42, # Optional. If set, this fields indicates the number of objects to ingest from the Cloud Storage bucket. If empty, the entire bucket will be ingested. Unless they are first deleted, conversations produced through sampling won&#x27;t be ingested by subsequent ingest requests.
+  &quot;speechConfig&quot;: { # Speech-to-Text configuration. Speech-to-Text settings are applied to conversations ingested from the `UploadConversation` and `IngestConversations` endpoints, including conversation coming from CCAI Platform. They are not applied to conversations ingested from the `CreateConversation` endpoint. # Optional. Default Speech-to-Text configuration. Optional, will default to the config specified in Settings.
     &quot;speechRecognizer&quot;: &quot;A String&quot;, # The fully-qualified Speech Recognizer resource name. Format: `projects/{project_id}/locations/{location}/recognizer/{recognizer}`
   },
   &quot;transcriptObjectConfig&quot;: { # Configuration for processing transcript objects. # Configuration for when `source` contains conversation transcripts.
@@ -1554,8 +1561,8 @@ Returns:
 Args:
   parent: string, Required. The parent resource of the conversation. (required)
   filter: string, A filter to reduce results to a specific subset. Useful for querying conversations with specific properties.
-  orderBy: string, Optional. The attribute by which to order conversations in the response. If empty, conversations will be ordered by descending creation time. Supported values are one of the following: * create_time * customer_satisfaction_rating * duration * latest_analysis * start_time * turn_count The default sort order is ascending. To specify order, append `asc` or `desc`, i.e. `create_time desc`. See https://google.aip.dev/132#ordering for more details.
-  pageSize: integer, The maximum number of conversations to return in the response. A valid page size ranges from 0 to 1,000 inclusive. If the page size is zero or unspecified, a default page size of 100 will be chosen. Note that a call might return fewer results than the requested page size.
+  orderBy: string, Optional. The attribute by which to order conversations in the response. If empty, conversations will be ordered by descending creation time. Supported values are one of the following: * create_time * customer_satisfaction_rating * duration * latest_analysis * start_time * turn_count The default sort order is ascending. To specify order, append `asc` or `desc` (`create_time desc`). For more details, see [Google AIPs Ordering](https://google.aip.dev/132#ordering).
+  pageSize: integer, The maximum number of conversations to return in the response. A valid page size ranges from 0 to 100,000 inclusive. If the page size is zero or unspecified, a default page size of 100 will be chosen. Note that a call might return fewer results than the requested page size.
   pageToken: string, The value returned by the last `ListConversationsResponse`. This value indicates that this is a continuation of a prior `ListConversations` call and that the system should return the next page of data.
   view: string, The level of details of the conversation. Default is `BASIC`.
     Allowed values
@@ -1596,7 +1603,7 @@ Returns:
       },
       &quot;duration&quot;: &quot;A String&quot;, # Output only. The duration of the conversation.
       &quot;expireTime&quot;: &quot;A String&quot;, # The time at which this conversation should expire. After this time, the conversation data and any associated analyses will be deleted.
-      &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 20 labels per conversation is allowed, with a maximum of 256 characters per entry.
+      &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 100 labels per conversation is allowed, with a maximum of 256 characters per entry.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;languageCode&quot;: &quot;A String&quot;, # A user-specified language code for the conversation.
@@ -1684,6 +1691,77 @@ Returns:
                 &quot;phraseMatcher&quot;: &quot;A String&quot;, # The unique identifier (the resource name) of the phrase matcher.
               },
             },
+            &quot;qaScorecardResults&quot;: [ # Results of scoring QaScorecards.
+              { # The results of scoring a single conversation against a QaScorecard. Contains a collection of QaAnswers and aggregate score.
+                &quot;agentId&quot;: &quot;A String&quot;, # ID of the agent that handled the conversation.
+                &quot;conversation&quot;: &quot;A String&quot;, # The conversation scored by this result.
+                &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp that the revision was created.
+                &quot;name&quot;: &quot;A String&quot;, # Identifier. The name of the scorecard result. Format: projects/{project}/locations/{location}/qaScorecardResults/{qa_scorecard_result}
+                &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score. Any manual edits are included if they exist.
+                &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+                &quot;qaAnswers&quot;: [ # Set of QaAnswers represented in the result.
+                  { # An answer to a QaQuestion.
+                    &quot;answerSources&quot;: [ # List of all individual answers given to the question.
+                      { # A question may have multiple answers from varying sources, one of which becomes the &quot;main&quot; answer above. AnswerSource represents each individual answer.
+                        &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The answer value from this source.
+                          &quot;boolValue&quot;: True or False, # Boolean value.
+                          &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                          &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                          &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                          &quot;numValue&quot;: 3.14, # Numerical value.
+                          &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                          &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                          &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                        },
+                        &quot;sourceType&quot;: &quot;A String&quot;, # What created the answer.
+                      },
+                    ],
+                    &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The main answer value, incorporating any manual edits if they exist.
+                      &quot;boolValue&quot;: True or False, # Boolean value.
+                      &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                      &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                      &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                      &quot;numValue&quot;: 3.14, # Numerical value.
+                      &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                      &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                      &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                    },
+                    &quot;conversation&quot;: &quot;A String&quot;, # The conversation the answer applies to.
+                    &quot;qaQuestion&quot;: &quot;A String&quot;, # The QaQuestion answered by this answer.
+                    &quot;questionBody&quot;: &quot;A String&quot;, # Question text. E.g., &quot;Did the agent greet the customer?&quot;
+                    &quot;tags&quot;: [ # User-defined list of arbitrary tags. Matches the value from QaScorecard.ScorecardQuestion.tags. Used for grouping/organization and for weighting the score of each answer.
+                      &quot;A String&quot;,
+                    ],
+                  },
+                ],
+                &quot;qaScorecardRevision&quot;: &quot;A String&quot;, # The QaScorecardRevision scored by this result.
+                &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+                  { # Tags and their corresponding results.
+                    &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                    &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                    &quot;score&quot;: 3.14, # The score the tag applies to.
+                    &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+                  },
+                ],
+                &quot;score&quot;: 3.14, # The overall numerical score of the result, incorporating any manual edits if they exist.
+                &quot;scoreSources&quot;: [ # List of all individual score sets.
+                  { # A scorecard result may have multiple sets of scores from varying sources, one of which becomes the &quot;main&quot; answer above. A ScoreSource represents each individual set of scores.
+                    &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score.
+                    &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+                    &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+                      { # Tags and their corresponding results.
+                        &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                        &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                        &quot;score&quot;: 3.14, # The score the tag applies to.
+                        &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+                      },
+                    ],
+                    &quot;score&quot;: 3.14, # The overall numerical score of the result.
+                    &quot;sourceType&quot;: &quot;A String&quot;, # What created the score.
+                  },
+                ],
+              },
+            ],
             &quot;sentiments&quot;: [ # Overall conversation-level sentiment for each channel of the call.
               { # One channel of conversation-level sentiment data.
                 &quot;channelTag&quot;: 42, # The channel of the audio that the data applies to.
@@ -1707,11 +1785,19 @@ Returns:
           &quot;phraseMatchers&quot;: [ # The list of phrase matchers to run. If not provided, all active phrase matchers will be used. If inactive phrase matchers are provided, they will not be used. Phrase matchers will be run only if run_phrase_matcher_annotator is set to true. Format: projects/{project}/locations/{location}/phraseMatchers/{phrase_matcher}
             &quot;A String&quot;,
           ],
+          &quot;qaConfig&quot;: { # Configuration for the QA feature. # Configuration for the QA annotator.
+            &quot;scorecardList&quot;: { # Container for a list of scorecards. # A manual list of scorecards to score.
+              &quot;qaScorecardRevisions&quot;: [ # List of QaScorecardRevisions.
+                &quot;A String&quot;,
+              ],
+            },
+          },
           &quot;runEntityAnnotator&quot;: True or False, # Whether to run the entity annotator.
           &quot;runIntentAnnotator&quot;: True or False, # Whether to run the intent annotator.
           &quot;runInterruptionAnnotator&quot;: True or False, # Whether to run the interruption annotator.
           &quot;runIssueModelAnnotator&quot;: True or False, # Whether to run the issue model annotator. A model should have already been deployed for this to take effect.
           &quot;runPhraseMatcherAnnotator&quot;: True or False, # Whether to run the active phrase matcher annotator(s).
+          &quot;runQaAnnotator&quot;: True or False, # Whether to run the QA annotator.
           &quot;runSentimentAnnotator&quot;: True or False, # Whether to run the sentiment annotator.
           &quot;runSilenceAnnotator&quot;: True or False, # Whether to run the silence annotator.
           &quot;runSummarizationAnnotator&quot;: True or False, # Whether to run the summarization annotator.
@@ -1737,15 +1823,21 @@ Returns:
         },
       },
       &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
+      &quot;metadataJson&quot;: &quot;A String&quot;, # Input only. JSON metadata encoded as a string. This field is primarily used by Insights integrations with various telphony systems and must be in one of Insight&#x27;s supported formats.
       &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
       &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
       &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
         &quot;agentInfo&quot;: [ # Information about agents involved in the call.
           { # Information about an agent involved in the conversation.
             &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+            &quot;agentType&quot;: &quot;A String&quot;, # The agent type, e.g. HUMAN_AGENT.
             &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
             &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
-            &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+            &quot;location&quot;: &quot;A String&quot;, # The agent&#x27;s location.
+            &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team. Deprecated in favor of the `teams` field.
+            &quot;teams&quot;: [ # User-specified strings representing the agent&#x27;s teams.
+              &quot;A String&quot;,
+            ],
           },
         ],
         &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
@@ -1801,98 +1893,6 @@ Returns:
             &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
             &quot;source&quot;: &quot;A String&quot;, # The knowledge document that this answer was extracted from. Format: projects/{project}/knowledgeBases/{knowledge_base}/documents/{document}.
           },
-          &quot;generatorSuggestionResult&quot;: { # Represents response from generators. # The generator suggestion result.
-            &quot;generatorSuggestion&quot;: { # Suggestion generated using a Generator. # The suggestion generated from the Generator.
-              &quot;agentCoachingSuggestion&quot;: { # Suggestion for coaching agents. # Optional. Suggestion to coach the agent.
-                &quot;agentActionSuggestions&quot;: [ # Optional. Suggested actions for the agent to take.
-                  { # Actions suggested for the agent. This is based on applicable instructions.
-                    &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The suggested action for the agent.
-                  },
-                ],
-                &quot;applicableInstructions&quot;: [ # Optional. Instructions applicable based on the current context.
-                  { # Agent Coaching instructions that customer can configure.
-                    &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The action that human agent should take. For example, &quot;apologize for the slow shipping&quot;. If the users only want to use agent coaching for intent detection, agent_action can be empty
-                    &quot;condition&quot;: &quot;A String&quot;, # Optional. The condition of the instruction. For example, &quot;the customer wants to cancel an order&quot;. If the users want the instruction to be triggered unconditionally, the condition can be empty.
-                    &quot;description&quot;: &quot;A String&quot;, # Optional. The detailed description of this instruction.
-                    &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name for the instruction.
-                    &quot;metadata&quot;: { # Optional. Additional information attached to this instruction.
-                      &quot;a_key&quot;: &quot;A String&quot;,
-                    },
-                    &quot;systemAction&quot;: &quot;A String&quot;, # Optional. The action that system should take. For example, &quot;call GetOrderTime with order_number={order number provided by the customer}&quot;. If the users don&#x27;t have plugins or don&#x27;t want to trigger plugins, the system_action can be empty
-                  },
-                ],
-                &quot;sampleResponses&quot;: [ # Optional. Sample response for the Agent.
-                  { # Sample response that the agent can use. This could be based on applicable instructions and ingested data from other systems.
-                    &quot;responseText&quot;: &quot;A String&quot;, # Optional. Sample response for Agent in text.
-                  },
-                ],
-                &quot;suggestionEval&quot;: { # Self evaluations of the suggestion. # Self evaluation of the suggestion.
-                  &quot;actionActionSuggestionEval&quot;: &quot;A String&quot;, # Optional. Eval for Agent action suggestion.
-                  &quot;sampleResponseEval&quot;: &quot;A String&quot;, # Optional. Eval for sample response.
-                },
-                &quot;suggestionReasoning&quot;: { # Reasoning for the suggestion. # Reasoning for the suggestion.
-                  &quot;agentActionTaken&quot;: &quot;A String&quot;, # Optional. The actions that the agent has taken already.
-                  &quot;issueSummary&quot;: &quot;A String&quot;, # Optional. Summary of the issue.
-                },
-              },
-              &quot;freeFormSuggestion&quot;: { # Suggestion generated using free form generator. # Optional. Free form suggestion.
-                &quot;labels&quot;: [ # Optional. Labels for the generator.
-                  &quot;A String&quot;,
-                ],
-                &quot;response&quot;: &quot;A String&quot;, # Required. Free form suggestion.
-              },
-              &quot;summarySuggestion&quot;: { # Suggested summary of the conversation. # Optional. Suggested summary.
-                &quot;summarySections&quot;: [ # Required. All the parts of generated summary.
-                  { # A component of the generated summary.
-                    &quot;section&quot;: &quot;A String&quot;, # Required. Name of the section.
-                    &quot;summary&quot;: &quot;A String&quot;, # Required. Summary text for the section.
-                  },
-                ],
-              },
-            },
-          },
-          &quot;knowledgeAssistResult&quot;: { # Response for Knowledge Assist. Contains suggested query and optionally includes an answer for the query. # The Knowledge Assist result.
-            &quot;suggestedQuery&quot;: { # Represents a suggested query. # The query suggested based on the context. Suggestion is made only if it is different from the previous suggestion.
-              &quot;queryText&quot;: &quot;A String&quot;, # Suggested query text.
-              &quot;score&quot;: 3.14, # Suggested query score.
-            },
-            &quot;suggestedQueryAnswer&quot;: { # Represents an answer from Knowledge. Cuurently supports FAQ and Generative answers. # The answer generated for the suggested query. Whether or not an answer is generated depends on how confident we are about the generated query.
-              &quot;answerText&quot;: &quot;A String&quot;, # The piece of text from the `source` that answers this suggested query.
-              &quot;faqSource&quot;: { # Details about source of FAQ answer. # Populated if the prediction came from FAQ.
-                &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this answer was extracted from. Format: `projects//knowledgeBases//documents/`.
-                &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
-              },
-              &quot;generativeSource&quot;: { # Details about source of Generative answer. # Populated if the prediction was Generative.
-                &quot;snippets&quot;: [ # All snippets used for this Generative Prediction, with their source URI and data.
-                  { # Snippet Source for a Generative Prediction.
-                    &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this snippet was extracted from. Format: `projects//knowledgeBases//documents/`.
-                    &quot;text&quot;: &quot;A String&quot;, # text taken from that URI.
-                    &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-                    &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-                  },
-                ],
-              },
-              &quot;intentMatchingSource&quot;: { # Details about source of Intent Matching answer. # Populated if the prediction was from intent matching.
-                &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-                &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-              },
-              &quot;matchConfidence&quot;: 3.14, # The system&#x27;s confidence score that this answer is a good match for this conversational query. The range is from 0.0 (completely uncertain) to 1.0 (completely certain).
-            },
-          },
-          &quot;knowledgeSearchResult&quot;: { # Represents a SearchKnowledge answer. # The Knowledge Search result.
-            &quot;answer&quot;: &quot;A String&quot;, # The piece of text from the knowledge base documents that answers the search query
-            &quot;answerRecord&quot;: &quot;A String&quot;, # The name of the answer record. Format: `projects//locations//answer Records/`
-            &quot;answerSources&quot;: [ # All sources used to generate the answer.
-              { # The sources of the answers.
-                &quot;document&quot;: &quot;A String&quot;, # The document from which the snippet was extracted. Format: `projects//knowledgeBases//documents/`
-                &quot;snippet&quot;: &quot;A String&quot;, # The relevant snippet of the article.
-                &quot;title&quot;: &quot;A String&quot;, # The title of the article.
-                &quot;uri&quot;: &quot;A String&quot;, # The URI of the article.
-              },
-            ],
-            &quot;answerType&quot;: &quot;A String&quot;, # The type of the answer.
-            &quot;confidenceScore&quot;: 3.14, # The confidence score in [0.0, 1.0] range.
-          },
           &quot;smartComposeSuggestion&quot;: { # Agent Assist Smart Compose suggestion data. # Agent Assist Smart Compose suggestion data.
             &quot;confidenceScore&quot;: 3.14, # The system&#x27;s confidence score that this suggestion is a good match for this conversation, ranging from 0.0 (completely uncertain) to 1.0 (completely certain).
             &quot;metadata&quot;: { # Map that contains metadata about the Smart Compose suggestion and the document from which it originates.
@@ -1912,6 +1912,11 @@ Returns:
           &quot;startBoundary&quot;: { # A point in a conversation that marks the start or the end of an annotation. # The boundary in the conversation where the annotation starts, inclusive.
             &quot;transcriptIndex&quot;: 42, # The index in the sequence of transcribed pieces of the conversation where the boundary is located. This index starts at zero.
             &quot;wordIndex&quot;: 42, # The word index of this boundary with respect to the first word in the transcript piece. This index starts at zero.
+          },
+          &quot;userInput&quot;: { # Explicit input used for generating the answer # Explicit input used for generating the answer
+            &quot;generatorName&quot;: &quot;A String&quot;, # The resource name of associated generator. Format: `projects//locations//generators/`
+            &quot;query&quot;: &quot;A String&quot;, # Query text. Article Search uses this to store the input query used to generate the search results.
+            &quot;querySource&quot;: &quot;A String&quot;, # Query source for the answer.
           },
         },
       ],
@@ -2005,7 +2010,7 @@ Args:
   },
   &quot;duration&quot;: &quot;A String&quot;, # Output only. The duration of the conversation.
   &quot;expireTime&quot;: &quot;A String&quot;, # The time at which this conversation should expire. After this time, the conversation data and any associated analyses will be deleted.
-  &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 20 labels per conversation is allowed, with a maximum of 256 characters per entry.
+  &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 100 labels per conversation is allowed, with a maximum of 256 characters per entry.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;languageCode&quot;: &quot;A String&quot;, # A user-specified language code for the conversation.
@@ -2093,6 +2098,77 @@ Args:
             &quot;phraseMatcher&quot;: &quot;A String&quot;, # The unique identifier (the resource name) of the phrase matcher.
           },
         },
+        &quot;qaScorecardResults&quot;: [ # Results of scoring QaScorecards.
+          { # The results of scoring a single conversation against a QaScorecard. Contains a collection of QaAnswers and aggregate score.
+            &quot;agentId&quot;: &quot;A String&quot;, # ID of the agent that handled the conversation.
+            &quot;conversation&quot;: &quot;A String&quot;, # The conversation scored by this result.
+            &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp that the revision was created.
+            &quot;name&quot;: &quot;A String&quot;, # Identifier. The name of the scorecard result. Format: projects/{project}/locations/{location}/qaScorecardResults/{qa_scorecard_result}
+            &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score. Any manual edits are included if they exist.
+            &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+            &quot;qaAnswers&quot;: [ # Set of QaAnswers represented in the result.
+              { # An answer to a QaQuestion.
+                &quot;answerSources&quot;: [ # List of all individual answers given to the question.
+                  { # A question may have multiple answers from varying sources, one of which becomes the &quot;main&quot; answer above. AnswerSource represents each individual answer.
+                    &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The answer value from this source.
+                      &quot;boolValue&quot;: True or False, # Boolean value.
+                      &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                      &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                      &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                      &quot;numValue&quot;: 3.14, # Numerical value.
+                      &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                      &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                      &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                    },
+                    &quot;sourceType&quot;: &quot;A String&quot;, # What created the answer.
+                  },
+                ],
+                &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The main answer value, incorporating any manual edits if they exist.
+                  &quot;boolValue&quot;: True or False, # Boolean value.
+                  &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                  &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                  &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                  &quot;numValue&quot;: 3.14, # Numerical value.
+                  &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                  &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                  &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                },
+                &quot;conversation&quot;: &quot;A String&quot;, # The conversation the answer applies to.
+                &quot;qaQuestion&quot;: &quot;A String&quot;, # The QaQuestion answered by this answer.
+                &quot;questionBody&quot;: &quot;A String&quot;, # Question text. E.g., &quot;Did the agent greet the customer?&quot;
+                &quot;tags&quot;: [ # User-defined list of arbitrary tags. Matches the value from QaScorecard.ScorecardQuestion.tags. Used for grouping/organization and for weighting the score of each answer.
+                  &quot;A String&quot;,
+                ],
+              },
+            ],
+            &quot;qaScorecardRevision&quot;: &quot;A String&quot;, # The QaScorecardRevision scored by this result.
+            &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+              { # Tags and their corresponding results.
+                &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                &quot;score&quot;: 3.14, # The score the tag applies to.
+                &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+              },
+            ],
+            &quot;score&quot;: 3.14, # The overall numerical score of the result, incorporating any manual edits if they exist.
+            &quot;scoreSources&quot;: [ # List of all individual score sets.
+              { # A scorecard result may have multiple sets of scores from varying sources, one of which becomes the &quot;main&quot; answer above. A ScoreSource represents each individual set of scores.
+                &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score.
+                &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+                &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+                  { # Tags and their corresponding results.
+                    &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                    &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                    &quot;score&quot;: 3.14, # The score the tag applies to.
+                    &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+                  },
+                ],
+                &quot;score&quot;: 3.14, # The overall numerical score of the result.
+                &quot;sourceType&quot;: &quot;A String&quot;, # What created the score.
+              },
+            ],
+          },
+        ],
         &quot;sentiments&quot;: [ # Overall conversation-level sentiment for each channel of the call.
           { # One channel of conversation-level sentiment data.
             &quot;channelTag&quot;: 42, # The channel of the audio that the data applies to.
@@ -2116,11 +2192,19 @@ Args:
       &quot;phraseMatchers&quot;: [ # The list of phrase matchers to run. If not provided, all active phrase matchers will be used. If inactive phrase matchers are provided, they will not be used. Phrase matchers will be run only if run_phrase_matcher_annotator is set to true. Format: projects/{project}/locations/{location}/phraseMatchers/{phrase_matcher}
         &quot;A String&quot;,
       ],
+      &quot;qaConfig&quot;: { # Configuration for the QA feature. # Configuration for the QA annotator.
+        &quot;scorecardList&quot;: { # Container for a list of scorecards. # A manual list of scorecards to score.
+          &quot;qaScorecardRevisions&quot;: [ # List of QaScorecardRevisions.
+            &quot;A String&quot;,
+          ],
+        },
+      },
       &quot;runEntityAnnotator&quot;: True or False, # Whether to run the entity annotator.
       &quot;runIntentAnnotator&quot;: True or False, # Whether to run the intent annotator.
       &quot;runInterruptionAnnotator&quot;: True or False, # Whether to run the interruption annotator.
       &quot;runIssueModelAnnotator&quot;: True or False, # Whether to run the issue model annotator. A model should have already been deployed for this to take effect.
       &quot;runPhraseMatcherAnnotator&quot;: True or False, # Whether to run the active phrase matcher annotator(s).
+      &quot;runQaAnnotator&quot;: True or False, # Whether to run the QA annotator.
       &quot;runSentimentAnnotator&quot;: True or False, # Whether to run the sentiment annotator.
       &quot;runSilenceAnnotator&quot;: True or False, # Whether to run the silence annotator.
       &quot;runSummarizationAnnotator&quot;: True or False, # Whether to run the summarization annotator.
@@ -2146,15 +2230,21 @@ Args:
     },
   },
   &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
+  &quot;metadataJson&quot;: &quot;A String&quot;, # Input only. JSON metadata encoded as a string. This field is primarily used by Insights integrations with various telphony systems and must be in one of Insight&#x27;s supported formats.
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
   &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
   &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
     &quot;agentInfo&quot;: [ # Information about agents involved in the call.
       { # Information about an agent involved in the conversation.
         &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+        &quot;agentType&quot;: &quot;A String&quot;, # The agent type, e.g. HUMAN_AGENT.
         &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
         &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
-        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+        &quot;location&quot;: &quot;A String&quot;, # The agent&#x27;s location.
+        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team. Deprecated in favor of the `teams` field.
+        &quot;teams&quot;: [ # User-specified strings representing the agent&#x27;s teams.
+          &quot;A String&quot;,
+        ],
       },
     ],
     &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
@@ -2210,98 +2300,6 @@ Args:
         &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
         &quot;source&quot;: &quot;A String&quot;, # The knowledge document that this answer was extracted from. Format: projects/{project}/knowledgeBases/{knowledge_base}/documents/{document}.
       },
-      &quot;generatorSuggestionResult&quot;: { # Represents response from generators. # The generator suggestion result.
-        &quot;generatorSuggestion&quot;: { # Suggestion generated using a Generator. # The suggestion generated from the Generator.
-          &quot;agentCoachingSuggestion&quot;: { # Suggestion for coaching agents. # Optional. Suggestion to coach the agent.
-            &quot;agentActionSuggestions&quot;: [ # Optional. Suggested actions for the agent to take.
-              { # Actions suggested for the agent. This is based on applicable instructions.
-                &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The suggested action for the agent.
-              },
-            ],
-            &quot;applicableInstructions&quot;: [ # Optional. Instructions applicable based on the current context.
-              { # Agent Coaching instructions that customer can configure.
-                &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The action that human agent should take. For example, &quot;apologize for the slow shipping&quot;. If the users only want to use agent coaching for intent detection, agent_action can be empty
-                &quot;condition&quot;: &quot;A String&quot;, # Optional. The condition of the instruction. For example, &quot;the customer wants to cancel an order&quot;. If the users want the instruction to be triggered unconditionally, the condition can be empty.
-                &quot;description&quot;: &quot;A String&quot;, # Optional. The detailed description of this instruction.
-                &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name for the instruction.
-                &quot;metadata&quot;: { # Optional. Additional information attached to this instruction.
-                  &quot;a_key&quot;: &quot;A String&quot;,
-                },
-                &quot;systemAction&quot;: &quot;A String&quot;, # Optional. The action that system should take. For example, &quot;call GetOrderTime with order_number={order number provided by the customer}&quot;. If the users don&#x27;t have plugins or don&#x27;t want to trigger plugins, the system_action can be empty
-              },
-            ],
-            &quot;sampleResponses&quot;: [ # Optional. Sample response for the Agent.
-              { # Sample response that the agent can use. This could be based on applicable instructions and ingested data from other systems.
-                &quot;responseText&quot;: &quot;A String&quot;, # Optional. Sample response for Agent in text.
-              },
-            ],
-            &quot;suggestionEval&quot;: { # Self evaluations of the suggestion. # Self evaluation of the suggestion.
-              &quot;actionActionSuggestionEval&quot;: &quot;A String&quot;, # Optional. Eval for Agent action suggestion.
-              &quot;sampleResponseEval&quot;: &quot;A String&quot;, # Optional. Eval for sample response.
-            },
-            &quot;suggestionReasoning&quot;: { # Reasoning for the suggestion. # Reasoning for the suggestion.
-              &quot;agentActionTaken&quot;: &quot;A String&quot;, # Optional. The actions that the agent has taken already.
-              &quot;issueSummary&quot;: &quot;A String&quot;, # Optional. Summary of the issue.
-            },
-          },
-          &quot;freeFormSuggestion&quot;: { # Suggestion generated using free form generator. # Optional. Free form suggestion.
-            &quot;labels&quot;: [ # Optional. Labels for the generator.
-              &quot;A String&quot;,
-            ],
-            &quot;response&quot;: &quot;A String&quot;, # Required. Free form suggestion.
-          },
-          &quot;summarySuggestion&quot;: { # Suggested summary of the conversation. # Optional. Suggested summary.
-            &quot;summarySections&quot;: [ # Required. All the parts of generated summary.
-              { # A component of the generated summary.
-                &quot;section&quot;: &quot;A String&quot;, # Required. Name of the section.
-                &quot;summary&quot;: &quot;A String&quot;, # Required. Summary text for the section.
-              },
-            ],
-          },
-        },
-      },
-      &quot;knowledgeAssistResult&quot;: { # Response for Knowledge Assist. Contains suggested query and optionally includes an answer for the query. # The Knowledge Assist result.
-        &quot;suggestedQuery&quot;: { # Represents a suggested query. # The query suggested based on the context. Suggestion is made only if it is different from the previous suggestion.
-          &quot;queryText&quot;: &quot;A String&quot;, # Suggested query text.
-          &quot;score&quot;: 3.14, # Suggested query score.
-        },
-        &quot;suggestedQueryAnswer&quot;: { # Represents an answer from Knowledge. Cuurently supports FAQ and Generative answers. # The answer generated for the suggested query. Whether or not an answer is generated depends on how confident we are about the generated query.
-          &quot;answerText&quot;: &quot;A String&quot;, # The piece of text from the `source` that answers this suggested query.
-          &quot;faqSource&quot;: { # Details about source of FAQ answer. # Populated if the prediction came from FAQ.
-            &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this answer was extracted from. Format: `projects//knowledgeBases//documents/`.
-            &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
-          },
-          &quot;generativeSource&quot;: { # Details about source of Generative answer. # Populated if the prediction was Generative.
-            &quot;snippets&quot;: [ # All snippets used for this Generative Prediction, with their source URI and data.
-              { # Snippet Source for a Generative Prediction.
-                &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this snippet was extracted from. Format: `projects//knowledgeBases//documents/`.
-                &quot;text&quot;: &quot;A String&quot;, # text taken from that URI.
-                &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-                &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-              },
-            ],
-          },
-          &quot;intentMatchingSource&quot;: { # Details about source of Intent Matching answer. # Populated if the prediction was from intent matching.
-            &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-            &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-          },
-          &quot;matchConfidence&quot;: 3.14, # The system&#x27;s confidence score that this answer is a good match for this conversational query. The range is from 0.0 (completely uncertain) to 1.0 (completely certain).
-        },
-      },
-      &quot;knowledgeSearchResult&quot;: { # Represents a SearchKnowledge answer. # The Knowledge Search result.
-        &quot;answer&quot;: &quot;A String&quot;, # The piece of text from the knowledge base documents that answers the search query
-        &quot;answerRecord&quot;: &quot;A String&quot;, # The name of the answer record. Format: `projects//locations//answer Records/`
-        &quot;answerSources&quot;: [ # All sources used to generate the answer.
-          { # The sources of the answers.
-            &quot;document&quot;: &quot;A String&quot;, # The document from which the snippet was extracted. Format: `projects//knowledgeBases//documents/`
-            &quot;snippet&quot;: &quot;A String&quot;, # The relevant snippet of the article.
-            &quot;title&quot;: &quot;A String&quot;, # The title of the article.
-            &quot;uri&quot;: &quot;A String&quot;, # The URI of the article.
-          },
-        ],
-        &quot;answerType&quot;: &quot;A String&quot;, # The type of the answer.
-        &quot;confidenceScore&quot;: 3.14, # The confidence score in [0.0, 1.0] range.
-      },
       &quot;smartComposeSuggestion&quot;: { # Agent Assist Smart Compose suggestion data. # Agent Assist Smart Compose suggestion data.
         &quot;confidenceScore&quot;: 3.14, # The system&#x27;s confidence score that this suggestion is a good match for this conversation, ranging from 0.0 (completely uncertain) to 1.0 (completely certain).
         &quot;metadata&quot;: { # Map that contains metadata about the Smart Compose suggestion and the document from which it originates.
@@ -2321,6 +2319,11 @@ Args:
       &quot;startBoundary&quot;: { # A point in a conversation that marks the start or the end of an annotation. # The boundary in the conversation where the annotation starts, inclusive.
         &quot;transcriptIndex&quot;: 42, # The index in the sequence of transcribed pieces of the conversation where the boundary is located. This index starts at zero.
         &quot;wordIndex&quot;: 42, # The word index of this boundary with respect to the first word in the transcript piece. This index starts at zero.
+      },
+      &quot;userInput&quot;: { # Explicit input used for generating the answer # Explicit input used for generating the answer
+        &quot;generatorName&quot;: &quot;A String&quot;, # The resource name of associated generator. Format: `projects//locations//generators/`
+        &quot;query&quot;: &quot;A String&quot;, # Query text. Article Search uses this to store the input query used to generate the search results.
+        &quot;querySource&quot;: &quot;A String&quot;, # Query source for the answer.
       },
     },
   ],
@@ -2363,7 +2366,7 @@ Args:
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The most recent time at which the conversation was updated.
 }
 
-  updateMask: string, The list of fields to be updated.
+  updateMask: string, The list of fields to be updated. All possible fields can be updated by passing `*`, or a subset of the following updateable fields can be provided: * `agent_id` * `language_code` * `labels` * `metadata` * `quality_metadata` * `call_metadata` * `start_time` * `expire_time` or `ttl` * `data_source.gcs_source.audio_uri` or `data_source.dialogflow_source.audio_uri`
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -2396,7 +2399,7 @@ Returns:
   },
   &quot;duration&quot;: &quot;A String&quot;, # Output only. The duration of the conversation.
   &quot;expireTime&quot;: &quot;A String&quot;, # The time at which this conversation should expire. After this time, the conversation data and any associated analyses will be deleted.
-  &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 20 labels per conversation is allowed, with a maximum of 256 characters per entry.
+  &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 100 labels per conversation is allowed, with a maximum of 256 characters per entry.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;languageCode&quot;: &quot;A String&quot;, # A user-specified language code for the conversation.
@@ -2484,6 +2487,77 @@ Returns:
             &quot;phraseMatcher&quot;: &quot;A String&quot;, # The unique identifier (the resource name) of the phrase matcher.
           },
         },
+        &quot;qaScorecardResults&quot;: [ # Results of scoring QaScorecards.
+          { # The results of scoring a single conversation against a QaScorecard. Contains a collection of QaAnswers and aggregate score.
+            &quot;agentId&quot;: &quot;A String&quot;, # ID of the agent that handled the conversation.
+            &quot;conversation&quot;: &quot;A String&quot;, # The conversation scored by this result.
+            &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp that the revision was created.
+            &quot;name&quot;: &quot;A String&quot;, # Identifier. The name of the scorecard result. Format: projects/{project}/locations/{location}/qaScorecardResults/{qa_scorecard_result}
+            &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score. Any manual edits are included if they exist.
+            &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+            &quot;qaAnswers&quot;: [ # Set of QaAnswers represented in the result.
+              { # An answer to a QaQuestion.
+                &quot;answerSources&quot;: [ # List of all individual answers given to the question.
+                  { # A question may have multiple answers from varying sources, one of which becomes the &quot;main&quot; answer above. AnswerSource represents each individual answer.
+                    &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The answer value from this source.
+                      &quot;boolValue&quot;: True or False, # Boolean value.
+                      &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                      &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                      &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                      &quot;numValue&quot;: 3.14, # Numerical value.
+                      &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                      &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                      &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                    },
+                    &quot;sourceType&quot;: &quot;A String&quot;, # What created the answer.
+                  },
+                ],
+                &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The main answer value, incorporating any manual edits if they exist.
+                  &quot;boolValue&quot;: True or False, # Boolean value.
+                  &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                  &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                  &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                  &quot;numValue&quot;: 3.14, # Numerical value.
+                  &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                  &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                  &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                },
+                &quot;conversation&quot;: &quot;A String&quot;, # The conversation the answer applies to.
+                &quot;qaQuestion&quot;: &quot;A String&quot;, # The QaQuestion answered by this answer.
+                &quot;questionBody&quot;: &quot;A String&quot;, # Question text. E.g., &quot;Did the agent greet the customer?&quot;
+                &quot;tags&quot;: [ # User-defined list of arbitrary tags. Matches the value from QaScorecard.ScorecardQuestion.tags. Used for grouping/organization and for weighting the score of each answer.
+                  &quot;A String&quot;,
+                ],
+              },
+            ],
+            &quot;qaScorecardRevision&quot;: &quot;A String&quot;, # The QaScorecardRevision scored by this result.
+            &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+              { # Tags and their corresponding results.
+                &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                &quot;score&quot;: 3.14, # The score the tag applies to.
+                &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+              },
+            ],
+            &quot;score&quot;: 3.14, # The overall numerical score of the result, incorporating any manual edits if they exist.
+            &quot;scoreSources&quot;: [ # List of all individual score sets.
+              { # A scorecard result may have multiple sets of scores from varying sources, one of which becomes the &quot;main&quot; answer above. A ScoreSource represents each individual set of scores.
+                &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score.
+                &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+                &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+                  { # Tags and their corresponding results.
+                    &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                    &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                    &quot;score&quot;: 3.14, # The score the tag applies to.
+                    &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+                  },
+                ],
+                &quot;score&quot;: 3.14, # The overall numerical score of the result.
+                &quot;sourceType&quot;: &quot;A String&quot;, # What created the score.
+              },
+            ],
+          },
+        ],
         &quot;sentiments&quot;: [ # Overall conversation-level sentiment for each channel of the call.
           { # One channel of conversation-level sentiment data.
             &quot;channelTag&quot;: 42, # The channel of the audio that the data applies to.
@@ -2507,11 +2581,19 @@ Returns:
       &quot;phraseMatchers&quot;: [ # The list of phrase matchers to run. If not provided, all active phrase matchers will be used. If inactive phrase matchers are provided, they will not be used. Phrase matchers will be run only if run_phrase_matcher_annotator is set to true. Format: projects/{project}/locations/{location}/phraseMatchers/{phrase_matcher}
         &quot;A String&quot;,
       ],
+      &quot;qaConfig&quot;: { # Configuration for the QA feature. # Configuration for the QA annotator.
+        &quot;scorecardList&quot;: { # Container for a list of scorecards. # A manual list of scorecards to score.
+          &quot;qaScorecardRevisions&quot;: [ # List of QaScorecardRevisions.
+            &quot;A String&quot;,
+          ],
+        },
+      },
       &quot;runEntityAnnotator&quot;: True or False, # Whether to run the entity annotator.
       &quot;runIntentAnnotator&quot;: True or False, # Whether to run the intent annotator.
       &quot;runInterruptionAnnotator&quot;: True or False, # Whether to run the interruption annotator.
       &quot;runIssueModelAnnotator&quot;: True or False, # Whether to run the issue model annotator. A model should have already been deployed for this to take effect.
       &quot;runPhraseMatcherAnnotator&quot;: True or False, # Whether to run the active phrase matcher annotator(s).
+      &quot;runQaAnnotator&quot;: True or False, # Whether to run the QA annotator.
       &quot;runSentimentAnnotator&quot;: True or False, # Whether to run the sentiment annotator.
       &quot;runSilenceAnnotator&quot;: True or False, # Whether to run the silence annotator.
       &quot;runSummarizationAnnotator&quot;: True or False, # Whether to run the summarization annotator.
@@ -2537,15 +2619,21 @@ Returns:
     },
   },
   &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
+  &quot;metadataJson&quot;: &quot;A String&quot;, # Input only. JSON metadata encoded as a string. This field is primarily used by Insights integrations with various telphony systems and must be in one of Insight&#x27;s supported formats.
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
   &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
   &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
     &quot;agentInfo&quot;: [ # Information about agents involved in the call.
       { # Information about an agent involved in the conversation.
         &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+        &quot;agentType&quot;: &quot;A String&quot;, # The agent type, e.g. HUMAN_AGENT.
         &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
         &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
-        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+        &quot;location&quot;: &quot;A String&quot;, # The agent&#x27;s location.
+        &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team. Deprecated in favor of the `teams` field.
+        &quot;teams&quot;: [ # User-specified strings representing the agent&#x27;s teams.
+          &quot;A String&quot;,
+        ],
       },
     ],
     &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
@@ -2601,98 +2689,6 @@ Returns:
         &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
         &quot;source&quot;: &quot;A String&quot;, # The knowledge document that this answer was extracted from. Format: projects/{project}/knowledgeBases/{knowledge_base}/documents/{document}.
       },
-      &quot;generatorSuggestionResult&quot;: { # Represents response from generators. # The generator suggestion result.
-        &quot;generatorSuggestion&quot;: { # Suggestion generated using a Generator. # The suggestion generated from the Generator.
-          &quot;agentCoachingSuggestion&quot;: { # Suggestion for coaching agents. # Optional. Suggestion to coach the agent.
-            &quot;agentActionSuggestions&quot;: [ # Optional. Suggested actions for the agent to take.
-              { # Actions suggested for the agent. This is based on applicable instructions.
-                &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The suggested action for the agent.
-              },
-            ],
-            &quot;applicableInstructions&quot;: [ # Optional. Instructions applicable based on the current context.
-              { # Agent Coaching instructions that customer can configure.
-                &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The action that human agent should take. For example, &quot;apologize for the slow shipping&quot;. If the users only want to use agent coaching for intent detection, agent_action can be empty
-                &quot;condition&quot;: &quot;A String&quot;, # Optional. The condition of the instruction. For example, &quot;the customer wants to cancel an order&quot;. If the users want the instruction to be triggered unconditionally, the condition can be empty.
-                &quot;description&quot;: &quot;A String&quot;, # Optional. The detailed description of this instruction.
-                &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name for the instruction.
-                &quot;metadata&quot;: { # Optional. Additional information attached to this instruction.
-                  &quot;a_key&quot;: &quot;A String&quot;,
-                },
-                &quot;systemAction&quot;: &quot;A String&quot;, # Optional. The action that system should take. For example, &quot;call GetOrderTime with order_number={order number provided by the customer}&quot;. If the users don&#x27;t have plugins or don&#x27;t want to trigger plugins, the system_action can be empty
-              },
-            ],
-            &quot;sampleResponses&quot;: [ # Optional. Sample response for the Agent.
-              { # Sample response that the agent can use. This could be based on applicable instructions and ingested data from other systems.
-                &quot;responseText&quot;: &quot;A String&quot;, # Optional. Sample response for Agent in text.
-              },
-            ],
-            &quot;suggestionEval&quot;: { # Self evaluations of the suggestion. # Self evaluation of the suggestion.
-              &quot;actionActionSuggestionEval&quot;: &quot;A String&quot;, # Optional. Eval for Agent action suggestion.
-              &quot;sampleResponseEval&quot;: &quot;A String&quot;, # Optional. Eval for sample response.
-            },
-            &quot;suggestionReasoning&quot;: { # Reasoning for the suggestion. # Reasoning for the suggestion.
-              &quot;agentActionTaken&quot;: &quot;A String&quot;, # Optional. The actions that the agent has taken already.
-              &quot;issueSummary&quot;: &quot;A String&quot;, # Optional. Summary of the issue.
-            },
-          },
-          &quot;freeFormSuggestion&quot;: { # Suggestion generated using free form generator. # Optional. Free form suggestion.
-            &quot;labels&quot;: [ # Optional. Labels for the generator.
-              &quot;A String&quot;,
-            ],
-            &quot;response&quot;: &quot;A String&quot;, # Required. Free form suggestion.
-          },
-          &quot;summarySuggestion&quot;: { # Suggested summary of the conversation. # Optional. Suggested summary.
-            &quot;summarySections&quot;: [ # Required. All the parts of generated summary.
-              { # A component of the generated summary.
-                &quot;section&quot;: &quot;A String&quot;, # Required. Name of the section.
-                &quot;summary&quot;: &quot;A String&quot;, # Required. Summary text for the section.
-              },
-            ],
-          },
-        },
-      },
-      &quot;knowledgeAssistResult&quot;: { # Response for Knowledge Assist. Contains suggested query and optionally includes an answer for the query. # The Knowledge Assist result.
-        &quot;suggestedQuery&quot;: { # Represents a suggested query. # The query suggested based on the context. Suggestion is made only if it is different from the previous suggestion.
-          &quot;queryText&quot;: &quot;A String&quot;, # Suggested query text.
-          &quot;score&quot;: 3.14, # Suggested query score.
-        },
-        &quot;suggestedQueryAnswer&quot;: { # Represents an answer from Knowledge. Cuurently supports FAQ and Generative answers. # The answer generated for the suggested query. Whether or not an answer is generated depends on how confident we are about the generated query.
-          &quot;answerText&quot;: &quot;A String&quot;, # The piece of text from the `source` that answers this suggested query.
-          &quot;faqSource&quot;: { # Details about source of FAQ answer. # Populated if the prediction came from FAQ.
-            &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this answer was extracted from. Format: `projects//knowledgeBases//documents/`.
-            &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
-          },
-          &quot;generativeSource&quot;: { # Details about source of Generative answer. # Populated if the prediction was Generative.
-            &quot;snippets&quot;: [ # All snippets used for this Generative Prediction, with their source URI and data.
-              { # Snippet Source for a Generative Prediction.
-                &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this snippet was extracted from. Format: `projects//knowledgeBases//documents/`.
-                &quot;text&quot;: &quot;A String&quot;, # text taken from that URI.
-                &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-                &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-              },
-            ],
-          },
-          &quot;intentMatchingSource&quot;: { # Details about source of Intent Matching answer. # Populated if the prediction was from intent matching.
-            &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-            &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-          },
-          &quot;matchConfidence&quot;: 3.14, # The system&#x27;s confidence score that this answer is a good match for this conversational query. The range is from 0.0 (completely uncertain) to 1.0 (completely certain).
-        },
-      },
-      &quot;knowledgeSearchResult&quot;: { # Represents a SearchKnowledge answer. # The Knowledge Search result.
-        &quot;answer&quot;: &quot;A String&quot;, # The piece of text from the knowledge base documents that answers the search query
-        &quot;answerRecord&quot;: &quot;A String&quot;, # The name of the answer record. Format: `projects//locations//answer Records/`
-        &quot;answerSources&quot;: [ # All sources used to generate the answer.
-          { # The sources of the answers.
-            &quot;document&quot;: &quot;A String&quot;, # The document from which the snippet was extracted. Format: `projects//knowledgeBases//documents/`
-            &quot;snippet&quot;: &quot;A String&quot;, # The relevant snippet of the article.
-            &quot;title&quot;: &quot;A String&quot;, # The title of the article.
-            &quot;uri&quot;: &quot;A String&quot;, # The URI of the article.
-          },
-        ],
-        &quot;answerType&quot;: &quot;A String&quot;, # The type of the answer.
-        &quot;confidenceScore&quot;: 3.14, # The confidence score in [0.0, 1.0] range.
-      },
       &quot;smartComposeSuggestion&quot;: { # Agent Assist Smart Compose suggestion data. # Agent Assist Smart Compose suggestion data.
         &quot;confidenceScore&quot;: 3.14, # The system&#x27;s confidence score that this suggestion is a good match for this conversation, ranging from 0.0 (completely uncertain) to 1.0 (completely certain).
         &quot;metadata&quot;: { # Map that contains metadata about the Smart Compose suggestion and the document from which it originates.
@@ -2712,6 +2708,11 @@ Returns:
       &quot;startBoundary&quot;: { # A point in a conversation that marks the start or the end of an annotation. # The boundary in the conversation where the annotation starts, inclusive.
         &quot;transcriptIndex&quot;: 42, # The index in the sequence of transcribed pieces of the conversation where the boundary is located. This index starts at zero.
         &quot;wordIndex&quot;: 42, # The word index of this boundary with respect to the first word in the transcript piece. This index starts at zero.
+      },
+      &quot;userInput&quot;: { # Explicit input used for generating the answer # Explicit input used for generating the answer
+        &quot;generatorName&quot;: &quot;A String&quot;, # The resource name of associated generator. Format: `projects//locations//generators/`
+        &quot;query&quot;: &quot;A String&quot;, # Query text. Article Search uses this to store the input query used to generate the search results.
+        &quot;querySource&quot;: &quot;A String&quot;, # Query source for the answer.
       },
     },
   ],
@@ -2757,7 +2758,7 @@ Returns:
 
 <div class="method">
     <code class="details" id="upload">upload(parent, body=None, x__xgafv=None)</code>
-  <pre>Create a longrunning conversation upload operation. This method differs from CreateConversation by allowing audio transcription and optional DLP redaction.
+  <pre>Create a long-running conversation upload operation. This method differs from `CreateConversation` by allowing audio transcription and optional DLP redaction.
 
 Args:
   parent: string, Required. The parent resource of the conversation. (required)
@@ -2789,7 +2790,7 @@ Args:
     },
     &quot;duration&quot;: &quot;A String&quot;, # Output only. The duration of the conversation.
     &quot;expireTime&quot;: &quot;A String&quot;, # The time at which this conversation should expire. After this time, the conversation data and any associated analyses will be deleted.
-    &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 20 labels per conversation is allowed, with a maximum of 256 characters per entry.
+    &quot;labels&quot;: { # A map for the user to specify any custom fields. A maximum of 100 labels per conversation is allowed, with a maximum of 256 characters per entry.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
     &quot;languageCode&quot;: &quot;A String&quot;, # A user-specified language code for the conversation.
@@ -2877,6 +2878,77 @@ Args:
               &quot;phraseMatcher&quot;: &quot;A String&quot;, # The unique identifier (the resource name) of the phrase matcher.
             },
           },
+          &quot;qaScorecardResults&quot;: [ # Results of scoring QaScorecards.
+            { # The results of scoring a single conversation against a QaScorecard. Contains a collection of QaAnswers and aggregate score.
+              &quot;agentId&quot;: &quot;A String&quot;, # ID of the agent that handled the conversation.
+              &quot;conversation&quot;: &quot;A String&quot;, # The conversation scored by this result.
+              &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp that the revision was created.
+              &quot;name&quot;: &quot;A String&quot;, # Identifier. The name of the scorecard result. Format: projects/{project}/locations/{location}/qaScorecardResults/{qa_scorecard_result}
+              &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score. Any manual edits are included if they exist.
+              &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+              &quot;qaAnswers&quot;: [ # Set of QaAnswers represented in the result.
+                { # An answer to a QaQuestion.
+                  &quot;answerSources&quot;: [ # List of all individual answers given to the question.
+                    { # A question may have multiple answers from varying sources, one of which becomes the &quot;main&quot; answer above. AnswerSource represents each individual answer.
+                      &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The answer value from this source.
+                        &quot;boolValue&quot;: True or False, # Boolean value.
+                        &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                        &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                        &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                        &quot;numValue&quot;: 3.14, # Numerical value.
+                        &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                        &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                        &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                      },
+                      &quot;sourceType&quot;: &quot;A String&quot;, # What created the answer.
+                    },
+                  ],
+                  &quot;answerValue&quot;: { # Message for holding the value of a QaAnswer. QaQuestion.AnswerChoice defines the possible answer values for a question. # The main answer value, incorporating any manual edits if they exist.
+                    &quot;boolValue&quot;: True or False, # Boolean value.
+                    &quot;key&quot;: &quot;A String&quot;, # A short string used as an identifier. Matches the value used in QaQuestion.AnswerChoice.key.
+                    &quot;naValue&quot;: True or False, # A value of &quot;Not Applicable (N/A)&quot;. Should only ever be `true`.
+                    &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
+                    &quot;numValue&quot;: 3.14, # Numerical value.
+                    &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                    &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                    &quot;strValue&quot;: &quot;A String&quot;, # String value.
+                  },
+                  &quot;conversation&quot;: &quot;A String&quot;, # The conversation the answer applies to.
+                  &quot;qaQuestion&quot;: &quot;A String&quot;, # The QaQuestion answered by this answer.
+                  &quot;questionBody&quot;: &quot;A String&quot;, # Question text. E.g., &quot;Did the agent greet the customer?&quot;
+                  &quot;tags&quot;: [ # User-defined list of arbitrary tags. Matches the value from QaScorecard.ScorecardQuestion.tags. Used for grouping/organization and for weighting the score of each answer.
+                    &quot;A String&quot;,
+                  ],
+                },
+              ],
+              &quot;qaScorecardRevision&quot;: &quot;A String&quot;, # The QaScorecardRevision scored by this result.
+              &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+                { # Tags and their corresponding results.
+                  &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                  &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                  &quot;score&quot;: 3.14, # The score the tag applies to.
+                  &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+                },
+              ],
+              &quot;score&quot;: 3.14, # The overall numerical score of the result, incorporating any manual edits if they exist.
+              &quot;scoreSources&quot;: [ # List of all individual score sets.
+                { # A scorecard result may have multiple sets of scores from varying sources, one of which becomes the &quot;main&quot; answer above. A ScoreSource represents each individual set of scores.
+                  &quot;normalizedScore&quot;: 3.14, # The normalized score, which is the score divided by the potential score.
+                  &quot;potentialScore&quot;: 3.14, # The maximum potential overall score of the scorecard. Any questions answered using `na_value` are excluded from this calculation.
+                  &quot;qaTagResults&quot;: [ # Collection of tags and their scores.
+                    { # Tags and their corresponding results.
+                      &quot;normalizedScore&quot;: 3.14, # The normalized score the tag applies to.
+                      &quot;potentialScore&quot;: 3.14, # The potential score the tag applies to.
+                      &quot;score&quot;: 3.14, # The score the tag applies to.
+                      &quot;tag&quot;: &quot;A String&quot;, # The tag the score applies to.
+                    },
+                  ],
+                  &quot;score&quot;: 3.14, # The overall numerical score of the result.
+                  &quot;sourceType&quot;: &quot;A String&quot;, # What created the score.
+                },
+              ],
+            },
+          ],
           &quot;sentiments&quot;: [ # Overall conversation-level sentiment for each channel of the call.
             { # One channel of conversation-level sentiment data.
               &quot;channelTag&quot;: 42, # The channel of the audio that the data applies to.
@@ -2900,11 +2972,19 @@ Args:
         &quot;phraseMatchers&quot;: [ # The list of phrase matchers to run. If not provided, all active phrase matchers will be used. If inactive phrase matchers are provided, they will not be used. Phrase matchers will be run only if run_phrase_matcher_annotator is set to true. Format: projects/{project}/locations/{location}/phraseMatchers/{phrase_matcher}
           &quot;A String&quot;,
         ],
+        &quot;qaConfig&quot;: { # Configuration for the QA feature. # Configuration for the QA annotator.
+          &quot;scorecardList&quot;: { # Container for a list of scorecards. # A manual list of scorecards to score.
+            &quot;qaScorecardRevisions&quot;: [ # List of QaScorecardRevisions.
+              &quot;A String&quot;,
+            ],
+          },
+        },
         &quot;runEntityAnnotator&quot;: True or False, # Whether to run the entity annotator.
         &quot;runIntentAnnotator&quot;: True or False, # Whether to run the intent annotator.
         &quot;runInterruptionAnnotator&quot;: True or False, # Whether to run the interruption annotator.
         &quot;runIssueModelAnnotator&quot;: True or False, # Whether to run the issue model annotator. A model should have already been deployed for this to take effect.
         &quot;runPhraseMatcherAnnotator&quot;: True or False, # Whether to run the active phrase matcher annotator(s).
+        &quot;runQaAnnotator&quot;: True or False, # Whether to run the QA annotator.
         &quot;runSentimentAnnotator&quot;: True or False, # Whether to run the sentiment annotator.
         &quot;runSilenceAnnotator&quot;: True or False, # Whether to run the silence annotator.
         &quot;runSummarizationAnnotator&quot;: True or False, # Whether to run the summarization annotator.
@@ -2930,15 +3010,21 @@ Args:
       },
     },
     &quot;medium&quot;: &quot;A String&quot;, # Immutable. The conversation medium, if unspecified will default to PHONE_CALL.
+    &quot;metadataJson&quot;: &quot;A String&quot;, # Input only. JSON metadata encoded as a string. This field is primarily used by Insights integrations with various telphony systems and must be in one of Insight&#x27;s supported formats.
     &quot;name&quot;: &quot;A String&quot;, # Immutable. The resource name of the conversation. Format: projects/{project}/locations/{location}/conversations/{conversation}
     &quot;obfuscatedUserId&quot;: &quot;A String&quot;, # Obfuscated user ID which the customer sent to us.
     &quot;qualityMetadata&quot;: { # Conversation metadata related to quality management. # Conversation metadata related to quality management.
       &quot;agentInfo&quot;: [ # Information about agents involved in the call.
         { # Information about an agent involved in the conversation.
           &quot;agentId&quot;: &quot;A String&quot;, # A user-specified string representing the agent.
+          &quot;agentType&quot;: &quot;A String&quot;, # The agent type, e.g. HUMAN_AGENT.
           &quot;displayName&quot;: &quot;A String&quot;, # The agent&#x27;s name.
           &quot;dispositionCode&quot;: &quot;A String&quot;, # A user-provided string indicating the outcome of the agent&#x27;s segment of the call.
-          &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team.
+          &quot;location&quot;: &quot;A String&quot;, # The agent&#x27;s location.
+          &quot;team&quot;: &quot;A String&quot;, # A user-specified string representing the agent&#x27;s team. Deprecated in favor of the `teams` field.
+          &quot;teams&quot;: [ # User-specified strings representing the agent&#x27;s teams.
+            &quot;A String&quot;,
+          ],
         },
       ],
       &quot;customerSatisfactionRating&quot;: 42, # An arbitrary integer value indicating the customer&#x27;s satisfaction rating.
@@ -2994,98 +3080,6 @@ Args:
           &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
           &quot;source&quot;: &quot;A String&quot;, # The knowledge document that this answer was extracted from. Format: projects/{project}/knowledgeBases/{knowledge_base}/documents/{document}.
         },
-        &quot;generatorSuggestionResult&quot;: { # Represents response from generators. # The generator suggestion result.
-          &quot;generatorSuggestion&quot;: { # Suggestion generated using a Generator. # The suggestion generated from the Generator.
-            &quot;agentCoachingSuggestion&quot;: { # Suggestion for coaching agents. # Optional. Suggestion to coach the agent.
-              &quot;agentActionSuggestions&quot;: [ # Optional. Suggested actions for the agent to take.
-                { # Actions suggested for the agent. This is based on applicable instructions.
-                  &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The suggested action for the agent.
-                },
-              ],
-              &quot;applicableInstructions&quot;: [ # Optional. Instructions applicable based on the current context.
-                { # Agent Coaching instructions that customer can configure.
-                  &quot;agentAction&quot;: &quot;A String&quot;, # Optional. The action that human agent should take. For example, &quot;apologize for the slow shipping&quot;. If the users only want to use agent coaching for intent detection, agent_action can be empty
-                  &quot;condition&quot;: &quot;A String&quot;, # Optional. The condition of the instruction. For example, &quot;the customer wants to cancel an order&quot;. If the users want the instruction to be triggered unconditionally, the condition can be empty.
-                  &quot;description&quot;: &quot;A String&quot;, # Optional. The detailed description of this instruction.
-                  &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name for the instruction.
-                  &quot;metadata&quot;: { # Optional. Additional information attached to this instruction.
-                    &quot;a_key&quot;: &quot;A String&quot;,
-                  },
-                  &quot;systemAction&quot;: &quot;A String&quot;, # Optional. The action that system should take. For example, &quot;call GetOrderTime with order_number={order number provided by the customer}&quot;. If the users don&#x27;t have plugins or don&#x27;t want to trigger plugins, the system_action can be empty
-                },
-              ],
-              &quot;sampleResponses&quot;: [ # Optional. Sample response for the Agent.
-                { # Sample response that the agent can use. This could be based on applicable instructions and ingested data from other systems.
-                  &quot;responseText&quot;: &quot;A String&quot;, # Optional. Sample response for Agent in text.
-                },
-              ],
-              &quot;suggestionEval&quot;: { # Self evaluations of the suggestion. # Self evaluation of the suggestion.
-                &quot;actionActionSuggestionEval&quot;: &quot;A String&quot;, # Optional. Eval for Agent action suggestion.
-                &quot;sampleResponseEval&quot;: &quot;A String&quot;, # Optional. Eval for sample response.
-              },
-              &quot;suggestionReasoning&quot;: { # Reasoning for the suggestion. # Reasoning for the suggestion.
-                &quot;agentActionTaken&quot;: &quot;A String&quot;, # Optional. The actions that the agent has taken already.
-                &quot;issueSummary&quot;: &quot;A String&quot;, # Optional. Summary of the issue.
-              },
-            },
-            &quot;freeFormSuggestion&quot;: { # Suggestion generated using free form generator. # Optional. Free form suggestion.
-              &quot;labels&quot;: [ # Optional. Labels for the generator.
-                &quot;A String&quot;,
-              ],
-              &quot;response&quot;: &quot;A String&quot;, # Required. Free form suggestion.
-            },
-            &quot;summarySuggestion&quot;: { # Suggested summary of the conversation. # Optional. Suggested summary.
-              &quot;summarySections&quot;: [ # Required. All the parts of generated summary.
-                { # A component of the generated summary.
-                  &quot;section&quot;: &quot;A String&quot;, # Required. Name of the section.
-                  &quot;summary&quot;: &quot;A String&quot;, # Required. Summary text for the section.
-                },
-              ],
-            },
-          },
-        },
-        &quot;knowledgeAssistResult&quot;: { # Response for Knowledge Assist. Contains suggested query and optionally includes an answer for the query. # The Knowledge Assist result.
-          &quot;suggestedQuery&quot;: { # Represents a suggested query. # The query suggested based on the context. Suggestion is made only if it is different from the previous suggestion.
-            &quot;queryText&quot;: &quot;A String&quot;, # Suggested query text.
-            &quot;score&quot;: 3.14, # Suggested query score.
-          },
-          &quot;suggestedQueryAnswer&quot;: { # Represents an answer from Knowledge. Cuurently supports FAQ and Generative answers. # The answer generated for the suggested query. Whether or not an answer is generated depends on how confident we are about the generated query.
-            &quot;answerText&quot;: &quot;A String&quot;, # The piece of text from the `source` that answers this suggested query.
-            &quot;faqSource&quot;: { # Details about source of FAQ answer. # Populated if the prediction came from FAQ.
-              &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this answer was extracted from. Format: `projects//knowledgeBases//documents/`.
-              &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
-            },
-            &quot;generativeSource&quot;: { # Details about source of Generative answer. # Populated if the prediction was Generative.
-              &quot;snippets&quot;: [ # All snippets used for this Generative Prediction, with their source URI and data.
-                { # Snippet Source for a Generative Prediction.
-                  &quot;document&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this snippet was extracted from. Format: `projects//knowledgeBases//documents/`.
-                  &quot;text&quot;: &quot;A String&quot;, # text taken from that URI.
-                  &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-                  &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-                },
-              ],
-            },
-            &quot;intentMatchingSource&quot;: { # Details about source of Intent Matching answer. # Populated if the prediction was from intent matching.
-              &quot;title&quot;: &quot;A String&quot;, # Title of the document.
-              &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
-            },
-            &quot;matchConfidence&quot;: 3.14, # The system&#x27;s confidence score that this answer is a good match for this conversational query. The range is from 0.0 (completely uncertain) to 1.0 (completely certain).
-          },
-        },
-        &quot;knowledgeSearchResult&quot;: { # Represents a SearchKnowledge answer. # The Knowledge Search result.
-          &quot;answer&quot;: &quot;A String&quot;, # The piece of text from the knowledge base documents that answers the search query
-          &quot;answerRecord&quot;: &quot;A String&quot;, # The name of the answer record. Format: `projects//locations//answer Records/`
-          &quot;answerSources&quot;: [ # All sources used to generate the answer.
-            { # The sources of the answers.
-              &quot;document&quot;: &quot;A String&quot;, # The document from which the snippet was extracted. Format: `projects//knowledgeBases//documents/`
-              &quot;snippet&quot;: &quot;A String&quot;, # The relevant snippet of the article.
-              &quot;title&quot;: &quot;A String&quot;, # The title of the article.
-              &quot;uri&quot;: &quot;A String&quot;, # The URI of the article.
-            },
-          ],
-          &quot;answerType&quot;: &quot;A String&quot;, # The type of the answer.
-          &quot;confidenceScore&quot;: 3.14, # The confidence score in [0.0, 1.0] range.
-        },
         &quot;smartComposeSuggestion&quot;: { # Agent Assist Smart Compose suggestion data. # Agent Assist Smart Compose suggestion data.
           &quot;confidenceScore&quot;: 3.14, # The system&#x27;s confidence score that this suggestion is a good match for this conversation, ranging from 0.0 (completely uncertain) to 1.0 (completely certain).
           &quot;metadata&quot;: { # Map that contains metadata about the Smart Compose suggestion and the document from which it originates.
@@ -3105,6 +3099,11 @@ Args:
         &quot;startBoundary&quot;: { # A point in a conversation that marks the start or the end of an annotation. # The boundary in the conversation where the annotation starts, inclusive.
           &quot;transcriptIndex&quot;: 42, # The index in the sequence of transcribed pieces of the conversation where the boundary is located. This index starts at zero.
           &quot;wordIndex&quot;: 42, # The word index of this boundary with respect to the first word in the transcript piece. This index starts at zero.
+        },
+        &quot;userInput&quot;: { # Explicit input used for generating the answer # Explicit input used for generating the answer
+          &quot;generatorName&quot;: &quot;A String&quot;, # The resource name of associated generator. Format: `projects//locations//generators/`
+          &quot;query&quot;: &quot;A String&quot;, # Query text. Article Search uses this to store the input query used to generate the search results.
+          &quot;querySource&quot;: &quot;A String&quot;, # Query source for the answer.
         },
       },
     ],
@@ -3148,11 +3147,11 @@ Args:
   },
   &quot;conversationId&quot;: &quot;A String&quot;, # Optional. A unique ID for the new conversation. This ID will become the final component of the conversation&#x27;s resource name. If no ID is specified, a server-generated ID will be used. This value should be 4-64 characters and must match the regular expression `^[a-z0-9-]{4,64}$`. Valid characters are `a-z-`
   &quot;parent&quot;: &quot;A String&quot;, # Required. The parent resource of the conversation.
-  &quot;redactionConfig&quot;: { # DLP resources used for redaction while ingesting conversations. DLP settings are applied to conversations ingested from the UploadConversation and IngestConversations endpoints, including conversation coming from CCAI Platform. They are not applied to conversations ingested from the CreateConversation endpoint or the Dialogflow / Agent Assist runtime integrations. When using Dialogflow / Agent Assist runtime integrations redaction should be performed in Dialogflow / Agent Assist. # Optional. DLP settings for transcript redaction. Will default to the config specified in Settings.
+  &quot;redactionConfig&quot;: { # DLP resources used for redaction while ingesting conversations. DLP settings are applied to conversations ingested from the `UploadConversation` and `IngestConversations` endpoints, including conversation coming from CCAI Platform. They are not applied to conversations ingested from the `CreateConversation` endpoint or the Dialogflow / Agent Assist runtime integrations. When using Dialogflow / Agent Assist runtime integrations, redaction should be performed in Dialogflow / Agent Assist. # Optional. DLP settings for transcript redaction. Will default to the config specified in Settings.
     &quot;deidentifyTemplate&quot;: &quot;A String&quot;, # The fully-qualified DLP deidentify template resource name. Format: `projects/{project}/deidentifyTemplates/{template}`
     &quot;inspectTemplate&quot;: &quot;A String&quot;, # The fully-qualified DLP inspect template resource name. Format: `projects/{project}/locations/{location}/inspectTemplates/{template}`
   },
-  &quot;speechConfig&quot;: { # Speech-to-Text configuration. Speech-to-Text settings are applied to conversations ingested from the UploadConversation and IngestConversations endpoints, including conversation coming from CCAI Platform. They are not applied to conversations ingested from the CreateConversation endpoint. # Optional. Speech-to-Text configuration. Will default to the config specified in Settings.
+  &quot;speechConfig&quot;: { # Speech-to-Text configuration. Speech-to-Text settings are applied to conversations ingested from the `UploadConversation` and `IngestConversations` endpoints, including conversation coming from CCAI Platform. They are not applied to conversations ingested from the `CreateConversation` endpoint. # Optional. Speech-to-Text configuration. Will default to the config specified in Settings.
     &quot;speechRecognizer&quot;: &quot;A String&quot;, # The fully-qualified Speech Recognizer resource name. Format: `projects/{project_id}/locations/{location}/recognizer/{recognizer}`
   },
 }

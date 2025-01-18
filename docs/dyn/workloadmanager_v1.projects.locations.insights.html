@@ -102,7 +102,7 @@ Args:
     &quot;sapDiscovery&quot;: { # The schema of SAP system discovery data. # The insights data for SAP system discovery. This is a copy of SAP System proto and should get updated whenever that one changes.
       &quot;applicationLayer&quot;: { # Message describing the system component. # Optional. An SAP system may run without an application layer.
         &quot;applicationProperties&quot;: { # A set of properties describing an SAP Application layer. # Optional. The component is a SAP application.
-          &quot;abap&quot;: True or False, # Optional. Indicates whether this is a Java or ABAP Netweaver instance. true means it is ABAP, false means it is Java.
+          &quot;abap&quot;: True or False, # Optional. Deprecated: ApplicationType now tells you whether this is ABAP or Java.
           &quot;appInstanceNumber&quot;: &quot;A String&quot;, # Optional. Instance number of the SAP application instance.
           &quot;applicationType&quot;: &quot;A String&quot;, # Required. Type of the application. Netweaver, etc.
           &quot;ascsInstanceNumber&quot;: &quot;A String&quot;, # Optional. Instance number of the ASCS instance.
@@ -123,6 +123,13 @@ Args:
           &quot;A String&quot;,
         ],
         &quot;hostProject&quot;: &quot;A String&quot;, # Required. Pantheon Project in which the resources reside.
+        &quot;region&quot;: &quot;A String&quot;, # Optional. The region this component&#x27;s resources are primarily located in.
+        &quot;replicationSites&quot;: [ # Optional. A list of replication sites used in Disaster Recovery (DR) configurations.
+          { # A replication site used in Disaster Recovery (DR) configurations.
+            &quot;component&quot;: # Object with schema name: SapDiscoveryComponent # Optional. The system component for the site.
+            &quot;sourceSite&quot;: &quot;A String&quot;, # Optional. The name of the source site from which this one replicates.
+          },
+        ],
         &quot;resources&quot;: [ # Optional. The resources in a component.
           { # Message describing a resource.
             &quot;instanceProperties&quot;: { # A set of properties only present for an instance type resource # Optional. A set of properties only applying to instance type resources.
@@ -137,6 +144,7 @@ Args:
               ],
               &quot;instanceNumber&quot;: &quot;A String&quot;, # Optional. The VM&#x27;s instance number.
               &quot;instanceRole&quot;: &quot;A String&quot;, # Optional. Bitmask of instance role, a resource may have multiple roles at once.
+              &quot;isDrSite&quot;: True or False, # Optional. Instance is part of a DR site.
               &quot;virtualHostname&quot;: &quot;A String&quot;, # Optional. A virtual hostname of the instance if it has one.
             },
             &quot;relatedResources&quot;: [ # Optional. A list of resource URIs related to this resource.
@@ -153,7 +161,7 @@ Args:
       },
       &quot;databaseLayer&quot;: { # Message describing the system component. # Required. An SAP System must have a database.
         &quot;applicationProperties&quot;: { # A set of properties describing an SAP Application layer. # Optional. The component is a SAP application.
-          &quot;abap&quot;: True or False, # Optional. Indicates whether this is a Java or ABAP Netweaver instance. true means it is ABAP, false means it is Java.
+          &quot;abap&quot;: True or False, # Optional. Deprecated: ApplicationType now tells you whether this is ABAP or Java.
           &quot;appInstanceNumber&quot;: &quot;A String&quot;, # Optional. Instance number of the SAP application instance.
           &quot;applicationType&quot;: &quot;A String&quot;, # Required. Type of the application. Netweaver, etc.
           &quot;ascsInstanceNumber&quot;: &quot;A String&quot;, # Optional. Instance number of the ASCS instance.
@@ -174,6 +182,13 @@ Args:
           &quot;A String&quot;,
         ],
         &quot;hostProject&quot;: &quot;A String&quot;, # Required. Pantheon Project in which the resources reside.
+        &quot;region&quot;: &quot;A String&quot;, # Optional. The region this component&#x27;s resources are primarily located in.
+        &quot;replicationSites&quot;: [ # Optional. A list of replication sites used in Disaster Recovery (DR) configurations.
+          { # A replication site used in Disaster Recovery (DR) configurations.
+            &quot;component&quot;: # Object with schema name: SapDiscoveryComponent # Optional. The system component for the site.
+            &quot;sourceSite&quot;: &quot;A String&quot;, # Optional. The name of the source site from which this one replicates.
+          },
+        ],
         &quot;resources&quot;: [ # Optional. The resources in a component.
           { # Message describing a resource.
             &quot;instanceProperties&quot;: { # A set of properties only present for an instance type resource # Optional. A set of properties only applying to instance type resources.
@@ -188,6 +203,7 @@ Args:
               ],
               &quot;instanceNumber&quot;: &quot;A String&quot;, # Optional. The VM&#x27;s instance number.
               &quot;instanceRole&quot;: &quot;A String&quot;, # Optional. Bitmask of instance role, a resource may have multiple roles at once.
+              &quot;isDrSite&quot;: True or False, # Optional. Instance is part of a DR site.
               &quot;virtualHostname&quot;: &quot;A String&quot;, # Optional. A virtual hostname of the instance if it has one.
             },
             &quot;relatedResources&quot;: [ # Optional. A list of resource URIs related to this resource.
@@ -258,6 +274,15 @@ Args:
           &quot;type&quot;: &quot;A String&quot;, # Optional. The Sqlserver system that the validation data is from.
         },
       ],
+    },
+    &quot;torsoValidation&quot;: { # The schema of torso workload validation data. # The insights data for workload validation of torso workloads.
+      &quot;agentVersion&quot;: &quot;A String&quot;, # Required. agent_version lists the version of the agent that collected this data.
+      &quot;instanceName&quot;: &quot;A String&quot;, # Required. instance_name lists the human readable name of the instance that the data comes from.
+      &quot;projectId&quot;: &quot;A String&quot;, # Required. project_id lists the human readable cloud project that the data comes from.
+      &quot;validationDetails&quot;: { # Required. validation_details contains the pairs of validation data: field name &amp; field value.
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
+      &quot;workloadType&quot;: &quot;A String&quot;, # Required. workload_type specifies the type of torso workload.
     },
   },
   &quot;requestId&quot;: &quot;A String&quot;, # Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes since the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).

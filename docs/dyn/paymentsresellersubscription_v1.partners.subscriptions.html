@@ -97,7 +97,7 @@ h1, h2, h3 {
 <p class="firstline">Used by partners to provision a subscription for their customers. This creates a subscription without associating it with the end user account. EntitleSubscription must be called separately using OAuth in order for the end user account to be associated with the subscription. It should be called directly by the partner using service accounts.</p>
 <p class="toc_element">
   <code><a href="#undoCancel">undoCancel(name, body=None, x__xgafv=None)</a></code></p>
-<p class="firstline">Used by partners to revoke the pending cancellation of a subscription, which is currently in `STATE_CANCEL_AT_END_OF_CYCLE` state. If the subscription is already cancelled, the request will fail. It should be called directly by the partner using service accounts.</p>
+<p class="firstline">Revokes the pending cancellation of a subscription, which is currently in `STATE_CANCEL_AT_END_OF_CYCLE` state. If the subscription is already cancelled, the request will fail. - **This API doesn't apply to YouTube subscriptions.** It should be called directly by the partner using service accounts.</p>
 <h3>Method Details</h3>
 <div class="method">
     <code class="details" id="cancel">cancel(name, body=None, x__xgafv=None)</code>
@@ -109,7 +109,7 @@ Args:
     The object takes the form of:
 
 { # Request to cancel a subscription.
-  &quot;cancelImmediately&quot;: True or False, # Optional. If true, Google will cancel the subscription immediately, and may or may not (based on the contract) issue a prorated refund for the remainder of the billing cycle. Otherwise, Google defers the cancelation at renewal_time, and will not issue a refund.
+  &quot;cancelImmediately&quot;: True or False, # Optional. If true, Google will cancel the subscription immediately, and may or may not (based on the contract) issue a prorated refund for the remainder of the billing cycle. Otherwise, Google defers the cancelation at renewal_time, and will not issue a refund. - YouTube subscriptions must use this option currently. However, the user will still have access to the subscription until the end of the billing cycle.
   &quot;cancellationReason&quot;: &quot;A String&quot;, # Specifies the reason for the cancellation.
 }
 
@@ -201,6 +201,9 @@ Returns:
         &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the line item.
       },
     ],
+    &quot;migrationDetails&quot;: { # Describes the details of the migrated subscription. # Output only. Describes the details of the migrated subscription. Only populated if this subscription is migrated from another system.
+      &quot;migratedSubscriptionId&quot;: &quot;A String&quot;, # Output only. The migrated subscription id in the legacy system.
+    },
     &quot;name&quot;: &quot;A String&quot;, # Identifier. Resource name of the subscription. It will have the format of &quot;partners/{partner_id}/subscriptions/{subscription_id}&quot;. This is available for authorizeAddon, but otherwise is response only.
     &quot;partnerUserToken&quot;: &quot;A String&quot;, # Required. Identifier of the end-user in partner’s system. The value is restricted to 63 ASCII characters at the maximum.
     &quot;processingState&quot;: &quot;A String&quot;, # Output only. Describes the processing state of the subscription. See more details at [the lifecycle of a subscription](/payments/reseller/subscription/reference/index/Receive.Notifications#payments-subscription-lifecycle).
@@ -343,6 +346,9 @@ Args:
       &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the line item.
     },
   ],
+  &quot;migrationDetails&quot;: { # Describes the details of the migrated subscription. # Output only. Describes the details of the migrated subscription. Only populated if this subscription is migrated from another system.
+    &quot;migratedSubscriptionId&quot;: &quot;A String&quot;, # Output only. The migrated subscription id in the legacy system.
+  },
   &quot;name&quot;: &quot;A String&quot;, # Identifier. Resource name of the subscription. It will have the format of &quot;partners/{partner_id}/subscriptions/{subscription_id}&quot;. This is available for authorizeAddon, but otherwise is response only.
   &quot;partnerUserToken&quot;: &quot;A String&quot;, # Required. Identifier of the end-user in partner’s system. The value is restricted to 63 ASCII characters at the maximum.
   &quot;processingState&quot;: &quot;A String&quot;, # Output only. Describes the processing state of the subscription. See more details at [the lifecycle of a subscription](/payments/reseller/subscription/reference/index/Receive.Notifications#payments-subscription-lifecycle).
@@ -478,6 +484,9 @@ Returns:
       &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the line item.
     },
   ],
+  &quot;migrationDetails&quot;: { # Describes the details of the migrated subscription. # Output only. Describes the details of the migrated subscription. Only populated if this subscription is migrated from another system.
+    &quot;migratedSubscriptionId&quot;: &quot;A String&quot;, # Output only. The migrated subscription id in the legacy system.
+  },
   &quot;name&quot;: &quot;A String&quot;, # Identifier. Resource name of the subscription. It will have the format of &quot;partners/{partner_id}/subscriptions/{subscription_id}&quot;. This is available for authorizeAddon, but otherwise is response only.
   &quot;partnerUserToken&quot;: &quot;A String&quot;, # Required. Identifier of the end-user in partner’s system. The value is restricted to 63 ASCII characters at the maximum.
   &quot;processingState&quot;: &quot;A String&quot;, # Output only. Describes the processing state of the subscription. See more details at [the lifecycle of a subscription](/payments/reseller/subscription/reference/index/Receive.Notifications#payments-subscription-lifecycle).
@@ -634,6 +643,9 @@ Returns:
         &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the line item.
       },
     ],
+    &quot;migrationDetails&quot;: { # Describes the details of the migrated subscription. # Output only. Describes the details of the migrated subscription. Only populated if this subscription is migrated from another system.
+      &quot;migratedSubscriptionId&quot;: &quot;A String&quot;, # Output only. The migrated subscription id in the legacy system.
+    },
     &quot;name&quot;: &quot;A String&quot;, # Identifier. Resource name of the subscription. It will have the format of &quot;partners/{partner_id}/subscriptions/{subscription_id}&quot;. This is available for authorizeAddon, but otherwise is response only.
     &quot;partnerUserToken&quot;: &quot;A String&quot;, # Required. Identifier of the end-user in partner’s system. The value is restricted to 63 ASCII characters at the maximum.
     &quot;processingState&quot;: &quot;A String&quot;, # Output only. Describes the processing state of the subscription. See more details at [the lifecycle of a subscription](/payments/reseller/subscription/reference/index/Receive.Notifications#payments-subscription-lifecycle).
@@ -811,6 +823,9 @@ Returns:
       &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the line item.
     },
   ],
+  &quot;migrationDetails&quot;: { # Describes the details of the migrated subscription. # Output only. Describes the details of the migrated subscription. Only populated if this subscription is migrated from another system.
+    &quot;migratedSubscriptionId&quot;: &quot;A String&quot;, # Output only. The migrated subscription id in the legacy system.
+  },
   &quot;name&quot;: &quot;A String&quot;, # Identifier. Resource name of the subscription. It will have the format of &quot;partners/{partner_id}/subscriptions/{subscription_id}&quot;. This is available for authorizeAddon, but otherwise is response only.
   &quot;partnerUserToken&quot;: &quot;A String&quot;, # Required. Identifier of the end-user in partner’s system. The value is restricted to 63 ASCII characters at the maximum.
   &quot;processingState&quot;: &quot;A String&quot;, # Output only. Describes the processing state of the subscription. See more details at [the lifecycle of a subscription](/payments/reseller/subscription/reference/index/Receive.Notifications#payments-subscription-lifecycle).
@@ -947,6 +962,9 @@ Args:
       &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the line item.
     },
   ],
+  &quot;migrationDetails&quot;: { # Describes the details of the migrated subscription. # Output only. Describes the details of the migrated subscription. Only populated if this subscription is migrated from another system.
+    &quot;migratedSubscriptionId&quot;: &quot;A String&quot;, # Output only. The migrated subscription id in the legacy system.
+  },
   &quot;name&quot;: &quot;A String&quot;, # Identifier. Resource name of the subscription. It will have the format of &quot;partners/{partner_id}/subscriptions/{subscription_id}&quot;. This is available for authorizeAddon, but otherwise is response only.
   &quot;partnerUserToken&quot;: &quot;A String&quot;, # Required. Identifier of the end-user in partner’s system. The value is restricted to 63 ASCII characters at the maximum.
   &quot;processingState&quot;: &quot;A String&quot;, # Output only. Describes the processing state of the subscription. See more details at [the lifecycle of a subscription](/payments/reseller/subscription/reference/index/Receive.Notifications#payments-subscription-lifecycle).
@@ -1082,6 +1100,9 @@ Returns:
       &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the line item.
     },
   ],
+  &quot;migrationDetails&quot;: { # Describes the details of the migrated subscription. # Output only. Describes the details of the migrated subscription. Only populated if this subscription is migrated from another system.
+    &quot;migratedSubscriptionId&quot;: &quot;A String&quot;, # Output only. The migrated subscription id in the legacy system.
+  },
   &quot;name&quot;: &quot;A String&quot;, # Identifier. Resource name of the subscription. It will have the format of &quot;partners/{partner_id}/subscriptions/{subscription_id}&quot;. This is available for authorizeAddon, but otherwise is response only.
   &quot;partnerUserToken&quot;: &quot;A String&quot;, # Required. Identifier of the end-user in partner’s system. The value is restricted to 63 ASCII characters at the maximum.
   &quot;processingState&quot;: &quot;A String&quot;, # Output only. Describes the processing state of the subscription. See more details at [the lifecycle of a subscription](/payments/reseller/subscription/reference/index/Receive.Notifications#payments-subscription-lifecycle).
@@ -1132,7 +1153,7 @@ Returns:
 
 <div class="method">
     <code class="details" id="undoCancel">undoCancel(name, body=None, x__xgafv=None)</code>
-  <pre>Used by partners to revoke the pending cancellation of a subscription, which is currently in `STATE_CANCEL_AT_END_OF_CYCLE` state. If the subscription is already cancelled, the request will fail. It should be called directly by the partner using service accounts.
+  <pre>Revokes the pending cancellation of a subscription, which is currently in `STATE_CANCEL_AT_END_OF_CYCLE` state. If the subscription is already cancelled, the request will fail. - **This API doesn&#x27;t apply to YouTube subscriptions.** It should be called directly by the partner using service accounts.
 
 Args:
   name: string, Required. The name of the subscription resource whose pending cancellation needs to be undone. It will have the format of &quot;partners/{partner_id}/subscriptions/{subscription_id}&quot; (required)
@@ -1230,6 +1251,9 @@ Returns:
         &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the line item.
       },
     ],
+    &quot;migrationDetails&quot;: { # Describes the details of the migrated subscription. # Output only. Describes the details of the migrated subscription. Only populated if this subscription is migrated from another system.
+      &quot;migratedSubscriptionId&quot;: &quot;A String&quot;, # Output only. The migrated subscription id in the legacy system.
+    },
     &quot;name&quot;: &quot;A String&quot;, # Identifier. Resource name of the subscription. It will have the format of &quot;partners/{partner_id}/subscriptions/{subscription_id}&quot;. This is available for authorizeAddon, but otherwise is response only.
     &quot;partnerUserToken&quot;: &quot;A String&quot;, # Required. Identifier of the end-user in partner’s system. The value is restricted to 63 ASCII characters at the maximum.
     &quot;processingState&quot;: &quot;A String&quot;, # Output only. Describes the processing state of the subscription. See more details at [the lifecycle of a subscription](/payments/reseller/subscription/reference/index/Receive.Notifications#payments-subscription-lifecycle).

@@ -117,7 +117,7 @@ h1, h2, h3 {
   <pre>Filters an organization or source&#x27;s findings and groups them by their specified properties. To group across all sources provide a `-` as the source id. Example: /v1/organizations/{organization_id}/sources/-/findings, /v1/folders/{folder_id}/sources/-/findings, /v1/projects/{project_id}/sources/-/findings
 
 Args:
-  parent: string, Required. Name of the source to groupBy. Its format is &quot;organizations/[organization_id]/sources/[source_id]&quot;, folders/[folder_id]/sources/[source_id], or projects/[project_id]/sources/[source_id]. To groupBy across all sources provide a source_id of `-`. For example: organizations/{organization_id}/sources/-, folders/{folder_id}/sources/-, or projects/{project_id}/sources/- (required)
+  parent: string, Required. Name of the source to groupBy. Its format is `organizations/[organization_id]/sources/[source_id]`, `folders/[folder_id]/sources/[source_id]`, or `projects/[project_id]/sources/[source_id]`. To groupBy across all sources provide a source_id of `-`. For example: `organizations/{organization_id}/sources/-, folders/{folder_id}/sources/-`, or `projects/{project_id}/sources/-` (required)
   body: object, The request body.
     The object takes the form of:
 
@@ -172,7 +172,7 @@ Returns:
   <pre>Lists an organization or source&#x27;s findings. To list across all sources provide a `-` as the source id. Example: /v1/organizations/{organization_id}/sources/-/findings
 
 Args:
-  parent: string, Required. Name of the source the findings belong to. Its format is &quot;organizations/[organization_id]/sources/[source_id], folders/[folder_id]/sources/[source_id], or projects/[project_id]/sources/[source_id]&quot;. To list across all sources provide a source_id of `-`. For example: organizations/{organization_id}/sources/-, folders/{folder_id}/sources/- or projects/{projects_id}/sources/- (required)
+  parent: string, Required. Name of the source the findings belong to. Its format is `organizations/[organization_id]/sources/[source_id]`, `folders/[folder_id]/sources/[source_id]`, or `projects/[project_id]/sources/[source_id]`. To list across all sources provide a source_id of `-`. For example: `organizations/{organization_id}/sources/-`, `folders/{folder_id}/sources/-` or `projects/{projects_id}/sources/-` (required)
   compareDuration: string, When compare_duration is set, the ListFindingsResult&#x27;s &quot;state_change&quot; attribute is updated to indicate whether the finding had its state changed, the finding&#x27;s state remained unchanged, or if the finding was added in any state during the compare_duration period of time that precedes the read_time. This is the time between (read_time - compare_duration) and read_time. The state_change value is derived based on the presence and state of the finding at the two points in time. Intermediate state changes between the two times don&#x27;t affect the result. For example, the results aren&#x27;t affected if the finding is made inactive and then active again. Possible &quot;state_change&quot; values when compare_duration is specified: * &quot;CHANGED&quot;: indicates that the finding was present and matched the given filter at the start of compare_duration, but changed its state at read_time. * &quot;UNCHANGED&quot;: indicates that the finding was present and matched the given filter at the start of compare_duration and did not change state at read_time. * &quot;ADDED&quot;: indicates that the finding did not match the given filter or was not present at the start of compare_duration, but was present at read_time. * &quot;REMOVED&quot;: indicates that the finding was present and matched the filter at the start of compare_duration, but did not match the filter at read_time. If compare_duration is not specified, then the only possible state_change is &quot;UNUSED&quot;, which will be the state_change set for all findings present at read_time.
   fieldMask: string, A field mask to specify the Finding fields to be listed in the response. An empty field mask will list all fields.
   filter: string, Expression that defines the filter to apply across findings. The expression is a list of one or more restrictions combined via logical operators `AND` and `OR`. Parentheses are supported, and `OR` has higher precedence than `AND`. Restrictions have the form ` ` and may have a `-` character in front of them to indicate negation. Examples include: * name * source_properties.a_property * security_marks.marks.marka The supported operators are: * `=` for all value types. * `&gt;`, `&lt;`, `&gt;=`, `&lt;=` for integer values. * `:`, meaning substring matching, for strings. The supported value types are: * string literals in quotes. * integer literals without quotes. * boolean literals `true` and `false` without quotes. The following field and operator combinations are supported: * name: `=` * parent: `=`, `:` * resource_name: `=`, `:` * state: `=`, `:` * category: `=`, `:` * external_uri: `=`, `:` * event_time: `=`, `&gt;`, `&lt;`, `&gt;=`, `&lt;=` Usage: This should be milliseconds since epoch or an RFC3339 string. Examples: `event_time = &quot;2019-06-10T16:07:18-07:00&quot;` `event_time = 1560208038000` * severity: `=`, `:` * workflow_state: `=`, `:` * security_marks.marks: `=`, `:` * source_properties: `=`, `:`, `&gt;`, `&lt;`, `&gt;=`, `&lt;=` For example, `source_properties.size = 100` is a valid filter string. Use a partial match on the empty string to filter based on a property existing: `source_properties.my_property : &quot;&quot;` Use a negated partial match on the empty string to filter based on a property not existing: `-source_properties.my_property : &quot;&quot;` * resource: * resource.name: `=`, `:` * resource.parent_name: `=`, `:` * resource.parent_display_name: `=`, `:` * resource.project_name: `=`, `:` * resource.project_display_name: `=`, `:` * resource.type: `=`, `:` * resource.folders.resource_folder: `=`, `:` * resource.display_name: `=`, `:`
@@ -217,7 +217,7 @@ Returns:
           &quot;fullUri&quot;: &quot;A String&quot;, # The full URI with payload that can be used to reproduce the vulnerability. For example, `http://example.com?p=aMmYgI6H`.
         },
         &quot;attackExposure&quot;: { # An attack exposure contains the results of an attack path simulation run. # The results of an attack path simulation relevant to this finding.
-          &quot;attackExposureResult&quot;: &quot;A String&quot;, # The resource name of the attack path simulation result that contains the details regarding this attack exposure score. Example: organizations/123/simulations/456/attackExposureResults/789
+          &quot;attackExposureResult&quot;: &quot;A String&quot;, # The resource name of the attack path simulation result that contains the details regarding this attack exposure score. Example: `organizations/123/simulations/456/attackExposureResults/789`
           &quot;exposedHighValueResourcesCount&quot;: 42, # The number of high value resources that are exposed as a result of this finding.
           &quot;exposedLowValueResourcesCount&quot;: 42, # The number of high value resources that are exposed as a result of this finding.
           &quot;exposedMediumValueResourcesCount&quot;: 42, # The number of medium value resources that are exposed as a result of this finding.
@@ -251,8 +251,10 @@ Returns:
           },
           &quot;attack&quot;: { # Information about DDoS attack volume and classification. # Information about DDoS attack volume and classification.
             &quot;classification&quot;: &quot;A String&quot;, # Type of attack, for example, &#x27;SYN-flood&#x27;, &#x27;NTP-udp&#x27;, or &#x27;CHARGEN-udp&#x27;.
-            &quot;volumeBps&quot;: 42, # Total BPS (bytes per second) volume of attack.
-            &quot;volumePps&quot;: 42, # Total PPS (packets per second) volume of attack.
+            &quot;volumeBps&quot;: 42, # Total BPS (bytes per second) volume of attack. Deprecated - refer to volume_bps_long instead.
+            &quot;volumeBpsLong&quot;: &quot;A String&quot;, # Total BPS (bytes per second) volume of attack.
+            &quot;volumePps&quot;: 42, # Total PPS (packets per second) volume of attack. Deprecated - refer to volume_pps_long instead.
+            &quot;volumePpsLong&quot;: &quot;A String&quot;, # Total PPS (packets per second) volume of attack.
           },
           &quot;duration&quot;: &quot;A String&quot;, # Duration of attack from the start until the current moment (updated every 5 minutes).
           &quot;requests&quot;: { # Information about the requests relevant to the finding. # Information about incoming requests evaluated by [Google Cloud Armor security policies](https://cloud.google.com/armor/docs/security-policy-overview).
@@ -320,6 +322,31 @@ Returns:
           },
         ],
         &quot;createTime&quot;: &quot;A String&quot;, # The time at which the finding was created in Security Command Center.
+        &quot;dataAccessEvents&quot;: [ # Data access events associated with the finding.
+          { # Details about a data access attempt made by a principal not authorized under applicable data security policy.
+            &quot;eventId&quot;: &quot;A String&quot;, # Unique identifier for data access event.
+            &quot;eventTime&quot;: &quot;A String&quot;, # Timestamp of data access event.
+            &quot;operation&quot;: &quot;A String&quot;, # The operation performed by the principal to access the data.
+            &quot;principalEmail&quot;: &quot;A String&quot;, # The email address of the principal that accessed the data. The principal could be a user account, service account, Google group, or other.
+          },
+        ],
+        &quot;dataFlowEvents&quot;: [ # Data flow events associated with the finding.
+          { # Details about a data flow event, in which either the data is moved to or is accessed from a non-compliant geo-location, as defined in the applicable data security policy.
+            &quot;eventId&quot;: &quot;A String&quot;, # Unique identifier for data flow event.
+            &quot;eventTime&quot;: &quot;A String&quot;, # Timestamp of data flow event.
+            &quot;operation&quot;: &quot;A String&quot;, # The operation performed by the principal for the data flow event.
+            &quot;principalEmail&quot;: &quot;A String&quot;, # The email address of the principal that initiated the data flow event. The principal could be a user account, service account, Google group, or other.
+            &quot;violatedLocation&quot;: &quot;A String&quot;, # Non-compliant location of the principal or the data destination.
+          },
+        ],
+        &quot;dataRetentionDeletionEvents&quot;: [ # Data retention deletion events associated with the finding.
+          { # Details about data retention deletion violations, in which the data is non-compliant based on their retention or deletion time, as defined in the applicable data security policy. The Data Retention Deletion (DRD) control is a control of the DSPM (Data Security Posture Management) suite that enables organizations to manage data retention and deletion policies in compliance with regulations, such as GDPR and CRPA. DRD supports two primary policy types: maximum storage length (max TTL) and minimum storage length (min TTL). Both are aimed at helping organizations meet regulatory and data management commitments.
+            &quot;dataObjectCount&quot;: &quot;A String&quot;, # Number of objects that violated the policy for this resource. If the number is less than 1,000, then the value of this field is the exact number. If the number of objects that violated the policy is greater than or equal to 1,000, then the value of this field is 1000.
+            &quot;eventDetectionTime&quot;: &quot;A String&quot;, # Timestamp indicating when the event was detected.
+            &quot;eventType&quot;: &quot;A String&quot;, # Type of the DRD event.
+            &quot;maxRetentionAllowed&quot;: &quot;A String&quot;, # Maximum duration of retention allowed from the DRD control. This comes from the DRD control where users set a max TTL for their data. For example, suppose that a user set the max TTL for a Cloud Storage bucket to 90 days. However, an object in that bucket is 100 days old. In this case, a DataRetentionDeletionEvent will be generated for that Cloud Storage bucket, and the max_retention_allowed is 90 days.
+          },
+        ],
         &quot;database&quot;: { # Represents database access information, such as queries. A database may be a sub-resource of an instance (as in the case of Cloud SQL instances or Cloud Spanner instances), or the database instance itself. Some database resources might not have the [full resource name](https://google.aip.dev/122#full-resource-names) populated because these resource types, such as Cloud SQL databases, are not yet supported by Cloud Asset Inventory. In these cases only the display name is provided. # Database associated with the finding.
           &quot;displayName&quot;: &quot;A String&quot;, # The human-readable name of the database that the user connected to.
           &quot;grantees&quot;: [ # The target usernames, roles, or groups of an SQL privilege grant, which is not an IAM policy change.
@@ -331,6 +358,9 @@ Returns:
           &quot;version&quot;: &quot;A String&quot;, # The version of the database, for example, POSTGRES_14. See [the complete list](https://cloud.google.com/sql/docs/mysql/admin-api/rest/v1/SqlDatabaseVersion).
         },
         &quot;description&quot;: &quot;A String&quot;, # Contains more details about the finding.
+        &quot;disk&quot;: { # Contains information about the disk associated with the finding. # Disk associated with the finding.
+          &quot;name&quot;: &quot;A String&quot;, # The name of the disk, for example, &quot;https://www.googleapis.com/compute/v1/projects/project-id/zones/zone-id/disks/disk-id&quot;.
+        },
         &quot;eventTime&quot;: &quot;A String&quot;, # The time the finding was first detected. If an existing finding is updated, then this is the time the update occurred. For example, if the finding represents an open firewall, this property captures the time the detector believes the firewall became open. The accuracy is determined by the detector. If the finding is later resolved, then this time reflects when the finding was resolved. This must not be set to a value greater than the current timestamp.
         &quot;exfiltration&quot;: { # Exfiltration represents a data exfiltration attempt from one or more sources to one or more targets. The `sources` attribute lists the sources of the exfiltrated data. The `targets` attribute lists the destinations the data was copied to. # Represents exfiltrations associated with the finding.
           &quot;sources&quot;: [ # If there are multiple sources, then the data is considered &quot;joined&quot; between them. For instance, BigQuery can join multiple tables, and each table would be considered a source.
@@ -391,6 +421,12 @@ Returns:
           },
         ],
         &quot;findingClass&quot;: &quot;A String&quot;, # The class of the finding.
+        &quot;groupMemberships&quot;: [ # Contains details about groups of which this finding is a member. A group is a collection of findings that are related in some way. This field cannot be updated. Its value is ignored in all update requests.
+          { # Contains details about groups of which this finding is a member. A group is a collection of findings that are related in some way.
+            &quot;groupId&quot;: &quot;A String&quot;, # ID of the group.
+            &quot;groupType&quot;: &quot;A String&quot;, # Type of group.
+          },
+        ],
         &quot;iamBindings&quot;: [ # Represents IAM bindings associated with the finding.
           { # Represents a particular IAM binding, which captures a member&#x27;s role addition, removal, or state.
             &quot;action&quot;: &quot;A String&quot;, # The action that was performed on a Binding.
@@ -568,6 +604,18 @@ Returns:
         },
         &quot;moduleName&quot;: &quot;A String&quot;, # Unique identifier of the module which generated the finding. Example: folders/598186756061/securityHealthAnalyticsSettings/customModules/56799441161885
         &quot;mute&quot;: &quot;A String&quot;, # Indicates the mute state of a finding (either muted, unmuted or undefined). Unlike other attributes of a finding, a finding provider shouldn&#x27;t set the value of mute.
+        &quot;muteInfo&quot;: { # Mute information about the finding, including whether the finding has a static mute or any matching dynamic mute rules. # Output only. The mute information regarding this finding.
+          &quot;dynamicMuteRecords&quot;: [ # The list of dynamic mute rules that currently match the finding.
+            { # The record of a dynamic mute rule that matches the finding.
+              &quot;matchTime&quot;: &quot;A String&quot;, # When the dynamic mute rule first matched the finding.
+              &quot;muteConfig&quot;: &quot;A String&quot;, # The relative resource name of the mute rule, represented by a mute config, that created this record, for example `organizations/123/muteConfigs/mymuteconfig` or `organizations/123/locations/global/muteConfigs/mymuteconfig`.
+            },
+          ],
+          &quot;staticMute&quot;: { # Information about the static mute state. A static mute state overrides any dynamic mute rules that apply to this finding. The static mute state can be set by a static mute rule or by muting the finding directly. # If set, the static mute applied to this finding. Static mutes override dynamic mutes. If unset, there is no static mute.
+            &quot;applyTime&quot;: &quot;A String&quot;, # When the static mute was applied.
+            &quot;state&quot;: &quot;A String&quot;, # The static mute state. If the value is `MUTED` or `UNMUTED`, then the finding&#x27;s overall mute state will have the same value.
+          },
+        },
         &quot;muteInitiator&quot;: &quot;A String&quot;, # Records additional information about the mute operation, for example, the [mute configuration](/security-command-center/docs/how-to-mute-findings) that muted the finding and the user who muted the finding.
         &quot;muteUpdateTime&quot;: &quot;A String&quot;, # Output only. The most recent time this finding was muted or unmuted.
         &quot;name&quot;: &quot;A String&quot;, # The [relative resource name](https://cloud.google.com/apis/design/resource_names#relative_resource_name) of the finding. Example: &quot;organizations/{organization_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;folders/{folder_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;projects/{project_id}/sources/{source_id}/findings/{finding_id}&quot;.
@@ -670,6 +718,12 @@ Returns:
           &quot;a_key&quot;: &quot;&quot;,
         },
         &quot;state&quot;: &quot;A String&quot;, # The state of the finding.
+        &quot;toxicCombination&quot;: { # Contains details about a group of security issues that, when the issues occur together, represent a greater risk than when the issues occur independently. A group of such issues is referred to as a toxic combination. # Contains details about a group of security issues that, when the issues occur together, represent a greater risk than when the issues occur independently. A group of such issues is referred to as a toxic combination. This field cannot be updated. Its value is ignored in all update requests.
+          &quot;attackExposureScore&quot;: 3.14, # The [Attack exposure score](https://cloud.google.com/security-command-center/docs/attack-exposure-learn#attack_exposure_scores) of this toxic combination. The score is a measure of how much this toxic combination exposes one or more high-value resources to potential attack.
+          &quot;relatedFindings&quot;: [ # List of resource names of findings associated with this toxic combination. For example, `organizations/123/sources/456/findings/789`.
+            &quot;A String&quot;,
+          ],
+        },
         &quot;vulnerability&quot;: { # Refers to common vulnerability fields e.g. cve, cvss, cwe etc. # Represents vulnerability-specific fields like CVE and CVSS scores. CVE stands for Common Vulnerabilities and Exposures (https://cve.mitre.org/about/)
           &quot;cve&quot;: { # CVE stands for Common Vulnerabilities and Exposures. Information from the [CVE record](https://www.cve.org/ResourcesSupport/Glossary) that describes this vulnerability. # CVE stands for Common Vulnerabilities and Exposures (https://cve.mitre.org/about/)
             &quot;cvssv3&quot;: { # Common Vulnerability Scoring System version 3. # Describe Common Vulnerability Scoring System specified at https://www.first.org/cvss/v3.1/specification-document
@@ -683,7 +737,9 @@ Returns:
               &quot;scope&quot;: &quot;A String&quot;, # The Scope metric captures whether a vulnerability in one vulnerable component impacts resources in components beyond its security scope.
               &quot;userInteraction&quot;: &quot;A String&quot;, # This metric captures the requirement for a human user, other than the attacker, to participate in the successful compromise of the vulnerable component.
             },
+            &quot;exploitReleaseDate&quot;: &quot;A String&quot;, # Date the first publicly available exploit or PoC was released.
             &quot;exploitationActivity&quot;: &quot;A String&quot;, # The exploitation activity of the vulnerability in the wild.
+            &quot;firstExploitationDate&quot;: &quot;A String&quot;, # Date of the earliest known exploitation.
             &quot;id&quot;: &quot;A String&quot;, # The unique identifier for the vulnerability. e.g. CVE-2021-34527
             &quot;impact&quot;: &quot;A String&quot;, # The potential impact of the vulnerability if it was to be exploited.
             &quot;observedInTheWild&quot;: True or False, # Whether or not the vulnerability has been observed in the wild.
@@ -731,6 +787,26 @@ Returns:
             },
           ],
         },
+        &quot;azureMetadata&quot;: { # Azure metadata associated with the resource, only applicable if the finding&#x27;s cloud provider is Microsoft Azure. # The Azure metadata associated with the finding.
+          &quot;managementGroups&quot;: [ # A list of Azure management groups associated with the resource, ordered from lowest level (closest to the subscription) to highest level.
+            { # Represents an Azure management group.
+              &quot;displayName&quot;: &quot;A String&quot;, # The display name of the Azure management group.
+              &quot;id&quot;: &quot;A String&quot;, # The UUID of the Azure management group, for example, `20000000-0001-0000-0000-000000000000`.
+            },
+          ],
+          &quot;resourceGroup&quot;: { # Represents an Azure resource group. # The Azure resource group associated with the resource.
+            &quot;id&quot;: &quot;A String&quot;, # The ID of the Azure resource group.
+            &quot;name&quot;: &quot;A String&quot;, # The name of the Azure resource group. This is not a UUID.
+          },
+          &quot;subscription&quot;: { # Represents an Azure subscription. # The Azure subscription associated with the resource.
+            &quot;displayName&quot;: &quot;A String&quot;, # The display name of the Azure subscription.
+            &quot;id&quot;: &quot;A String&quot;, # The UUID of the Azure subscription, for example, `291bba3f-e0a5-47bc-a099-3bdcb2a50a05`.
+          },
+          &quot;tenant&quot;: { # Represents a Microsoft Entra tenant. # The Azure Entra tenant associated with the resource.
+            &quot;displayName&quot;: &quot;A String&quot;, # The display name of the Azure tenant.
+            &quot;id&quot;: &quot;A String&quot;, # The ID of the Microsoft Entra tenant, for example, &quot;a11aaa11-aa11-1aa1-11aa-1aaa11a&quot;.
+          },
+        },
         &quot;cloudProvider&quot;: &quot;A String&quot;, # Indicates which cloud provider the finding is from.
         &quot;displayName&quot;: &quot;A String&quot;, # The human readable name of the resource.
         &quot;folders&quot;: [ # Contains a Folder message for each folder in the assets ancestry. The first folder is the deepest nested folder, and the last folder is the folder directly under the Organization.
@@ -755,7 +831,7 @@ Returns:
             },
           ],
         },
-        &quot;resourcePathString&quot;: &quot;A String&quot;, # A string representation of the resource path. For Google Cloud, it has the format of org/{organization_id}/folder/{folder_id}/folder/{folder_id}/project/{project_id} where there can be any number of folders. For AWS, it has the format of org/{organization_id}/ou/{organizational_unit_id}/ou/{organizational_unit_id}/account/{account_id} where there can be any number of organizational units. For Azure, it has the format of mg/{management_group_id}/mg/{management_group_id}/subscription/{subscription_id}/rg/{resource_group_name} where there can be any number of management groups.
+        &quot;resourcePathString&quot;: &quot;A String&quot;, # A string representation of the resource path. For Google Cloud, it has the format of `org/{organization_id}/folder/{folder_id}/folder/{folder_id}/project/{project_id}` where there can be any number of folders. For AWS, it has the format of `org/{organization_id}/ou/{organizational_unit_id}/ou/{organizational_unit_id}/account/{account_id}` where there can be any number of organizational units. For Azure, it has the format of `mg/{management_group_id}/mg/{management_group_id}/subscription/{subscription_id}/rg/{resource_group_name}` where there can be any number of management groups.
         &quot;service&quot;: &quot;A String&quot;, # The service or resource provider associated with the resource.
         &quot;type&quot;: &quot;A String&quot;, # The full resource type of the resource.
       },
@@ -817,7 +893,7 @@ Args:
     &quot;fullUri&quot;: &quot;A String&quot;, # The full URI with payload that can be used to reproduce the vulnerability. For example, `http://example.com?p=aMmYgI6H`.
   },
   &quot;attackExposure&quot;: { # An attack exposure contains the results of an attack path simulation run. # The results of an attack path simulation relevant to this finding.
-    &quot;attackExposureResult&quot;: &quot;A String&quot;, # The resource name of the attack path simulation result that contains the details regarding this attack exposure score. Example: organizations/123/simulations/456/attackExposureResults/789
+    &quot;attackExposureResult&quot;: &quot;A String&quot;, # The resource name of the attack path simulation result that contains the details regarding this attack exposure score. Example: `organizations/123/simulations/456/attackExposureResults/789`
     &quot;exposedHighValueResourcesCount&quot;: 42, # The number of high value resources that are exposed as a result of this finding.
     &quot;exposedLowValueResourcesCount&quot;: 42, # The number of high value resources that are exposed as a result of this finding.
     &quot;exposedMediumValueResourcesCount&quot;: 42, # The number of medium value resources that are exposed as a result of this finding.
@@ -851,8 +927,10 @@ Args:
     },
     &quot;attack&quot;: { # Information about DDoS attack volume and classification. # Information about DDoS attack volume and classification.
       &quot;classification&quot;: &quot;A String&quot;, # Type of attack, for example, &#x27;SYN-flood&#x27;, &#x27;NTP-udp&#x27;, or &#x27;CHARGEN-udp&#x27;.
-      &quot;volumeBps&quot;: 42, # Total BPS (bytes per second) volume of attack.
-      &quot;volumePps&quot;: 42, # Total PPS (packets per second) volume of attack.
+      &quot;volumeBps&quot;: 42, # Total BPS (bytes per second) volume of attack. Deprecated - refer to volume_bps_long instead.
+      &quot;volumeBpsLong&quot;: &quot;A String&quot;, # Total BPS (bytes per second) volume of attack.
+      &quot;volumePps&quot;: 42, # Total PPS (packets per second) volume of attack. Deprecated - refer to volume_pps_long instead.
+      &quot;volumePpsLong&quot;: &quot;A String&quot;, # Total PPS (packets per second) volume of attack.
     },
     &quot;duration&quot;: &quot;A String&quot;, # Duration of attack from the start until the current moment (updated every 5 minutes).
     &quot;requests&quot;: { # Information about the requests relevant to the finding. # Information about incoming requests evaluated by [Google Cloud Armor security policies](https://cloud.google.com/armor/docs/security-policy-overview).
@@ -920,6 +998,31 @@ Args:
     },
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # The time at which the finding was created in Security Command Center.
+  &quot;dataAccessEvents&quot;: [ # Data access events associated with the finding.
+    { # Details about a data access attempt made by a principal not authorized under applicable data security policy.
+      &quot;eventId&quot;: &quot;A String&quot;, # Unique identifier for data access event.
+      &quot;eventTime&quot;: &quot;A String&quot;, # Timestamp of data access event.
+      &quot;operation&quot;: &quot;A String&quot;, # The operation performed by the principal to access the data.
+      &quot;principalEmail&quot;: &quot;A String&quot;, # The email address of the principal that accessed the data. The principal could be a user account, service account, Google group, or other.
+    },
+  ],
+  &quot;dataFlowEvents&quot;: [ # Data flow events associated with the finding.
+    { # Details about a data flow event, in which either the data is moved to or is accessed from a non-compliant geo-location, as defined in the applicable data security policy.
+      &quot;eventId&quot;: &quot;A String&quot;, # Unique identifier for data flow event.
+      &quot;eventTime&quot;: &quot;A String&quot;, # Timestamp of data flow event.
+      &quot;operation&quot;: &quot;A String&quot;, # The operation performed by the principal for the data flow event.
+      &quot;principalEmail&quot;: &quot;A String&quot;, # The email address of the principal that initiated the data flow event. The principal could be a user account, service account, Google group, or other.
+      &quot;violatedLocation&quot;: &quot;A String&quot;, # Non-compliant location of the principal or the data destination.
+    },
+  ],
+  &quot;dataRetentionDeletionEvents&quot;: [ # Data retention deletion events associated with the finding.
+    { # Details about data retention deletion violations, in which the data is non-compliant based on their retention or deletion time, as defined in the applicable data security policy. The Data Retention Deletion (DRD) control is a control of the DSPM (Data Security Posture Management) suite that enables organizations to manage data retention and deletion policies in compliance with regulations, such as GDPR and CRPA. DRD supports two primary policy types: maximum storage length (max TTL) and minimum storage length (min TTL). Both are aimed at helping organizations meet regulatory and data management commitments.
+      &quot;dataObjectCount&quot;: &quot;A String&quot;, # Number of objects that violated the policy for this resource. If the number is less than 1,000, then the value of this field is the exact number. If the number of objects that violated the policy is greater than or equal to 1,000, then the value of this field is 1000.
+      &quot;eventDetectionTime&quot;: &quot;A String&quot;, # Timestamp indicating when the event was detected.
+      &quot;eventType&quot;: &quot;A String&quot;, # Type of the DRD event.
+      &quot;maxRetentionAllowed&quot;: &quot;A String&quot;, # Maximum duration of retention allowed from the DRD control. This comes from the DRD control where users set a max TTL for their data. For example, suppose that a user set the max TTL for a Cloud Storage bucket to 90 days. However, an object in that bucket is 100 days old. In this case, a DataRetentionDeletionEvent will be generated for that Cloud Storage bucket, and the max_retention_allowed is 90 days.
+    },
+  ],
   &quot;database&quot;: { # Represents database access information, such as queries. A database may be a sub-resource of an instance (as in the case of Cloud SQL instances or Cloud Spanner instances), or the database instance itself. Some database resources might not have the [full resource name](https://google.aip.dev/122#full-resource-names) populated because these resource types, such as Cloud SQL databases, are not yet supported by Cloud Asset Inventory. In these cases only the display name is provided. # Database associated with the finding.
     &quot;displayName&quot;: &quot;A String&quot;, # The human-readable name of the database that the user connected to.
     &quot;grantees&quot;: [ # The target usernames, roles, or groups of an SQL privilege grant, which is not an IAM policy change.
@@ -931,6 +1034,9 @@ Args:
     &quot;version&quot;: &quot;A String&quot;, # The version of the database, for example, POSTGRES_14. See [the complete list](https://cloud.google.com/sql/docs/mysql/admin-api/rest/v1/SqlDatabaseVersion).
   },
   &quot;description&quot;: &quot;A String&quot;, # Contains more details about the finding.
+  &quot;disk&quot;: { # Contains information about the disk associated with the finding. # Disk associated with the finding.
+    &quot;name&quot;: &quot;A String&quot;, # The name of the disk, for example, &quot;https://www.googleapis.com/compute/v1/projects/project-id/zones/zone-id/disks/disk-id&quot;.
+  },
   &quot;eventTime&quot;: &quot;A String&quot;, # The time the finding was first detected. If an existing finding is updated, then this is the time the update occurred. For example, if the finding represents an open firewall, this property captures the time the detector believes the firewall became open. The accuracy is determined by the detector. If the finding is later resolved, then this time reflects when the finding was resolved. This must not be set to a value greater than the current timestamp.
   &quot;exfiltration&quot;: { # Exfiltration represents a data exfiltration attempt from one or more sources to one or more targets. The `sources` attribute lists the sources of the exfiltrated data. The `targets` attribute lists the destinations the data was copied to. # Represents exfiltrations associated with the finding.
     &quot;sources&quot;: [ # If there are multiple sources, then the data is considered &quot;joined&quot; between them. For instance, BigQuery can join multiple tables, and each table would be considered a source.
@@ -991,6 +1097,12 @@ Args:
     },
   ],
   &quot;findingClass&quot;: &quot;A String&quot;, # The class of the finding.
+  &quot;groupMemberships&quot;: [ # Contains details about groups of which this finding is a member. A group is a collection of findings that are related in some way. This field cannot be updated. Its value is ignored in all update requests.
+    { # Contains details about groups of which this finding is a member. A group is a collection of findings that are related in some way.
+      &quot;groupId&quot;: &quot;A String&quot;, # ID of the group.
+      &quot;groupType&quot;: &quot;A String&quot;, # Type of group.
+    },
+  ],
   &quot;iamBindings&quot;: [ # Represents IAM bindings associated with the finding.
     { # Represents a particular IAM binding, which captures a member&#x27;s role addition, removal, or state.
       &quot;action&quot;: &quot;A String&quot;, # The action that was performed on a Binding.
@@ -1168,6 +1280,18 @@ Args:
   },
   &quot;moduleName&quot;: &quot;A String&quot;, # Unique identifier of the module which generated the finding. Example: folders/598186756061/securityHealthAnalyticsSettings/customModules/56799441161885
   &quot;mute&quot;: &quot;A String&quot;, # Indicates the mute state of a finding (either muted, unmuted or undefined). Unlike other attributes of a finding, a finding provider shouldn&#x27;t set the value of mute.
+  &quot;muteInfo&quot;: { # Mute information about the finding, including whether the finding has a static mute or any matching dynamic mute rules. # Output only. The mute information regarding this finding.
+    &quot;dynamicMuteRecords&quot;: [ # The list of dynamic mute rules that currently match the finding.
+      { # The record of a dynamic mute rule that matches the finding.
+        &quot;matchTime&quot;: &quot;A String&quot;, # When the dynamic mute rule first matched the finding.
+        &quot;muteConfig&quot;: &quot;A String&quot;, # The relative resource name of the mute rule, represented by a mute config, that created this record, for example `organizations/123/muteConfigs/mymuteconfig` or `organizations/123/locations/global/muteConfigs/mymuteconfig`.
+      },
+    ],
+    &quot;staticMute&quot;: { # Information about the static mute state. A static mute state overrides any dynamic mute rules that apply to this finding. The static mute state can be set by a static mute rule or by muting the finding directly. # If set, the static mute applied to this finding. Static mutes override dynamic mutes. If unset, there is no static mute.
+      &quot;applyTime&quot;: &quot;A String&quot;, # When the static mute was applied.
+      &quot;state&quot;: &quot;A String&quot;, # The static mute state. If the value is `MUTED` or `UNMUTED`, then the finding&#x27;s overall mute state will have the same value.
+    },
+  },
   &quot;muteInitiator&quot;: &quot;A String&quot;, # Records additional information about the mute operation, for example, the [mute configuration](/security-command-center/docs/how-to-mute-findings) that muted the finding and the user who muted the finding.
   &quot;muteUpdateTime&quot;: &quot;A String&quot;, # Output only. The most recent time this finding was muted or unmuted.
   &quot;name&quot;: &quot;A String&quot;, # The [relative resource name](https://cloud.google.com/apis/design/resource_names#relative_resource_name) of the finding. Example: &quot;organizations/{organization_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;folders/{folder_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;projects/{project_id}/sources/{source_id}/findings/{finding_id}&quot;.
@@ -1270,6 +1394,12 @@ Args:
     &quot;a_key&quot;: &quot;&quot;,
   },
   &quot;state&quot;: &quot;A String&quot;, # The state of the finding.
+  &quot;toxicCombination&quot;: { # Contains details about a group of security issues that, when the issues occur together, represent a greater risk than when the issues occur independently. A group of such issues is referred to as a toxic combination. # Contains details about a group of security issues that, when the issues occur together, represent a greater risk than when the issues occur independently. A group of such issues is referred to as a toxic combination. This field cannot be updated. Its value is ignored in all update requests.
+    &quot;attackExposureScore&quot;: 3.14, # The [Attack exposure score](https://cloud.google.com/security-command-center/docs/attack-exposure-learn#attack_exposure_scores) of this toxic combination. The score is a measure of how much this toxic combination exposes one or more high-value resources to potential attack.
+    &quot;relatedFindings&quot;: [ # List of resource names of findings associated with this toxic combination. For example, `organizations/123/sources/456/findings/789`.
+      &quot;A String&quot;,
+    ],
+  },
   &quot;vulnerability&quot;: { # Refers to common vulnerability fields e.g. cve, cvss, cwe etc. # Represents vulnerability-specific fields like CVE and CVSS scores. CVE stands for Common Vulnerabilities and Exposures (https://cve.mitre.org/about/)
     &quot;cve&quot;: { # CVE stands for Common Vulnerabilities and Exposures. Information from the [CVE record](https://www.cve.org/ResourcesSupport/Glossary) that describes this vulnerability. # CVE stands for Common Vulnerabilities and Exposures (https://cve.mitre.org/about/)
       &quot;cvssv3&quot;: { # Common Vulnerability Scoring System version 3. # Describe Common Vulnerability Scoring System specified at https://www.first.org/cvss/v3.1/specification-document
@@ -1283,7 +1413,9 @@ Args:
         &quot;scope&quot;: &quot;A String&quot;, # The Scope metric captures whether a vulnerability in one vulnerable component impacts resources in components beyond its security scope.
         &quot;userInteraction&quot;: &quot;A String&quot;, # This metric captures the requirement for a human user, other than the attacker, to participate in the successful compromise of the vulnerable component.
       },
+      &quot;exploitReleaseDate&quot;: &quot;A String&quot;, # Date the first publicly available exploit or PoC was released.
       &quot;exploitationActivity&quot;: &quot;A String&quot;, # The exploitation activity of the vulnerability in the wild.
+      &quot;firstExploitationDate&quot;: &quot;A String&quot;, # Date of the earliest known exploitation.
       &quot;id&quot;: &quot;A String&quot;, # The unique identifier for the vulnerability. e.g. CVE-2021-34527
       &quot;impact&quot;: &quot;A String&quot;, # The potential impact of the vulnerability if it was to be exploited.
       &quot;observedInTheWild&quot;: True or False, # Whether or not the vulnerability has been observed in the wild.
@@ -1351,7 +1483,7 @@ Returns:
     &quot;fullUri&quot;: &quot;A String&quot;, # The full URI with payload that can be used to reproduce the vulnerability. For example, `http://example.com?p=aMmYgI6H`.
   },
   &quot;attackExposure&quot;: { # An attack exposure contains the results of an attack path simulation run. # The results of an attack path simulation relevant to this finding.
-    &quot;attackExposureResult&quot;: &quot;A String&quot;, # The resource name of the attack path simulation result that contains the details regarding this attack exposure score. Example: organizations/123/simulations/456/attackExposureResults/789
+    &quot;attackExposureResult&quot;: &quot;A String&quot;, # The resource name of the attack path simulation result that contains the details regarding this attack exposure score. Example: `organizations/123/simulations/456/attackExposureResults/789`
     &quot;exposedHighValueResourcesCount&quot;: 42, # The number of high value resources that are exposed as a result of this finding.
     &quot;exposedLowValueResourcesCount&quot;: 42, # The number of high value resources that are exposed as a result of this finding.
     &quot;exposedMediumValueResourcesCount&quot;: 42, # The number of medium value resources that are exposed as a result of this finding.
@@ -1385,8 +1517,10 @@ Returns:
     },
     &quot;attack&quot;: { # Information about DDoS attack volume and classification. # Information about DDoS attack volume and classification.
       &quot;classification&quot;: &quot;A String&quot;, # Type of attack, for example, &#x27;SYN-flood&#x27;, &#x27;NTP-udp&#x27;, or &#x27;CHARGEN-udp&#x27;.
-      &quot;volumeBps&quot;: 42, # Total BPS (bytes per second) volume of attack.
-      &quot;volumePps&quot;: 42, # Total PPS (packets per second) volume of attack.
+      &quot;volumeBps&quot;: 42, # Total BPS (bytes per second) volume of attack. Deprecated - refer to volume_bps_long instead.
+      &quot;volumeBpsLong&quot;: &quot;A String&quot;, # Total BPS (bytes per second) volume of attack.
+      &quot;volumePps&quot;: 42, # Total PPS (packets per second) volume of attack. Deprecated - refer to volume_pps_long instead.
+      &quot;volumePpsLong&quot;: &quot;A String&quot;, # Total PPS (packets per second) volume of attack.
     },
     &quot;duration&quot;: &quot;A String&quot;, # Duration of attack from the start until the current moment (updated every 5 minutes).
     &quot;requests&quot;: { # Information about the requests relevant to the finding. # Information about incoming requests evaluated by [Google Cloud Armor security policies](https://cloud.google.com/armor/docs/security-policy-overview).
@@ -1454,6 +1588,31 @@ Returns:
     },
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # The time at which the finding was created in Security Command Center.
+  &quot;dataAccessEvents&quot;: [ # Data access events associated with the finding.
+    { # Details about a data access attempt made by a principal not authorized under applicable data security policy.
+      &quot;eventId&quot;: &quot;A String&quot;, # Unique identifier for data access event.
+      &quot;eventTime&quot;: &quot;A String&quot;, # Timestamp of data access event.
+      &quot;operation&quot;: &quot;A String&quot;, # The operation performed by the principal to access the data.
+      &quot;principalEmail&quot;: &quot;A String&quot;, # The email address of the principal that accessed the data. The principal could be a user account, service account, Google group, or other.
+    },
+  ],
+  &quot;dataFlowEvents&quot;: [ # Data flow events associated with the finding.
+    { # Details about a data flow event, in which either the data is moved to or is accessed from a non-compliant geo-location, as defined in the applicable data security policy.
+      &quot;eventId&quot;: &quot;A String&quot;, # Unique identifier for data flow event.
+      &quot;eventTime&quot;: &quot;A String&quot;, # Timestamp of data flow event.
+      &quot;operation&quot;: &quot;A String&quot;, # The operation performed by the principal for the data flow event.
+      &quot;principalEmail&quot;: &quot;A String&quot;, # The email address of the principal that initiated the data flow event. The principal could be a user account, service account, Google group, or other.
+      &quot;violatedLocation&quot;: &quot;A String&quot;, # Non-compliant location of the principal or the data destination.
+    },
+  ],
+  &quot;dataRetentionDeletionEvents&quot;: [ # Data retention deletion events associated with the finding.
+    { # Details about data retention deletion violations, in which the data is non-compliant based on their retention or deletion time, as defined in the applicable data security policy. The Data Retention Deletion (DRD) control is a control of the DSPM (Data Security Posture Management) suite that enables organizations to manage data retention and deletion policies in compliance with regulations, such as GDPR and CRPA. DRD supports two primary policy types: maximum storage length (max TTL) and minimum storage length (min TTL). Both are aimed at helping organizations meet regulatory and data management commitments.
+      &quot;dataObjectCount&quot;: &quot;A String&quot;, # Number of objects that violated the policy for this resource. If the number is less than 1,000, then the value of this field is the exact number. If the number of objects that violated the policy is greater than or equal to 1,000, then the value of this field is 1000.
+      &quot;eventDetectionTime&quot;: &quot;A String&quot;, # Timestamp indicating when the event was detected.
+      &quot;eventType&quot;: &quot;A String&quot;, # Type of the DRD event.
+      &quot;maxRetentionAllowed&quot;: &quot;A String&quot;, # Maximum duration of retention allowed from the DRD control. This comes from the DRD control where users set a max TTL for their data. For example, suppose that a user set the max TTL for a Cloud Storage bucket to 90 days. However, an object in that bucket is 100 days old. In this case, a DataRetentionDeletionEvent will be generated for that Cloud Storage bucket, and the max_retention_allowed is 90 days.
+    },
+  ],
   &quot;database&quot;: { # Represents database access information, such as queries. A database may be a sub-resource of an instance (as in the case of Cloud SQL instances or Cloud Spanner instances), or the database instance itself. Some database resources might not have the [full resource name](https://google.aip.dev/122#full-resource-names) populated because these resource types, such as Cloud SQL databases, are not yet supported by Cloud Asset Inventory. In these cases only the display name is provided. # Database associated with the finding.
     &quot;displayName&quot;: &quot;A String&quot;, # The human-readable name of the database that the user connected to.
     &quot;grantees&quot;: [ # The target usernames, roles, or groups of an SQL privilege grant, which is not an IAM policy change.
@@ -1465,6 +1624,9 @@ Returns:
     &quot;version&quot;: &quot;A String&quot;, # The version of the database, for example, POSTGRES_14. See [the complete list](https://cloud.google.com/sql/docs/mysql/admin-api/rest/v1/SqlDatabaseVersion).
   },
   &quot;description&quot;: &quot;A String&quot;, # Contains more details about the finding.
+  &quot;disk&quot;: { # Contains information about the disk associated with the finding. # Disk associated with the finding.
+    &quot;name&quot;: &quot;A String&quot;, # The name of the disk, for example, &quot;https://www.googleapis.com/compute/v1/projects/project-id/zones/zone-id/disks/disk-id&quot;.
+  },
   &quot;eventTime&quot;: &quot;A String&quot;, # The time the finding was first detected. If an existing finding is updated, then this is the time the update occurred. For example, if the finding represents an open firewall, this property captures the time the detector believes the firewall became open. The accuracy is determined by the detector. If the finding is later resolved, then this time reflects when the finding was resolved. This must not be set to a value greater than the current timestamp.
   &quot;exfiltration&quot;: { # Exfiltration represents a data exfiltration attempt from one or more sources to one or more targets. The `sources` attribute lists the sources of the exfiltrated data. The `targets` attribute lists the destinations the data was copied to. # Represents exfiltrations associated with the finding.
     &quot;sources&quot;: [ # If there are multiple sources, then the data is considered &quot;joined&quot; between them. For instance, BigQuery can join multiple tables, and each table would be considered a source.
@@ -1525,6 +1687,12 @@ Returns:
     },
   ],
   &quot;findingClass&quot;: &quot;A String&quot;, # The class of the finding.
+  &quot;groupMemberships&quot;: [ # Contains details about groups of which this finding is a member. A group is a collection of findings that are related in some way. This field cannot be updated. Its value is ignored in all update requests.
+    { # Contains details about groups of which this finding is a member. A group is a collection of findings that are related in some way.
+      &quot;groupId&quot;: &quot;A String&quot;, # ID of the group.
+      &quot;groupType&quot;: &quot;A String&quot;, # Type of group.
+    },
+  ],
   &quot;iamBindings&quot;: [ # Represents IAM bindings associated with the finding.
     { # Represents a particular IAM binding, which captures a member&#x27;s role addition, removal, or state.
       &quot;action&quot;: &quot;A String&quot;, # The action that was performed on a Binding.
@@ -1702,6 +1870,18 @@ Returns:
   },
   &quot;moduleName&quot;: &quot;A String&quot;, # Unique identifier of the module which generated the finding. Example: folders/598186756061/securityHealthAnalyticsSettings/customModules/56799441161885
   &quot;mute&quot;: &quot;A String&quot;, # Indicates the mute state of a finding (either muted, unmuted or undefined). Unlike other attributes of a finding, a finding provider shouldn&#x27;t set the value of mute.
+  &quot;muteInfo&quot;: { # Mute information about the finding, including whether the finding has a static mute or any matching dynamic mute rules. # Output only. The mute information regarding this finding.
+    &quot;dynamicMuteRecords&quot;: [ # The list of dynamic mute rules that currently match the finding.
+      { # The record of a dynamic mute rule that matches the finding.
+        &quot;matchTime&quot;: &quot;A String&quot;, # When the dynamic mute rule first matched the finding.
+        &quot;muteConfig&quot;: &quot;A String&quot;, # The relative resource name of the mute rule, represented by a mute config, that created this record, for example `organizations/123/muteConfigs/mymuteconfig` or `organizations/123/locations/global/muteConfigs/mymuteconfig`.
+      },
+    ],
+    &quot;staticMute&quot;: { # Information about the static mute state. A static mute state overrides any dynamic mute rules that apply to this finding. The static mute state can be set by a static mute rule or by muting the finding directly. # If set, the static mute applied to this finding. Static mutes override dynamic mutes. If unset, there is no static mute.
+      &quot;applyTime&quot;: &quot;A String&quot;, # When the static mute was applied.
+      &quot;state&quot;: &quot;A String&quot;, # The static mute state. If the value is `MUTED` or `UNMUTED`, then the finding&#x27;s overall mute state will have the same value.
+    },
+  },
   &quot;muteInitiator&quot;: &quot;A String&quot;, # Records additional information about the mute operation, for example, the [mute configuration](/security-command-center/docs/how-to-mute-findings) that muted the finding and the user who muted the finding.
   &quot;muteUpdateTime&quot;: &quot;A String&quot;, # Output only. The most recent time this finding was muted or unmuted.
   &quot;name&quot;: &quot;A String&quot;, # The [relative resource name](https://cloud.google.com/apis/design/resource_names#relative_resource_name) of the finding. Example: &quot;organizations/{organization_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;folders/{folder_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;projects/{project_id}/sources/{source_id}/findings/{finding_id}&quot;.
@@ -1804,6 +1984,12 @@ Returns:
     &quot;a_key&quot;: &quot;&quot;,
   },
   &quot;state&quot;: &quot;A String&quot;, # The state of the finding.
+  &quot;toxicCombination&quot;: { # Contains details about a group of security issues that, when the issues occur together, represent a greater risk than when the issues occur independently. A group of such issues is referred to as a toxic combination. # Contains details about a group of security issues that, when the issues occur together, represent a greater risk than when the issues occur independently. A group of such issues is referred to as a toxic combination. This field cannot be updated. Its value is ignored in all update requests.
+    &quot;attackExposureScore&quot;: 3.14, # The [Attack exposure score](https://cloud.google.com/security-command-center/docs/attack-exposure-learn#attack_exposure_scores) of this toxic combination. The score is a measure of how much this toxic combination exposes one or more high-value resources to potential attack.
+    &quot;relatedFindings&quot;: [ # List of resource names of findings associated with this toxic combination. For example, `organizations/123/sources/456/findings/789`.
+      &quot;A String&quot;,
+    ],
+  },
   &quot;vulnerability&quot;: { # Refers to common vulnerability fields e.g. cve, cvss, cwe etc. # Represents vulnerability-specific fields like CVE and CVSS scores. CVE stands for Common Vulnerabilities and Exposures (https://cve.mitre.org/about/)
     &quot;cve&quot;: { # CVE stands for Common Vulnerabilities and Exposures. Information from the [CVE record](https://www.cve.org/ResourcesSupport/Glossary) that describes this vulnerability. # CVE stands for Common Vulnerabilities and Exposures (https://cve.mitre.org/about/)
       &quot;cvssv3&quot;: { # Common Vulnerability Scoring System version 3. # Describe Common Vulnerability Scoring System specified at https://www.first.org/cvss/v3.1/specification-document
@@ -1817,7 +2003,9 @@ Returns:
         &quot;scope&quot;: &quot;A String&quot;, # The Scope metric captures whether a vulnerability in one vulnerable component impacts resources in components beyond its security scope.
         &quot;userInteraction&quot;: &quot;A String&quot;, # This metric captures the requirement for a human user, other than the attacker, to participate in the successful compromise of the vulnerable component.
       },
+      &quot;exploitReleaseDate&quot;: &quot;A String&quot;, # Date the first publicly available exploit or PoC was released.
       &quot;exploitationActivity&quot;: &quot;A String&quot;, # The exploitation activity of the vulnerability in the wild.
+      &quot;firstExploitationDate&quot;: &quot;A String&quot;, # Date of the earliest known exploitation.
       &quot;id&quot;: &quot;A String&quot;, # The unique identifier for the vulnerability. e.g. CVE-2021-34527
       &quot;impact&quot;: &quot;A String&quot;, # The potential impact of the vulnerability if it was to be exploited.
       &quot;observedInTheWild&quot;: True or False, # Whether or not the vulnerability has been observed in the wild.
@@ -1856,7 +2044,7 @@ Returns:
   <pre>Updates the mute state of a finding.
 
 Args:
-  name: string, Required. The [relative resource name](https://cloud.google.com/apis/design/resource_names#relative_resource_name) of the finding. Example: &quot;organizations/{organization_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;folders/{folder_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;projects/{project_id}/sources/{source_id}/findings/{finding_id}&quot;. (required)
+  name: string, Required. The [relative resource name](https://cloud.google.com/apis/design/resource_names#relative_resource_name) of the finding. Example: `organizations/{organization_id}/sources/{source_id}/findings/{finding_id}`, `folders/{folder_id}/sources/{source_id}/findings/{finding_id}`, `projects/{project_id}/sources/{source_id}/findings/{finding_id}`. (required)
   body: object, The request body.
     The object takes the form of:
 
@@ -1898,7 +2086,7 @@ Returns:
     &quot;fullUri&quot;: &quot;A String&quot;, # The full URI with payload that can be used to reproduce the vulnerability. For example, `http://example.com?p=aMmYgI6H`.
   },
   &quot;attackExposure&quot;: { # An attack exposure contains the results of an attack path simulation run. # The results of an attack path simulation relevant to this finding.
-    &quot;attackExposureResult&quot;: &quot;A String&quot;, # The resource name of the attack path simulation result that contains the details regarding this attack exposure score. Example: organizations/123/simulations/456/attackExposureResults/789
+    &quot;attackExposureResult&quot;: &quot;A String&quot;, # The resource name of the attack path simulation result that contains the details regarding this attack exposure score. Example: `organizations/123/simulations/456/attackExposureResults/789`
     &quot;exposedHighValueResourcesCount&quot;: 42, # The number of high value resources that are exposed as a result of this finding.
     &quot;exposedLowValueResourcesCount&quot;: 42, # The number of high value resources that are exposed as a result of this finding.
     &quot;exposedMediumValueResourcesCount&quot;: 42, # The number of medium value resources that are exposed as a result of this finding.
@@ -1932,8 +2120,10 @@ Returns:
     },
     &quot;attack&quot;: { # Information about DDoS attack volume and classification. # Information about DDoS attack volume and classification.
       &quot;classification&quot;: &quot;A String&quot;, # Type of attack, for example, &#x27;SYN-flood&#x27;, &#x27;NTP-udp&#x27;, or &#x27;CHARGEN-udp&#x27;.
-      &quot;volumeBps&quot;: 42, # Total BPS (bytes per second) volume of attack.
-      &quot;volumePps&quot;: 42, # Total PPS (packets per second) volume of attack.
+      &quot;volumeBps&quot;: 42, # Total BPS (bytes per second) volume of attack. Deprecated - refer to volume_bps_long instead.
+      &quot;volumeBpsLong&quot;: &quot;A String&quot;, # Total BPS (bytes per second) volume of attack.
+      &quot;volumePps&quot;: 42, # Total PPS (packets per second) volume of attack. Deprecated - refer to volume_pps_long instead.
+      &quot;volumePpsLong&quot;: &quot;A String&quot;, # Total PPS (packets per second) volume of attack.
     },
     &quot;duration&quot;: &quot;A String&quot;, # Duration of attack from the start until the current moment (updated every 5 minutes).
     &quot;requests&quot;: { # Information about the requests relevant to the finding. # Information about incoming requests evaluated by [Google Cloud Armor security policies](https://cloud.google.com/armor/docs/security-policy-overview).
@@ -2001,6 +2191,31 @@ Returns:
     },
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # The time at which the finding was created in Security Command Center.
+  &quot;dataAccessEvents&quot;: [ # Data access events associated with the finding.
+    { # Details about a data access attempt made by a principal not authorized under applicable data security policy.
+      &quot;eventId&quot;: &quot;A String&quot;, # Unique identifier for data access event.
+      &quot;eventTime&quot;: &quot;A String&quot;, # Timestamp of data access event.
+      &quot;operation&quot;: &quot;A String&quot;, # The operation performed by the principal to access the data.
+      &quot;principalEmail&quot;: &quot;A String&quot;, # The email address of the principal that accessed the data. The principal could be a user account, service account, Google group, or other.
+    },
+  ],
+  &quot;dataFlowEvents&quot;: [ # Data flow events associated with the finding.
+    { # Details about a data flow event, in which either the data is moved to or is accessed from a non-compliant geo-location, as defined in the applicable data security policy.
+      &quot;eventId&quot;: &quot;A String&quot;, # Unique identifier for data flow event.
+      &quot;eventTime&quot;: &quot;A String&quot;, # Timestamp of data flow event.
+      &quot;operation&quot;: &quot;A String&quot;, # The operation performed by the principal for the data flow event.
+      &quot;principalEmail&quot;: &quot;A String&quot;, # The email address of the principal that initiated the data flow event. The principal could be a user account, service account, Google group, or other.
+      &quot;violatedLocation&quot;: &quot;A String&quot;, # Non-compliant location of the principal or the data destination.
+    },
+  ],
+  &quot;dataRetentionDeletionEvents&quot;: [ # Data retention deletion events associated with the finding.
+    { # Details about data retention deletion violations, in which the data is non-compliant based on their retention or deletion time, as defined in the applicable data security policy. The Data Retention Deletion (DRD) control is a control of the DSPM (Data Security Posture Management) suite that enables organizations to manage data retention and deletion policies in compliance with regulations, such as GDPR and CRPA. DRD supports two primary policy types: maximum storage length (max TTL) and minimum storage length (min TTL). Both are aimed at helping organizations meet regulatory and data management commitments.
+      &quot;dataObjectCount&quot;: &quot;A String&quot;, # Number of objects that violated the policy for this resource. If the number is less than 1,000, then the value of this field is the exact number. If the number of objects that violated the policy is greater than or equal to 1,000, then the value of this field is 1000.
+      &quot;eventDetectionTime&quot;: &quot;A String&quot;, # Timestamp indicating when the event was detected.
+      &quot;eventType&quot;: &quot;A String&quot;, # Type of the DRD event.
+      &quot;maxRetentionAllowed&quot;: &quot;A String&quot;, # Maximum duration of retention allowed from the DRD control. This comes from the DRD control where users set a max TTL for their data. For example, suppose that a user set the max TTL for a Cloud Storage bucket to 90 days. However, an object in that bucket is 100 days old. In this case, a DataRetentionDeletionEvent will be generated for that Cloud Storage bucket, and the max_retention_allowed is 90 days.
+    },
+  ],
   &quot;database&quot;: { # Represents database access information, such as queries. A database may be a sub-resource of an instance (as in the case of Cloud SQL instances or Cloud Spanner instances), or the database instance itself. Some database resources might not have the [full resource name](https://google.aip.dev/122#full-resource-names) populated because these resource types, such as Cloud SQL databases, are not yet supported by Cloud Asset Inventory. In these cases only the display name is provided. # Database associated with the finding.
     &quot;displayName&quot;: &quot;A String&quot;, # The human-readable name of the database that the user connected to.
     &quot;grantees&quot;: [ # The target usernames, roles, or groups of an SQL privilege grant, which is not an IAM policy change.
@@ -2012,6 +2227,9 @@ Returns:
     &quot;version&quot;: &quot;A String&quot;, # The version of the database, for example, POSTGRES_14. See [the complete list](https://cloud.google.com/sql/docs/mysql/admin-api/rest/v1/SqlDatabaseVersion).
   },
   &quot;description&quot;: &quot;A String&quot;, # Contains more details about the finding.
+  &quot;disk&quot;: { # Contains information about the disk associated with the finding. # Disk associated with the finding.
+    &quot;name&quot;: &quot;A String&quot;, # The name of the disk, for example, &quot;https://www.googleapis.com/compute/v1/projects/project-id/zones/zone-id/disks/disk-id&quot;.
+  },
   &quot;eventTime&quot;: &quot;A String&quot;, # The time the finding was first detected. If an existing finding is updated, then this is the time the update occurred. For example, if the finding represents an open firewall, this property captures the time the detector believes the firewall became open. The accuracy is determined by the detector. If the finding is later resolved, then this time reflects when the finding was resolved. This must not be set to a value greater than the current timestamp.
   &quot;exfiltration&quot;: { # Exfiltration represents a data exfiltration attempt from one or more sources to one or more targets. The `sources` attribute lists the sources of the exfiltrated data. The `targets` attribute lists the destinations the data was copied to. # Represents exfiltrations associated with the finding.
     &quot;sources&quot;: [ # If there are multiple sources, then the data is considered &quot;joined&quot; between them. For instance, BigQuery can join multiple tables, and each table would be considered a source.
@@ -2072,6 +2290,12 @@ Returns:
     },
   ],
   &quot;findingClass&quot;: &quot;A String&quot;, # The class of the finding.
+  &quot;groupMemberships&quot;: [ # Contains details about groups of which this finding is a member. A group is a collection of findings that are related in some way. This field cannot be updated. Its value is ignored in all update requests.
+    { # Contains details about groups of which this finding is a member. A group is a collection of findings that are related in some way.
+      &quot;groupId&quot;: &quot;A String&quot;, # ID of the group.
+      &quot;groupType&quot;: &quot;A String&quot;, # Type of group.
+    },
+  ],
   &quot;iamBindings&quot;: [ # Represents IAM bindings associated with the finding.
     { # Represents a particular IAM binding, which captures a member&#x27;s role addition, removal, or state.
       &quot;action&quot;: &quot;A String&quot;, # The action that was performed on a Binding.
@@ -2249,6 +2473,18 @@ Returns:
   },
   &quot;moduleName&quot;: &quot;A String&quot;, # Unique identifier of the module which generated the finding. Example: folders/598186756061/securityHealthAnalyticsSettings/customModules/56799441161885
   &quot;mute&quot;: &quot;A String&quot;, # Indicates the mute state of a finding (either muted, unmuted or undefined). Unlike other attributes of a finding, a finding provider shouldn&#x27;t set the value of mute.
+  &quot;muteInfo&quot;: { # Mute information about the finding, including whether the finding has a static mute or any matching dynamic mute rules. # Output only. The mute information regarding this finding.
+    &quot;dynamicMuteRecords&quot;: [ # The list of dynamic mute rules that currently match the finding.
+      { # The record of a dynamic mute rule that matches the finding.
+        &quot;matchTime&quot;: &quot;A String&quot;, # When the dynamic mute rule first matched the finding.
+        &quot;muteConfig&quot;: &quot;A String&quot;, # The relative resource name of the mute rule, represented by a mute config, that created this record, for example `organizations/123/muteConfigs/mymuteconfig` or `organizations/123/locations/global/muteConfigs/mymuteconfig`.
+      },
+    ],
+    &quot;staticMute&quot;: { # Information about the static mute state. A static mute state overrides any dynamic mute rules that apply to this finding. The static mute state can be set by a static mute rule or by muting the finding directly. # If set, the static mute applied to this finding. Static mutes override dynamic mutes. If unset, there is no static mute.
+      &quot;applyTime&quot;: &quot;A String&quot;, # When the static mute was applied.
+      &quot;state&quot;: &quot;A String&quot;, # The static mute state. If the value is `MUTED` or `UNMUTED`, then the finding&#x27;s overall mute state will have the same value.
+    },
+  },
   &quot;muteInitiator&quot;: &quot;A String&quot;, # Records additional information about the mute operation, for example, the [mute configuration](/security-command-center/docs/how-to-mute-findings) that muted the finding and the user who muted the finding.
   &quot;muteUpdateTime&quot;: &quot;A String&quot;, # Output only. The most recent time this finding was muted or unmuted.
   &quot;name&quot;: &quot;A String&quot;, # The [relative resource name](https://cloud.google.com/apis/design/resource_names#relative_resource_name) of the finding. Example: &quot;organizations/{organization_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;folders/{folder_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;projects/{project_id}/sources/{source_id}/findings/{finding_id}&quot;.
@@ -2351,6 +2587,12 @@ Returns:
     &quot;a_key&quot;: &quot;&quot;,
   },
   &quot;state&quot;: &quot;A String&quot;, # The state of the finding.
+  &quot;toxicCombination&quot;: { # Contains details about a group of security issues that, when the issues occur together, represent a greater risk than when the issues occur independently. A group of such issues is referred to as a toxic combination. # Contains details about a group of security issues that, when the issues occur together, represent a greater risk than when the issues occur independently. A group of such issues is referred to as a toxic combination. This field cannot be updated. Its value is ignored in all update requests.
+    &quot;attackExposureScore&quot;: 3.14, # The [Attack exposure score](https://cloud.google.com/security-command-center/docs/attack-exposure-learn#attack_exposure_scores) of this toxic combination. The score is a measure of how much this toxic combination exposes one or more high-value resources to potential attack.
+    &quot;relatedFindings&quot;: [ # List of resource names of findings associated with this toxic combination. For example, `organizations/123/sources/456/findings/789`.
+      &quot;A String&quot;,
+    ],
+  },
   &quot;vulnerability&quot;: { # Refers to common vulnerability fields e.g. cve, cvss, cwe etc. # Represents vulnerability-specific fields like CVE and CVSS scores. CVE stands for Common Vulnerabilities and Exposures (https://cve.mitre.org/about/)
     &quot;cve&quot;: { # CVE stands for Common Vulnerabilities and Exposures. Information from the [CVE record](https://www.cve.org/ResourcesSupport/Glossary) that describes this vulnerability. # CVE stands for Common Vulnerabilities and Exposures (https://cve.mitre.org/about/)
       &quot;cvssv3&quot;: { # Common Vulnerability Scoring System version 3. # Describe Common Vulnerability Scoring System specified at https://www.first.org/cvss/v3.1/specification-document
@@ -2364,7 +2606,9 @@ Returns:
         &quot;scope&quot;: &quot;A String&quot;, # The Scope metric captures whether a vulnerability in one vulnerable component impacts resources in components beyond its security scope.
         &quot;userInteraction&quot;: &quot;A String&quot;, # This metric captures the requirement for a human user, other than the attacker, to participate in the successful compromise of the vulnerable component.
       },
+      &quot;exploitReleaseDate&quot;: &quot;A String&quot;, # Date the first publicly available exploit or PoC was released.
       &quot;exploitationActivity&quot;: &quot;A String&quot;, # The exploitation activity of the vulnerability in the wild.
+      &quot;firstExploitationDate&quot;: &quot;A String&quot;, # Date of the earliest known exploitation.
       &quot;id&quot;: &quot;A String&quot;, # The unique identifier for the vulnerability. e.g. CVE-2021-34527
       &quot;impact&quot;: &quot;A String&quot;, # The potential impact of the vulnerability if it was to be exploited.
       &quot;observedInTheWild&quot;: True or False, # Whether or not the vulnerability has been observed in the wild.
@@ -2403,12 +2647,12 @@ Returns:
   <pre>Updates the state of a finding.
 
 Args:
-  name: string, Required. The [relative resource name](https://cloud.google.com/apis/design/resource_names#relative_resource_name) of the finding. Example: &quot;organizations/{organization_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;folders/{folder_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;projects/{project_id}/sources/{source_id}/findings/{finding_id}&quot;. (required)
+  name: string, Required. The [relative resource name](https://cloud.google.com/apis/design/resource_names#relative_resource_name) of the finding. Example: `organizations/{organization_id}/sources/{source_id}/findings/{finding_id}`, `folders/{folder_id}/sources/{source_id}/findings/{finding_id}`, `projects/{project_id}/sources/{source_id}/findings/{finding_id}`. (required)
   body: object, The request body.
     The object takes the form of:
 
 { # Request message for updating a finding&#x27;s state.
-  &quot;startTime&quot;: &quot;A String&quot;, # Required. The time at which the updated state takes effect.
+  &quot;startTime&quot;: &quot;A String&quot;, # Optional. The time at which the updated state takes effect. If unset, defaults to the request time.
   &quot;state&quot;: &quot;A String&quot;, # Required. The desired State of the finding.
 }
 
@@ -2446,7 +2690,7 @@ Returns:
     &quot;fullUri&quot;: &quot;A String&quot;, # The full URI with payload that can be used to reproduce the vulnerability. For example, `http://example.com?p=aMmYgI6H`.
   },
   &quot;attackExposure&quot;: { # An attack exposure contains the results of an attack path simulation run. # The results of an attack path simulation relevant to this finding.
-    &quot;attackExposureResult&quot;: &quot;A String&quot;, # The resource name of the attack path simulation result that contains the details regarding this attack exposure score. Example: organizations/123/simulations/456/attackExposureResults/789
+    &quot;attackExposureResult&quot;: &quot;A String&quot;, # The resource name of the attack path simulation result that contains the details regarding this attack exposure score. Example: `organizations/123/simulations/456/attackExposureResults/789`
     &quot;exposedHighValueResourcesCount&quot;: 42, # The number of high value resources that are exposed as a result of this finding.
     &quot;exposedLowValueResourcesCount&quot;: 42, # The number of high value resources that are exposed as a result of this finding.
     &quot;exposedMediumValueResourcesCount&quot;: 42, # The number of medium value resources that are exposed as a result of this finding.
@@ -2480,8 +2724,10 @@ Returns:
     },
     &quot;attack&quot;: { # Information about DDoS attack volume and classification. # Information about DDoS attack volume and classification.
       &quot;classification&quot;: &quot;A String&quot;, # Type of attack, for example, &#x27;SYN-flood&#x27;, &#x27;NTP-udp&#x27;, or &#x27;CHARGEN-udp&#x27;.
-      &quot;volumeBps&quot;: 42, # Total BPS (bytes per second) volume of attack.
-      &quot;volumePps&quot;: 42, # Total PPS (packets per second) volume of attack.
+      &quot;volumeBps&quot;: 42, # Total BPS (bytes per second) volume of attack. Deprecated - refer to volume_bps_long instead.
+      &quot;volumeBpsLong&quot;: &quot;A String&quot;, # Total BPS (bytes per second) volume of attack.
+      &quot;volumePps&quot;: 42, # Total PPS (packets per second) volume of attack. Deprecated - refer to volume_pps_long instead.
+      &quot;volumePpsLong&quot;: &quot;A String&quot;, # Total PPS (packets per second) volume of attack.
     },
     &quot;duration&quot;: &quot;A String&quot;, # Duration of attack from the start until the current moment (updated every 5 minutes).
     &quot;requests&quot;: { # Information about the requests relevant to the finding. # Information about incoming requests evaluated by [Google Cloud Armor security policies](https://cloud.google.com/armor/docs/security-policy-overview).
@@ -2549,6 +2795,31 @@ Returns:
     },
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # The time at which the finding was created in Security Command Center.
+  &quot;dataAccessEvents&quot;: [ # Data access events associated with the finding.
+    { # Details about a data access attempt made by a principal not authorized under applicable data security policy.
+      &quot;eventId&quot;: &quot;A String&quot;, # Unique identifier for data access event.
+      &quot;eventTime&quot;: &quot;A String&quot;, # Timestamp of data access event.
+      &quot;operation&quot;: &quot;A String&quot;, # The operation performed by the principal to access the data.
+      &quot;principalEmail&quot;: &quot;A String&quot;, # The email address of the principal that accessed the data. The principal could be a user account, service account, Google group, or other.
+    },
+  ],
+  &quot;dataFlowEvents&quot;: [ # Data flow events associated with the finding.
+    { # Details about a data flow event, in which either the data is moved to or is accessed from a non-compliant geo-location, as defined in the applicable data security policy.
+      &quot;eventId&quot;: &quot;A String&quot;, # Unique identifier for data flow event.
+      &quot;eventTime&quot;: &quot;A String&quot;, # Timestamp of data flow event.
+      &quot;operation&quot;: &quot;A String&quot;, # The operation performed by the principal for the data flow event.
+      &quot;principalEmail&quot;: &quot;A String&quot;, # The email address of the principal that initiated the data flow event. The principal could be a user account, service account, Google group, or other.
+      &quot;violatedLocation&quot;: &quot;A String&quot;, # Non-compliant location of the principal or the data destination.
+    },
+  ],
+  &quot;dataRetentionDeletionEvents&quot;: [ # Data retention deletion events associated with the finding.
+    { # Details about data retention deletion violations, in which the data is non-compliant based on their retention or deletion time, as defined in the applicable data security policy. The Data Retention Deletion (DRD) control is a control of the DSPM (Data Security Posture Management) suite that enables organizations to manage data retention and deletion policies in compliance with regulations, such as GDPR and CRPA. DRD supports two primary policy types: maximum storage length (max TTL) and minimum storage length (min TTL). Both are aimed at helping organizations meet regulatory and data management commitments.
+      &quot;dataObjectCount&quot;: &quot;A String&quot;, # Number of objects that violated the policy for this resource. If the number is less than 1,000, then the value of this field is the exact number. If the number of objects that violated the policy is greater than or equal to 1,000, then the value of this field is 1000.
+      &quot;eventDetectionTime&quot;: &quot;A String&quot;, # Timestamp indicating when the event was detected.
+      &quot;eventType&quot;: &quot;A String&quot;, # Type of the DRD event.
+      &quot;maxRetentionAllowed&quot;: &quot;A String&quot;, # Maximum duration of retention allowed from the DRD control. This comes from the DRD control where users set a max TTL for their data. For example, suppose that a user set the max TTL for a Cloud Storage bucket to 90 days. However, an object in that bucket is 100 days old. In this case, a DataRetentionDeletionEvent will be generated for that Cloud Storage bucket, and the max_retention_allowed is 90 days.
+    },
+  ],
   &quot;database&quot;: { # Represents database access information, such as queries. A database may be a sub-resource of an instance (as in the case of Cloud SQL instances or Cloud Spanner instances), or the database instance itself. Some database resources might not have the [full resource name](https://google.aip.dev/122#full-resource-names) populated because these resource types, such as Cloud SQL databases, are not yet supported by Cloud Asset Inventory. In these cases only the display name is provided. # Database associated with the finding.
     &quot;displayName&quot;: &quot;A String&quot;, # The human-readable name of the database that the user connected to.
     &quot;grantees&quot;: [ # The target usernames, roles, or groups of an SQL privilege grant, which is not an IAM policy change.
@@ -2560,6 +2831,9 @@ Returns:
     &quot;version&quot;: &quot;A String&quot;, # The version of the database, for example, POSTGRES_14. See [the complete list](https://cloud.google.com/sql/docs/mysql/admin-api/rest/v1/SqlDatabaseVersion).
   },
   &quot;description&quot;: &quot;A String&quot;, # Contains more details about the finding.
+  &quot;disk&quot;: { # Contains information about the disk associated with the finding. # Disk associated with the finding.
+    &quot;name&quot;: &quot;A String&quot;, # The name of the disk, for example, &quot;https://www.googleapis.com/compute/v1/projects/project-id/zones/zone-id/disks/disk-id&quot;.
+  },
   &quot;eventTime&quot;: &quot;A String&quot;, # The time the finding was first detected. If an existing finding is updated, then this is the time the update occurred. For example, if the finding represents an open firewall, this property captures the time the detector believes the firewall became open. The accuracy is determined by the detector. If the finding is later resolved, then this time reflects when the finding was resolved. This must not be set to a value greater than the current timestamp.
   &quot;exfiltration&quot;: { # Exfiltration represents a data exfiltration attempt from one or more sources to one or more targets. The `sources` attribute lists the sources of the exfiltrated data. The `targets` attribute lists the destinations the data was copied to. # Represents exfiltrations associated with the finding.
     &quot;sources&quot;: [ # If there are multiple sources, then the data is considered &quot;joined&quot; between them. For instance, BigQuery can join multiple tables, and each table would be considered a source.
@@ -2620,6 +2894,12 @@ Returns:
     },
   ],
   &quot;findingClass&quot;: &quot;A String&quot;, # The class of the finding.
+  &quot;groupMemberships&quot;: [ # Contains details about groups of which this finding is a member. A group is a collection of findings that are related in some way. This field cannot be updated. Its value is ignored in all update requests.
+    { # Contains details about groups of which this finding is a member. A group is a collection of findings that are related in some way.
+      &quot;groupId&quot;: &quot;A String&quot;, # ID of the group.
+      &quot;groupType&quot;: &quot;A String&quot;, # Type of group.
+    },
+  ],
   &quot;iamBindings&quot;: [ # Represents IAM bindings associated with the finding.
     { # Represents a particular IAM binding, which captures a member&#x27;s role addition, removal, or state.
       &quot;action&quot;: &quot;A String&quot;, # The action that was performed on a Binding.
@@ -2797,6 +3077,18 @@ Returns:
   },
   &quot;moduleName&quot;: &quot;A String&quot;, # Unique identifier of the module which generated the finding. Example: folders/598186756061/securityHealthAnalyticsSettings/customModules/56799441161885
   &quot;mute&quot;: &quot;A String&quot;, # Indicates the mute state of a finding (either muted, unmuted or undefined). Unlike other attributes of a finding, a finding provider shouldn&#x27;t set the value of mute.
+  &quot;muteInfo&quot;: { # Mute information about the finding, including whether the finding has a static mute or any matching dynamic mute rules. # Output only. The mute information regarding this finding.
+    &quot;dynamicMuteRecords&quot;: [ # The list of dynamic mute rules that currently match the finding.
+      { # The record of a dynamic mute rule that matches the finding.
+        &quot;matchTime&quot;: &quot;A String&quot;, # When the dynamic mute rule first matched the finding.
+        &quot;muteConfig&quot;: &quot;A String&quot;, # The relative resource name of the mute rule, represented by a mute config, that created this record, for example `organizations/123/muteConfigs/mymuteconfig` or `organizations/123/locations/global/muteConfigs/mymuteconfig`.
+      },
+    ],
+    &quot;staticMute&quot;: { # Information about the static mute state. A static mute state overrides any dynamic mute rules that apply to this finding. The static mute state can be set by a static mute rule or by muting the finding directly. # If set, the static mute applied to this finding. Static mutes override dynamic mutes. If unset, there is no static mute.
+      &quot;applyTime&quot;: &quot;A String&quot;, # When the static mute was applied.
+      &quot;state&quot;: &quot;A String&quot;, # The static mute state. If the value is `MUTED` or `UNMUTED`, then the finding&#x27;s overall mute state will have the same value.
+    },
+  },
   &quot;muteInitiator&quot;: &quot;A String&quot;, # Records additional information about the mute operation, for example, the [mute configuration](/security-command-center/docs/how-to-mute-findings) that muted the finding and the user who muted the finding.
   &quot;muteUpdateTime&quot;: &quot;A String&quot;, # Output only. The most recent time this finding was muted or unmuted.
   &quot;name&quot;: &quot;A String&quot;, # The [relative resource name](https://cloud.google.com/apis/design/resource_names#relative_resource_name) of the finding. Example: &quot;organizations/{organization_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;folders/{folder_id}/sources/{source_id}/findings/{finding_id}&quot;, &quot;projects/{project_id}/sources/{source_id}/findings/{finding_id}&quot;.
@@ -2899,6 +3191,12 @@ Returns:
     &quot;a_key&quot;: &quot;&quot;,
   },
   &quot;state&quot;: &quot;A String&quot;, # The state of the finding.
+  &quot;toxicCombination&quot;: { # Contains details about a group of security issues that, when the issues occur together, represent a greater risk than when the issues occur independently. A group of such issues is referred to as a toxic combination. # Contains details about a group of security issues that, when the issues occur together, represent a greater risk than when the issues occur independently. A group of such issues is referred to as a toxic combination. This field cannot be updated. Its value is ignored in all update requests.
+    &quot;attackExposureScore&quot;: 3.14, # The [Attack exposure score](https://cloud.google.com/security-command-center/docs/attack-exposure-learn#attack_exposure_scores) of this toxic combination. The score is a measure of how much this toxic combination exposes one or more high-value resources to potential attack.
+    &quot;relatedFindings&quot;: [ # List of resource names of findings associated with this toxic combination. For example, `organizations/123/sources/456/findings/789`.
+      &quot;A String&quot;,
+    ],
+  },
   &quot;vulnerability&quot;: { # Refers to common vulnerability fields e.g. cve, cvss, cwe etc. # Represents vulnerability-specific fields like CVE and CVSS scores. CVE stands for Common Vulnerabilities and Exposures (https://cve.mitre.org/about/)
     &quot;cve&quot;: { # CVE stands for Common Vulnerabilities and Exposures. Information from the [CVE record](https://www.cve.org/ResourcesSupport/Glossary) that describes this vulnerability. # CVE stands for Common Vulnerabilities and Exposures (https://cve.mitre.org/about/)
       &quot;cvssv3&quot;: { # Common Vulnerability Scoring System version 3. # Describe Common Vulnerability Scoring System specified at https://www.first.org/cvss/v3.1/specification-document
@@ -2912,7 +3210,9 @@ Returns:
         &quot;scope&quot;: &quot;A String&quot;, # The Scope metric captures whether a vulnerability in one vulnerable component impacts resources in components beyond its security scope.
         &quot;userInteraction&quot;: &quot;A String&quot;, # This metric captures the requirement for a human user, other than the attacker, to participate in the successful compromise of the vulnerable component.
       },
+      &quot;exploitReleaseDate&quot;: &quot;A String&quot;, # Date the first publicly available exploit or PoC was released.
       &quot;exploitationActivity&quot;: &quot;A String&quot;, # The exploitation activity of the vulnerability in the wild.
+      &quot;firstExploitationDate&quot;: &quot;A String&quot;, # Date of the earliest known exploitation.
       &quot;id&quot;: &quot;A String&quot;, # The unique identifier for the vulnerability. e.g. CVE-2021-34527
       &quot;impact&quot;: &quot;A String&quot;, # The potential impact of the vulnerability if it was to be exploited.
       &quot;observedInTheWild&quot;: True or False, # Whether or not the vulnerability has been observed in the wild.

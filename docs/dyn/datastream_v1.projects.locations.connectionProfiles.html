@@ -132,9 +132,9 @@ Args:
   &quot;labels&quot;: { # Labels.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
-  &quot;mysqlProfile&quot;: { # MySQL database profile. # MySQL ConnectionProfile configuration.
+  &quot;mysqlProfile&quot;: { # MySQL database profile. Next ID: 7. # MySQL ConnectionProfile configuration.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the MySQL connection.
-    &quot;password&quot;: &quot;A String&quot;, # Required. Input only. Password for the MySQL connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Input only. Password for the MySQL connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the MySQL connection, default value is 3306.
     &quot;sslConfig&quot;: { # MySQL SSL configuration information. # SSL configuration for the MySQL connection.
       &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
@@ -146,35 +146,60 @@ Args:
     },
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the MySQL connection.
   },
-  &quot;name&quot;: &quot;A String&quot;, # Output only. The resource&#x27;s name.
-  &quot;oracleProfile&quot;: { # Oracle database profile. # Oracle ConnectionProfile configuration.
+  &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. The resource&#x27;s name.
+  &quot;oracleProfile&quot;: { # Oracle database profile. Next ID: 10. # Oracle ConnectionProfile configuration.
     &quot;connectionAttributes&quot;: { # Connection string attributes
       &quot;a_key&quot;: &quot;A String&quot;,
     },
     &quot;databaseService&quot;: &quot;A String&quot;, # Required. Database for the Oracle connection.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle connection.
+    &quot;oracleAsmConfig&quot;: { # Configuration for Oracle Automatic Storage Management (ASM) connection. . # Optional. Configuration for Oracle ASM connection.
+      &quot;asmService&quot;: &quot;A String&quot;, # Required. ASM service name for the Oracle ASM connection.
+      &quot;connectionAttributes&quot;: { # Optional. Connection string attributes
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
+      &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle ASM connection.
+      &quot;oracleSslConfig&quot;: { # Oracle SSL configuration information. # Optional. SSL configuration for the Oracle connection.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
+        &quot;caCertificateSet&quot;: True or False, # Output only. Indicates whether the ca_certificate field has been set for this Connection-Profile.
+      },
+      &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the Oracle ASM connection.
+      &quot;port&quot;: 42, # Required. Port for the Oracle ASM connection.
+      &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle ASM connection.
+    },
     &quot;oracleSslConfig&quot;: { # Oracle SSL configuration information. # Optional. SSL configuration for the Oracle connection.
       &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
       &quot;caCertificateSet&quot;: True or False, # Output only. Indicates whether the ca_certificate field has been set for this Connection-Profile.
     },
-    &quot;password&quot;: &quot;A String&quot;, # Required. Password for the Oracle connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the Oracle connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the Oracle connection, default value is 1521.
+    &quot;secretManagerStoredPassword&quot;: &quot;A String&quot;, # Optional. A reference to a Secret Manager resource name storing the Oracle connection password. Mutually exclusive with the `password` field.
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle connection.
   },
   &quot;postgresqlProfile&quot;: { # PostgreSQL database profile. # PostgreSQL Connection Profile configuration.
     &quot;database&quot;: &quot;A String&quot;, # Required. Database for the PostgreSQL connection.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the PostgreSQL connection.
-    &quot;password&quot;: &quot;A String&quot;, # Required. Password for the PostgreSQL connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the PostgreSQL connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the PostgreSQL connection, default value is 5432.
+    &quot;sslConfig&quot;: { # PostgreSQL SSL configuration information. # Optional. SSL configuration for the PostgreSQL connection. In case PostgresqlSslConfig is not set, the connection will use the default SSL mode, which is `prefer` (i.e. this mode will only use encryption if enabled from database side, otherwise will use unencrypted communication)
+      &quot;serverAndClientVerification&quot;: { # Message represents the option where Datastream will enforce the encryption and authenticate the server identity as well as the client identity. ca_certificate, client_certificate and client_key must be set if user selects this option. # If this field is set, the communication will be encrypted with TLS encryption and both the server identity and the client identity will be authenticated.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded server root CA certificate.
+        &quot;clientCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded certificate used by the source database to authenticate the client identity (i.e., the Datastream&#x27;s identity). This certificate is signed by either a root certificate trusted by the server or one or more intermediate certificates (which is stored with the leaf certificate) to link the this certificate to the trusted root certificate.
+        &quot;clientKey&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded private key associated with the client certificate. This value will be used during the SSL/TLS handshake, allowing the PostgreSQL server to authenticate the client&#x27;s identity, i.e. identity of the Datastream.
+      },
+      &quot;serverVerification&quot;: { # Message represents the option where Datastream will enforce the encryption and authenticate the server identity. ca_certificate must be set if user selects this option. #  If this field is set, the communication will be encrypted with TLS encryption and the server identity will be authenticated.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded server root CA certificate.
+      },
+    },
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the PostgreSQL connection.
   },
   &quot;privateConnectivity&quot;: { # Private Connectivity # Private connectivity.
     &quot;privateConnection&quot;: &quot;A String&quot;, # Required. A reference to a private connection resource. Format: `projects/{project}/locations/{location}/privateConnections/{name}`
   },
-  &quot;sqlServerProfile&quot;: { # SQLServer database profile # SQLServer Connection Profile configuration.
+  &quot;sqlServerProfile&quot;: { # SQLServer database profile. Next ID: 8. # SQLServer Connection Profile configuration.
     &quot;database&quot;: &quot;A String&quot;, # Required. Database for the SQLServer connection.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the SQLServer connection.
-    &quot;password&quot;: &quot;A String&quot;, # Required. Password for the SQLServer connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the SQLServer connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the SQLServer connection, default value is 1433.
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the SQLServer connection.
   },
@@ -281,9 +306,9 @@ Args:
     &quot;labels&quot;: { # Labels.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
-    &quot;mysqlProfile&quot;: { # MySQL database profile. # MySQL ConnectionProfile configuration.
+    &quot;mysqlProfile&quot;: { # MySQL database profile. Next ID: 7. # MySQL ConnectionProfile configuration.
       &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the MySQL connection.
-      &quot;password&quot;: &quot;A String&quot;, # Required. Input only. Password for the MySQL connection.
+      &quot;password&quot;: &quot;A String&quot;, # Optional. Input only. Password for the MySQL connection. Mutually exclusive with the `secret_manager_stored_password` field.
       &quot;port&quot;: 42, # Port for the MySQL connection, default value is 3306.
       &quot;sslConfig&quot;: { # MySQL SSL configuration information. # SSL configuration for the MySQL connection.
         &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
@@ -295,35 +320,60 @@ Args:
       },
       &quot;username&quot;: &quot;A String&quot;, # Required. Username for the MySQL connection.
     },
-    &quot;name&quot;: &quot;A String&quot;, # Output only. The resource&#x27;s name.
-    &quot;oracleProfile&quot;: { # Oracle database profile. # Oracle ConnectionProfile configuration.
+    &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. The resource&#x27;s name.
+    &quot;oracleProfile&quot;: { # Oracle database profile. Next ID: 10. # Oracle ConnectionProfile configuration.
       &quot;connectionAttributes&quot;: { # Connection string attributes
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;databaseService&quot;: &quot;A String&quot;, # Required. Database for the Oracle connection.
       &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle connection.
+      &quot;oracleAsmConfig&quot;: { # Configuration for Oracle Automatic Storage Management (ASM) connection. . # Optional. Configuration for Oracle ASM connection.
+        &quot;asmService&quot;: &quot;A String&quot;, # Required. ASM service name for the Oracle ASM connection.
+        &quot;connectionAttributes&quot;: { # Optional. Connection string attributes
+          &quot;a_key&quot;: &quot;A String&quot;,
+        },
+        &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle ASM connection.
+        &quot;oracleSslConfig&quot;: { # Oracle SSL configuration information. # Optional. SSL configuration for the Oracle connection.
+          &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
+          &quot;caCertificateSet&quot;: True or False, # Output only. Indicates whether the ca_certificate field has been set for this Connection-Profile.
+        },
+        &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the Oracle ASM connection.
+        &quot;port&quot;: 42, # Required. Port for the Oracle ASM connection.
+        &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle ASM connection.
+      },
       &quot;oracleSslConfig&quot;: { # Oracle SSL configuration information. # Optional. SSL configuration for the Oracle connection.
         &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
         &quot;caCertificateSet&quot;: True or False, # Output only. Indicates whether the ca_certificate field has been set for this Connection-Profile.
       },
-      &quot;password&quot;: &quot;A String&quot;, # Required. Password for the Oracle connection.
+      &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the Oracle connection. Mutually exclusive with the `secret_manager_stored_password` field.
       &quot;port&quot;: 42, # Port for the Oracle connection, default value is 1521.
+      &quot;secretManagerStoredPassword&quot;: &quot;A String&quot;, # Optional. A reference to a Secret Manager resource name storing the Oracle connection password. Mutually exclusive with the `password` field.
       &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle connection.
     },
     &quot;postgresqlProfile&quot;: { # PostgreSQL database profile. # PostgreSQL Connection Profile configuration.
       &quot;database&quot;: &quot;A String&quot;, # Required. Database for the PostgreSQL connection.
       &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the PostgreSQL connection.
-      &quot;password&quot;: &quot;A String&quot;, # Required. Password for the PostgreSQL connection.
+      &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the PostgreSQL connection. Mutually exclusive with the `secret_manager_stored_password` field.
       &quot;port&quot;: 42, # Port for the PostgreSQL connection, default value is 5432.
+      &quot;sslConfig&quot;: { # PostgreSQL SSL configuration information. # Optional. SSL configuration for the PostgreSQL connection. In case PostgresqlSslConfig is not set, the connection will use the default SSL mode, which is `prefer` (i.e. this mode will only use encryption if enabled from database side, otherwise will use unencrypted communication)
+        &quot;serverAndClientVerification&quot;: { # Message represents the option where Datastream will enforce the encryption and authenticate the server identity as well as the client identity. ca_certificate, client_certificate and client_key must be set if user selects this option. # If this field is set, the communication will be encrypted with TLS encryption and both the server identity and the client identity will be authenticated.
+          &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded server root CA certificate.
+          &quot;clientCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded certificate used by the source database to authenticate the client identity (i.e., the Datastream&#x27;s identity). This certificate is signed by either a root certificate trusted by the server or one or more intermediate certificates (which is stored with the leaf certificate) to link the this certificate to the trusted root certificate.
+          &quot;clientKey&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded private key associated with the client certificate. This value will be used during the SSL/TLS handshake, allowing the PostgreSQL server to authenticate the client&#x27;s identity, i.e. identity of the Datastream.
+        },
+        &quot;serverVerification&quot;: { # Message represents the option where Datastream will enforce the encryption and authenticate the server identity. ca_certificate must be set if user selects this option. #  If this field is set, the communication will be encrypted with TLS encryption and the server identity will be authenticated.
+          &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded server root CA certificate.
+        },
+      },
       &quot;username&quot;: &quot;A String&quot;, # Required. Username for the PostgreSQL connection.
     },
     &quot;privateConnectivity&quot;: { # Private Connectivity # Private connectivity.
       &quot;privateConnection&quot;: &quot;A String&quot;, # Required. A reference to a private connection resource. Format: `projects/{project}/locations/{location}/privateConnections/{name}`
     },
-    &quot;sqlServerProfile&quot;: { # SQLServer database profile # SQLServer Connection Profile configuration.
+    &quot;sqlServerProfile&quot;: { # SQLServer database profile. Next ID: 8. # SQLServer Connection Profile configuration.
       &quot;database&quot;: &quot;A String&quot;, # Required. Database for the SQLServer connection.
       &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the SQLServer connection.
-      &quot;password&quot;: &quot;A String&quot;, # Required. Password for the SQLServer connection.
+      &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the SQLServer connection. Mutually exclusive with the `secret_manager_stored_password` field.
       &quot;port&quot;: 42, # Port for the SQLServer connection, default value is 1433.
       &quot;username&quot;: &quot;A String&quot;, # Required. Username for the SQLServer connection.
     },
@@ -405,6 +455,30 @@ Args:
           },
         ],
         &quot;schema&quot;: &quot;A String&quot;, # Schema name.
+      },
+    ],
+  },
+  &quot;sqlServerRdbms&quot;: { # SQLServer database structure. # SQLServer RDBMS to enrich with child data objects and metadata.
+    &quot;schemas&quot;: [ # SQLServer schemas in the database server.
+      { # SQLServer schema.
+        &quot;schema&quot;: &quot;A String&quot;, # Schema name.
+        &quot;tables&quot;: [ # Tables in the schema.
+          { # SQLServer table.
+            &quot;columns&quot;: [ # SQLServer columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.
+              { # SQLServer Column.
+                &quot;column&quot;: &quot;A String&quot;, # Column name.
+                &quot;dataType&quot;: &quot;A String&quot;, # The SQLServer data type.
+                &quot;length&quot;: 42, # Column length.
+                &quot;nullable&quot;: True or False, # Whether or not the column can accept a null value.
+                &quot;ordinalPosition&quot;: 42, # The ordinal position of the column in the table.
+                &quot;precision&quot;: 42, # Column precision.
+                &quot;primaryKey&quot;: True or False, # Whether or not the column represents a primary key.
+                &quot;scale&quot;: 42, # Column scale.
+              },
+            ],
+            &quot;table&quot;: &quot;A String&quot;, # Table name.
+          },
+        ],
       },
     ],
   },
@@ -493,6 +567,30 @@ Returns:
       },
     ],
   },
+  &quot;sqlServerRdbms&quot;: { # SQLServer database structure. # Enriched SQLServer RDBMS object.
+    &quot;schemas&quot;: [ # SQLServer schemas in the database server.
+      { # SQLServer schema.
+        &quot;schema&quot;: &quot;A String&quot;, # Schema name.
+        &quot;tables&quot;: [ # Tables in the schema.
+          { # SQLServer table.
+            &quot;columns&quot;: [ # SQLServer columns in the schema. When unspecified as part of include/exclude objects, includes/excludes everything.
+              { # SQLServer Column.
+                &quot;column&quot;: &quot;A String&quot;, # Column name.
+                &quot;dataType&quot;: &quot;A String&quot;, # The SQLServer data type.
+                &quot;length&quot;: 42, # Column length.
+                &quot;nullable&quot;: True or False, # Whether or not the column can accept a null value.
+                &quot;ordinalPosition&quot;: 42, # The ordinal position of the column in the table.
+                &quot;precision&quot;: 42, # Column precision.
+                &quot;primaryKey&quot;: True or False, # Whether or not the column represents a primary key.
+                &quot;scale&quot;: 42, # Column scale.
+              },
+            ],
+            &quot;table&quot;: &quot;A String&quot;, # Table name.
+          },
+        ],
+      },
+    ],
+  },
 }</pre>
 </div>
 
@@ -529,9 +627,9 @@ Returns:
   &quot;labels&quot;: { # Labels.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
-  &quot;mysqlProfile&quot;: { # MySQL database profile. # MySQL ConnectionProfile configuration.
+  &quot;mysqlProfile&quot;: { # MySQL database profile. Next ID: 7. # MySQL ConnectionProfile configuration.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the MySQL connection.
-    &quot;password&quot;: &quot;A String&quot;, # Required. Input only. Password for the MySQL connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Input only. Password for the MySQL connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the MySQL connection, default value is 3306.
     &quot;sslConfig&quot;: { # MySQL SSL configuration information. # SSL configuration for the MySQL connection.
       &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
@@ -543,35 +641,60 @@ Returns:
     },
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the MySQL connection.
   },
-  &quot;name&quot;: &quot;A String&quot;, # Output only. The resource&#x27;s name.
-  &quot;oracleProfile&quot;: { # Oracle database profile. # Oracle ConnectionProfile configuration.
+  &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. The resource&#x27;s name.
+  &quot;oracleProfile&quot;: { # Oracle database profile. Next ID: 10. # Oracle ConnectionProfile configuration.
     &quot;connectionAttributes&quot;: { # Connection string attributes
       &quot;a_key&quot;: &quot;A String&quot;,
     },
     &quot;databaseService&quot;: &quot;A String&quot;, # Required. Database for the Oracle connection.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle connection.
+    &quot;oracleAsmConfig&quot;: { # Configuration for Oracle Automatic Storage Management (ASM) connection. . # Optional. Configuration for Oracle ASM connection.
+      &quot;asmService&quot;: &quot;A String&quot;, # Required. ASM service name for the Oracle ASM connection.
+      &quot;connectionAttributes&quot;: { # Optional. Connection string attributes
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
+      &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle ASM connection.
+      &quot;oracleSslConfig&quot;: { # Oracle SSL configuration information. # Optional. SSL configuration for the Oracle connection.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
+        &quot;caCertificateSet&quot;: True or False, # Output only. Indicates whether the ca_certificate field has been set for this Connection-Profile.
+      },
+      &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the Oracle ASM connection.
+      &quot;port&quot;: 42, # Required. Port for the Oracle ASM connection.
+      &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle ASM connection.
+    },
     &quot;oracleSslConfig&quot;: { # Oracle SSL configuration information. # Optional. SSL configuration for the Oracle connection.
       &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
       &quot;caCertificateSet&quot;: True or False, # Output only. Indicates whether the ca_certificate field has been set for this Connection-Profile.
     },
-    &quot;password&quot;: &quot;A String&quot;, # Required. Password for the Oracle connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the Oracle connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the Oracle connection, default value is 1521.
+    &quot;secretManagerStoredPassword&quot;: &quot;A String&quot;, # Optional. A reference to a Secret Manager resource name storing the Oracle connection password. Mutually exclusive with the `password` field.
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle connection.
   },
   &quot;postgresqlProfile&quot;: { # PostgreSQL database profile. # PostgreSQL Connection Profile configuration.
     &quot;database&quot;: &quot;A String&quot;, # Required. Database for the PostgreSQL connection.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the PostgreSQL connection.
-    &quot;password&quot;: &quot;A String&quot;, # Required. Password for the PostgreSQL connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the PostgreSQL connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the PostgreSQL connection, default value is 5432.
+    &quot;sslConfig&quot;: { # PostgreSQL SSL configuration information. # Optional. SSL configuration for the PostgreSQL connection. In case PostgresqlSslConfig is not set, the connection will use the default SSL mode, which is `prefer` (i.e. this mode will only use encryption if enabled from database side, otherwise will use unencrypted communication)
+      &quot;serverAndClientVerification&quot;: { # Message represents the option where Datastream will enforce the encryption and authenticate the server identity as well as the client identity. ca_certificate, client_certificate and client_key must be set if user selects this option. # If this field is set, the communication will be encrypted with TLS encryption and both the server identity and the client identity will be authenticated.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded server root CA certificate.
+        &quot;clientCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded certificate used by the source database to authenticate the client identity (i.e., the Datastream&#x27;s identity). This certificate is signed by either a root certificate trusted by the server or one or more intermediate certificates (which is stored with the leaf certificate) to link the this certificate to the trusted root certificate.
+        &quot;clientKey&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded private key associated with the client certificate. This value will be used during the SSL/TLS handshake, allowing the PostgreSQL server to authenticate the client&#x27;s identity, i.e. identity of the Datastream.
+      },
+      &quot;serverVerification&quot;: { # Message represents the option where Datastream will enforce the encryption and authenticate the server identity. ca_certificate must be set if user selects this option. #  If this field is set, the communication will be encrypted with TLS encryption and the server identity will be authenticated.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded server root CA certificate.
+      },
+    },
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the PostgreSQL connection.
   },
   &quot;privateConnectivity&quot;: { # Private Connectivity # Private connectivity.
     &quot;privateConnection&quot;: &quot;A String&quot;, # Required. A reference to a private connection resource. Format: `projects/{project}/locations/{location}/privateConnections/{name}`
   },
-  &quot;sqlServerProfile&quot;: { # SQLServer database profile # SQLServer Connection Profile configuration.
+  &quot;sqlServerProfile&quot;: { # SQLServer database profile. Next ID: 8. # SQLServer Connection Profile configuration.
     &quot;database&quot;: &quot;A String&quot;, # Required. Database for the SQLServer connection.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the SQLServer connection.
-    &quot;password&quot;: &quot;A String&quot;, # Required. Password for the SQLServer connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the SQLServer connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the SQLServer connection, default value is 1433.
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the SQLServer connection.
   },
@@ -620,9 +743,9 @@ Returns:
       &quot;labels&quot;: { # Labels.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
-      &quot;mysqlProfile&quot;: { # MySQL database profile. # MySQL ConnectionProfile configuration.
+      &quot;mysqlProfile&quot;: { # MySQL database profile. Next ID: 7. # MySQL ConnectionProfile configuration.
         &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the MySQL connection.
-        &quot;password&quot;: &quot;A String&quot;, # Required. Input only. Password for the MySQL connection.
+        &quot;password&quot;: &quot;A String&quot;, # Optional. Input only. Password for the MySQL connection. Mutually exclusive with the `secret_manager_stored_password` field.
         &quot;port&quot;: 42, # Port for the MySQL connection, default value is 3306.
         &quot;sslConfig&quot;: { # MySQL SSL configuration information. # SSL configuration for the MySQL connection.
           &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
@@ -634,35 +757,60 @@ Returns:
         },
         &quot;username&quot;: &quot;A String&quot;, # Required. Username for the MySQL connection.
       },
-      &quot;name&quot;: &quot;A String&quot;, # Output only. The resource&#x27;s name.
-      &quot;oracleProfile&quot;: { # Oracle database profile. # Oracle ConnectionProfile configuration.
+      &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. The resource&#x27;s name.
+      &quot;oracleProfile&quot;: { # Oracle database profile. Next ID: 10. # Oracle ConnectionProfile configuration.
         &quot;connectionAttributes&quot;: { # Connection string attributes
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;databaseService&quot;: &quot;A String&quot;, # Required. Database for the Oracle connection.
         &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle connection.
+        &quot;oracleAsmConfig&quot;: { # Configuration for Oracle Automatic Storage Management (ASM) connection. . # Optional. Configuration for Oracle ASM connection.
+          &quot;asmService&quot;: &quot;A String&quot;, # Required. ASM service name for the Oracle ASM connection.
+          &quot;connectionAttributes&quot;: { # Optional. Connection string attributes
+            &quot;a_key&quot;: &quot;A String&quot;,
+          },
+          &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle ASM connection.
+          &quot;oracleSslConfig&quot;: { # Oracle SSL configuration information. # Optional. SSL configuration for the Oracle connection.
+            &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
+            &quot;caCertificateSet&quot;: True or False, # Output only. Indicates whether the ca_certificate field has been set for this Connection-Profile.
+          },
+          &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the Oracle ASM connection.
+          &quot;port&quot;: 42, # Required. Port for the Oracle ASM connection.
+          &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle ASM connection.
+        },
         &quot;oracleSslConfig&quot;: { # Oracle SSL configuration information. # Optional. SSL configuration for the Oracle connection.
           &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
           &quot;caCertificateSet&quot;: True or False, # Output only. Indicates whether the ca_certificate field has been set for this Connection-Profile.
         },
-        &quot;password&quot;: &quot;A String&quot;, # Required. Password for the Oracle connection.
+        &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the Oracle connection. Mutually exclusive with the `secret_manager_stored_password` field.
         &quot;port&quot;: 42, # Port for the Oracle connection, default value is 1521.
+        &quot;secretManagerStoredPassword&quot;: &quot;A String&quot;, # Optional. A reference to a Secret Manager resource name storing the Oracle connection password. Mutually exclusive with the `password` field.
         &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle connection.
       },
       &quot;postgresqlProfile&quot;: { # PostgreSQL database profile. # PostgreSQL Connection Profile configuration.
         &quot;database&quot;: &quot;A String&quot;, # Required. Database for the PostgreSQL connection.
         &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the PostgreSQL connection.
-        &quot;password&quot;: &quot;A String&quot;, # Required. Password for the PostgreSQL connection.
+        &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the PostgreSQL connection. Mutually exclusive with the `secret_manager_stored_password` field.
         &quot;port&quot;: 42, # Port for the PostgreSQL connection, default value is 5432.
+        &quot;sslConfig&quot;: { # PostgreSQL SSL configuration information. # Optional. SSL configuration for the PostgreSQL connection. In case PostgresqlSslConfig is not set, the connection will use the default SSL mode, which is `prefer` (i.e. this mode will only use encryption if enabled from database side, otherwise will use unencrypted communication)
+          &quot;serverAndClientVerification&quot;: { # Message represents the option where Datastream will enforce the encryption and authenticate the server identity as well as the client identity. ca_certificate, client_certificate and client_key must be set if user selects this option. # If this field is set, the communication will be encrypted with TLS encryption and both the server identity and the client identity will be authenticated.
+            &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded server root CA certificate.
+            &quot;clientCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded certificate used by the source database to authenticate the client identity (i.e., the Datastream&#x27;s identity). This certificate is signed by either a root certificate trusted by the server or one or more intermediate certificates (which is stored with the leaf certificate) to link the this certificate to the trusted root certificate.
+            &quot;clientKey&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded private key associated with the client certificate. This value will be used during the SSL/TLS handshake, allowing the PostgreSQL server to authenticate the client&#x27;s identity, i.e. identity of the Datastream.
+          },
+          &quot;serverVerification&quot;: { # Message represents the option where Datastream will enforce the encryption and authenticate the server identity. ca_certificate must be set if user selects this option. #  If this field is set, the communication will be encrypted with TLS encryption and the server identity will be authenticated.
+            &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded server root CA certificate.
+          },
+        },
         &quot;username&quot;: &quot;A String&quot;, # Required. Username for the PostgreSQL connection.
       },
       &quot;privateConnectivity&quot;: { # Private Connectivity # Private connectivity.
         &quot;privateConnection&quot;: &quot;A String&quot;, # Required. A reference to a private connection resource. Format: `projects/{project}/locations/{location}/privateConnections/{name}`
       },
-      &quot;sqlServerProfile&quot;: { # SQLServer database profile # SQLServer Connection Profile configuration.
+      &quot;sqlServerProfile&quot;: { # SQLServer database profile. Next ID: 8. # SQLServer Connection Profile configuration.
         &quot;database&quot;: &quot;A String&quot;, # Required. Database for the SQLServer connection.
         &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the SQLServer connection.
-        &quot;password&quot;: &quot;A String&quot;, # Required. Password for the SQLServer connection.
+        &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the SQLServer connection. Mutually exclusive with the `secret_manager_stored_password` field.
         &quot;port&quot;: 42, # Port for the SQLServer connection, default value is 1433.
         &quot;username&quot;: &quot;A String&quot;, # Required. Username for the SQLServer connection.
       },
@@ -697,7 +845,7 @@ Returns:
   <pre>Use this method to update the parameters of a connection profile.
 
 Args:
-  name: string, Output only. The resource&#x27;s name. (required)
+  name: string, Output only. Identifier. The resource&#x27;s name. (required)
   body: object, The request body.
     The object takes the form of:
 
@@ -720,9 +868,9 @@ Args:
   &quot;labels&quot;: { # Labels.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
-  &quot;mysqlProfile&quot;: { # MySQL database profile. # MySQL ConnectionProfile configuration.
+  &quot;mysqlProfile&quot;: { # MySQL database profile. Next ID: 7. # MySQL ConnectionProfile configuration.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the MySQL connection.
-    &quot;password&quot;: &quot;A String&quot;, # Required. Input only. Password for the MySQL connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Input only. Password for the MySQL connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the MySQL connection, default value is 3306.
     &quot;sslConfig&quot;: { # MySQL SSL configuration information. # SSL configuration for the MySQL connection.
       &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
@@ -734,35 +882,60 @@ Args:
     },
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the MySQL connection.
   },
-  &quot;name&quot;: &quot;A String&quot;, # Output only. The resource&#x27;s name.
-  &quot;oracleProfile&quot;: { # Oracle database profile. # Oracle ConnectionProfile configuration.
+  &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. The resource&#x27;s name.
+  &quot;oracleProfile&quot;: { # Oracle database profile. Next ID: 10. # Oracle ConnectionProfile configuration.
     &quot;connectionAttributes&quot;: { # Connection string attributes
       &quot;a_key&quot;: &quot;A String&quot;,
     },
     &quot;databaseService&quot;: &quot;A String&quot;, # Required. Database for the Oracle connection.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle connection.
+    &quot;oracleAsmConfig&quot;: { # Configuration for Oracle Automatic Storage Management (ASM) connection. . # Optional. Configuration for Oracle ASM connection.
+      &quot;asmService&quot;: &quot;A String&quot;, # Required. ASM service name for the Oracle ASM connection.
+      &quot;connectionAttributes&quot;: { # Optional. Connection string attributes
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
+      &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle ASM connection.
+      &quot;oracleSslConfig&quot;: { # Oracle SSL configuration information. # Optional. SSL configuration for the Oracle connection.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
+        &quot;caCertificateSet&quot;: True or False, # Output only. Indicates whether the ca_certificate field has been set for this Connection-Profile.
+      },
+      &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the Oracle ASM connection.
+      &quot;port&quot;: 42, # Required. Port for the Oracle ASM connection.
+      &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle ASM connection.
+    },
     &quot;oracleSslConfig&quot;: { # Oracle SSL configuration information. # Optional. SSL configuration for the Oracle connection.
       &quot;caCertificate&quot;: &quot;A String&quot;, # Input only. PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate.
       &quot;caCertificateSet&quot;: True or False, # Output only. Indicates whether the ca_certificate field has been set for this Connection-Profile.
     },
-    &quot;password&quot;: &quot;A String&quot;, # Required. Password for the Oracle connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the Oracle connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the Oracle connection, default value is 1521.
+    &quot;secretManagerStoredPassword&quot;: &quot;A String&quot;, # Optional. A reference to a Secret Manager resource name storing the Oracle connection password. Mutually exclusive with the `password` field.
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle connection.
   },
   &quot;postgresqlProfile&quot;: { # PostgreSQL database profile. # PostgreSQL Connection Profile configuration.
     &quot;database&quot;: &quot;A String&quot;, # Required. Database for the PostgreSQL connection.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the PostgreSQL connection.
-    &quot;password&quot;: &quot;A String&quot;, # Required. Password for the PostgreSQL connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the PostgreSQL connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the PostgreSQL connection, default value is 5432.
+    &quot;sslConfig&quot;: { # PostgreSQL SSL configuration information. # Optional. SSL configuration for the PostgreSQL connection. In case PostgresqlSslConfig is not set, the connection will use the default SSL mode, which is `prefer` (i.e. this mode will only use encryption if enabled from database side, otherwise will use unencrypted communication)
+      &quot;serverAndClientVerification&quot;: { # Message represents the option where Datastream will enforce the encryption and authenticate the server identity as well as the client identity. ca_certificate, client_certificate and client_key must be set if user selects this option. # If this field is set, the communication will be encrypted with TLS encryption and both the server identity and the client identity will be authenticated.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded server root CA certificate.
+        &quot;clientCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded certificate used by the source database to authenticate the client identity (i.e., the Datastream&#x27;s identity). This certificate is signed by either a root certificate trusted by the server or one or more intermediate certificates (which is stored with the leaf certificate) to link the this certificate to the trusted root certificate.
+        &quot;clientKey&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded private key associated with the client certificate. This value will be used during the SSL/TLS handshake, allowing the PostgreSQL server to authenticate the client&#x27;s identity, i.e. identity of the Datastream.
+      },
+      &quot;serverVerification&quot;: { # Message represents the option where Datastream will enforce the encryption and authenticate the server identity. ca_certificate must be set if user selects this option. #  If this field is set, the communication will be encrypted with TLS encryption and the server identity will be authenticated.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. PEM-encoded server root CA certificate.
+      },
+    },
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the PostgreSQL connection.
   },
   &quot;privateConnectivity&quot;: { # Private Connectivity # Private connectivity.
     &quot;privateConnection&quot;: &quot;A String&quot;, # Required. A reference to a private connection resource. Format: `projects/{project}/locations/{location}/privateConnections/{name}`
   },
-  &quot;sqlServerProfile&quot;: { # SQLServer database profile # SQLServer Connection Profile configuration.
+  &quot;sqlServerProfile&quot;: { # SQLServer database profile. Next ID: 8. # SQLServer Connection Profile configuration.
     &quot;database&quot;: &quot;A String&quot;, # Required. Database for the SQLServer connection.
     &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the SQLServer connection.
-    &quot;password&quot;: &quot;A String&quot;, # Required. Password for the SQLServer connection.
+    &quot;password&quot;: &quot;A String&quot;, # Optional. Password for the SQLServer connection. Mutually exclusive with the `secret_manager_stored_password` field.
     &quot;port&quot;: 42, # Port for the SQLServer connection, default value is 1433.
     &quot;username&quot;: &quot;A String&quot;, # Required. Username for the SQLServer connection.
   },

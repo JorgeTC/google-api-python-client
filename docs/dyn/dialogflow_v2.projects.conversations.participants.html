@@ -202,7 +202,7 @@ Returns:
   An object of the form:
 
     { # The response message for Participants.AnalyzeContent.
-  &quot;automatedAgentReply&quot;: { # Represents a response from an automated agent. # Only set if a Dialogflow automated agent has responded. Note that: AutomatedAgentReply.detect_intent_response.output_audio and AutomatedAgentReply.detect_intent_response.output_audio_config are always empty, use reply_audio instead.
+  &quot;automatedAgentReply&quot;: { # Represents a response from an automated agent. # Only set if a Dialogflow automated agent has responded. Note that in AutomatedAgentReply.DetectIntentResponse, Sessions.DetectIntentResponse.output_audio and Sessions.DetectIntentResponse.output_audio_config are always empty, use reply_audio instead.
     &quot;allowCancellation&quot;: True or False, # Indicates whether the partial automated agent reply is interruptible when a later reply message arrives. e.g. if the agent specified some music as partial response, it can be cancelled.
     &quot;automatedAgentReplyType&quot;: &quot;A String&quot;, # AutomatedAgentReply type.
     &quot;cxCurrentPage&quot;: &quot;A String&quot;, # The unique identifier of the current Dialogflow CX conversation page. Format: `projects//locations//agents//flows//pages/`.
@@ -668,7 +668,7 @@ Returns:
           &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
         },
         &quot;queryText&quot;: &quot;A String&quot;, # The original conversational query text: - If natural language text was provided as input, `query_text` contains a copy of the input. - If natural language speech audio was provided as input, `query_text` contains the speech recognition result. If speech recognizer produced multiple alternatives, a particular one is picked. - If automatic spell correction is enabled, `query_text` will contain the corrected user input.
-        &quot;sentimentAnalysisResult&quot;: { # The result of sentiment analysis. Sentiment analysis inspects user input and identifies the prevailing subjective opinion, especially to determine a user&#x27;s attitude as positive, negative, or neutral. For Participants.DetectIntent, it needs to be configured in DetectIntentRequest.query_params. For Participants.StreamingDetectIntent, it needs to be configured in StreamingDetectIntentRequest.query_params. And for Participants.AnalyzeContent and Participants.StreamingAnalyzeContent, it needs to be configured in ConversationProfile.human_agent_assistant_config # The sentiment analysis result, which depends on the `sentiment_analysis_request_config` specified in the request.
+        &quot;sentimentAnalysisResult&quot;: { # The result of sentiment analysis. Sentiment analysis inspects user input and identifies the prevailing subjective opinion, especially to determine a user&#x27;s attitude as positive, negative, or neutral. For DetectIntent, it needs to be configured in DetectIntentRequest.query_params. For StreamingDetectIntent, it needs to be configured in StreamingDetectIntentRequest.query_params. And for Participants.AnalyzeContent and Participants.StreamingAnalyzeContent, it needs to be configured in ConversationProfile.human_agent_assistant_config # The sentiment analysis result, which depends on the `sentiment_analysis_request_config` specified in the request.
           &quot;queryTextSentiment&quot;: { # The sentiment, such as positive/negative feeling or association, for a unit of analysis, such as the query text. See: https://cloud.google.com/natural-language/docs/basics#interpreting_sentiment_analysis_values for how to interpret the result. # The sentiment analysis result for `query_text`.
             &quot;magnitude&quot;: 3.14, # A non-negative number in the [0, +inf) range, which represents the absolute magnitude of sentiment, regardless of score (positive or negative).
             &quot;score&quot;: 3.14, # Sentiment score between -1.0 (negative sentiment) and 1.0 (positive sentiment).
@@ -740,6 +740,34 @@ Returns:
         ],
         &quot;latestMessage&quot;: &quot;A String&quot;, # The name of the latest conversation message used to compile suggestion for. Format: `projects//locations//conversations//messages/`.
       },
+      &quot;suggestKnowledgeAssistResponse&quot;: { # The response message for Participants.SuggestKnowledgeAssist. # SuggestKnowledgeAssistResponse if request is for KNOWLEDGE_ASSIST.
+        &quot;contextSize&quot;: 42, # Number of messages prior to and including latest_message to compile the suggestion. It may be smaller than the SuggestKnowledgeAssistRequest.context_size field in the request if there are fewer messages in the conversation.
+        &quot;knowledgeAssistAnswer&quot;: { # Represents a Knowledge Assist answer. # Output only. Knowledge Assist suggestion.
+          &quot;answerRecord&quot;: &quot;A String&quot;, # The name of the answer record. Format: `projects//locations//answer Records/`.
+          &quot;suggestedQuery&quot;: { # Represents a suggested query. # The query suggested based on the context. Suggestion is made only if it is different from the previous suggestion.
+            &quot;queryText&quot;: &quot;A String&quot;, # Suggested query text.
+          },
+          &quot;suggestedQueryAnswer&quot;: { # Represents an answer from Knowledge. Currently supports FAQ and Generative answers. # The answer generated for the suggested query. Whether or not an answer is generated depends on how confident we are about the generated query.
+            &quot;answerText&quot;: &quot;A String&quot;, # The piece of text from the `source` that answers this suggested query.
+            &quot;faqSource&quot;: { # Details about source of FAQ answer. # Populated if the prediction came from FAQ.
+              &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
+            },
+            &quot;generativeSource&quot;: { # Details about source of Generative answer. # Populated if the prediction was Generative.
+              &quot;snippets&quot;: [ # All snippets used for this Generative Prediction, with their source URI and data.
+                { # Snippet Source for a Generative Prediction.
+                  &quot;metadata&quot;: { # Metadata of the document.
+                    &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                  },
+                  &quot;text&quot;: &quot;A String&quot;, # Text taken from that URI.
+                  &quot;title&quot;: &quot;A String&quot;, # Title of the document.
+                  &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
+                },
+              ],
+            },
+          },
+        },
+        &quot;latestMessage&quot;: &quot;A String&quot;, # The name of the latest conversation message used to compile suggestion for. Format: `projects//locations//conversations//messages/`.
+      },
       &quot;suggestSmartRepliesResponse&quot;: { # The response message for Participants.SuggestSmartReplies. # SuggestSmartRepliesResponse if request is for SMART_REPLY.
         &quot;contextSize&quot;: 42, # Number of messages prior to and including latest_message to compile the suggestion. It may be smaller than the SuggestSmartRepliesRequest.context_size field in the request if there aren&#x27;t that many messages in the conversation.
         &quot;latestMessage&quot;: &quot;A String&quot;, # The name of the latest conversation message used to compile suggestion for. Format: `projects//locations//conversations//messages/`.
@@ -798,6 +826,34 @@ Returns:
         ],
         &quot;latestMessage&quot;: &quot;A String&quot;, # The name of the latest conversation message used to compile suggestion for. Format: `projects//locations//conversations//messages/`.
       },
+      &quot;suggestKnowledgeAssistResponse&quot;: { # The response message for Participants.SuggestKnowledgeAssist. # SuggestKnowledgeAssistResponse if request is for KNOWLEDGE_ASSIST.
+        &quot;contextSize&quot;: 42, # Number of messages prior to and including latest_message to compile the suggestion. It may be smaller than the SuggestKnowledgeAssistRequest.context_size field in the request if there are fewer messages in the conversation.
+        &quot;knowledgeAssistAnswer&quot;: { # Represents a Knowledge Assist answer. # Output only. Knowledge Assist suggestion.
+          &quot;answerRecord&quot;: &quot;A String&quot;, # The name of the answer record. Format: `projects//locations//answer Records/`.
+          &quot;suggestedQuery&quot;: { # Represents a suggested query. # The query suggested based on the context. Suggestion is made only if it is different from the previous suggestion.
+            &quot;queryText&quot;: &quot;A String&quot;, # Suggested query text.
+          },
+          &quot;suggestedQueryAnswer&quot;: { # Represents an answer from Knowledge. Currently supports FAQ and Generative answers. # The answer generated for the suggested query. Whether or not an answer is generated depends on how confident we are about the generated query.
+            &quot;answerText&quot;: &quot;A String&quot;, # The piece of text from the `source` that answers this suggested query.
+            &quot;faqSource&quot;: { # Details about source of FAQ answer. # Populated if the prediction came from FAQ.
+              &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
+            },
+            &quot;generativeSource&quot;: { # Details about source of Generative answer. # Populated if the prediction was Generative.
+              &quot;snippets&quot;: [ # All snippets used for this Generative Prediction, with their source URI and data.
+                { # Snippet Source for a Generative Prediction.
+                  &quot;metadata&quot;: { # Metadata of the document.
+                    &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                  },
+                  &quot;text&quot;: &quot;A String&quot;, # Text taken from that URI.
+                  &quot;title&quot;: &quot;A String&quot;, # Title of the document.
+                  &quot;uri&quot;: &quot;A String&quot;, # URI the data is sourced from.
+                },
+              ],
+            },
+          },
+        },
+        &quot;latestMessage&quot;: &quot;A String&quot;, # The name of the latest conversation message used to compile suggestion for. Format: `projects//locations//conversations//messages/`.
+      },
       &quot;suggestSmartRepliesResponse&quot;: { # The response message for Participants.SuggestSmartReplies. # SuggestSmartRepliesResponse if request is for SMART_REPLY.
         &quot;contextSize&quot;: 42, # Number of messages prior to and including latest_message to compile the suggestion. It may be smaller than the SuggestSmartRepliesRequest.context_size field in the request if there aren&#x27;t that many messages in the conversation.
         &quot;latestMessage&quot;: &quot;A String&quot;, # The name of the latest conversation message used to compile suggestion for. Format: `projects//locations//conversations//messages/`.
@@ -829,7 +885,7 @@ Returns:
     &quot;participant&quot;: &quot;A String&quot;, # Output only. The participant that sends this message.
     &quot;participantRole&quot;: &quot;A String&quot;, # Output only. The role of the participant.
     &quot;sendTime&quot;: &quot;A String&quot;, # Optional. The time when the message was sent.
-    &quot;sentimentAnalysis&quot;: { # The result of sentiment analysis. Sentiment analysis inspects user input and identifies the prevailing subjective opinion, especially to determine a user&#x27;s attitude as positive, negative, or neutral. For Participants.DetectIntent, it needs to be configured in DetectIntentRequest.query_params. For Participants.StreamingDetectIntent, it needs to be configured in StreamingDetectIntentRequest.query_params. And for Participants.AnalyzeContent and Participants.StreamingAnalyzeContent, it needs to be configured in ConversationProfile.human_agent_assistant_config # Output only. The sentiment analysis result for the message.
+    &quot;sentimentAnalysis&quot;: { # The result of sentiment analysis. Sentiment analysis inspects user input and identifies the prevailing subjective opinion, especially to determine a user&#x27;s attitude as positive, negative, or neutral. For DetectIntent, it needs to be configured in DetectIntentRequest.query_params. For StreamingDetectIntent, it needs to be configured in StreamingDetectIntentRequest.query_params. And for Participants.AnalyzeContent and Participants.StreamingAnalyzeContent, it needs to be configured in ConversationProfile.human_agent_assistant_config # Output only. The sentiment analysis result for the message.
       &quot;queryTextSentiment&quot;: { # The sentiment, such as positive/negative feeling or association, for a unit of analysis, such as the query text. See: https://cloud.google.com/natural-language/docs/basics#interpreting_sentiment_analysis_values for how to interpret the result. # The sentiment analysis result for `query_text`.
         &quot;magnitude&quot;: 3.14, # A non-negative number in the [0, +inf) range, which represents the absolute magnitude of sentiment, regardless of score (positive or negative).
         &quot;score&quot;: 3.14, # Sentiment score between -1.0 (negative sentiment) and 1.0 (positive sentiment).

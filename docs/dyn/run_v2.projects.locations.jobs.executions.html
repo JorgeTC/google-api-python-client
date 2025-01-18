@@ -96,7 +96,7 @@ h1, h2, h3 {
 <p class="firstline">Gets information about an Execution.</p>
 <p class="toc_element">
   <code><a href="#list">list(parent, pageSize=None, pageToken=None, showDeleted=None, x__xgafv=None)</a></code></p>
-<p class="firstline">Lists Executions from a Job.</p>
+<p class="firstline">Lists Executions from a Job. Results are sorted by creation time, descending.</p>
 <p class="toc_element">
   <code><a href="#list_next">list_next()</a></code></p>
 <p class="firstline">Retrieves the next page of results.</p>
@@ -209,8 +209,8 @@ Returns:
       &quot;status&quot;: { # Wire-format for a Status object # The status of the export task if done.
         &quot;canonicalCode&quot;: 42, # The canonical error code (see codes.proto) that most closely corresponds to this status. This may be missing, and in the common case of the generic space, it definitely will be.
         &quot;code&quot;: 42, # Numeric code drawn from the space specified below. Often, this is the canonical error space, and code is drawn from google3/util/task/codes.proto
-        &quot;message&quot;: &quot;A String&quot;, # Detail message
-        &quot;messageSet&quot;: { # This is proto2&#x27;s version of MessageSet. # message_set associates an arbitrary proto message with the status.
+        &quot;message&quot;: &quot;A String&quot;, # Detail message copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional string message = 3;
+        &quot;messageSet&quot;: { # This is proto2&#x27;s version of MessageSet. # message_set associates an arbitrary proto message with the status. copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional proto2.bridge.MessageSet message_set = 5;
         },
         &quot;space&quot;: &quot;A String&quot;, # The following are usually only present when code != 0 Space to which this status belongs
       },
@@ -291,7 +291,7 @@ Returns:
         &quot;env&quot;: [ # List of environment variables to set in the container.
           { # EnvVar represents an environment variable present in a Container.
             &quot;name&quot;: &quot;A String&quot;, # Required. Name of the environment variable. Must not exceed 32768 characters.
-            &quot;value&quot;: &quot;A String&quot;, # Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any route environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to &quot;&quot;, and the maximum length is 32768 bytes.
+            &quot;value&quot;: &quot;A String&quot;, # Literal value of the environment variable. Defaults to &quot;&quot;, and the maximum length is 32768 bytes. Variable references are not supported in Cloud Run.
             &quot;valueSource&quot;: { # EnvVarSource represents a source for the value of an EnvVar. # Source for the environment variable&#x27;s value.
               &quot;secretKeyRef&quot;: { # SecretEnvVarSource represents a source for the value of an EnvVar. # Selects a secret and a specific version from Cloud Secret Manager.
                 &quot;secret&quot;: &quot;A String&quot;, # Required. The name of the secret in Cloud Secret Manager. Format: {secret_name} if the secret is in the same project. projects/{project}/secrets/{secret_name} if the secret is in a different project.
@@ -388,6 +388,9 @@ Returns:
         },
         &quot;gcs&quot;: { # Represents a volume backed by a Cloud Storage bucket using Cloud Storage FUSE. # Persistent storage backed by a Google Cloud Storage bucket.
           &quot;bucket&quot;: &quot;A String&quot;, # Cloud Storage Bucket name.
+          &quot;mountOptions&quot;: [ # A list of additional flags to pass to the gcsfuse CLI. Options should be specified without the leading &quot;--&quot;.
+            &quot;A String&quot;,
+          ],
           &quot;readOnly&quot;: True or False, # If true, the volume will be mounted as read only for all mounts.
         },
         &quot;name&quot;: &quot;A String&quot;, # Required. Volume&#x27;s name.
@@ -397,10 +400,10 @@ Returns:
           &quot;server&quot;: &quot;A String&quot;, # Hostname or IP address of the NFS server
         },
         &quot;secret&quot;: { # The secret&#x27;s value will be presented as the content of a file whose name is defined in the item path. If no items are defined, the name of the file is the secret. # Secret represents a secret that should populate this volume.
-          &quot;defaultMode&quot;: 42, # Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 777 (a=rwx), set to 0777 (octal) or 511 (base-10). For chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.
+          &quot;defaultMode&quot;: 42, # Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.
           &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
             { # VersionToPath maps a specific version of a secret to a relative file to mount to, relative to VolumeMount&#x27;s mount_path.
-              &quot;mode&quot;: 42, # Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume&#x27;s default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 777 (a=rwx), set to 0777 (octal) or 511 (base-10). For chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
+              &quot;mode&quot;: 42, # Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume&#x27;s default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
               &quot;path&quot;: &quot;A String&quot;, # Required. The relative path of the secret in the container.
               &quot;version&quot;: &quot;A String&quot;, # The Cloud Secret Manager secret version. Can be &#x27;latest&#x27; for the latest value, or an integer or a secret alias for a specific version.
             },
@@ -410,7 +413,7 @@ Returns:
       },
     ],
     &quot;vpcAccess&quot;: { # VPC Access settings. For more information on sending traffic to a VPC network, visit https://cloud.google.com/run/docs/configuring/connecting-vpc. # Optional. VPC Access configuration to use for this Task. For more information, visit https://cloud.google.com/run/docs/configuring/connecting-vpc.
-      &quot;connector&quot;: &quot;A String&quot;, # VPC Access connector name. Format: projects/{project}/locations/{location}/connectors/{connector}, where {project} can be project id or number. For more information on sending traffic to a VPC network via a connector, visit https://cloud.google.com/run/docs/configuring/vpc-connectors.
+      &quot;connector&quot;: &quot;A String&quot;, # VPC Access connector name. Format: `projects/{project}/locations/{location}/connectors/{connector}`, where `{project}` can be project id or number. For more information on sending traffic to a VPC network via a connector, visit https://cloud.google.com/run/docs/configuring/vpc-connectors.
       &quot;egress&quot;: &quot;A String&quot;, # Optional. Traffic VPC egress settings. If not provided, it defaults to PRIVATE_RANGES_ONLY.
       &quot;networkInterfaces&quot;: [ # Optional. Direct VPC egress settings. Currently only single network interface is supported.
         { # Direct VPC egress settings.
@@ -430,7 +433,7 @@ Returns:
 
 <div class="method">
     <code class="details" id="list">list(parent, pageSize=None, pageToken=None, showDeleted=None, x__xgafv=None)</code>
-  <pre>Lists Executions from a Job.
+  <pre>Lists Executions from a Job. Results are sorted by creation time, descending.
 
 Args:
   parent: string, Required. The Execution from which the Executions should be listed. To list all Executions across Jobs, use &quot;-&quot; instead of Job name. Format: `projects/{project}/locations/{location}/jobs/{job}`, where `{project}` can be project id or number. (required)
@@ -502,7 +505,7 @@ Returns:
             &quot;env&quot;: [ # List of environment variables to set in the container.
               { # EnvVar represents an environment variable present in a Container.
                 &quot;name&quot;: &quot;A String&quot;, # Required. Name of the environment variable. Must not exceed 32768 characters.
-                &quot;value&quot;: &quot;A String&quot;, # Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any route environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to &quot;&quot;, and the maximum length is 32768 bytes.
+                &quot;value&quot;: &quot;A String&quot;, # Literal value of the environment variable. Defaults to &quot;&quot;, and the maximum length is 32768 bytes. Variable references are not supported in Cloud Run.
                 &quot;valueSource&quot;: { # EnvVarSource represents a source for the value of an EnvVar. # Source for the environment variable&#x27;s value.
                   &quot;secretKeyRef&quot;: { # SecretEnvVarSource represents a source for the value of an EnvVar. # Selects a secret and a specific version from Cloud Secret Manager.
                     &quot;secret&quot;: &quot;A String&quot;, # Required. The name of the secret in Cloud Secret Manager. Format: {secret_name} if the secret is in the same project. projects/{project}/secrets/{secret_name} if the secret is in a different project.
@@ -599,6 +602,9 @@ Returns:
             },
             &quot;gcs&quot;: { # Represents a volume backed by a Cloud Storage bucket using Cloud Storage FUSE. # Persistent storage backed by a Google Cloud Storage bucket.
               &quot;bucket&quot;: &quot;A String&quot;, # Cloud Storage Bucket name.
+              &quot;mountOptions&quot;: [ # A list of additional flags to pass to the gcsfuse CLI. Options should be specified without the leading &quot;--&quot;.
+                &quot;A String&quot;,
+              ],
               &quot;readOnly&quot;: True or False, # If true, the volume will be mounted as read only for all mounts.
             },
             &quot;name&quot;: &quot;A String&quot;, # Required. Volume&#x27;s name.
@@ -608,10 +614,10 @@ Returns:
               &quot;server&quot;: &quot;A String&quot;, # Hostname or IP address of the NFS server
             },
             &quot;secret&quot;: { # The secret&#x27;s value will be presented as the content of a file whose name is defined in the item path. If no items are defined, the name of the file is the secret. # Secret represents a secret that should populate this volume.
-              &quot;defaultMode&quot;: 42, # Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 777 (a=rwx), set to 0777 (octal) or 511 (base-10). For chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.
+              &quot;defaultMode&quot;: 42, # Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.
               &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
                 { # VersionToPath maps a specific version of a secret to a relative file to mount to, relative to VolumeMount&#x27;s mount_path.
-                  &quot;mode&quot;: 42, # Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume&#x27;s default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 777 (a=rwx), set to 0777 (octal) or 511 (base-10). For chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
+                  &quot;mode&quot;: 42, # Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume&#x27;s default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
                   &quot;path&quot;: &quot;A String&quot;, # Required. The relative path of the secret in the container.
                   &quot;version&quot;: &quot;A String&quot;, # The Cloud Secret Manager secret version. Can be &#x27;latest&#x27; for the latest value, or an integer or a secret alias for a specific version.
                 },
@@ -621,7 +627,7 @@ Returns:
           },
         ],
         &quot;vpcAccess&quot;: { # VPC Access settings. For more information on sending traffic to a VPC network, visit https://cloud.google.com/run/docs/configuring/connecting-vpc. # Optional. VPC Access configuration to use for this Task. For more information, visit https://cloud.google.com/run/docs/configuring/connecting-vpc.
-          &quot;connector&quot;: &quot;A String&quot;, # VPC Access connector name. Format: projects/{project}/locations/{location}/connectors/{connector}, where {project} can be project id or number. For more information on sending traffic to a VPC network via a connector, visit https://cloud.google.com/run/docs/configuring/vpc-connectors.
+          &quot;connector&quot;: &quot;A String&quot;, # VPC Access connector name. Format: `projects/{project}/locations/{location}/connectors/{connector}`, where `{project}` can be project id or number. For more information on sending traffic to a VPC network via a connector, visit https://cloud.google.com/run/docs/configuring/vpc-connectors.
           &quot;egress&quot;: &quot;A String&quot;, # Optional. Traffic VPC egress settings. If not provided, it defaults to PRIVATE_RANGES_ONLY.
           &quot;networkInterfaces&quot;: [ # Optional. Direct VPC egress settings. Currently only single network interface is supported.
             { # Direct VPC egress settings.

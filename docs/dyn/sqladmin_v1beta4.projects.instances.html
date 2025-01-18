@@ -201,6 +201,8 @@ Returns:
       &quot;bakType&quot;: &quot;A String&quot;, # Type of this bak file will be export, FULL or DIFF, SQL Server only
       &quot;copyOnly&quot;: True or False, # Deprecated: copy_only is deprecated. Use differential_base instead
       &quot;differentialBase&quot;: True or False, # Whether or not the backup can be used as a differential base copy_only backup can not be served as differential base
+      &quot;exportLogEndTime&quot;: &quot;A String&quot;, # Optional. The end timestamp when transaction log will be included in the export operation. [RFC 3339](https://tools.ietf.org/html/rfc3339) format (for example, `2023-10-01T16:19:00.094`) in UTC. When omitted, all available logs until current time will be included. Only applied to Cloud SQL for SQL Server.
+      &quot;exportLogStartTime&quot;: &quot;A String&quot;, # Optional. The begin timestamp when transaction log will be included in the export operation. [RFC 3339](https://tools.ietf.org/html/rfc3339) format (for example, `2023-10-01T16:19:00.094`) in UTC. When omitted, all available logs from the beginning of retention period will be included. Only applied to Cloud SQL for SQL Server.
       &quot;stripeCount&quot;: 42, # Option for specifying how many stripes to use for the export. If blank, and the value of the striped field is true, the number of stripes is automatically chosen.
       &quot;striped&quot;: True or False, # Whether or not the export should be striped.
     },
@@ -222,6 +224,10 @@ Returns:
         &quot;masterData&quot;: 42, # Option to include SQL statement required to set up replication. If set to `1`, the dump file includes a CHANGE MASTER TO statement with the binary log coordinates, and --set-gtid-purged is set to ON. If set to `2`, the CHANGE MASTER TO statement is written as a SQL comment and has no effect. If set to any value other than `1`, --set-gtid-purged is set to OFF.
       },
       &quot;parallel&quot;: True or False, # Optional. Whether or not the export should be parallel.
+      &quot;postgresExportOptions&quot;: { # Options for exporting from a Cloud SQL for PostgreSQL instance.
+        &quot;clean&quot;: True or False, # Optional. Use this option to include DROP SQL statements. These statements are used to delete database objects before running the import operation.
+        &quot;ifExists&quot;: True or False, # Optional. Option to include an IF EXISTS SQL statement with each DROP statement produced by clean.
+      },
       &quot;schemaOnly&quot;: True or False, # Export only schemas.
       &quot;tables&quot;: [ # Tables to export, or that were exported, from the specified database. If you specify tables, specify one and only one database. For PostgreSQL instances, you can specify only one table.
         &quot;A String&quot;,
@@ -260,6 +266,10 @@ Returns:
     &quot;kind&quot;: &quot;A String&quot;, # This is always `sql#importContext`.
     &quot;sqlImportOptions&quot;: { # Optional. Options for importing data from SQL statements.
       &quot;parallel&quot;: True or False, # Optional. Whether or not the import should be parallel.
+      &quot;postgresImportOptions&quot;: { # Optional. Options for importing from a Cloud SQL for PostgreSQL instance.
+        &quot;clean&quot;: True or False, # Optional. The --clean flag for the pg_restore utility. This flag applies only if you enabled Cloud SQL to import files in parallel.
+        &quot;ifExists&quot;: True or False, # Optional. The --if-exists flag for the pg_restore utility. This flag applies only if you enabled Cloud SQL to import files in parallel.
+      },
       &quot;threads&quot;: 42, # Optional. The number of threads to use for parallel import.
     },
     &quot;uri&quot;: &quot;A String&quot;, # Path to the import file in Cloud Storage, in the form `gs://bucketName/fileName`. Compressed gzip files (.gz) are supported when `fileType` is `SQL`. The instance must have write permissions to the bucket and read access to the file.
@@ -271,7 +281,10 @@ Returns:
   &quot;selfLink&quot;: &quot;A String&quot;, # The URI of this resource.
   &quot;startTime&quot;: &quot;A String&quot;, # The time this operation actually started in UTC timezone in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`.
   &quot;status&quot;: &quot;A String&quot;, # The status of an operation.
-  &quot;targetId&quot;: &quot;A String&quot;, # Name of the database instance related to this operation.
+  &quot;subOperationType&quot;: { # The sub operation type based on the operation type. # Optional. The sub operation based on the operation type.
+    &quot;maintenanceType&quot;: &quot;A String&quot;, # The type of maintenance to be performed on the instance.
+  },
+  &quot;targetId&quot;: &quot;A String&quot;,
   &quot;targetLink&quot;: &quot;A String&quot;,
   &quot;targetProject&quot;: &quot;A String&quot;, # The project ID of the target instance related to this operation.
   &quot;user&quot;: &quot;A String&quot;, # The email address of the user who initiated this operation.
@@ -335,6 +348,8 @@ Returns:
       &quot;bakType&quot;: &quot;A String&quot;, # Type of this bak file will be export, FULL or DIFF, SQL Server only
       &quot;copyOnly&quot;: True or False, # Deprecated: copy_only is deprecated. Use differential_base instead
       &quot;differentialBase&quot;: True or False, # Whether or not the backup can be used as a differential base copy_only backup can not be served as differential base
+      &quot;exportLogEndTime&quot;: &quot;A String&quot;, # Optional. The end timestamp when transaction log will be included in the export operation. [RFC 3339](https://tools.ietf.org/html/rfc3339) format (for example, `2023-10-01T16:19:00.094`) in UTC. When omitted, all available logs until current time will be included. Only applied to Cloud SQL for SQL Server.
+      &quot;exportLogStartTime&quot;: &quot;A String&quot;, # Optional. The begin timestamp when transaction log will be included in the export operation. [RFC 3339](https://tools.ietf.org/html/rfc3339) format (for example, `2023-10-01T16:19:00.094`) in UTC. When omitted, all available logs from the beginning of retention period will be included. Only applied to Cloud SQL for SQL Server.
       &quot;stripeCount&quot;: 42, # Option for specifying how many stripes to use for the export. If blank, and the value of the striped field is true, the number of stripes is automatically chosen.
       &quot;striped&quot;: True or False, # Whether or not the export should be striped.
     },
@@ -356,6 +371,10 @@ Returns:
         &quot;masterData&quot;: 42, # Option to include SQL statement required to set up replication. If set to `1`, the dump file includes a CHANGE MASTER TO statement with the binary log coordinates, and --set-gtid-purged is set to ON. If set to `2`, the CHANGE MASTER TO statement is written as a SQL comment and has no effect. If set to any value other than `1`, --set-gtid-purged is set to OFF.
       },
       &quot;parallel&quot;: True or False, # Optional. Whether or not the export should be parallel.
+      &quot;postgresExportOptions&quot;: { # Options for exporting from a Cloud SQL for PostgreSQL instance.
+        &quot;clean&quot;: True or False, # Optional. Use this option to include DROP SQL statements. These statements are used to delete database objects before running the import operation.
+        &quot;ifExists&quot;: True or False, # Optional. Option to include an IF EXISTS SQL statement with each DROP statement produced by clean.
+      },
       &quot;schemaOnly&quot;: True or False, # Export only schemas.
       &quot;tables&quot;: [ # Tables to export, or that were exported, from the specified database. If you specify tables, specify one and only one database. For PostgreSQL instances, you can specify only one table.
         &quot;A String&quot;,
@@ -394,6 +413,10 @@ Returns:
     &quot;kind&quot;: &quot;A String&quot;, # This is always `sql#importContext`.
     &quot;sqlImportOptions&quot;: { # Optional. Options for importing data from SQL statements.
       &quot;parallel&quot;: True or False, # Optional. Whether or not the import should be parallel.
+      &quot;postgresImportOptions&quot;: { # Optional. Options for importing from a Cloud SQL for PostgreSQL instance.
+        &quot;clean&quot;: True or False, # Optional. The --clean flag for the pg_restore utility. This flag applies only if you enabled Cloud SQL to import files in parallel.
+        &quot;ifExists&quot;: True or False, # Optional. The --if-exists flag for the pg_restore utility. This flag applies only if you enabled Cloud SQL to import files in parallel.
+      },
       &quot;threads&quot;: 42, # Optional. The number of threads to use for parallel import.
     },
     &quot;uri&quot;: &quot;A String&quot;, # Path to the import file in Cloud Storage, in the form `gs://bucketName/fileName`. Compressed gzip files (.gz) are supported when `fileType` is `SQL`. The instance must have write permissions to the bucket and read access to the file.
@@ -405,7 +428,10 @@ Returns:
   &quot;selfLink&quot;: &quot;A String&quot;, # The URI of this resource.
   &quot;startTime&quot;: &quot;A String&quot;, # The time this operation actually started in UTC timezone in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`.
   &quot;status&quot;: &quot;A String&quot;, # The status of an operation.
-  &quot;targetId&quot;: &quot;A String&quot;, # Name of the database instance related to this operation.
+  &quot;subOperationType&quot;: { # The sub operation type based on the operation type. # Optional. The sub operation based on the operation type.
+    &quot;maintenanceType&quot;: &quot;A String&quot;, # The type of maintenance to be performed on the instance.
+  },
+  &quot;targetId&quot;: &quot;A String&quot;,
   &quot;targetLink&quot;: &quot;A String&quot;,
   &quot;targetProject&quot;: &quot;A String&quot;, # The project ID of the target instance related to this operation.
   &quot;user&quot;: &quot;A String&quot;, # The email address of the user who initiated this operation.
@@ -465,6 +491,8 @@ Returns:
       &quot;bakType&quot;: &quot;A String&quot;, # Type of this bak file will be export, FULL or DIFF, SQL Server only
       &quot;copyOnly&quot;: True or False, # Deprecated: copy_only is deprecated. Use differential_base instead
       &quot;differentialBase&quot;: True or False, # Whether or not the backup can be used as a differential base copy_only backup can not be served as differential base
+      &quot;exportLogEndTime&quot;: &quot;A String&quot;, # Optional. The end timestamp when transaction log will be included in the export operation. [RFC 3339](https://tools.ietf.org/html/rfc3339) format (for example, `2023-10-01T16:19:00.094`) in UTC. When omitted, all available logs until current time will be included. Only applied to Cloud SQL for SQL Server.
+      &quot;exportLogStartTime&quot;: &quot;A String&quot;, # Optional. The begin timestamp when transaction log will be included in the export operation. [RFC 3339](https://tools.ietf.org/html/rfc3339) format (for example, `2023-10-01T16:19:00.094`) in UTC. When omitted, all available logs from the beginning of retention period will be included. Only applied to Cloud SQL for SQL Server.
       &quot;stripeCount&quot;: 42, # Option for specifying how many stripes to use for the export. If blank, and the value of the striped field is true, the number of stripes is automatically chosen.
       &quot;striped&quot;: True or False, # Whether or not the export should be striped.
     },
@@ -486,6 +514,10 @@ Returns:
         &quot;masterData&quot;: 42, # Option to include SQL statement required to set up replication. If set to `1`, the dump file includes a CHANGE MASTER TO statement with the binary log coordinates, and --set-gtid-purged is set to ON. If set to `2`, the CHANGE MASTER TO statement is written as a SQL comment and has no effect. If set to any value other than `1`, --set-gtid-purged is set to OFF.
       },
       &quot;parallel&quot;: True or False, # Optional. Whether or not the export should be parallel.
+      &quot;postgresExportOptions&quot;: { # Options for exporting from a Cloud SQL for PostgreSQL instance.
+        &quot;clean&quot;: True or False, # Optional. Use this option to include DROP SQL statements. These statements are used to delete database objects before running the import operation.
+        &quot;ifExists&quot;: True or False, # Optional. Option to include an IF EXISTS SQL statement with each DROP statement produced by clean.
+      },
       &quot;schemaOnly&quot;: True or False, # Export only schemas.
       &quot;tables&quot;: [ # Tables to export, or that were exported, from the specified database. If you specify tables, specify one and only one database. For PostgreSQL instances, you can specify only one table.
         &quot;A String&quot;,
@@ -524,6 +556,10 @@ Returns:
     &quot;kind&quot;: &quot;A String&quot;, # This is always `sql#importContext`.
     &quot;sqlImportOptions&quot;: { # Optional. Options for importing data from SQL statements.
       &quot;parallel&quot;: True or False, # Optional. Whether or not the import should be parallel.
+      &quot;postgresImportOptions&quot;: { # Optional. Options for importing from a Cloud SQL for PostgreSQL instance.
+        &quot;clean&quot;: True or False, # Optional. The --clean flag for the pg_restore utility. This flag applies only if you enabled Cloud SQL to import files in parallel.
+        &quot;ifExists&quot;: True or False, # Optional. The --if-exists flag for the pg_restore utility. This flag applies only if you enabled Cloud SQL to import files in parallel.
+      },
       &quot;threads&quot;: 42, # Optional. The number of threads to use for parallel import.
     },
     &quot;uri&quot;: &quot;A String&quot;, # Path to the import file in Cloud Storage, in the form `gs://bucketName/fileName`. Compressed gzip files (.gz) are supported when `fileType` is `SQL`. The instance must have write permissions to the bucket and read access to the file.
@@ -535,7 +571,10 @@ Returns:
   &quot;selfLink&quot;: &quot;A String&quot;, # The URI of this resource.
   &quot;startTime&quot;: &quot;A String&quot;, # The time this operation actually started in UTC timezone in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`.
   &quot;status&quot;: &quot;A String&quot;, # The status of an operation.
-  &quot;targetId&quot;: &quot;A String&quot;, # Name of the database instance related to this operation.
+  &quot;subOperationType&quot;: { # The sub operation type based on the operation type. # Optional. The sub operation based on the operation type.
+    &quot;maintenanceType&quot;: &quot;A String&quot;, # The type of maintenance to be performed on the instance.
+  },
+  &quot;targetId&quot;: &quot;A String&quot;,
   &quot;targetLink&quot;: &quot;A String&quot;,
   &quot;targetProject&quot;: &quot;A String&quot;, # The project ID of the target instance related to this operation.
   &quot;user&quot;: &quot;A String&quot;, # The email address of the user who initiated this operation.
@@ -607,6 +646,8 @@ Returns:
       &quot;bakType&quot;: &quot;A String&quot;, # Type of this bak file will be export, FULL or DIFF, SQL Server only
       &quot;copyOnly&quot;: True or False, # Deprecated: copy_only is deprecated. Use differential_base instead
       &quot;differentialBase&quot;: True or False, # Whether or not the backup can be used as a differential base copy_only backup can not be served as differential base
+      &quot;exportLogEndTime&quot;: &quot;A String&quot;, # Optional. The end timestamp when transaction log will be included in the export operation. [RFC 3339](https://tools.ietf.org/html/rfc3339) format (for example, `2023-10-01T16:19:00.094`) in UTC. When omitted, all available logs until current time will be included. Only applied to Cloud SQL for SQL Server.
+      &quot;exportLogStartTime&quot;: &quot;A String&quot;, # Optional. The begin timestamp when transaction log will be included in the export operation. [RFC 3339](https://tools.ietf.org/html/rfc3339) format (for example, `2023-10-01T16:19:00.094`) in UTC. When omitted, all available logs from the beginning of retention period will be included. Only applied to Cloud SQL for SQL Server.
       &quot;stripeCount&quot;: 42, # Option for specifying how many stripes to use for the export. If blank, and the value of the striped field is true, the number of stripes is automatically chosen.
       &quot;striped&quot;: True or False, # Whether or not the export should be striped.
     },
@@ -628,6 +669,10 @@ Returns:
         &quot;masterData&quot;: 42, # Option to include SQL statement required to set up replication. If set to `1`, the dump file includes a CHANGE MASTER TO statement with the binary log coordinates, and --set-gtid-purged is set to ON. If set to `2`, the CHANGE MASTER TO statement is written as a SQL comment and has no effect. If set to any value other than `1`, --set-gtid-purged is set to OFF.
       },
       &quot;parallel&quot;: True or False, # Optional. Whether or not the export should be parallel.
+      &quot;postgresExportOptions&quot;: { # Options for exporting from a Cloud SQL for PostgreSQL instance.
+        &quot;clean&quot;: True or False, # Optional. Use this option to include DROP SQL statements. These statements are used to delete database objects before running the import operation.
+        &quot;ifExists&quot;: True or False, # Optional. Option to include an IF EXISTS SQL statement with each DROP statement produced by clean.
+      },
       &quot;schemaOnly&quot;: True or False, # Export only schemas.
       &quot;tables&quot;: [ # Tables to export, or that were exported, from the specified database. If you specify tables, specify one and only one database. For PostgreSQL instances, you can specify only one table.
         &quot;A String&quot;,
@@ -666,6 +711,10 @@ Returns:
     &quot;kind&quot;: &quot;A String&quot;, # This is always `sql#importContext`.
     &quot;sqlImportOptions&quot;: { # Optional. Options for importing data from SQL statements.
       &quot;parallel&quot;: True or False, # Optional. Whether or not the import should be parallel.
+      &quot;postgresImportOptions&quot;: { # Optional. Options for importing from a Cloud SQL for PostgreSQL instance.
+        &quot;clean&quot;: True or False, # Optional. The --clean flag for the pg_restore utility. This flag applies only if you enabled Cloud SQL to import files in parallel.
+        &quot;ifExists&quot;: True or False, # Optional. The --if-exists flag for the pg_restore utility. This flag applies only if you enabled Cloud SQL to import files in parallel.
+      },
       &quot;threads&quot;: 42, # Optional. The number of threads to use for parallel import.
     },
     &quot;uri&quot;: &quot;A String&quot;, # Path to the import file in Cloud Storage, in the form `gs://bucketName/fileName`. Compressed gzip files (.gz) are supported when `fileType` is `SQL`. The instance must have write permissions to the bucket and read access to the file.
@@ -677,7 +726,10 @@ Returns:
   &quot;selfLink&quot;: &quot;A String&quot;, # The URI of this resource.
   &quot;startTime&quot;: &quot;A String&quot;, # The time this operation actually started in UTC timezone in [RFC 3339](https://tools.ietf.org/html/rfc3339) format, for example `2012-11-15T16:19:00.094Z`.
   &quot;status&quot;: &quot;A String&quot;, # The status of an operation.
-  &quot;targetId&quot;: &quot;A String&quot;, # Name of the database instance related to this operation.
+  &quot;subOperationType&quot;: { # The sub operation type based on the operation type. # Optional. The sub operation based on the operation type.
+    &quot;maintenanceType&quot;: &quot;A String&quot;, # The type of maintenance to be performed on the instance.
+  },
+  &quot;targetId&quot;: &quot;A String&quot;,
   &quot;targetLink&quot;: &quot;A String&quot;,
   &quot;targetProject&quot;: &quot;A String&quot;, # The project ID of the target instance related to this operation.
   &quot;user&quot;: &quot;A String&quot;, # The email address of the user who initiated this operation.
@@ -704,6 +756,11 @@ Args:
       },
     ],
   },
+  &quot;selectedObjects&quot;: [ # Optional. Migrate only the specified objects from the source instance. If this field is empty, then migrate all objects.
+    { # The selected object that Cloud SQL migrates.
+      &quot;database&quot;: &quot;A String&quot;, # The name of the database that Cloud SQL migrates.
+    },
+  ],
   &quot;syncMode&quot;: &quot;A String&quot;, # External sync mode
   &quot;syncParallelLevel&quot;: &quot;A String&quot;, # Optional. Parallel level for initial data sync. Only applicable for PostgreSQL.
   &quot;verifyConnectionOnly&quot;: True or False, # Flag to enable verifying connection only

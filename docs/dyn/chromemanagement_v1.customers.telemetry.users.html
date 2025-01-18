@@ -98,7 +98,7 @@ h1, h2, h3 {
 
 Args:
   name: string, Required. Name of the `TelemetryUser` to return. (required)
-  readMask: string, Read mask to specify which fields to return. Supported read_mask paths are: - name - org_unit_id - user_id - user_email - user_device.device_id - user_device.audio_status_report - user_device.device_activity_report - user_device.network_bandwidth_report - user_device.peripherals_report 
+  readMask: string, Read mask to specify which fields to return. Supported read_mask paths are: - name - org_unit_id - user_id - user_email - user_device.device_id - user_device.audio_status_report - user_device.device_activity_report - user_device.network_bandwidth_report - user_device.peripherals_report - user_device.app_report 
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -113,6 +113,19 @@ Returns:
   &quot;orgUnitId&quot;: &quot;A String&quot;, # Organization unit of the user.
   &quot;userDevice&quot;: [ # Telemetry data collected from a managed user and device.
     { # Telemetry data collected for a managed user and device. * Granular permission needed: TELEMETRY_API_DEVICE
+      &quot;appReport&quot;: [ # Output only. App reports collected periodically sorted in a decreasing order of report_time.
+        { # App report.
+          &quot;reportTime&quot;: &quot;A String&quot;, # Timestamp when the report was collected.
+          &quot;usageData&quot;: [ # App usage data.
+            { # App usage data.
+              &quot;appId&quot;: &quot;A String&quot;, # App id.
+              &quot;appInstanceId&quot;: &quot;A String&quot;, # Application instance id. This will be unique per window/instance.
+              &quot;appType&quot;: &quot;A String&quot;, # Type of app.
+              &quot;runningDuration&quot;: &quot;A String&quot;, # App foreground running time.
+            },
+          ],
+        },
+      ],
       &quot;audioStatusReport&quot;: [ # Output only. Audio reports collected periodically sorted in a decreasing order of report_time.
         { # Status data for storage. * This field is telemetry information and this will change over time as the device is utilized. * Data for this field is controlled via policy: [ReportDeviceAudioStatus](https://chromeenterprise.google/policies/#ReportDeviceAudioStatus) * Data Collection Frequency: 10 minutes * Default Data Reporting Frequency: 3 hours - Policy Controlled: Yes * Cache: If the device is offline, the collected data is stored locally, and will be reported when the device is next online: No * Reported for affiliated users only: N/A * Granular permission needed: TELEMETRY_API_AUDIO_REPORT
           &quot;inputDevice&quot;: &quot;A String&quot;, # Output only. Active input device&#x27;s name.
@@ -172,7 +185,7 @@ Args:
   filter: string, Only include resources that match the filter. Supported filter fields: - user_id - user_org_unit_id 
   pageSize: integer, Maximum number of results to return. Default value is 100. Maximum value is 1000.
   pageToken: string, Token to specify next page in the list.
-  readMask: string, Read mask to specify which fields to return. Supported read_mask paths are: - name - org_unit_id - user_id - user_email - user_device.device_id - user_device.audio_status_report - user_device.device_activity_report - user_device.network_bandwidth_report - user_device.peripherals_report 
+  readMask: string, Read mask to specify which fields to return. Supported read_mask paths are: - name - org_unit_id - user_id - user_email - user_device.device_id - user_device.audio_status_report - user_device.device_activity_report - user_device.network_bandwidth_report - user_device.peripherals_report - user_device.app_report 
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -190,6 +203,19 @@ Returns:
       &quot;orgUnitId&quot;: &quot;A String&quot;, # Organization unit of the user.
       &quot;userDevice&quot;: [ # Telemetry data collected from a managed user and device.
         { # Telemetry data collected for a managed user and device. * Granular permission needed: TELEMETRY_API_DEVICE
+          &quot;appReport&quot;: [ # Output only. App reports collected periodically sorted in a decreasing order of report_time.
+            { # App report.
+              &quot;reportTime&quot;: &quot;A String&quot;, # Timestamp when the report was collected.
+              &quot;usageData&quot;: [ # App usage data.
+                { # App usage data.
+                  &quot;appId&quot;: &quot;A String&quot;, # App id.
+                  &quot;appInstanceId&quot;: &quot;A String&quot;, # Application instance id. This will be unique per window/instance.
+                  &quot;appType&quot;: &quot;A String&quot;, # Type of app.
+                  &quot;runningDuration&quot;: &quot;A String&quot;, # App foreground running time.
+                },
+              ],
+            },
+          ],
           &quot;audioStatusReport&quot;: [ # Output only. Audio reports collected periodically sorted in a decreasing order of report_time.
             { # Status data for storage. * This field is telemetry information and this will change over time as the device is utilized. * Data for this field is controlled via policy: [ReportDeviceAudioStatus](https://chromeenterprise.google/policies/#ReportDeviceAudioStatus) * Data Collection Frequency: 10 minutes * Default Data Reporting Frequency: 3 hours - Policy Controlled: Yes * Cache: If the device is offline, the collected data is stored locally, and will be reported when the device is next online: No * Reported for affiliated users only: N/A * Granular permission needed: TELEMETRY_API_AUDIO_REPORT
               &quot;inputDevice&quot;: &quot;A String&quot;, # Output only. Active input device&#x27;s name.

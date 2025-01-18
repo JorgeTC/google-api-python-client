@@ -103,7 +103,7 @@ h1, h2, h3 {
 <p class="firstline">Retrieves the next page of results.</p>
 <p class="toc_element">
   <code><a href="#move">move(calendarId, eventId, destination, sendNotifications=None, sendUpdates=None)</a></code></p>
-<p class="firstline">Moves an event to another calendar, i.e. changes an event's organizer. Note that only default events can be moved; outOfOffice, focusTime and workingLocation events cannot be moved.</p>
+<p class="firstline">Moves an event to another calendar, i.e. changes an event's organizer. Note that only default events can be moved; birthday, focusTime, fromGmail, outOfOffice and workingLocation events cannot be moved.</p>
 <p class="toc_element">
   <code><a href="#patch">patch(calendarId, eventId, alwaysIncludeEmail=None, body=None, conferenceDataVersion=None, maxAttendees=None, sendNotifications=None, sendUpdates=None, supportsAttachments=None)</a></code></p>
 <p class="firstline">Updates an event. This method supports patch semantics.</p>
@@ -185,11 +185,21 @@ Returns:
           # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
           # - &quot;declined&quot; - The attendee has declined the invitation.
           # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
       &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
     },
   ],
   &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+  &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+    &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+    &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+    &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+        # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+        # - &quot;birthday&quot; - A birthday event. This is the default value.
+        # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+        # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+        # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+  },
   &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
   &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
     &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -308,9 +318,11 @@ Returns:
   &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
   &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
   &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+      # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
       # - &quot;default&quot; - A regular event or not further specified.
-      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;focusTime&quot; - A focus-time event.
+      # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;workingLocation&quot; - A working location event.
   &quot;extendedProperties&quot;: { # Extended properties of the event.
     &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -375,7 +387,7 @@ Returns:
     &quot;A String&quot;,
   ],
   &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
     &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
       {
         &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -412,7 +424,7 @@ Returns:
   &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
       # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
       # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
   &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
       # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
       # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -480,11 +492,21 @@ Args:
           # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
           # - &quot;declined&quot; - The attendee has declined the invitation.
           # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
       &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
     },
   ],
   &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+  &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+    &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+    &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+    &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+        # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+        # - &quot;birthday&quot; - A birthday event. This is the default value.
+        # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+        # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+        # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+  },
   &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
   &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
     &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -603,9 +625,11 @@ Args:
   &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
   &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
   &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+      # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
       # - &quot;default&quot; - A regular event or not further specified.
-      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;focusTime&quot; - A focus-time event.
+      # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;workingLocation&quot; - A working location event.
   &quot;extendedProperties&quot;: { # Extended properties of the event.
     &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -670,7 +694,7 @@ Args:
     &quot;A String&quot;,
   ],
   &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
     &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
       {
         &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -707,7 +731,7 @@ Args:
   &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
       # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
       # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
   &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
       # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
       # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -770,11 +794,21 @@ Returns:
           # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
           # - &quot;declined&quot; - The attendee has declined the invitation.
           # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
       &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
     },
   ],
   &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+  &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+    &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+    &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+    &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+        # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+        # - &quot;birthday&quot; - A birthday event. This is the default value.
+        # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+        # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+        # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+  },
   &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
   &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
     &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -893,9 +927,11 @@ Returns:
   &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
   &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
   &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+      # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
       # - &quot;default&quot; - A regular event or not further specified.
-      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;focusTime&quot; - A focus-time event.
+      # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;workingLocation&quot; - A working location event.
   &quot;extendedProperties&quot;: { # Extended properties of the event.
     &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -960,7 +996,7 @@ Returns:
     &quot;A String&quot;,
   ],
   &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
     &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
       {
         &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -997,7 +1033,7 @@ Returns:
   &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
       # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
       # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
   &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
       # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
       # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -1064,11 +1100,21 @@ Args:
           # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
           # - &quot;declined&quot; - The attendee has declined the invitation.
           # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
       &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
     },
   ],
   &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+  &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+    &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+    &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+    &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+        # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+        # - &quot;birthday&quot; - A birthday event. This is the default value.
+        # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+        # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+        # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+  },
   &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
   &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
     &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -1187,9 +1233,11 @@ Args:
   &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
   &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
   &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+      # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
       # - &quot;default&quot; - A regular event or not further specified.
-      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;focusTime&quot; - A focus-time event.
+      # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;workingLocation&quot; - A working location event.
   &quot;extendedProperties&quot;: { # Extended properties of the event.
     &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -1254,7 +1302,7 @@ Args:
     &quot;A String&quot;,
   ],
   &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
     &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
       {
         &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -1291,7 +1339,7 @@ Args:
   &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
       # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
       # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
   &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
       # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
       # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -1363,11 +1411,21 @@ Returns:
           # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
           # - &quot;declined&quot; - The attendee has declined the invitation.
           # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
       &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
     },
   ],
   &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+  &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+    &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+    &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+    &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+        # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+        # - &quot;birthday&quot; - A birthday event. This is the default value.
+        # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+        # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+        # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+  },
   &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
   &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
     &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -1486,9 +1544,11 @@ Returns:
   &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
   &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
   &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+      # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
       # - &quot;default&quot; - A regular event or not further specified.
-      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;focusTime&quot; - A focus-time event.
+      # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;workingLocation&quot; - A working location event.
   &quot;extendedProperties&quot;: { # Extended properties of the event.
     &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -1553,7 +1613,7 @@ Returns:
     &quot;A String&quot;,
   ],
   &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
     &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
       {
         &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -1590,7 +1650,7 @@ Returns:
   &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
       # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
       # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
   &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
       # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
       # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -1688,11 +1748,21 @@ Returns:
               # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
               # - &quot;declined&quot; - The attendee has declined the invitation.
               # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-              # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+              # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
           &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
         },
       ],
       &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+      &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+        &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+        &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+        &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+            # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+            # - &quot;birthday&quot; - A birthday event. This is the default value.
+            # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+            # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+            # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+      },
       &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
       &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
         &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -1811,9 +1881,11 @@ Returns:
       &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
       &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
       &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+          # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
           # - &quot;default&quot; - A regular event or not further specified.
-          # - &quot;outOfOffice&quot; - An out-of-office event.
           # - &quot;focusTime&quot; - A focus-time event.
+          # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+          # - &quot;outOfOffice&quot; - An out-of-office event.
           # - &quot;workingLocation&quot; - A working location event.
       &quot;extendedProperties&quot;: { # Extended properties of the event.
         &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -1878,7 +1950,7 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-      &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+      &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
         &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
           {
             &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -1915,7 +1987,7 @@ Returns:
       &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
           # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
           # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-      &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+      &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
       &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
           # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
           # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -1973,8 +2045,10 @@ Args:
   alwaysIncludeEmail: boolean, Deprecated and ignored.
   eventTypes: string, Event types to return. Optional. This parameter can be repeated multiple times to return events of different types. If unset, returns all event types. (repeated)
     Allowed values
+      birthday - Special all-day events with an annual recurrence.
       default - Regular events.
       focusTime - Focus time events.
+      fromGmail - Events from Gmail.
       outOfOffice - Out of office events.
       workingLocation - Working location events.
   iCalUID: string, Specifies an event ID in the iCalendar format to be provided in the response. Optional. Use this if you want to search for an event by its iCalendar ID.
@@ -2077,11 +2151,21 @@ Returns:
               # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
               # - &quot;declined&quot; - The attendee has declined the invitation.
               # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-              # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+              # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
           &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
         },
       ],
       &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+      &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+        &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+        &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+        &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+            # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+            # - &quot;birthday&quot; - A birthday event. This is the default value.
+            # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+            # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+            # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+      },
       &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
       &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
         &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -2200,9 +2284,11 @@ Returns:
       &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
       &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
       &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+          # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
           # - &quot;default&quot; - A regular event or not further specified.
-          # - &quot;outOfOffice&quot; - An out-of-office event.
           # - &quot;focusTime&quot; - A focus-time event.
+          # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+          # - &quot;outOfOffice&quot; - An out-of-office event.
           # - &quot;workingLocation&quot; - A working location event.
       &quot;extendedProperties&quot;: { # Extended properties of the event.
         &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -2267,7 +2353,7 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-      &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+      &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
         &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
           {
             &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -2304,7 +2390,7 @@ Returns:
       &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
           # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
           # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-      &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+      &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
       &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
           # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
           # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -2355,7 +2441,7 @@ Returns:
 
 <div class="method">
     <code class="details" id="move">move(calendarId, eventId, destination, sendNotifications=None, sendUpdates=None)</code>
-  <pre>Moves an event to another calendar, i.e. changes an event&#x27;s organizer. Note that only default events can be moved; outOfOffice, focusTime and workingLocation events cannot be moved.
+  <pre>Moves an event to another calendar, i.e. changes an event&#x27;s organizer. Note that only default events can be moved; birthday, focusTime, fromGmail, outOfOffice and workingLocation events cannot be moved.
 
 Args:
   calendarId: string, Calendar identifier of the source calendar where the event currently is on. (required)
@@ -2404,11 +2490,21 @@ Returns:
           # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
           # - &quot;declined&quot; - The attendee has declined the invitation.
           # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
       &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
     },
   ],
   &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+  &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+    &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+    &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+    &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+        # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+        # - &quot;birthday&quot; - A birthday event. This is the default value.
+        # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+        # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+        # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+  },
   &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
   &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
     &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -2527,9 +2623,11 @@ Returns:
   &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
   &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
   &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+      # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
       # - &quot;default&quot; - A regular event or not further specified.
-      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;focusTime&quot; - A focus-time event.
+      # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;workingLocation&quot; - A working location event.
   &quot;extendedProperties&quot;: { # Extended properties of the event.
     &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -2594,7 +2692,7 @@ Returns:
     &quot;A String&quot;,
   ],
   &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
     &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
       {
         &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -2631,7 +2729,7 @@ Returns:
   &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
       # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
       # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
   &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
       # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
       # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -2699,11 +2797,21 @@ Args:
           # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
           # - &quot;declined&quot; - The attendee has declined the invitation.
           # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
       &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
     },
   ],
   &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+  &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+    &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+    &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+    &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+        # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+        # - &quot;birthday&quot; - A birthday event. This is the default value.
+        # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+        # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+        # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+  },
   &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
   &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
     &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -2822,9 +2930,11 @@ Args:
   &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
   &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
   &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+      # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
       # - &quot;default&quot; - A regular event or not further specified.
-      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;focusTime&quot; - A focus-time event.
+      # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;workingLocation&quot; - A working location event.
   &quot;extendedProperties&quot;: { # Extended properties of the event.
     &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -2889,7 +2999,7 @@ Args:
     &quot;A String&quot;,
   ],
   &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
     &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
       {
         &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -2926,7 +3036,7 @@ Args:
   &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
       # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
       # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
   &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
       # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
       # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -2999,11 +3109,21 @@ Returns:
           # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
           # - &quot;declined&quot; - The attendee has declined the invitation.
           # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
       &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
     },
   ],
   &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+  &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+    &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+    &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+    &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+        # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+        # - &quot;birthday&quot; - A birthday event. This is the default value.
+        # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+        # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+        # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+  },
   &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
   &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
     &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -3122,9 +3242,11 @@ Returns:
   &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
   &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
   &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+      # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
       # - &quot;default&quot; - A regular event or not further specified.
-      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;focusTime&quot; - A focus-time event.
+      # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;workingLocation&quot; - A working location event.
   &quot;extendedProperties&quot;: { # Extended properties of the event.
     &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -3189,7 +3311,7 @@ Returns:
     &quot;A String&quot;,
   ],
   &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
     &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
       {
         &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -3226,7 +3348,7 @@ Returns:
   &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
       # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
       # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
   &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
       # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
       # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -3303,11 +3425,21 @@ Returns:
           # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
           # - &quot;declined&quot; - The attendee has declined the invitation.
           # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
       &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
     },
   ],
   &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+  &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+    &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+    &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+    &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+        # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+        # - &quot;birthday&quot; - A birthday event. This is the default value.
+        # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+        # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+        # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+  },
   &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
   &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
     &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -3426,9 +3558,11 @@ Returns:
   &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
   &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
   &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+      # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
       # - &quot;default&quot; - A regular event or not further specified.
-      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;focusTime&quot; - A focus-time event.
+      # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;workingLocation&quot; - A working location event.
   &quot;extendedProperties&quot;: { # Extended properties of the event.
     &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -3493,7 +3627,7 @@ Returns:
     &quot;A String&quot;,
   ],
   &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
     &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
       {
         &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -3530,7 +3664,7 @@ Returns:
   &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
       # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
       # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
   &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
       # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
       # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -3598,11 +3732,21 @@ Args:
           # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
           # - &quot;declined&quot; - The attendee has declined the invitation.
           # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
       &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
     },
   ],
   &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+  &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+    &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+    &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+    &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+        # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+        # - &quot;birthday&quot; - A birthday event. This is the default value.
+        # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+        # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+        # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+  },
   &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
   &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
     &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -3721,9 +3865,11 @@ Args:
   &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
   &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
   &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+      # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
       # - &quot;default&quot; - A regular event or not further specified.
-      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;focusTime&quot; - A focus-time event.
+      # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;workingLocation&quot; - A working location event.
   &quot;extendedProperties&quot;: { # Extended properties of the event.
     &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -3788,7 +3934,7 @@ Args:
     &quot;A String&quot;,
   ],
   &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
     &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
       {
         &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -3825,7 +3971,7 @@ Args:
   &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
       # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
       # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
   &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
       # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
       # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -3898,11 +4044,21 @@ Returns:
           # - &quot;needsAction&quot; - The attendee has not responded to the invitation (recommended for new events).
           # - &quot;declined&quot; - The attendee has declined the invitation.
           # - &quot;tentative&quot; - The attendee has tentatively accepted the invitation.
-          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; won&#x27;t see an event on their calendar unless they choose to change their invitation response in the event invitation email.
+          # - &quot;accepted&quot; - The attendee has accepted the invitation.  Warning: If you add an event using the values declined, tentative, or accepted, attendees with the &quot;Add invitations to my calendar&quot; setting set to &quot;When I respond to invitation in email&quot; or &quot;Only if the sender is known&quot; might have their response reset to needsAction and won&#x27;t see an event in their calendar unless they change their response in the event invitation email. Furthermore, if more than 200 guests are invited to the event, response status is not propagated to the guests.
       &quot;self&quot;: false, # Whether this entry represents the calendar on which this copy of the event appears. Read-only. The default is False.
     },
   ],
   &quot;attendeesOmitted&quot;: false, # Whether attendees may have been omitted from the event&#x27;s representation. When retrieving an event, this may be due to a restriction specified by the maxAttendee query parameter. When updating an event, this can be used to only update the participant&#x27;s response. Optional. The default is False.
+  &quot;birthdayProperties&quot;: { # Birthday or special event data. Used if eventType is &quot;birthday&quot;. Immutable.
+    &quot;contact&quot;: &quot;A String&quot;, # Resource name of the contact this birthday event is linked to. This can be used to fetch contact details from People API. Format: &quot;people/c12345&quot;. Read-only.
+    &quot;customTypeName&quot;: &quot;A String&quot;, # Custom type label specified for this event. This is populated if birthdayProperties.type is set to &quot;custom&quot;. Read-only.
+    &quot;type&quot;: &quot;birthday&quot;, # Type of birthday or special event. Possible values are:
+        # - &quot;anniversary&quot; - An anniversary other than birthday. Always has a contact.
+        # - &quot;birthday&quot; - A birthday event. This is the default value.
+        # - &quot;custom&quot; - A special date whose label is further specified in the customTypeName field. Always has a contact.
+        # - &quot;other&quot; - A special date which does not fall into the other categories, and does not have a custom label. Always has a contact.
+        # - &quot;self&quot; - Calendar owner&#x27;s own birthday. Cannot have a contact.  The Calendar API only supports creating events with the type &quot;birthday&quot;. The type cannot be changed after the event is created.
+  },
   &quot;colorId&quot;: &quot;A String&quot;, # The color of the event. This is an ID referring to an entry in the event section of the colors definition (see the  colors endpoint). Optional.
   &quot;conferenceData&quot;: { # The conference-related information, such as details of a Google Meet conference. To create new conference details use the createRequest field. To persist your changes, remember to set the conferenceDataVersion request parameter to 1 for all event modification requests.
     &quot;conferenceId&quot;: &quot;A String&quot;, # The ID of the conference.
@@ -4021,9 +4177,11 @@ Returns:
   &quot;endTimeUnspecified&quot;: false, # Whether the end time is actually unspecified. An end time is still provided for compatibility reasons, even if this attribute is set to True. The default is False.
   &quot;etag&quot;: &quot;A String&quot;, # ETag of the resource.
   &quot;eventType&quot;: &quot;default&quot;, # Specific type of the event. This cannot be modified after the event is created. Possible values are:
+      # - &quot;birthday&quot; - A special all-day event with an annual recurrence.
       # - &quot;default&quot; - A regular event or not further specified.
-      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;focusTime&quot; - A focus-time event.
+      # - &quot;fromGmail&quot; - An event from Gmail. This type of event cannot be created.
+      # - &quot;outOfOffice&quot; - An out-of-office event.
       # - &quot;workingLocation&quot; - A working location event.
   &quot;extendedProperties&quot;: { # Extended properties of the event.
     &quot;private&quot;: { # Properties that are private to the copy of the event that appears on this calendar.
@@ -4088,7 +4246,7 @@ Returns:
     &quot;A String&quot;,
   ],
   &quot;recurringEventId&quot;: &quot;A String&quot;, # For an instance of a recurring event, this is the id of the recurring event to which this instance belongs. Immutable.
-  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user.
+  &quot;reminders&quot;: { # Information about the event&#x27;s reminders for the authenticated user. Note that changing reminders does not also change the updated property of the enclosing event.
     &quot;overrides&quot;: [ # If the event doesn&#x27;t use the default reminders, this lists the reminders specific to the event, or, if not set, indicates that no reminders are set for this event. The maximum number of override reminders is 5.
       {
         &quot;method&quot;: &quot;A String&quot;, # The method used by this reminder. Possible values are:
@@ -4125,7 +4283,7 @@ Returns:
   &quot;transparency&quot;: &quot;opaque&quot;, # Whether the event blocks time on the calendar. Optional. Possible values are:
       # - &quot;opaque&quot; - Default value. The event does block time on the calendar. This is equivalent to setting Show me as to Busy in the Calendar UI.
       # - &quot;transparent&quot; - The event does not block time on the calendar. This is equivalent to setting Show me as to Available in the Calendar UI.
-  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the event (as a RFC3339 timestamp). Read-only.
+  &quot;updated&quot;: &quot;A String&quot;, # Last modification time of the main event data (as a RFC3339 timestamp). Updating event reminders will not cause this to change. Read-only.
   &quot;visibility&quot;: &quot;default&quot;, # Visibility of the event. Optional. Possible values are:
       # - &quot;default&quot; - Uses the default visibility for events on the calendar. This is the default value.
       # - &quot;public&quot; - The event is public and event details are visible to all readers of the calendar.
@@ -4179,8 +4337,10 @@ Args:
   alwaysIncludeEmail: boolean, Deprecated and ignored.
   eventTypes: string, Event types to return. Optional. This parameter can be repeated multiple times to return events of different types. If unset, returns all event types. (repeated)
     Allowed values
+      birthday - Special all-day events with an annual recurrence.
       default - Regular events.
       focusTime - Focus time events.
+      fromGmail - Events from Gmail.
       outOfOffice - Out of office events.
       workingLocation - Working location events.
   iCalUID: string, Specifies an event ID in the iCalendar format to be provided in the response. Optional. Use this if you want to search for an event by its iCalendar ID.

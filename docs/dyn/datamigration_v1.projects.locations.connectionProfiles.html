@@ -140,12 +140,24 @@ Args:
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;id&quot;: &quot;A String&quot;, # Required. The ID of the AlloyDB primary instance. The ID must satisfy the regex expression &quot;[a-z0-9-]+&quot;.
+        &quot;instanceNetworkConfig&quot;: { # Metadata related to instance level network configuration. # Optional. Metadata related to instance level network configuration.
+          &quot;authorizedExternalNetworks&quot;: [ # Optional. A list of external network authorized to access this instance.
+            { # AuthorizedNetwork contains metadata for an authorized network.
+              &quot;cidrRange&quot;: &quot;A String&quot;, # Optional. CIDR range for one authorzied network of the instance.
+            },
+          ],
+          &quot;enableOutboundPublicIp&quot;: True or False, # Optional. Enabling an outbound public IP address to support a database server sending requests out into the internet.
+          &quot;enablePublicIp&quot;: True or False, # Optional. Enabling public ip for the instance.
+        },
         &quot;labels&quot;: { # Labels for the AlloyDB primary instance created by DMS. An object containing a list of &#x27;key&#x27;, &#x27;value&#x27; pairs.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;machineConfig&quot;: { # MachineConfig describes the configuration of a machine. # Configuration for the machines that host the underlying database engine.
           &quot;cpuCount&quot;: 42, # The number of CPU&#x27;s in the VM instance.
         },
+        &quot;outboundPublicIpAddresses&quot;: [ # Output only. All outbound public IP addresses configured for the instance.
+          &quot;A String&quot;,
+        ],
         &quot;privateIp&quot;: &quot;A String&quot;, # Output only. The private IP address for the Instance. This is the connection endpoint for an end-user application.
       },
       &quot;vpcNetwork&quot;: &quot;A String&quot;, # Required. The resource link for the VPC network in which cluster resources are created and from which they are accessible via Private IP. The network must belong to the same project as the cluster. It is specified in the form: &quot;projects/{project_number}/global/networks/{network_id}&quot;. This is required to create a cluster.
@@ -170,7 +182,8 @@ Args:
       &quot;databaseFlags&quot;: { # The database flags passed to the Cloud SQL instance at startup. An object containing a list of &quot;key&quot;: value pairs. Example: { &quot;name&quot;: &quot;wrench&quot;, &quot;mass&quot;: &quot;1.3kg&quot;, &quot;count&quot;: &quot;3&quot; }.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
-      &quot;databaseVersion&quot;: &quot;A String&quot;, # The database engine type and version.
+      &quot;databaseVersion&quot;: &quot;A String&quot;, # The database engine type and version. Deprecated. Use database_version_name instead.
+      &quot;databaseVersionName&quot;: &quot;A String&quot;, # Optional. The database engine type and version name.
       &quot;edition&quot;: &quot;A String&quot;, # Optional. The edition of the given Cloud SQL instance.
       &quot;ipConfig&quot;: { # IP Management configuration. # The settings for IP Management. This allows to enable or disable the instance IP and manage which external networks can connect to the instance. The IPv4 address cannot be disabled.
         &quot;allocatedIpRange&quot;: &quot;A String&quot;, # Optional. The name of the allocated IP address range for the private IP Cloud SQL instance. This name refers to an already allocated IP range address. If set, the instance IP address will be created in the allocated range. Note that this IP address range can&#x27;t be modified after the instance is created. If you change the VPC when configuring connectivity settings for the migration job, this field is not relevant.
@@ -222,7 +235,7 @@ Args:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;username&quot;: &quot;A String&quot;, # Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.
   },
@@ -237,6 +250,20 @@ Args:
       &quot;username&quot;: &quot;A String&quot;, # Required. Username for the SSH tunnel.
     },
     &quot;host&quot;: &quot;A String&quot;, # Required. The IP or hostname of the source Oracle database.
+    &quot;oracleAsmConfig&quot;: { # Configuration for Oracle Automatic Storage Management (ASM) connection. # Optional. Configuration for Oracle ASM connection.
+      &quot;asmService&quot;: &quot;A String&quot;, # Required. ASM service name for the Oracle ASM connection.
+      &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle ASM connection.
+      &quot;password&quot;: &quot;A String&quot;, # Required. Input only. Password for the Oracle ASM connection.
+      &quot;passwordSet&quot;: True or False, # Output only. Indicates whether a new password is included in the request.
+      &quot;port&quot;: 42, # Required. Port for the Oracle ASM connection.
+      &quot;ssl&quot;: { # SSL configuration information. # Optional. SSL configuration for the Oracle connection.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
+        &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
+        &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
+        &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      },
+      &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle ASM connection.
+    },
     &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password for the user that Database Migration Service will be using to connect to the database. This field is not returned on request, and the value is encrypted when stored in Database Migration Service.
     &quot;passwordSet&quot;: True or False, # Output only. Indicates whether a new password is included in the request.
     &quot;port&quot;: 42, # Required. The network port of the source Oracle database.
@@ -247,7 +274,7 @@ Args:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;staticServiceIpConnectivity&quot;: { # Static IP address connectivity configured on service project. # Static Service IP connectivity.
     },
@@ -256,6 +283,7 @@ Args:
   &quot;postgresql&quot;: { # Specifies connection parameters required specifically for PostgreSQL databases. # A PostgreSQL database connection profile.
     &quot;alloydbClusterId&quot;: &quot;A String&quot;, # Optional. If the destination is an AlloyDB database, use this field to provide the AlloyDB cluster ID.
     &quot;cloudSqlId&quot;: &quot;A String&quot;, # If the source is a Cloud SQL database, use this field to provide the Cloud SQL instance ID of the source.
+    &quot;database&quot;: &quot;A String&quot;, # Optional. The name of the specific database within the host.
     &quot;host&quot;: &quot;A String&quot;, # Required. The IP or hostname of the source PostgreSQL database.
     &quot;networkArchitecture&quot;: &quot;A String&quot;, # Output only. If the source is a Cloud SQL database, this field indicates the network architecture it&#x27;s associated with.
     &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password for the user that Database Migration Service will be using to connect to the database. This field is not returned on request, and the value is encrypted when stored in Database Migration Service.
@@ -268,13 +296,16 @@ Args:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;staticIpConnectivity&quot;: { # The source database will allow incoming connections from the public IP of the destination database. You can retrieve the public IP of the Cloud SQL instance from the Cloud SQL console or using Cloud SQL APIs. No additional configuration is required. # Static ip connectivity data (default, no additional details needed).
     },
     &quot;username&quot;: &quot;A String&quot;, # Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.
   },
   &quot;provider&quot;: &quot;A String&quot;, # The database provider.
+  &quot;role&quot;: &quot;A String&quot;, # Optional. The connection profile role.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Zone Isolation compliance state of the resource.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Zone Separation compliance state of the resource.
   &quot;sqlserver&quot;: { # Specifies connection parameters required specifically for SQL Server databases. # Connection profile for a SQL Server data source.
     &quot;backups&quot;: { # Specifies the backup details in Cloud Storage for homogeneous migration to Cloud SQL for SQL Server. # The backup details in Cloud Storage for homogeneous migration to Cloud SQL for SQL Server.
       &quot;gcsBucket&quot;: &quot;A String&quot;, # Required. The Cloud Storage bucket that stores backups for all replicated databases.
@@ -302,7 +333,7 @@ Args:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;staticIpConnectivity&quot;: { # The source database will allow incoming connections from the public IP of the destination database. You can retrieve the public IP of the Cloud SQL instance from the Cloud SQL console or using Cloud SQL APIs. No additional configuration is required. # Static IP connectivity data (default, no additional details needed).
     },
@@ -417,12 +448,24 @@ Returns:
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;id&quot;: &quot;A String&quot;, # Required. The ID of the AlloyDB primary instance. The ID must satisfy the regex expression &quot;[a-z0-9-]+&quot;.
+        &quot;instanceNetworkConfig&quot;: { # Metadata related to instance level network configuration. # Optional. Metadata related to instance level network configuration.
+          &quot;authorizedExternalNetworks&quot;: [ # Optional. A list of external network authorized to access this instance.
+            { # AuthorizedNetwork contains metadata for an authorized network.
+              &quot;cidrRange&quot;: &quot;A String&quot;, # Optional. CIDR range for one authorzied network of the instance.
+            },
+          ],
+          &quot;enableOutboundPublicIp&quot;: True or False, # Optional. Enabling an outbound public IP address to support a database server sending requests out into the internet.
+          &quot;enablePublicIp&quot;: True or False, # Optional. Enabling public ip for the instance.
+        },
         &quot;labels&quot;: { # Labels for the AlloyDB primary instance created by DMS. An object containing a list of &#x27;key&#x27;, &#x27;value&#x27; pairs.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;machineConfig&quot;: { # MachineConfig describes the configuration of a machine. # Configuration for the machines that host the underlying database engine.
           &quot;cpuCount&quot;: 42, # The number of CPU&#x27;s in the VM instance.
         },
+        &quot;outboundPublicIpAddresses&quot;: [ # Output only. All outbound public IP addresses configured for the instance.
+          &quot;A String&quot;,
+        ],
         &quot;privateIp&quot;: &quot;A String&quot;, # Output only. The private IP address for the Instance. This is the connection endpoint for an end-user application.
       },
       &quot;vpcNetwork&quot;: &quot;A String&quot;, # Required. The resource link for the VPC network in which cluster resources are created and from which they are accessible via Private IP. The network must belong to the same project as the cluster. It is specified in the form: &quot;projects/{project_number}/global/networks/{network_id}&quot;. This is required to create a cluster.
@@ -447,7 +490,8 @@ Returns:
       &quot;databaseFlags&quot;: { # The database flags passed to the Cloud SQL instance at startup. An object containing a list of &quot;key&quot;: value pairs. Example: { &quot;name&quot;: &quot;wrench&quot;, &quot;mass&quot;: &quot;1.3kg&quot;, &quot;count&quot;: &quot;3&quot; }.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
-      &quot;databaseVersion&quot;: &quot;A String&quot;, # The database engine type and version.
+      &quot;databaseVersion&quot;: &quot;A String&quot;, # The database engine type and version. Deprecated. Use database_version_name instead.
+      &quot;databaseVersionName&quot;: &quot;A String&quot;, # Optional. The database engine type and version name.
       &quot;edition&quot;: &quot;A String&quot;, # Optional. The edition of the given Cloud SQL instance.
       &quot;ipConfig&quot;: { # IP Management configuration. # The settings for IP Management. This allows to enable or disable the instance IP and manage which external networks can connect to the instance. The IPv4 address cannot be disabled.
         &quot;allocatedIpRange&quot;: &quot;A String&quot;, # Optional. The name of the allocated IP address range for the private IP Cloud SQL instance. This name refers to an already allocated IP range address. If set, the instance IP address will be created in the allocated range. Note that this IP address range can&#x27;t be modified after the instance is created. If you change the VPC when configuring connectivity settings for the migration job, this field is not relevant.
@@ -499,7 +543,7 @@ Returns:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;username&quot;: &quot;A String&quot;, # Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.
   },
@@ -514,6 +558,20 @@ Returns:
       &quot;username&quot;: &quot;A String&quot;, # Required. Username for the SSH tunnel.
     },
     &quot;host&quot;: &quot;A String&quot;, # Required. The IP or hostname of the source Oracle database.
+    &quot;oracleAsmConfig&quot;: { # Configuration for Oracle Automatic Storage Management (ASM) connection. # Optional. Configuration for Oracle ASM connection.
+      &quot;asmService&quot;: &quot;A String&quot;, # Required. ASM service name for the Oracle ASM connection.
+      &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle ASM connection.
+      &quot;password&quot;: &quot;A String&quot;, # Required. Input only. Password for the Oracle ASM connection.
+      &quot;passwordSet&quot;: True or False, # Output only. Indicates whether a new password is included in the request.
+      &quot;port&quot;: 42, # Required. Port for the Oracle ASM connection.
+      &quot;ssl&quot;: { # SSL configuration information. # Optional. SSL configuration for the Oracle connection.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
+        &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
+        &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
+        &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      },
+      &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle ASM connection.
+    },
     &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password for the user that Database Migration Service will be using to connect to the database. This field is not returned on request, and the value is encrypted when stored in Database Migration Service.
     &quot;passwordSet&quot;: True or False, # Output only. Indicates whether a new password is included in the request.
     &quot;port&quot;: 42, # Required. The network port of the source Oracle database.
@@ -524,7 +582,7 @@ Returns:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;staticServiceIpConnectivity&quot;: { # Static IP address connectivity configured on service project. # Static Service IP connectivity.
     },
@@ -533,6 +591,7 @@ Returns:
   &quot;postgresql&quot;: { # Specifies connection parameters required specifically for PostgreSQL databases. # A PostgreSQL database connection profile.
     &quot;alloydbClusterId&quot;: &quot;A String&quot;, # Optional. If the destination is an AlloyDB database, use this field to provide the AlloyDB cluster ID.
     &quot;cloudSqlId&quot;: &quot;A String&quot;, # If the source is a Cloud SQL database, use this field to provide the Cloud SQL instance ID of the source.
+    &quot;database&quot;: &quot;A String&quot;, # Optional. The name of the specific database within the host.
     &quot;host&quot;: &quot;A String&quot;, # Required. The IP or hostname of the source PostgreSQL database.
     &quot;networkArchitecture&quot;: &quot;A String&quot;, # Output only. If the source is a Cloud SQL database, this field indicates the network architecture it&#x27;s associated with.
     &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password for the user that Database Migration Service will be using to connect to the database. This field is not returned on request, and the value is encrypted when stored in Database Migration Service.
@@ -545,13 +604,16 @@ Returns:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;staticIpConnectivity&quot;: { # The source database will allow incoming connections from the public IP of the destination database. You can retrieve the public IP of the Cloud SQL instance from the Cloud SQL console or using Cloud SQL APIs. No additional configuration is required. # Static ip connectivity data (default, no additional details needed).
     },
     &quot;username&quot;: &quot;A String&quot;, # Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.
   },
   &quot;provider&quot;: &quot;A String&quot;, # The database provider.
+  &quot;role&quot;: &quot;A String&quot;, # Optional. The connection profile role.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Zone Isolation compliance state of the resource.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Zone Separation compliance state of the resource.
   &quot;sqlserver&quot;: { # Specifies connection parameters required specifically for SQL Server databases. # Connection profile for a SQL Server data source.
     &quot;backups&quot;: { # Specifies the backup details in Cloud Storage for homogeneous migration to Cloud SQL for SQL Server. # The backup details in Cloud Storage for homogeneous migration to Cloud SQL for SQL Server.
       &quot;gcsBucket&quot;: &quot;A String&quot;, # Required. The Cloud Storage bucket that stores backups for all replicated databases.
@@ -579,7 +641,7 @@ Returns:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;staticIpConnectivity&quot;: { # The source database will allow incoming connections from the public IP of the destination database. You can retrieve the public IP of the Cloud SQL instance from the Cloud SQL console or using Cloud SQL APIs. No additional configuration is required. # Static IP connectivity data (default, no additional details needed).
     },
@@ -679,12 +741,24 @@ Returns:
               &quot;a_key&quot;: &quot;A String&quot;,
             },
             &quot;id&quot;: &quot;A String&quot;, # Required. The ID of the AlloyDB primary instance. The ID must satisfy the regex expression &quot;[a-z0-9-]+&quot;.
+            &quot;instanceNetworkConfig&quot;: { # Metadata related to instance level network configuration. # Optional. Metadata related to instance level network configuration.
+              &quot;authorizedExternalNetworks&quot;: [ # Optional. A list of external network authorized to access this instance.
+                { # AuthorizedNetwork contains metadata for an authorized network.
+                  &quot;cidrRange&quot;: &quot;A String&quot;, # Optional. CIDR range for one authorzied network of the instance.
+                },
+              ],
+              &quot;enableOutboundPublicIp&quot;: True or False, # Optional. Enabling an outbound public IP address to support a database server sending requests out into the internet.
+              &quot;enablePublicIp&quot;: True or False, # Optional. Enabling public ip for the instance.
+            },
             &quot;labels&quot;: { # Labels for the AlloyDB primary instance created by DMS. An object containing a list of &#x27;key&#x27;, &#x27;value&#x27; pairs.
               &quot;a_key&quot;: &quot;A String&quot;,
             },
             &quot;machineConfig&quot;: { # MachineConfig describes the configuration of a machine. # Configuration for the machines that host the underlying database engine.
               &quot;cpuCount&quot;: 42, # The number of CPU&#x27;s in the VM instance.
             },
+            &quot;outboundPublicIpAddresses&quot;: [ # Output only. All outbound public IP addresses configured for the instance.
+              &quot;A String&quot;,
+            ],
             &quot;privateIp&quot;: &quot;A String&quot;, # Output only. The private IP address for the Instance. This is the connection endpoint for an end-user application.
           },
           &quot;vpcNetwork&quot;: &quot;A String&quot;, # Required. The resource link for the VPC network in which cluster resources are created and from which they are accessible via Private IP. The network must belong to the same project as the cluster. It is specified in the form: &quot;projects/{project_number}/global/networks/{network_id}&quot;. This is required to create a cluster.
@@ -709,7 +783,8 @@ Returns:
           &quot;databaseFlags&quot;: { # The database flags passed to the Cloud SQL instance at startup. An object containing a list of &quot;key&quot;: value pairs. Example: { &quot;name&quot;: &quot;wrench&quot;, &quot;mass&quot;: &quot;1.3kg&quot;, &quot;count&quot;: &quot;3&quot; }.
             &quot;a_key&quot;: &quot;A String&quot;,
           },
-          &quot;databaseVersion&quot;: &quot;A String&quot;, # The database engine type and version.
+          &quot;databaseVersion&quot;: &quot;A String&quot;, # The database engine type and version. Deprecated. Use database_version_name instead.
+          &quot;databaseVersionName&quot;: &quot;A String&quot;, # Optional. The database engine type and version name.
           &quot;edition&quot;: &quot;A String&quot;, # Optional. The edition of the given Cloud SQL instance.
           &quot;ipConfig&quot;: { # IP Management configuration. # The settings for IP Management. This allows to enable or disable the instance IP and manage which external networks can connect to the instance. The IPv4 address cannot be disabled.
             &quot;allocatedIpRange&quot;: &quot;A String&quot;, # Optional. The name of the allocated IP address range for the private IP Cloud SQL instance. This name refers to an already allocated IP range address. If set, the instance IP address will be created in the allocated range. Note that this IP address range can&#x27;t be modified after the instance is created. If you change the VPC when configuring connectivity settings for the migration job, this field is not relevant.
@@ -761,7 +836,7 @@ Returns:
           &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
           &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
           &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-          &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+          &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
         },
         &quot;username&quot;: &quot;A String&quot;, # Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.
       },
@@ -776,6 +851,20 @@ Returns:
           &quot;username&quot;: &quot;A String&quot;, # Required. Username for the SSH tunnel.
         },
         &quot;host&quot;: &quot;A String&quot;, # Required. The IP or hostname of the source Oracle database.
+        &quot;oracleAsmConfig&quot;: { # Configuration for Oracle Automatic Storage Management (ASM) connection. # Optional. Configuration for Oracle ASM connection.
+          &quot;asmService&quot;: &quot;A String&quot;, # Required. ASM service name for the Oracle ASM connection.
+          &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle ASM connection.
+          &quot;password&quot;: &quot;A String&quot;, # Required. Input only. Password for the Oracle ASM connection.
+          &quot;passwordSet&quot;: True or False, # Output only. Indicates whether a new password is included in the request.
+          &quot;port&quot;: 42, # Required. Port for the Oracle ASM connection.
+          &quot;ssl&quot;: { # SSL configuration information. # Optional. SSL configuration for the Oracle connection.
+            &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
+            &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
+            &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
+            &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+          },
+          &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle ASM connection.
+        },
         &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password for the user that Database Migration Service will be using to connect to the database. This field is not returned on request, and the value is encrypted when stored in Database Migration Service.
         &quot;passwordSet&quot;: True or False, # Output only. Indicates whether a new password is included in the request.
         &quot;port&quot;: 42, # Required. The network port of the source Oracle database.
@@ -786,7 +875,7 @@ Returns:
           &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
           &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
           &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-          &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+          &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
         },
         &quot;staticServiceIpConnectivity&quot;: { # Static IP address connectivity configured on service project. # Static Service IP connectivity.
         },
@@ -795,6 +884,7 @@ Returns:
       &quot;postgresql&quot;: { # Specifies connection parameters required specifically for PostgreSQL databases. # A PostgreSQL database connection profile.
         &quot;alloydbClusterId&quot;: &quot;A String&quot;, # Optional. If the destination is an AlloyDB database, use this field to provide the AlloyDB cluster ID.
         &quot;cloudSqlId&quot;: &quot;A String&quot;, # If the source is a Cloud SQL database, use this field to provide the Cloud SQL instance ID of the source.
+        &quot;database&quot;: &quot;A String&quot;, # Optional. The name of the specific database within the host.
         &quot;host&quot;: &quot;A String&quot;, # Required. The IP or hostname of the source PostgreSQL database.
         &quot;networkArchitecture&quot;: &quot;A String&quot;, # Output only. If the source is a Cloud SQL database, this field indicates the network architecture it&#x27;s associated with.
         &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password for the user that Database Migration Service will be using to connect to the database. This field is not returned on request, and the value is encrypted when stored in Database Migration Service.
@@ -807,13 +897,16 @@ Returns:
           &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
           &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
           &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-          &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+          &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
         },
         &quot;staticIpConnectivity&quot;: { # The source database will allow incoming connections from the public IP of the destination database. You can retrieve the public IP of the Cloud SQL instance from the Cloud SQL console or using Cloud SQL APIs. No additional configuration is required. # Static ip connectivity data (default, no additional details needed).
         },
         &quot;username&quot;: &quot;A String&quot;, # Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.
       },
       &quot;provider&quot;: &quot;A String&quot;, # The database provider.
+      &quot;role&quot;: &quot;A String&quot;, # Optional. The connection profile role.
+      &quot;satisfiesPzi&quot;: True or False, # Output only. Zone Isolation compliance state of the resource.
+      &quot;satisfiesPzs&quot;: True or False, # Output only. Zone Separation compliance state of the resource.
       &quot;sqlserver&quot;: { # Specifies connection parameters required specifically for SQL Server databases. # Connection profile for a SQL Server data source.
         &quot;backups&quot;: { # Specifies the backup details in Cloud Storage for homogeneous migration to Cloud SQL for SQL Server. # The backup details in Cloud Storage for homogeneous migration to Cloud SQL for SQL Server.
           &quot;gcsBucket&quot;: &quot;A String&quot;, # Required. The Cloud Storage bucket that stores backups for all replicated databases.
@@ -841,7 +934,7 @@ Returns:
           &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
           &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
           &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-          &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+          &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
         },
         &quot;staticIpConnectivity&quot;: { # The source database will allow incoming connections from the public IP of the destination database. You can retrieve the public IP of the Cloud SQL instance from the Cloud SQL console or using Cloud SQL APIs. No additional configuration is required. # Static IP connectivity data (default, no additional details needed).
         },
@@ -902,12 +995,24 @@ Args:
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;id&quot;: &quot;A String&quot;, # Required. The ID of the AlloyDB primary instance. The ID must satisfy the regex expression &quot;[a-z0-9-]+&quot;.
+        &quot;instanceNetworkConfig&quot;: { # Metadata related to instance level network configuration. # Optional. Metadata related to instance level network configuration.
+          &quot;authorizedExternalNetworks&quot;: [ # Optional. A list of external network authorized to access this instance.
+            { # AuthorizedNetwork contains metadata for an authorized network.
+              &quot;cidrRange&quot;: &quot;A String&quot;, # Optional. CIDR range for one authorzied network of the instance.
+            },
+          ],
+          &quot;enableOutboundPublicIp&quot;: True or False, # Optional. Enabling an outbound public IP address to support a database server sending requests out into the internet.
+          &quot;enablePublicIp&quot;: True or False, # Optional. Enabling public ip for the instance.
+        },
         &quot;labels&quot;: { # Labels for the AlloyDB primary instance created by DMS. An object containing a list of &#x27;key&#x27;, &#x27;value&#x27; pairs.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;machineConfig&quot;: { # MachineConfig describes the configuration of a machine. # Configuration for the machines that host the underlying database engine.
           &quot;cpuCount&quot;: 42, # The number of CPU&#x27;s in the VM instance.
         },
+        &quot;outboundPublicIpAddresses&quot;: [ # Output only. All outbound public IP addresses configured for the instance.
+          &quot;A String&quot;,
+        ],
         &quot;privateIp&quot;: &quot;A String&quot;, # Output only. The private IP address for the Instance. This is the connection endpoint for an end-user application.
       },
       &quot;vpcNetwork&quot;: &quot;A String&quot;, # Required. The resource link for the VPC network in which cluster resources are created and from which they are accessible via Private IP. The network must belong to the same project as the cluster. It is specified in the form: &quot;projects/{project_number}/global/networks/{network_id}&quot;. This is required to create a cluster.
@@ -932,7 +1037,8 @@ Args:
       &quot;databaseFlags&quot;: { # The database flags passed to the Cloud SQL instance at startup. An object containing a list of &quot;key&quot;: value pairs. Example: { &quot;name&quot;: &quot;wrench&quot;, &quot;mass&quot;: &quot;1.3kg&quot;, &quot;count&quot;: &quot;3&quot; }.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
-      &quot;databaseVersion&quot;: &quot;A String&quot;, # The database engine type and version.
+      &quot;databaseVersion&quot;: &quot;A String&quot;, # The database engine type and version. Deprecated. Use database_version_name instead.
+      &quot;databaseVersionName&quot;: &quot;A String&quot;, # Optional. The database engine type and version name.
       &quot;edition&quot;: &quot;A String&quot;, # Optional. The edition of the given Cloud SQL instance.
       &quot;ipConfig&quot;: { # IP Management configuration. # The settings for IP Management. This allows to enable or disable the instance IP and manage which external networks can connect to the instance. The IPv4 address cannot be disabled.
         &quot;allocatedIpRange&quot;: &quot;A String&quot;, # Optional. The name of the allocated IP address range for the private IP Cloud SQL instance. This name refers to an already allocated IP range address. If set, the instance IP address will be created in the allocated range. Note that this IP address range can&#x27;t be modified after the instance is created. If you change the VPC when configuring connectivity settings for the migration job, this field is not relevant.
@@ -984,7 +1090,7 @@ Args:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;username&quot;: &quot;A String&quot;, # Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.
   },
@@ -999,6 +1105,20 @@ Args:
       &quot;username&quot;: &quot;A String&quot;, # Required. Username for the SSH tunnel.
     },
     &quot;host&quot;: &quot;A String&quot;, # Required. The IP or hostname of the source Oracle database.
+    &quot;oracleAsmConfig&quot;: { # Configuration for Oracle Automatic Storage Management (ASM) connection. # Optional. Configuration for Oracle ASM connection.
+      &quot;asmService&quot;: &quot;A String&quot;, # Required. ASM service name for the Oracle ASM connection.
+      &quot;hostname&quot;: &quot;A String&quot;, # Required. Hostname for the Oracle ASM connection.
+      &quot;password&quot;: &quot;A String&quot;, # Required. Input only. Password for the Oracle ASM connection.
+      &quot;passwordSet&quot;: True or False, # Output only. Indicates whether a new password is included in the request.
+      &quot;port&quot;: 42, # Required. Port for the Oracle ASM connection.
+      &quot;ssl&quot;: { # SSL configuration information. # Optional. SSL configuration for the Oracle connection.
+        &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
+        &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
+        &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
+        &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      },
+      &quot;username&quot;: &quot;A String&quot;, # Required. Username for the Oracle ASM connection.
+    },
     &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password for the user that Database Migration Service will be using to connect to the database. This field is not returned on request, and the value is encrypted when stored in Database Migration Service.
     &quot;passwordSet&quot;: True or False, # Output only. Indicates whether a new password is included in the request.
     &quot;port&quot;: 42, # Required. The network port of the source Oracle database.
@@ -1009,7 +1129,7 @@ Args:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;staticServiceIpConnectivity&quot;: { # Static IP address connectivity configured on service project. # Static Service IP connectivity.
     },
@@ -1018,6 +1138,7 @@ Args:
   &quot;postgresql&quot;: { # Specifies connection parameters required specifically for PostgreSQL databases. # A PostgreSQL database connection profile.
     &quot;alloydbClusterId&quot;: &quot;A String&quot;, # Optional. If the destination is an AlloyDB database, use this field to provide the AlloyDB cluster ID.
     &quot;cloudSqlId&quot;: &quot;A String&quot;, # If the source is a Cloud SQL database, use this field to provide the Cloud SQL instance ID of the source.
+    &quot;database&quot;: &quot;A String&quot;, # Optional. The name of the specific database within the host.
     &quot;host&quot;: &quot;A String&quot;, # Required. The IP or hostname of the source PostgreSQL database.
     &quot;networkArchitecture&quot;: &quot;A String&quot;, # Output only. If the source is a Cloud SQL database, this field indicates the network architecture it&#x27;s associated with.
     &quot;password&quot;: &quot;A String&quot;, # Required. Input only. The password for the user that Database Migration Service will be using to connect to the database. This field is not returned on request, and the value is encrypted when stored in Database Migration Service.
@@ -1030,13 +1151,16 @@ Args:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;staticIpConnectivity&quot;: { # The source database will allow incoming connections from the public IP of the destination database. You can retrieve the public IP of the Cloud SQL instance from the Cloud SQL console or using Cloud SQL APIs. No additional configuration is required. # Static ip connectivity data (default, no additional details needed).
     },
     &quot;username&quot;: &quot;A String&quot;, # Required. The username that Database Migration Service will use to connect to the database. The value is encrypted when stored in Database Migration Service.
   },
   &quot;provider&quot;: &quot;A String&quot;, # The database provider.
+  &quot;role&quot;: &quot;A String&quot;, # Optional. The connection profile role.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Zone Isolation compliance state of the resource.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Zone Separation compliance state of the resource.
   &quot;sqlserver&quot;: { # Specifies connection parameters required specifically for SQL Server databases. # Connection profile for a SQL Server data source.
     &quot;backups&quot;: { # Specifies the backup details in Cloud Storage for homogeneous migration to Cloud SQL for SQL Server. # The backup details in Cloud Storage for homogeneous migration to Cloud SQL for SQL Server.
       &quot;gcsBucket&quot;: &quot;A String&quot;, # Required. The Cloud Storage bucket that stores backups for all replicated databases.
@@ -1064,7 +1188,7 @@ Args:
       &quot;caCertificate&quot;: &quot;A String&quot;, # Required. Input only. The x509 PEM-encoded certificate of the CA that signed the source database server&#x27;s certificate. The replica will use this certificate to verify it&#x27;s connecting to the right host.
       &quot;clientCertificate&quot;: &quot;A String&quot;, # Input only. The x509 PEM-encoded certificate that will be used by the replica to authenticate against the source database server.If this field is used then the &#x27;client_key&#x27; field is mandatory.
       &quot;clientKey&quot;: &quot;A String&quot;, # Input only. The unencrypted PKCS#1 or PKCS#8 PEM-encoded private key associated with the Client Certificate. If this field is used then the &#x27;client_certificate&#x27; field is mandatory.
-      &quot;type&quot;: &quot;A String&quot;, # Output only. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. The ssl config type according to &#x27;client_key&#x27;, &#x27;client_certificate&#x27; and &#x27;ca_certificate&#x27;.
     },
     &quot;staticIpConnectivity&quot;: { # The source database will allow incoming connections from the public IP of the destination database. You can retrieve the public IP of the Cloud SQL instance from the Cloud SQL console or using Cloud SQL APIs. No additional configuration is required. # Static IP connectivity data (default, no additional details needed).
     },

@@ -92,7 +92,7 @@ h1, h2, h3 {
   <code><a href="#close">close()</a></code></p>
 <p class="firstline">Close httplib2 connections.</p>
 <p class="toc_element">
-  <code><a href="#create">create(parent, body=None, requestId=None, rolloutId=None, startingPhaseId=None, validateOnly=None, x__xgafv=None)</a></code></p>
+  <code><a href="#create">create(parent, body=None, overrideDeployPolicy=None, requestId=None, rolloutId=None, startingPhaseId=None, validateOnly=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Creates a new Rollout in a given project and location.</p>
 <p class="toc_element">
   <code><a href="#get">get(name, x__xgafv=None)</a></code></p>
@@ -120,6 +120,9 @@ Args:
     The object takes the form of:
 
 { # The request object used by `AdvanceRollout`.
+  &quot;overrideDeployPolicy&quot;: [ # Optional. Deploy policies to override. Format is `projects/{project}/locations/{location}/deployPolicies/{deployPolicy}`.
+    &quot;A String&quot;,
+  ],
   &quot;phaseId&quot;: &quot;A String&quot;, # Required. The phase ID to advance the `Rollout` to.
 }
 
@@ -146,6 +149,9 @@ Args:
 
 { # The request object used by `ApproveRollout`.
   &quot;approved&quot;: True or False, # Required. True = approve; false = reject
+  &quot;overrideDeployPolicy&quot;: [ # Optional. Deploy policies to override. Format is `projects/{project}/locations/{location}/deployPolicies/{deployPolicy}`.
+    &quot;A String&quot;,
+  ],
 }
 
   x__xgafv: string, V1 error format.
@@ -170,6 +176,9 @@ Args:
     The object takes the form of:
 
 { # The request object used by `CancelRollout`.
+  &quot;overrideDeployPolicy&quot;: [ # Optional. Deploy policies to override. Format is `projects/{project}/locations/{location}/deployPolicies/{deployPolicy}`.
+    &quot;A String&quot;,
+  ],
 }
 
   x__xgafv: string, V1 error format.
@@ -190,16 +199,17 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="create">create(parent, body=None, requestId=None, rolloutId=None, startingPhaseId=None, validateOnly=None, x__xgafv=None)</code>
+    <code class="details" id="create">create(parent, body=None, overrideDeployPolicy=None, requestId=None, rolloutId=None, startingPhaseId=None, validateOnly=None, x__xgafv=None)</code>
   <pre>Creates a new Rollout in a given project and location.
 
 Args:
-  parent: string, Required. The parent collection in which the `Rollout` should be created. Format should be `projects/{project_id}/locations/{location_name}/deliveryPipelines/{pipeline_name}/releases/{release_name}`. (required)
+  parent: string, Required. The parent collection in which the `Rollout` must be created. The format is `projects/{project_id}/locations/{location_name}/deliveryPipelines/{pipeline_name}/releases/{release_name}`. (required)
   body: object, The request body.
     The object takes the form of:
 
 { # A `Rollout` resource in the Cloud Deploy API. A `Rollout` contains information around a specific deployment to a `Target`.
-  &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
+  &quot;activeRepairAutomationRun&quot;: &quot;A String&quot;, # Output only. The AutomationRun actively repairing the rollout.
+  &quot;annotations&quot;: { # Optional. User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;approvalState&quot;: &quot;A String&quot;, # Output only. Approval state of the `Rollout`.
@@ -210,7 +220,7 @@ Args:
   &quot;deployFailureCause&quot;: &quot;A String&quot;, # Output only. The reason this rollout failed. This will always be unspecified while the rollout is in progress.
   &quot;deployStartTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Rollout` started deploying.
   &quot;deployingBuild&quot;: &quot;A String&quot;, # Output only. The resource name of the Cloud Build `Build` object that is used to deploy the Rollout. Format is `projects/{project}/locations/{location}/builds/{build}`.
-  &quot;description&quot;: &quot;A String&quot;, # Description of the `Rollout` for user purposes. Max length is 255 characters.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the `Rollout` for user purposes. Max length is 255 characters.
   &quot;enqueueTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Rollout` was enqueued.
   &quot;etag&quot;: &quot;A String&quot;, # This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
   &quot;failureReason&quot;: &quot;A String&quot;, # Output only. Additional information about the rollout failure, if available.
@@ -219,12 +229,11 @@ Args:
   },
   &quot;metadata&quot;: { # Metadata includes information associated with a `Rollout`. # Output only. Metadata contains information about the rollout.
     &quot;automation&quot;: { # AutomationRolloutMetadata contains Automation-related actions that were performed on a rollout. # Output only. AutomationRolloutMetadata contains the information about the interactions between Automation service and this rollout.
-      &quot;advanceAutomationRuns&quot;: [ # Output only. The IDs of the AutomationRuns initiated by an advance rollout rule.
+      &quot;advanceAutomationRuns&quot;: [ # Output only. The names of the AutomationRuns initiated by an advance rollout rule.
         &quot;A String&quot;,
       ],
-      &quot;currentRepairAutomationRun&quot;: &quot;A String&quot;, # Output only. The current AutomationRun repairing the rollout.
-      &quot;promoteAutomationRun&quot;: &quot;A String&quot;, # Output only. The ID of the AutomationRun initiated by a promote release rule.
-      &quot;repairAutomationRuns&quot;: [ # Output only. The IDs of the AutomationRuns initiated by a repair rollout rule.
+      &quot;promoteAutomationRun&quot;: &quot;A String&quot;, # Output only. The name of the AutomationRun initiated by a promote release rule.
+      &quot;repairAutomationRuns&quot;: [ # Output only. The names of the AutomationRuns initiated by a repair rollout rule.
         &quot;A String&quot;,
       ],
     },
@@ -242,7 +251,7 @@ Args:
       },
     },
   },
-  &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `Rollout`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/releases/{release}/rollouts/{rollout}`. The `rollout` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
+  &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the `Rollout`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/releases/{release}/rollouts/{rollout}`. The `rollout` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
   &quot;phases&quot;: [ # Output only. The phases that represent the workflows of this `Rollout`.
     { # Phase represents a collection of jobs that are logically grouped together for a `Rollout`.
       &quot;childRolloutJobs&quot;: { # ChildRollouts job composition # Output only. ChildRollout job composition.
@@ -411,6 +420,7 @@ Args:
   &quot;uid&quot;: &quot;A String&quot;, # Output only. Unique identifier of the `Rollout`.
 }
 
+  overrideDeployPolicy: string, Optional. Deploy policies to override. Format is `projects/{project}/locations/{location}/deployPolicies/{deployPolicy}`. (repeated)
   requestId: string, Optional. A request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server knows to ignore the request if it has already been completed. The server guarantees that for at least 60 minutes after the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).
   rolloutId: string, Required. ID of the `Rollout`.
   startingPhaseId: string, Optional. The starting phase ID for the `Rollout`. If empty the `Rollout` will start at the first phase.
@@ -459,7 +469,8 @@ Returns:
   An object of the form:
 
     { # A `Rollout` resource in the Cloud Deploy API. A `Rollout` contains information around a specific deployment to a `Target`.
-  &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
+  &quot;activeRepairAutomationRun&quot;: &quot;A String&quot;, # Output only. The AutomationRun actively repairing the rollout.
+  &quot;annotations&quot;: { # Optional. User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;approvalState&quot;: &quot;A String&quot;, # Output only. Approval state of the `Rollout`.
@@ -470,7 +481,7 @@ Returns:
   &quot;deployFailureCause&quot;: &quot;A String&quot;, # Output only. The reason this rollout failed. This will always be unspecified while the rollout is in progress.
   &quot;deployStartTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Rollout` started deploying.
   &quot;deployingBuild&quot;: &quot;A String&quot;, # Output only. The resource name of the Cloud Build `Build` object that is used to deploy the Rollout. Format is `projects/{project}/locations/{location}/builds/{build}`.
-  &quot;description&quot;: &quot;A String&quot;, # Description of the `Rollout` for user purposes. Max length is 255 characters.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the `Rollout` for user purposes. Max length is 255 characters.
   &quot;enqueueTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Rollout` was enqueued.
   &quot;etag&quot;: &quot;A String&quot;, # This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
   &quot;failureReason&quot;: &quot;A String&quot;, # Output only. Additional information about the rollout failure, if available.
@@ -479,12 +490,11 @@ Returns:
   },
   &quot;metadata&quot;: { # Metadata includes information associated with a `Rollout`. # Output only. Metadata contains information about the rollout.
     &quot;automation&quot;: { # AutomationRolloutMetadata contains Automation-related actions that were performed on a rollout. # Output only. AutomationRolloutMetadata contains the information about the interactions between Automation service and this rollout.
-      &quot;advanceAutomationRuns&quot;: [ # Output only. The IDs of the AutomationRuns initiated by an advance rollout rule.
+      &quot;advanceAutomationRuns&quot;: [ # Output only. The names of the AutomationRuns initiated by an advance rollout rule.
         &quot;A String&quot;,
       ],
-      &quot;currentRepairAutomationRun&quot;: &quot;A String&quot;, # Output only. The current AutomationRun repairing the rollout.
-      &quot;promoteAutomationRun&quot;: &quot;A String&quot;, # Output only. The ID of the AutomationRun initiated by a promote release rule.
-      &quot;repairAutomationRuns&quot;: [ # Output only. The IDs of the AutomationRuns initiated by a repair rollout rule.
+      &quot;promoteAutomationRun&quot;: &quot;A String&quot;, # Output only. The name of the AutomationRun initiated by a promote release rule.
+      &quot;repairAutomationRuns&quot;: [ # Output only. The names of the AutomationRuns initiated by a repair rollout rule.
         &quot;A String&quot;,
       ],
     },
@@ -502,7 +512,7 @@ Returns:
       },
     },
   },
-  &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `Rollout`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/releases/{release}/rollouts/{rollout}`. The `rollout` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
+  &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the `Rollout`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/releases/{release}/rollouts/{rollout}`. The `rollout` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
   &quot;phases&quot;: [ # Output only. The phases that represent the workflows of this `Rollout`.
     { # Phase represents a collection of jobs that are logically grouped together for a `Rollout`.
       &quot;childRolloutJobs&quot;: { # ChildRollouts job composition # Output only. ChildRollout job composition.
@@ -683,6 +693,9 @@ Args:
 
 { # The request object used by `IgnoreJob`.
   &quot;jobId&quot;: &quot;A String&quot;, # Required. The job ID for the Job to ignore.
+  &quot;overrideDeployPolicy&quot;: [ # Optional. Deploy policies to override. Format is `projects/{project}/locations/{location}/deployPolicies/{deployPolicy}`.
+    &quot;A String&quot;,
+  ],
   &quot;phaseId&quot;: &quot;A String&quot;, # Required. The phase ID the Job to ignore belongs to.
 }
 
@@ -720,7 +733,8 @@ Returns:
   &quot;nextPageToken&quot;: &quot;A String&quot;, # A token, which can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages.
   &quot;rollouts&quot;: [ # The `Rollout` objects.
     { # A `Rollout` resource in the Cloud Deploy API. A `Rollout` contains information around a specific deployment to a `Target`.
-      &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
+      &quot;activeRepairAutomationRun&quot;: &quot;A String&quot;, # Output only. The AutomationRun actively repairing the rollout.
+      &quot;annotations&quot;: { # Optional. User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;approvalState&quot;: &quot;A String&quot;, # Output only. Approval state of the `Rollout`.
@@ -731,7 +745,7 @@ Returns:
       &quot;deployFailureCause&quot;: &quot;A String&quot;, # Output only. The reason this rollout failed. This will always be unspecified while the rollout is in progress.
       &quot;deployStartTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Rollout` started deploying.
       &quot;deployingBuild&quot;: &quot;A String&quot;, # Output only. The resource name of the Cloud Build `Build` object that is used to deploy the Rollout. Format is `projects/{project}/locations/{location}/builds/{build}`.
-      &quot;description&quot;: &quot;A String&quot;, # Description of the `Rollout` for user purposes. Max length is 255 characters.
+      &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the `Rollout` for user purposes. Max length is 255 characters.
       &quot;enqueueTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Rollout` was enqueued.
       &quot;etag&quot;: &quot;A String&quot;, # This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
       &quot;failureReason&quot;: &quot;A String&quot;, # Output only. Additional information about the rollout failure, if available.
@@ -740,12 +754,11 @@ Returns:
       },
       &quot;metadata&quot;: { # Metadata includes information associated with a `Rollout`. # Output only. Metadata contains information about the rollout.
         &quot;automation&quot;: { # AutomationRolloutMetadata contains Automation-related actions that were performed on a rollout. # Output only. AutomationRolloutMetadata contains the information about the interactions between Automation service and this rollout.
-          &quot;advanceAutomationRuns&quot;: [ # Output only. The IDs of the AutomationRuns initiated by an advance rollout rule.
+          &quot;advanceAutomationRuns&quot;: [ # Output only. The names of the AutomationRuns initiated by an advance rollout rule.
             &quot;A String&quot;,
           ],
-          &quot;currentRepairAutomationRun&quot;: &quot;A String&quot;, # Output only. The current AutomationRun repairing the rollout.
-          &quot;promoteAutomationRun&quot;: &quot;A String&quot;, # Output only. The ID of the AutomationRun initiated by a promote release rule.
-          &quot;repairAutomationRuns&quot;: [ # Output only. The IDs of the AutomationRuns initiated by a repair rollout rule.
+          &quot;promoteAutomationRun&quot;: &quot;A String&quot;, # Output only. The name of the AutomationRun initiated by a promote release rule.
+          &quot;repairAutomationRuns&quot;: [ # Output only. The names of the AutomationRuns initiated by a repair rollout rule.
             &quot;A String&quot;,
           ],
         },
@@ -763,7 +776,7 @@ Returns:
           },
         },
       },
-      &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `Rollout`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/releases/{release}/rollouts/{rollout}`. The `rollout` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
+      &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the `Rollout`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/releases/{release}/rollouts/{rollout}`. The `rollout` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
       &quot;phases&quot;: [ # Output only. The phases that represent the workflows of this `Rollout`.
         { # Phase represents a collection of jobs that are logically grouped together for a `Rollout`.
           &quot;childRolloutJobs&quot;: { # ChildRollouts job composition # Output only. ChildRollout job composition.
@@ -963,6 +976,9 @@ Args:
 
 { # RetryJobRequest is the request object used by `RetryJob`.
   &quot;jobId&quot;: &quot;A String&quot;, # Required. The job ID for the Job to retry.
+  &quot;overrideDeployPolicy&quot;: [ # Optional. Deploy policies to override. Format is `projects/{project}/locations/{location}/deployPolicies/{deployPolicy}`.
+    &quot;A String&quot;,
+  ],
   &quot;phaseId&quot;: &quot;A String&quot;, # Required. The phase ID the Job to retry belongs to.
 }
 

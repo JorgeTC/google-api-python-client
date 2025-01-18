@@ -150,10 +150,19 @@ Args:
           &quot;acceleratorCount&quot;: 42, # The number of accelerators to attach to the machine.
           &quot;acceleratorType&quot;: &quot;A String&quot;, # Immutable. The type of accelerator(s) that may be attached to the machine as per accelerator_count.
           &quot;machineType&quot;: &quot;A String&quot;, # Immutable. The type of the machine. See the [list of machine types supported for prediction](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types) See the [list of machine types supported for custom training](https://cloud.google.com/vertex-ai/docs/training/configure-compute#machine-types). For DeployedModel this field is optional, and the default value is `n1-standard-2`. For BatchPredictionJob or as part of WorkerPoolSpec this field is required.
+          &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
+            &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
+            &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
+            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+              &quot;A String&quot;,
+            ],
+          },
           &quot;tpuTopology&quot;: &quot;A String&quot;, # Immutable. The topology of the TPUs. Corresponds to the TPU topologies available from GKE. (Example: tpu_topology: &quot;2x2x1&quot;).
         },
         &quot;maxReplicaCount&quot;: 42, # Immutable. The maximum number of replicas this DeployedModel may be deployed on when the traffic against it increases. If the requested value is too large, the deployment will error, but if deployment succeeds then the ability to scale the model to that many replicas is guaranteed (barring service outages). If traffic against the DeployedModel increases beyond what its replicas at maximum may handle, a portion of the traffic will be dropped. If this value is not provided, will use min_replica_count as the default value. The value of this field impacts the charge against Vertex CPU and GPU quotas. Specifically, you will be charged for (max_replica_count * number of cores in the selected machine type) and (max_replica_count * number of GPUs per replica in the selected machine type).
         &quot;minReplicaCount&quot;: 42, # Required. Immutable. The minimum number of machine replicas this DeployedModel will be always deployed on. This value must be greater than or equal to 1. If traffic against the DeployedModel increases, it may dynamically be deployed onto more replicas, and as traffic decreases, some of these extra replicas may be freed.
+        &quot;requiredReplicaCount&quot;: 42, # Optional. Number of required available replicas for the deployment to succeed. This field is only needed when partial model deployment/mutation is desired. If set, the model deploy/mutate operation will succeed once available_replica_count reaches required_replica_count, and the rest of the replicas will be retried. If not set, the default required_replica_count will be min_replica_count.
+        &quot;spot&quot;: True or False, # Optional. If true, schedule the deployment workload on [spot VMs](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms).
       },
       &quot;deployedIndexAuthConfig&quot;: { # Used to set up the auth on the DeployedIndex&#x27;s private endpoint. # Optional. If set, the authentication is enabled for the private endpoint.
         &quot;authProvider&quot;: { # Configuration for an authentication provider, including support for [JSON Web Token (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32). # Defines the authentication provider that the DeployedIndex uses.
@@ -182,6 +191,12 @@ Args:
         ],
         &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the service attachment resource. Populated if private service connect is enabled.
       },
+      &quot;pscAutomationConfigs&quot;: [ # Optional. If set for PSC deployed index, PSC connection will be automatically created after deployment is done and the endpoint information is populated in private_endpoints.psc_automated_endpoints.
+        { # PSC config that is used to automatically create forwarding rule via ServiceConnectionMap.
+          &quot;network&quot;: &quot;A String&quot;, # Required. The full name of the Google Compute Engine [network](https://cloud.google.com/compute/docs/networks-and-firewalls#networks). [Format](https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert): `projects/{project}/global/networks/{network}`. Where {project} is a project number, as in &#x27;12345&#x27;, and {network} is network name.
+          &quot;projectId&quot;: &quot;A String&quot;, # Required. Project id used to create forwarding rule.
+        },
+      ],
       &quot;reservedIpRanges&quot;: [ # Optional. A list of reserved ip ranges under the VPC network that can be used for this DeployedIndex. If set, we will deploy the index within the provided ip ranges. Otherwise, the index might be deployed to any ip ranges under the provided VPC network. The value should be the name of the address (https://cloud.google.com/compute/docs/reference/rest/v1/addresses) Example: [&#x27;vertex-ai-ip-range&#x27;]. For more information about subnets and network IP ranges, please see https://cloud.google.com/vpc/docs/subnets#manually_created_subnet_ip_ranges.
         &quot;A String&quot;,
       ],
@@ -204,9 +219,12 @@ Args:
     &quot;projectAllowlist&quot;: [ # A list of Projects from which the forwarding rule will target the service attachment.
       &quot;A String&quot;,
     ],
+    &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the generated service attachment resource. This is only populated if the endpoint is deployed with PrivateServiceConnect.
   },
   &quot;publicEndpointDomainName&quot;: &quot;A String&quot;, # Output only. If public_endpoint_enabled is true, this field will be populated with the domain name to use for this index endpoint.
   &quot;publicEndpointEnabled&quot;: True or False, # Optional. If true, the deployed index will be accessible through public endpoint.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Timestamp when this IndexEndpoint was last updated. This timestamp is not updated when the endpoint&#x27;s DeployedIndexes are updated, e.g. due to updates of the original Indexes they are the deployments of.
 }
 
@@ -301,10 +319,19 @@ Args:
         &quot;acceleratorCount&quot;: 42, # The number of accelerators to attach to the machine.
         &quot;acceleratorType&quot;: &quot;A String&quot;, # Immutable. The type of accelerator(s) that may be attached to the machine as per accelerator_count.
         &quot;machineType&quot;: &quot;A String&quot;, # Immutable. The type of the machine. See the [list of machine types supported for prediction](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types) See the [list of machine types supported for custom training](https://cloud.google.com/vertex-ai/docs/training/configure-compute#machine-types). For DeployedModel this field is optional, and the default value is `n1-standard-2`. For BatchPredictionJob or as part of WorkerPoolSpec this field is required.
+        &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
+          &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
+          &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
+          &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+            &quot;A String&quot;,
+          ],
+        },
         &quot;tpuTopology&quot;: &quot;A String&quot;, # Immutable. The topology of the TPUs. Corresponds to the TPU topologies available from GKE. (Example: tpu_topology: &quot;2x2x1&quot;).
       },
       &quot;maxReplicaCount&quot;: 42, # Immutable. The maximum number of replicas this DeployedModel may be deployed on when the traffic against it increases. If the requested value is too large, the deployment will error, but if deployment succeeds then the ability to scale the model to that many replicas is guaranteed (barring service outages). If traffic against the DeployedModel increases beyond what its replicas at maximum may handle, a portion of the traffic will be dropped. If this value is not provided, will use min_replica_count as the default value. The value of this field impacts the charge against Vertex CPU and GPU quotas. Specifically, you will be charged for (max_replica_count * number of cores in the selected machine type) and (max_replica_count * number of GPUs per replica in the selected machine type).
       &quot;minReplicaCount&quot;: 42, # Required. Immutable. The minimum number of machine replicas this DeployedModel will be always deployed on. This value must be greater than or equal to 1. If traffic against the DeployedModel increases, it may dynamically be deployed onto more replicas, and as traffic decreases, some of these extra replicas may be freed.
+      &quot;requiredReplicaCount&quot;: 42, # Optional. Number of required available replicas for the deployment to succeed. This field is only needed when partial model deployment/mutation is desired. If set, the model deploy/mutate operation will succeed once available_replica_count reaches required_replica_count, and the rest of the replicas will be retried. If not set, the default required_replica_count will be min_replica_count.
+      &quot;spot&quot;: True or False, # Optional. If true, schedule the deployment workload on [spot VMs](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms).
     },
     &quot;deployedIndexAuthConfig&quot;: { # Used to set up the auth on the DeployedIndex&#x27;s private endpoint. # Optional. If set, the authentication is enabled for the private endpoint.
       &quot;authProvider&quot;: { # Configuration for an authentication provider, including support for [JSON Web Token (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32). # Defines the authentication provider that the DeployedIndex uses.
@@ -333,6 +360,12 @@ Args:
       ],
       &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the service attachment resource. Populated if private service connect is enabled.
     },
+    &quot;pscAutomationConfigs&quot;: [ # Optional. If set for PSC deployed index, PSC connection will be automatically created after deployment is done and the endpoint information is populated in private_endpoints.psc_automated_endpoints.
+      { # PSC config that is used to automatically create forwarding rule via ServiceConnectionMap.
+        &quot;network&quot;: &quot;A String&quot;, # Required. The full name of the Google Compute Engine [network](https://cloud.google.com/compute/docs/networks-and-firewalls#networks). [Format](https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert): `projects/{project}/global/networks/{network}`. Where {project} is a project number, as in &#x27;12345&#x27;, and {network} is network name.
+        &quot;projectId&quot;: &quot;A String&quot;, # Required. Project id used to create forwarding rule.
+      },
+    ],
     &quot;reservedIpRanges&quot;: [ # Optional. A list of reserved ip ranges under the VPC network that can be used for this DeployedIndex. If set, we will deploy the index within the provided ip ranges. Otherwise, the index might be deployed to any ip ranges under the provided VPC network. The value should be the name of the address (https://cloud.google.com/compute/docs/reference/rest/v1/addresses) Example: [&#x27;vertex-ai-ip-range&#x27;]. For more information about subnets and network IP ranges, please see https://cloud.google.com/vpc/docs/subnets#manually_created_subnet_ip_ranges.
       &quot;A String&quot;,
     ],
@@ -524,10 +557,19 @@ Returns:
           &quot;acceleratorCount&quot;: 42, # The number of accelerators to attach to the machine.
           &quot;acceleratorType&quot;: &quot;A String&quot;, # Immutable. The type of accelerator(s) that may be attached to the machine as per accelerator_count.
           &quot;machineType&quot;: &quot;A String&quot;, # Immutable. The type of the machine. See the [list of machine types supported for prediction](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types) See the [list of machine types supported for custom training](https://cloud.google.com/vertex-ai/docs/training/configure-compute#machine-types). For DeployedModel this field is optional, and the default value is `n1-standard-2`. For BatchPredictionJob or as part of WorkerPoolSpec this field is required.
+          &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
+            &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
+            &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
+            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+              &quot;A String&quot;,
+            ],
+          },
           &quot;tpuTopology&quot;: &quot;A String&quot;, # Immutable. The topology of the TPUs. Corresponds to the TPU topologies available from GKE. (Example: tpu_topology: &quot;2x2x1&quot;).
         },
         &quot;maxReplicaCount&quot;: 42, # Immutable. The maximum number of replicas this DeployedModel may be deployed on when the traffic against it increases. If the requested value is too large, the deployment will error, but if deployment succeeds then the ability to scale the model to that many replicas is guaranteed (barring service outages). If traffic against the DeployedModel increases beyond what its replicas at maximum may handle, a portion of the traffic will be dropped. If this value is not provided, will use min_replica_count as the default value. The value of this field impacts the charge against Vertex CPU and GPU quotas. Specifically, you will be charged for (max_replica_count * number of cores in the selected machine type) and (max_replica_count * number of GPUs per replica in the selected machine type).
         &quot;minReplicaCount&quot;: 42, # Required. Immutable. The minimum number of machine replicas this DeployedModel will be always deployed on. This value must be greater than or equal to 1. If traffic against the DeployedModel increases, it may dynamically be deployed onto more replicas, and as traffic decreases, some of these extra replicas may be freed.
+        &quot;requiredReplicaCount&quot;: 42, # Optional. Number of required available replicas for the deployment to succeed. This field is only needed when partial model deployment/mutation is desired. If set, the model deploy/mutate operation will succeed once available_replica_count reaches required_replica_count, and the rest of the replicas will be retried. If not set, the default required_replica_count will be min_replica_count.
+        &quot;spot&quot;: True or False, # Optional. If true, schedule the deployment workload on [spot VMs](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms).
       },
       &quot;deployedIndexAuthConfig&quot;: { # Used to set up the auth on the DeployedIndex&#x27;s private endpoint. # Optional. If set, the authentication is enabled for the private endpoint.
         &quot;authProvider&quot;: { # Configuration for an authentication provider, including support for [JSON Web Token (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32). # Defines the authentication provider that the DeployedIndex uses.
@@ -556,6 +598,12 @@ Returns:
         ],
         &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the service attachment resource. Populated if private service connect is enabled.
       },
+      &quot;pscAutomationConfigs&quot;: [ # Optional. If set for PSC deployed index, PSC connection will be automatically created after deployment is done and the endpoint information is populated in private_endpoints.psc_automated_endpoints.
+        { # PSC config that is used to automatically create forwarding rule via ServiceConnectionMap.
+          &quot;network&quot;: &quot;A String&quot;, # Required. The full name of the Google Compute Engine [network](https://cloud.google.com/compute/docs/networks-and-firewalls#networks). [Format](https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert): `projects/{project}/global/networks/{network}`. Where {project} is a project number, as in &#x27;12345&#x27;, and {network} is network name.
+          &quot;projectId&quot;: &quot;A String&quot;, # Required. Project id used to create forwarding rule.
+        },
+      ],
       &quot;reservedIpRanges&quot;: [ # Optional. A list of reserved ip ranges under the VPC network that can be used for this DeployedIndex. If set, we will deploy the index within the provided ip ranges. Otherwise, the index might be deployed to any ip ranges under the provided VPC network. The value should be the name of the address (https://cloud.google.com/compute/docs/reference/rest/v1/addresses) Example: [&#x27;vertex-ai-ip-range&#x27;]. For more information about subnets and network IP ranges, please see https://cloud.google.com/vpc/docs/subnets#manually_created_subnet_ip_ranges.
         &quot;A String&quot;,
       ],
@@ -578,9 +626,12 @@ Returns:
     &quot;projectAllowlist&quot;: [ # A list of Projects from which the forwarding rule will target the service attachment.
       &quot;A String&quot;,
     ],
+    &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the generated service attachment resource. This is only populated if the endpoint is deployed with PrivateServiceConnect.
   },
   &quot;publicEndpointDomainName&quot;: &quot;A String&quot;, # Output only. If public_endpoint_enabled is true, this field will be populated with the domain name to use for this index endpoint.
   &quot;publicEndpointEnabled&quot;: True or False, # Optional. If true, the deployed index will be accessible through public endpoint.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Timestamp when this IndexEndpoint was last updated. This timestamp is not updated when the endpoint&#x27;s DeployedIndexes are updated, e.g. due to updates of the original Indexes they are the deployments of.
 }</pre>
 </div>
@@ -625,10 +676,19 @@ Returns:
               &quot;acceleratorCount&quot;: 42, # The number of accelerators to attach to the machine.
               &quot;acceleratorType&quot;: &quot;A String&quot;, # Immutable. The type of accelerator(s) that may be attached to the machine as per accelerator_count.
               &quot;machineType&quot;: &quot;A String&quot;, # Immutable. The type of the machine. See the [list of machine types supported for prediction](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types) See the [list of machine types supported for custom training](https://cloud.google.com/vertex-ai/docs/training/configure-compute#machine-types). For DeployedModel this field is optional, and the default value is `n1-standard-2`. For BatchPredictionJob or as part of WorkerPoolSpec this field is required.
+              &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
+                &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
+                &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
+                &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+                  &quot;A String&quot;,
+                ],
+              },
               &quot;tpuTopology&quot;: &quot;A String&quot;, # Immutable. The topology of the TPUs. Corresponds to the TPU topologies available from GKE. (Example: tpu_topology: &quot;2x2x1&quot;).
             },
             &quot;maxReplicaCount&quot;: 42, # Immutable. The maximum number of replicas this DeployedModel may be deployed on when the traffic against it increases. If the requested value is too large, the deployment will error, but if deployment succeeds then the ability to scale the model to that many replicas is guaranteed (barring service outages). If traffic against the DeployedModel increases beyond what its replicas at maximum may handle, a portion of the traffic will be dropped. If this value is not provided, will use min_replica_count as the default value. The value of this field impacts the charge against Vertex CPU and GPU quotas. Specifically, you will be charged for (max_replica_count * number of cores in the selected machine type) and (max_replica_count * number of GPUs per replica in the selected machine type).
             &quot;minReplicaCount&quot;: 42, # Required. Immutable. The minimum number of machine replicas this DeployedModel will be always deployed on. This value must be greater than or equal to 1. If traffic against the DeployedModel increases, it may dynamically be deployed onto more replicas, and as traffic decreases, some of these extra replicas may be freed.
+            &quot;requiredReplicaCount&quot;: 42, # Optional. Number of required available replicas for the deployment to succeed. This field is only needed when partial model deployment/mutation is desired. If set, the model deploy/mutate operation will succeed once available_replica_count reaches required_replica_count, and the rest of the replicas will be retried. If not set, the default required_replica_count will be min_replica_count.
+            &quot;spot&quot;: True or False, # Optional. If true, schedule the deployment workload on [spot VMs](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms).
           },
           &quot;deployedIndexAuthConfig&quot;: { # Used to set up the auth on the DeployedIndex&#x27;s private endpoint. # Optional. If set, the authentication is enabled for the private endpoint.
             &quot;authProvider&quot;: { # Configuration for an authentication provider, including support for [JSON Web Token (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32). # Defines the authentication provider that the DeployedIndex uses.
@@ -657,6 +717,12 @@ Returns:
             ],
             &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the service attachment resource. Populated if private service connect is enabled.
           },
+          &quot;pscAutomationConfigs&quot;: [ # Optional. If set for PSC deployed index, PSC connection will be automatically created after deployment is done and the endpoint information is populated in private_endpoints.psc_automated_endpoints.
+            { # PSC config that is used to automatically create forwarding rule via ServiceConnectionMap.
+              &quot;network&quot;: &quot;A String&quot;, # Required. The full name of the Google Compute Engine [network](https://cloud.google.com/compute/docs/networks-and-firewalls#networks). [Format](https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert): `projects/{project}/global/networks/{network}`. Where {project} is a project number, as in &#x27;12345&#x27;, and {network} is network name.
+              &quot;projectId&quot;: &quot;A String&quot;, # Required. Project id used to create forwarding rule.
+            },
+          ],
           &quot;reservedIpRanges&quot;: [ # Optional. A list of reserved ip ranges under the VPC network that can be used for this DeployedIndex. If set, we will deploy the index within the provided ip ranges. Otherwise, the index might be deployed to any ip ranges under the provided VPC network. The value should be the name of the address (https://cloud.google.com/compute/docs/reference/rest/v1/addresses) Example: [&#x27;vertex-ai-ip-range&#x27;]. For more information about subnets and network IP ranges, please see https://cloud.google.com/vpc/docs/subnets#manually_created_subnet_ip_ranges.
             &quot;A String&quot;,
           ],
@@ -679,9 +745,12 @@ Returns:
         &quot;projectAllowlist&quot;: [ # A list of Projects from which the forwarding rule will target the service attachment.
           &quot;A String&quot;,
         ],
+        &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the generated service attachment resource. This is only populated if the endpoint is deployed with PrivateServiceConnect.
       },
       &quot;publicEndpointDomainName&quot;: &quot;A String&quot;, # Output only. If public_endpoint_enabled is true, this field will be populated with the domain name to use for this index endpoint.
       &quot;publicEndpointEnabled&quot;: True or False, # Optional. If true, the deployed index will be accessible through public endpoint.
+      &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+      &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Timestamp when this IndexEndpoint was last updated. This timestamp is not updated when the endpoint&#x27;s DeployedIndexes are updated, e.g. due to updates of the original Indexes they are the deployments of.
     },
   ],
@@ -729,10 +798,19 @@ Args:
       &quot;acceleratorCount&quot;: 42, # The number of accelerators to attach to the machine.
       &quot;acceleratorType&quot;: &quot;A String&quot;, # Immutable. The type of accelerator(s) that may be attached to the machine as per accelerator_count.
       &quot;machineType&quot;: &quot;A String&quot;, # Immutable. The type of the machine. See the [list of machine types supported for prediction](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types) See the [list of machine types supported for custom training](https://cloud.google.com/vertex-ai/docs/training/configure-compute#machine-types). For DeployedModel this field is optional, and the default value is `n1-standard-2`. For BatchPredictionJob or as part of WorkerPoolSpec this field is required.
+      &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
+        &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
+        &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
+        &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+          &quot;A String&quot;,
+        ],
+      },
       &quot;tpuTopology&quot;: &quot;A String&quot;, # Immutable. The topology of the TPUs. Corresponds to the TPU topologies available from GKE. (Example: tpu_topology: &quot;2x2x1&quot;).
     },
     &quot;maxReplicaCount&quot;: 42, # Immutable. The maximum number of replicas this DeployedModel may be deployed on when the traffic against it increases. If the requested value is too large, the deployment will error, but if deployment succeeds then the ability to scale the model to that many replicas is guaranteed (barring service outages). If traffic against the DeployedModel increases beyond what its replicas at maximum may handle, a portion of the traffic will be dropped. If this value is not provided, will use min_replica_count as the default value. The value of this field impacts the charge against Vertex CPU and GPU quotas. Specifically, you will be charged for (max_replica_count * number of cores in the selected machine type) and (max_replica_count * number of GPUs per replica in the selected machine type).
     &quot;minReplicaCount&quot;: 42, # Required. Immutable. The minimum number of machine replicas this DeployedModel will be always deployed on. This value must be greater than or equal to 1. If traffic against the DeployedModel increases, it may dynamically be deployed onto more replicas, and as traffic decreases, some of these extra replicas may be freed.
+    &quot;requiredReplicaCount&quot;: 42, # Optional. Number of required available replicas for the deployment to succeed. This field is only needed when partial model deployment/mutation is desired. If set, the model deploy/mutate operation will succeed once available_replica_count reaches required_replica_count, and the rest of the replicas will be retried. If not set, the default required_replica_count will be min_replica_count.
+    &quot;spot&quot;: True or False, # Optional. If true, schedule the deployment workload on [spot VMs](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms).
   },
   &quot;deployedIndexAuthConfig&quot;: { # Used to set up the auth on the DeployedIndex&#x27;s private endpoint. # Optional. If set, the authentication is enabled for the private endpoint.
     &quot;authProvider&quot;: { # Configuration for an authentication provider, including support for [JSON Web Token (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32). # Defines the authentication provider that the DeployedIndex uses.
@@ -761,6 +839,12 @@ Args:
     ],
     &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the service attachment resource. Populated if private service connect is enabled.
   },
+  &quot;pscAutomationConfigs&quot;: [ # Optional. If set for PSC deployed index, PSC connection will be automatically created after deployment is done and the endpoint information is populated in private_endpoints.psc_automated_endpoints.
+    { # PSC config that is used to automatically create forwarding rule via ServiceConnectionMap.
+      &quot;network&quot;: &quot;A String&quot;, # Required. The full name of the Google Compute Engine [network](https://cloud.google.com/compute/docs/networks-and-firewalls#networks). [Format](https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert): `projects/{project}/global/networks/{network}`. Where {project} is a project number, as in &#x27;12345&#x27;, and {network} is network name.
+      &quot;projectId&quot;: &quot;A String&quot;, # Required. Project id used to create forwarding rule.
+    },
+  ],
   &quot;reservedIpRanges&quot;: [ # Optional. A list of reserved ip ranges under the VPC network that can be used for this DeployedIndex. If set, we will deploy the index within the provided ip ranges. Otherwise, the index might be deployed to any ip ranges under the provided VPC network. The value should be the name of the address (https://cloud.google.com/compute/docs/reference/rest/v1/addresses) Example: [&#x27;vertex-ai-ip-range&#x27;]. For more information about subnets and network IP ranges, please see https://cloud.google.com/vpc/docs/subnets#manually_created_subnet_ip_ranges.
     &quot;A String&quot;,
   ],
@@ -824,10 +908,19 @@ Args:
           &quot;acceleratorCount&quot;: 42, # The number of accelerators to attach to the machine.
           &quot;acceleratorType&quot;: &quot;A String&quot;, # Immutable. The type of accelerator(s) that may be attached to the machine as per accelerator_count.
           &quot;machineType&quot;: &quot;A String&quot;, # Immutable. The type of the machine. See the [list of machine types supported for prediction](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types) See the [list of machine types supported for custom training](https://cloud.google.com/vertex-ai/docs/training/configure-compute#machine-types). For DeployedModel this field is optional, and the default value is `n1-standard-2`. For BatchPredictionJob or as part of WorkerPoolSpec this field is required.
+          &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
+            &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
+            &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
+            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+              &quot;A String&quot;,
+            ],
+          },
           &quot;tpuTopology&quot;: &quot;A String&quot;, # Immutable. The topology of the TPUs. Corresponds to the TPU topologies available from GKE. (Example: tpu_topology: &quot;2x2x1&quot;).
         },
         &quot;maxReplicaCount&quot;: 42, # Immutable. The maximum number of replicas this DeployedModel may be deployed on when the traffic against it increases. If the requested value is too large, the deployment will error, but if deployment succeeds then the ability to scale the model to that many replicas is guaranteed (barring service outages). If traffic against the DeployedModel increases beyond what its replicas at maximum may handle, a portion of the traffic will be dropped. If this value is not provided, will use min_replica_count as the default value. The value of this field impacts the charge against Vertex CPU and GPU quotas. Specifically, you will be charged for (max_replica_count * number of cores in the selected machine type) and (max_replica_count * number of GPUs per replica in the selected machine type).
         &quot;minReplicaCount&quot;: 42, # Required. Immutable. The minimum number of machine replicas this DeployedModel will be always deployed on. This value must be greater than or equal to 1. If traffic against the DeployedModel increases, it may dynamically be deployed onto more replicas, and as traffic decreases, some of these extra replicas may be freed.
+        &quot;requiredReplicaCount&quot;: 42, # Optional. Number of required available replicas for the deployment to succeed. This field is only needed when partial model deployment/mutation is desired. If set, the model deploy/mutate operation will succeed once available_replica_count reaches required_replica_count, and the rest of the replicas will be retried. If not set, the default required_replica_count will be min_replica_count.
+        &quot;spot&quot;: True or False, # Optional. If true, schedule the deployment workload on [spot VMs](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms).
       },
       &quot;deployedIndexAuthConfig&quot;: { # Used to set up the auth on the DeployedIndex&#x27;s private endpoint. # Optional. If set, the authentication is enabled for the private endpoint.
         &quot;authProvider&quot;: { # Configuration for an authentication provider, including support for [JSON Web Token (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32). # Defines the authentication provider that the DeployedIndex uses.
@@ -856,6 +949,12 @@ Args:
         ],
         &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the service attachment resource. Populated if private service connect is enabled.
       },
+      &quot;pscAutomationConfigs&quot;: [ # Optional. If set for PSC deployed index, PSC connection will be automatically created after deployment is done and the endpoint information is populated in private_endpoints.psc_automated_endpoints.
+        { # PSC config that is used to automatically create forwarding rule via ServiceConnectionMap.
+          &quot;network&quot;: &quot;A String&quot;, # Required. The full name of the Google Compute Engine [network](https://cloud.google.com/compute/docs/networks-and-firewalls#networks). [Format](https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert): `projects/{project}/global/networks/{network}`. Where {project} is a project number, as in &#x27;12345&#x27;, and {network} is network name.
+          &quot;projectId&quot;: &quot;A String&quot;, # Required. Project id used to create forwarding rule.
+        },
+      ],
       &quot;reservedIpRanges&quot;: [ # Optional. A list of reserved ip ranges under the VPC network that can be used for this DeployedIndex. If set, we will deploy the index within the provided ip ranges. Otherwise, the index might be deployed to any ip ranges under the provided VPC network. The value should be the name of the address (https://cloud.google.com/compute/docs/reference/rest/v1/addresses) Example: [&#x27;vertex-ai-ip-range&#x27;]. For more information about subnets and network IP ranges, please see https://cloud.google.com/vpc/docs/subnets#manually_created_subnet_ip_ranges.
         &quot;A String&quot;,
       ],
@@ -878,9 +977,12 @@ Args:
     &quot;projectAllowlist&quot;: [ # A list of Projects from which the forwarding rule will target the service attachment.
       &quot;A String&quot;,
     ],
+    &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the generated service attachment resource. This is only populated if the endpoint is deployed with PrivateServiceConnect.
   },
   &quot;publicEndpointDomainName&quot;: &quot;A String&quot;, # Output only. If public_endpoint_enabled is true, this field will be populated with the domain name to use for this index endpoint.
   &quot;publicEndpointEnabled&quot;: True or False, # Optional. If true, the deployed index will be accessible through public endpoint.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Timestamp when this IndexEndpoint was last updated. This timestamp is not updated when the endpoint&#x27;s DeployedIndexes are updated, e.g. due to updates of the original Indexes they are the deployments of.
 }
 
@@ -913,10 +1015,19 @@ Returns:
           &quot;acceleratorCount&quot;: 42, # The number of accelerators to attach to the machine.
           &quot;acceleratorType&quot;: &quot;A String&quot;, # Immutable. The type of accelerator(s) that may be attached to the machine as per accelerator_count.
           &quot;machineType&quot;: &quot;A String&quot;, # Immutable. The type of the machine. See the [list of machine types supported for prediction](https://cloud.google.com/vertex-ai/docs/predictions/configure-compute#machine-types) See the [list of machine types supported for custom training](https://cloud.google.com/vertex-ai/docs/training/configure-compute#machine-types). For DeployedModel this field is optional, and the default value is `n1-standard-2`. For BatchPredictionJob or as part of WorkerPoolSpec this field is required.
+          &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
+            &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
+            &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
+            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+              &quot;A String&quot;,
+            ],
+          },
           &quot;tpuTopology&quot;: &quot;A String&quot;, # Immutable. The topology of the TPUs. Corresponds to the TPU topologies available from GKE. (Example: tpu_topology: &quot;2x2x1&quot;).
         },
         &quot;maxReplicaCount&quot;: 42, # Immutable. The maximum number of replicas this DeployedModel may be deployed on when the traffic against it increases. If the requested value is too large, the deployment will error, but if deployment succeeds then the ability to scale the model to that many replicas is guaranteed (barring service outages). If traffic against the DeployedModel increases beyond what its replicas at maximum may handle, a portion of the traffic will be dropped. If this value is not provided, will use min_replica_count as the default value. The value of this field impacts the charge against Vertex CPU and GPU quotas. Specifically, you will be charged for (max_replica_count * number of cores in the selected machine type) and (max_replica_count * number of GPUs per replica in the selected machine type).
         &quot;minReplicaCount&quot;: 42, # Required. Immutable. The minimum number of machine replicas this DeployedModel will be always deployed on. This value must be greater than or equal to 1. If traffic against the DeployedModel increases, it may dynamically be deployed onto more replicas, and as traffic decreases, some of these extra replicas may be freed.
+        &quot;requiredReplicaCount&quot;: 42, # Optional. Number of required available replicas for the deployment to succeed. This field is only needed when partial model deployment/mutation is desired. If set, the model deploy/mutate operation will succeed once available_replica_count reaches required_replica_count, and the rest of the replicas will be retried. If not set, the default required_replica_count will be min_replica_count.
+        &quot;spot&quot;: True or False, # Optional. If true, schedule the deployment workload on [spot VMs](https://cloud.google.com/kubernetes-engine/docs/concepts/spot-vms).
       },
       &quot;deployedIndexAuthConfig&quot;: { # Used to set up the auth on the DeployedIndex&#x27;s private endpoint. # Optional. If set, the authentication is enabled for the private endpoint.
         &quot;authProvider&quot;: { # Configuration for an authentication provider, including support for [JSON Web Token (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32). # Defines the authentication provider that the DeployedIndex uses.
@@ -945,6 +1056,12 @@ Returns:
         ],
         &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the service attachment resource. Populated if private service connect is enabled.
       },
+      &quot;pscAutomationConfigs&quot;: [ # Optional. If set for PSC deployed index, PSC connection will be automatically created after deployment is done and the endpoint information is populated in private_endpoints.psc_automated_endpoints.
+        { # PSC config that is used to automatically create forwarding rule via ServiceConnectionMap.
+          &quot;network&quot;: &quot;A String&quot;, # Required. The full name of the Google Compute Engine [network](https://cloud.google.com/compute/docs/networks-and-firewalls#networks). [Format](https://cloud.google.com/compute/docs/reference/rest/v1/networks/insert): `projects/{project}/global/networks/{network}`. Where {project} is a project number, as in &#x27;12345&#x27;, and {network} is network name.
+          &quot;projectId&quot;: &quot;A String&quot;, # Required. Project id used to create forwarding rule.
+        },
+      ],
       &quot;reservedIpRanges&quot;: [ # Optional. A list of reserved ip ranges under the VPC network that can be used for this DeployedIndex. If set, we will deploy the index within the provided ip ranges. Otherwise, the index might be deployed to any ip ranges under the provided VPC network. The value should be the name of the address (https://cloud.google.com/compute/docs/reference/rest/v1/addresses) Example: [&#x27;vertex-ai-ip-range&#x27;]. For more information about subnets and network IP ranges, please see https://cloud.google.com/vpc/docs/subnets#manually_created_subnet_ip_ranges.
         &quot;A String&quot;,
       ],
@@ -967,9 +1084,12 @@ Returns:
     &quot;projectAllowlist&quot;: [ # A list of Projects from which the forwarding rule will target the service attachment.
       &quot;A String&quot;,
     ],
+    &quot;serviceAttachment&quot;: &quot;A String&quot;, # Output only. The name of the generated service attachment resource. This is only populated if the endpoint is deployed with PrivateServiceConnect.
   },
   &quot;publicEndpointDomainName&quot;: &quot;A String&quot;, # Output only. If public_endpoint_enabled is true, this field will be populated with the domain name to use for this index endpoint.
   &quot;publicEndpointEnabled&quot;: True or False, # Optional. If true, the deployed index will be accessible through public endpoint.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Timestamp when this IndexEndpoint was last updated. This timestamp is not updated when the endpoint&#x27;s DeployedIndexes are updated, e.g. due to updates of the original Indexes they are the deployments of.
 }</pre>
 </div>

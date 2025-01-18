@@ -163,7 +163,8 @@ Args:
   },
   &quot;runtimeAuthConfig&quot;: { # Auth configuration to run the extension. # Optional. Auth config provided at runtime to override the default value in Extension.manifest.auth_config. The AuthConfig.auth_type should match the value in Extension.manifest.auth_config.
     &quot;apiKeyConfig&quot;: { # Config for authentication with API key. # Config for API key auth.
-      &quot;apiKeySecret&quot;: &quot;A String&quot;, # Required. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+      &quot;apiKeySecret&quot;: &quot;A String&quot;, # Optional. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If both `api_key_secret` and `api_key_string` are specified, this field takes precedence over `api_key_string`. - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+      &quot;apiKeyString&quot;: &quot;A String&quot;, # Optional. The API key to be used in the request directly.
       &quot;httpElementLocation&quot;: &quot;A String&quot;, # Required. The location of the API key.
       &quot;name&quot;: &quot;A String&quot;, # Required. The parameter name of the API key. E.g. If the API request is &quot;https://example.com/act?api_key=&quot;, &quot;api_key&quot; would be the parameter name.
     },
@@ -219,13 +220,16 @@ Returns:
   &quot;etag&quot;: &quot;A String&quot;, # Optional. Used to perform consistent read-modify-write updates. If not set, a blind &quot;overwrite&quot; update happens.
   &quot;extensionOperations&quot;: [ # Output only. Supported operations.
     { # Operation of an extension.
-      &quot;functionDeclaration&quot;: { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name and parameters. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client. # Output only. Structured representation of a function declaration as defined by the OpenAPI Spec.
+      &quot;functionDeclaration&quot;: { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name, description, parameters and response type. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client. # Output only. Structured representation of a function declaration as defined by the OpenAPI Spec.
         &quot;description&quot;: &quot;A String&quot;, # Optional. Description and purpose of the function. Model uses it to decide how and whether to call the function.
         &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots and dashes, with a maximum length of 64.
-        &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+        &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+          &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+            # Object with schema name: GoogleCloudAiplatformV1beta1Schema
+          ],
           &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
           &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-          &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+          &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
             &quot;A String&quot;,
           ],
           &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -244,16 +248,22 @@ Returns:
           &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
             &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1beta1Schema
           },
+          &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+            &quot;A String&quot;,
+          ],
           &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
             &quot;A String&quot;,
           ],
           &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
           &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
         },
-        &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+        &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+          &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+            # Object with schema name: GoogleCloudAiplatformV1beta1Schema
+          ],
           &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
           &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-          &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+          &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
             &quot;A String&quot;,
           ],
           &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -272,6 +282,9 @@ Returns:
           &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
             &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1beta1Schema
           },
+          &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+            &quot;A String&quot;,
+          ],
           &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
             &quot;A String&quot;,
           ],
@@ -289,7 +302,8 @@ Returns:
     },
     &quot;authConfig&quot;: { # Auth configuration to run the extension. # Required. Immutable. Type of auth supported by this extension.
       &quot;apiKeyConfig&quot;: { # Config for authentication with API key. # Config for API key auth.
-        &quot;apiKeySecret&quot;: &quot;A String&quot;, # Required. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+        &quot;apiKeySecret&quot;: &quot;A String&quot;, # Optional. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If both `api_key_secret` and `api_key_string` are specified, this field takes precedence over `api_key_string`. - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+        &quot;apiKeyString&quot;: &quot;A String&quot;, # Optional. The API key to be used in the request directly.
         &quot;httpElementLocation&quot;: &quot;A String&quot;, # Required. The location of the API key.
         &quot;name&quot;: &quot;A String&quot;, # Required. The parameter name of the API key. E.g. If the API request is &quot;https://example.com/act?api_key=&quot;, &quot;api_key&quot; would be the parameter name.
       },
@@ -309,11 +323,11 @@ Returns:
         &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used to generate an OpenID Connect (OIDC)-compatible JWT token signed by the Google OIDC Provider (accounts.google.com) for extension endpoint (https://cloud.google.com/iam/docs/create-short-lived-credentials-direct#sa-credentials-oidc). - The audience for the token will be set to the URL in the server url defined in the OpenApi spec. - If the service account is provided, the service account should grant `iam.serviceAccounts.getOpenIdToken` permission to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents).
       },
     },
-    &quot;description&quot;: &quot;A String&quot;, # Required. The natural language description shown to the LLM. It should describe the usage of the extension, and is essential for the LLM to perform reasoning.
+    &quot;description&quot;: &quot;A String&quot;, # Required. The natural language description shown to the LLM. It should describe the usage of the extension, and is essential for the LLM to perform reasoning. e.g., if the extension is a data store, you can let the LLM know what data it contains.
     &quot;name&quot;: &quot;A String&quot;, # Required. Extension name shown to the LLM. The name can be up to 128 characters long.
   },
   &quot;name&quot;: &quot;A String&quot;, # Identifier. The resource name of the Extension.
-  &quot;privateServiceConnectConfig&quot;: { # PrivateExtensionConfig configuration for the extension. # Optional. The PrivateServiceConnect config for the extension. If specified, the service endpoints associated with the Extension should be registered with private network access in the provided Service Directory (https://cloud.google.com/service-directory/docs/configuring-private-network-access). If the service contains more than one endpoint with a network, the service will arbitrarilty choose one of the endpoints to use for extension execution.
+  &quot;privateServiceConnectConfig&quot;: { # PrivateExtensionConfig configuration for the extension. # Optional. The PrivateServiceConnect config for the extension. If specified, the service endpoints associated with the Extension should be [registered with private network access in the provided Service Directory](https://cloud.google.com/service-directory/docs/configuring-private-network-access). If the service contains more than one endpoint with a network, the service will arbitrarilty choose one of the endpoints to use for extension execution.
     &quot;serviceDirectory&quot;: &quot;A String&quot;, # Required. The Service Directory resource name in which the service endpoints associated to the extension are registered. Format: `projects/{project_id}/locations/{location_id}/namespaces/{namespace_id}/services/{service_id}` - The Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) should be granted `servicedirectory.viewer` and `servicedirectory.pscAuthorizedService` roles on the resource.
   },
   &quot;runtimeConfig&quot;: { # Runtime configuration to run the extension. # Optional. Runtime config controlling the runtime behavior of this Extension.
@@ -324,11 +338,13 @@ Returns:
     &quot;defaultParams&quot;: { # Optional. Default parameters that will be set for all the execution of this extension. If specified, the parameter values can be overridden by values in [[ExecuteExtensionRequest.operation_params]] at request time. The struct should be in a form of map with param name as the key and actual param value as the value. E.g. If this operation requires a param &quot;name&quot; to be set to &quot;abc&quot;. you can set this to something like {&quot;name&quot;: &quot;abc&quot;}.
       &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
     },
-    &quot;vertexAiSearchRuntimeConfig&quot;: { # Runtime configuration for Vertext AI Search extension.
-      &quot;appId&quot;: &quot;A String&quot;, # Vertex AI Search App ID. This is used to construct the search request. By setting this app_id, API will construct the serving config which is required to call search API for the user. The app_id and serving_config_name cannot both be empty at the same time.
-      &quot;servingConfigName&quot;: &quot;A String&quot;, # [Deprecated] Please use app_id instead. Vertex AI Search serving config name. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/servingConfigs/{serving_config}`
+    &quot;vertexAiSearchRuntimeConfig&quot;: { # Runtime configuration for Vertex AI Search extension.
+      &quot;engineId&quot;: &quot;A String&quot;, # Optional. Vertex AI Search engine ID. This is used to construct the search request. By setting this engine_id, API will construct the serving config using the default value to call search API for the user. The engine_id and serving_config_name cannot both be empty at the same time.
+      &quot;servingConfigName&quot;: &quot;A String&quot;, # Optional. Vertex AI Search serving config name. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/servingConfigs/{serving_config}`
     },
   },
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;toolUseExamples&quot;: [ # Optional. Examples to illustrate the usage of the extension as a tool.
     { # A single example of the tool usage.
       &quot;displayName&quot;: &quot;A String&quot;, # Required. The display name for example.
@@ -367,13 +383,16 @@ Args:
   &quot;etag&quot;: &quot;A String&quot;, # Optional. Used to perform consistent read-modify-write updates. If not set, a blind &quot;overwrite&quot; update happens.
   &quot;extensionOperations&quot;: [ # Output only. Supported operations.
     { # Operation of an extension.
-      &quot;functionDeclaration&quot;: { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name and parameters. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client. # Output only. Structured representation of a function declaration as defined by the OpenAPI Spec.
+      &quot;functionDeclaration&quot;: { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name, description, parameters and response type. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client. # Output only. Structured representation of a function declaration as defined by the OpenAPI Spec.
         &quot;description&quot;: &quot;A String&quot;, # Optional. Description and purpose of the function. Model uses it to decide how and whether to call the function.
         &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots and dashes, with a maximum length of 64.
-        &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+        &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+          &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+            # Object with schema name: GoogleCloudAiplatformV1beta1Schema
+          ],
           &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
           &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-          &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+          &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
             &quot;A String&quot;,
           ],
           &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -392,16 +411,22 @@ Args:
           &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
             &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1beta1Schema
           },
+          &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+            &quot;A String&quot;,
+          ],
           &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
             &quot;A String&quot;,
           ],
           &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
           &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
         },
-        &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+        &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+          &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+            # Object with schema name: GoogleCloudAiplatformV1beta1Schema
+          ],
           &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
           &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-          &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+          &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
             &quot;A String&quot;,
           ],
           &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -420,6 +445,9 @@ Args:
           &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
             &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1beta1Schema
           },
+          &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+            &quot;A String&quot;,
+          ],
           &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
             &quot;A String&quot;,
           ],
@@ -437,7 +465,8 @@ Args:
     },
     &quot;authConfig&quot;: { # Auth configuration to run the extension. # Required. Immutable. Type of auth supported by this extension.
       &quot;apiKeyConfig&quot;: { # Config for authentication with API key. # Config for API key auth.
-        &quot;apiKeySecret&quot;: &quot;A String&quot;, # Required. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+        &quot;apiKeySecret&quot;: &quot;A String&quot;, # Optional. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If both `api_key_secret` and `api_key_string` are specified, this field takes precedence over `api_key_string`. - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+        &quot;apiKeyString&quot;: &quot;A String&quot;, # Optional. The API key to be used in the request directly.
         &quot;httpElementLocation&quot;: &quot;A String&quot;, # Required. The location of the API key.
         &quot;name&quot;: &quot;A String&quot;, # Required. The parameter name of the API key. E.g. If the API request is &quot;https://example.com/act?api_key=&quot;, &quot;api_key&quot; would be the parameter name.
       },
@@ -457,11 +486,11 @@ Args:
         &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used to generate an OpenID Connect (OIDC)-compatible JWT token signed by the Google OIDC Provider (accounts.google.com) for extension endpoint (https://cloud.google.com/iam/docs/create-short-lived-credentials-direct#sa-credentials-oidc). - The audience for the token will be set to the URL in the server url defined in the OpenApi spec. - If the service account is provided, the service account should grant `iam.serviceAccounts.getOpenIdToken` permission to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents).
       },
     },
-    &quot;description&quot;: &quot;A String&quot;, # Required. The natural language description shown to the LLM. It should describe the usage of the extension, and is essential for the LLM to perform reasoning.
+    &quot;description&quot;: &quot;A String&quot;, # Required. The natural language description shown to the LLM. It should describe the usage of the extension, and is essential for the LLM to perform reasoning. e.g., if the extension is a data store, you can let the LLM know what data it contains.
     &quot;name&quot;: &quot;A String&quot;, # Required. Extension name shown to the LLM. The name can be up to 128 characters long.
   },
   &quot;name&quot;: &quot;A String&quot;, # Identifier. The resource name of the Extension.
-  &quot;privateServiceConnectConfig&quot;: { # PrivateExtensionConfig configuration for the extension. # Optional. The PrivateServiceConnect config for the extension. If specified, the service endpoints associated with the Extension should be registered with private network access in the provided Service Directory (https://cloud.google.com/service-directory/docs/configuring-private-network-access). If the service contains more than one endpoint with a network, the service will arbitrarilty choose one of the endpoints to use for extension execution.
+  &quot;privateServiceConnectConfig&quot;: { # PrivateExtensionConfig configuration for the extension. # Optional. The PrivateServiceConnect config for the extension. If specified, the service endpoints associated with the Extension should be [registered with private network access in the provided Service Directory](https://cloud.google.com/service-directory/docs/configuring-private-network-access). If the service contains more than one endpoint with a network, the service will arbitrarilty choose one of the endpoints to use for extension execution.
     &quot;serviceDirectory&quot;: &quot;A String&quot;, # Required. The Service Directory resource name in which the service endpoints associated to the extension are registered. Format: `projects/{project_id}/locations/{location_id}/namespaces/{namespace_id}/services/{service_id}` - The Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) should be granted `servicedirectory.viewer` and `servicedirectory.pscAuthorizedService` roles on the resource.
   },
   &quot;runtimeConfig&quot;: { # Runtime configuration to run the extension. # Optional. Runtime config controlling the runtime behavior of this Extension.
@@ -472,11 +501,13 @@ Args:
     &quot;defaultParams&quot;: { # Optional. Default parameters that will be set for all the execution of this extension. If specified, the parameter values can be overridden by values in [[ExecuteExtensionRequest.operation_params]] at request time. The struct should be in a form of map with param name as the key and actual param value as the value. E.g. If this operation requires a param &quot;name&quot; to be set to &quot;abc&quot;. you can set this to something like {&quot;name&quot;: &quot;abc&quot;}.
       &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
     },
-    &quot;vertexAiSearchRuntimeConfig&quot;: { # Runtime configuration for Vertext AI Search extension.
-      &quot;appId&quot;: &quot;A String&quot;, # Vertex AI Search App ID. This is used to construct the search request. By setting this app_id, API will construct the serving config which is required to call search API for the user. The app_id and serving_config_name cannot both be empty at the same time.
-      &quot;servingConfigName&quot;: &quot;A String&quot;, # [Deprecated] Please use app_id instead. Vertex AI Search serving config name. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/servingConfigs/{serving_config}`
+    &quot;vertexAiSearchRuntimeConfig&quot;: { # Runtime configuration for Vertex AI Search extension.
+      &quot;engineId&quot;: &quot;A String&quot;, # Optional. Vertex AI Search engine ID. This is used to construct the search request. By setting this engine_id, API will construct the serving config using the default value to call search API for the user. The engine_id and serving_config_name cannot both be empty at the same time.
+      &quot;servingConfigName&quot;: &quot;A String&quot;, # Optional. Vertex AI Search serving config name. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/servingConfigs/{serving_config}`
     },
   },
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;toolUseExamples&quot;: [ # Optional. Examples to illustrate the usage of the extension as a tool.
     { # A single example of the tool usage.
       &quot;displayName&quot;: &quot;A String&quot;, # Required. The display name for example.
@@ -554,13 +585,16 @@ Returns:
       &quot;etag&quot;: &quot;A String&quot;, # Optional. Used to perform consistent read-modify-write updates. If not set, a blind &quot;overwrite&quot; update happens.
       &quot;extensionOperations&quot;: [ # Output only. Supported operations.
         { # Operation of an extension.
-          &quot;functionDeclaration&quot;: { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name and parameters. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client. # Output only. Structured representation of a function declaration as defined by the OpenAPI Spec.
+          &quot;functionDeclaration&quot;: { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name, description, parameters and response type. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client. # Output only. Structured representation of a function declaration as defined by the OpenAPI Spec.
             &quot;description&quot;: &quot;A String&quot;, # Optional. Description and purpose of the function. Model uses it to decide how and whether to call the function.
             &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots and dashes, with a maximum length of 64.
-            &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+            &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+              &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+                # Object with schema name: GoogleCloudAiplatformV1beta1Schema
+              ],
               &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
               &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-              &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+              &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
                 &quot;A String&quot;,
               ],
               &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -579,16 +613,22 @@ Returns:
               &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
                 &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1beta1Schema
               },
+              &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+                &quot;A String&quot;,
+              ],
               &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
                 &quot;A String&quot;,
               ],
               &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
               &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
             },
-            &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+            &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+              &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+                # Object with schema name: GoogleCloudAiplatformV1beta1Schema
+              ],
               &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
               &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-              &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+              &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
                 &quot;A String&quot;,
               ],
               &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -607,6 +647,9 @@ Returns:
               &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
                 &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1beta1Schema
               },
+              &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+                &quot;A String&quot;,
+              ],
               &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
                 &quot;A String&quot;,
               ],
@@ -624,7 +667,8 @@ Returns:
         },
         &quot;authConfig&quot;: { # Auth configuration to run the extension. # Required. Immutable. Type of auth supported by this extension.
           &quot;apiKeyConfig&quot;: { # Config for authentication with API key. # Config for API key auth.
-            &quot;apiKeySecret&quot;: &quot;A String&quot;, # Required. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+            &quot;apiKeySecret&quot;: &quot;A String&quot;, # Optional. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If both `api_key_secret` and `api_key_string` are specified, this field takes precedence over `api_key_string`. - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+            &quot;apiKeyString&quot;: &quot;A String&quot;, # Optional. The API key to be used in the request directly.
             &quot;httpElementLocation&quot;: &quot;A String&quot;, # Required. The location of the API key.
             &quot;name&quot;: &quot;A String&quot;, # Required. The parameter name of the API key. E.g. If the API request is &quot;https://example.com/act?api_key=&quot;, &quot;api_key&quot; would be the parameter name.
           },
@@ -644,11 +688,11 @@ Returns:
             &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used to generate an OpenID Connect (OIDC)-compatible JWT token signed by the Google OIDC Provider (accounts.google.com) for extension endpoint (https://cloud.google.com/iam/docs/create-short-lived-credentials-direct#sa-credentials-oidc). - The audience for the token will be set to the URL in the server url defined in the OpenApi spec. - If the service account is provided, the service account should grant `iam.serviceAccounts.getOpenIdToken` permission to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents).
           },
         },
-        &quot;description&quot;: &quot;A String&quot;, # Required. The natural language description shown to the LLM. It should describe the usage of the extension, and is essential for the LLM to perform reasoning.
+        &quot;description&quot;: &quot;A String&quot;, # Required. The natural language description shown to the LLM. It should describe the usage of the extension, and is essential for the LLM to perform reasoning. e.g., if the extension is a data store, you can let the LLM know what data it contains.
         &quot;name&quot;: &quot;A String&quot;, # Required. Extension name shown to the LLM. The name can be up to 128 characters long.
       },
       &quot;name&quot;: &quot;A String&quot;, # Identifier. The resource name of the Extension.
-      &quot;privateServiceConnectConfig&quot;: { # PrivateExtensionConfig configuration for the extension. # Optional. The PrivateServiceConnect config for the extension. If specified, the service endpoints associated with the Extension should be registered with private network access in the provided Service Directory (https://cloud.google.com/service-directory/docs/configuring-private-network-access). If the service contains more than one endpoint with a network, the service will arbitrarilty choose one of the endpoints to use for extension execution.
+      &quot;privateServiceConnectConfig&quot;: { # PrivateExtensionConfig configuration for the extension. # Optional. The PrivateServiceConnect config for the extension. If specified, the service endpoints associated with the Extension should be [registered with private network access in the provided Service Directory](https://cloud.google.com/service-directory/docs/configuring-private-network-access). If the service contains more than one endpoint with a network, the service will arbitrarilty choose one of the endpoints to use for extension execution.
         &quot;serviceDirectory&quot;: &quot;A String&quot;, # Required. The Service Directory resource name in which the service endpoints associated to the extension are registered. Format: `projects/{project_id}/locations/{location_id}/namespaces/{namespace_id}/services/{service_id}` - The Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) should be granted `servicedirectory.viewer` and `servicedirectory.pscAuthorizedService` roles on the resource.
       },
       &quot;runtimeConfig&quot;: { # Runtime configuration to run the extension. # Optional. Runtime config controlling the runtime behavior of this Extension.
@@ -659,11 +703,13 @@ Returns:
         &quot;defaultParams&quot;: { # Optional. Default parameters that will be set for all the execution of this extension. If specified, the parameter values can be overridden by values in [[ExecuteExtensionRequest.operation_params]] at request time. The struct should be in a form of map with param name as the key and actual param value as the value. E.g. If this operation requires a param &quot;name&quot; to be set to &quot;abc&quot;. you can set this to something like {&quot;name&quot;: &quot;abc&quot;}.
           &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
         },
-        &quot;vertexAiSearchRuntimeConfig&quot;: { # Runtime configuration for Vertext AI Search extension.
-          &quot;appId&quot;: &quot;A String&quot;, # Vertex AI Search App ID. This is used to construct the search request. By setting this app_id, API will construct the serving config which is required to call search API for the user. The app_id and serving_config_name cannot both be empty at the same time.
-          &quot;servingConfigName&quot;: &quot;A String&quot;, # [Deprecated] Please use app_id instead. Vertex AI Search serving config name. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/servingConfigs/{serving_config}`
+        &quot;vertexAiSearchRuntimeConfig&quot;: { # Runtime configuration for Vertex AI Search extension.
+          &quot;engineId&quot;: &quot;A String&quot;, # Optional. Vertex AI Search engine ID. This is used to construct the search request. By setting this engine_id, API will construct the serving config using the default value to call search API for the user. The engine_id and serving_config_name cannot both be empty at the same time.
+          &quot;servingConfigName&quot;: &quot;A String&quot;, # Optional. Vertex AI Search serving config name. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/servingConfigs/{serving_config}`
         },
       },
+      &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+      &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
       &quot;toolUseExamples&quot;: [ # Optional. Examples to illustrate the usage of the extension as a tool.
         { # A single example of the tool usage.
           &quot;displayName&quot;: &quot;A String&quot;, # Required. The display name for example.
@@ -719,13 +765,16 @@ Args:
   &quot;etag&quot;: &quot;A String&quot;, # Optional. Used to perform consistent read-modify-write updates. If not set, a blind &quot;overwrite&quot; update happens.
   &quot;extensionOperations&quot;: [ # Output only. Supported operations.
     { # Operation of an extension.
-      &quot;functionDeclaration&quot;: { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name and parameters. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client. # Output only. Structured representation of a function declaration as defined by the OpenAPI Spec.
+      &quot;functionDeclaration&quot;: { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name, description, parameters and response type. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client. # Output only. Structured representation of a function declaration as defined by the OpenAPI Spec.
         &quot;description&quot;: &quot;A String&quot;, # Optional. Description and purpose of the function. Model uses it to decide how and whether to call the function.
         &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots and dashes, with a maximum length of 64.
-        &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+        &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+          &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+            # Object with schema name: GoogleCloudAiplatformV1beta1Schema
+          ],
           &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
           &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-          &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+          &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
             &quot;A String&quot;,
           ],
           &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -744,16 +793,22 @@ Args:
           &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
             &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1beta1Schema
           },
+          &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+            &quot;A String&quot;,
+          ],
           &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
             &quot;A String&quot;,
           ],
           &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
           &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
         },
-        &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+        &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+          &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+            # Object with schema name: GoogleCloudAiplatformV1beta1Schema
+          ],
           &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
           &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-          &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+          &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
             &quot;A String&quot;,
           ],
           &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -772,6 +827,9 @@ Args:
           &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
             &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1beta1Schema
           },
+          &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+            &quot;A String&quot;,
+          ],
           &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
             &quot;A String&quot;,
           ],
@@ -789,7 +847,8 @@ Args:
     },
     &quot;authConfig&quot;: { # Auth configuration to run the extension. # Required. Immutable. Type of auth supported by this extension.
       &quot;apiKeyConfig&quot;: { # Config for authentication with API key. # Config for API key auth.
-        &quot;apiKeySecret&quot;: &quot;A String&quot;, # Required. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+        &quot;apiKeySecret&quot;: &quot;A String&quot;, # Optional. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If both `api_key_secret` and `api_key_string` are specified, this field takes precedence over `api_key_string`. - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+        &quot;apiKeyString&quot;: &quot;A String&quot;, # Optional. The API key to be used in the request directly.
         &quot;httpElementLocation&quot;: &quot;A String&quot;, # Required. The location of the API key.
         &quot;name&quot;: &quot;A String&quot;, # Required. The parameter name of the API key. E.g. If the API request is &quot;https://example.com/act?api_key=&quot;, &quot;api_key&quot; would be the parameter name.
       },
@@ -809,11 +868,11 @@ Args:
         &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used to generate an OpenID Connect (OIDC)-compatible JWT token signed by the Google OIDC Provider (accounts.google.com) for extension endpoint (https://cloud.google.com/iam/docs/create-short-lived-credentials-direct#sa-credentials-oidc). - The audience for the token will be set to the URL in the server url defined in the OpenApi spec. - If the service account is provided, the service account should grant `iam.serviceAccounts.getOpenIdToken` permission to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents).
       },
     },
-    &quot;description&quot;: &quot;A String&quot;, # Required. The natural language description shown to the LLM. It should describe the usage of the extension, and is essential for the LLM to perform reasoning.
+    &quot;description&quot;: &quot;A String&quot;, # Required. The natural language description shown to the LLM. It should describe the usage of the extension, and is essential for the LLM to perform reasoning. e.g., if the extension is a data store, you can let the LLM know what data it contains.
     &quot;name&quot;: &quot;A String&quot;, # Required. Extension name shown to the LLM. The name can be up to 128 characters long.
   },
   &quot;name&quot;: &quot;A String&quot;, # Identifier. The resource name of the Extension.
-  &quot;privateServiceConnectConfig&quot;: { # PrivateExtensionConfig configuration for the extension. # Optional. The PrivateServiceConnect config for the extension. If specified, the service endpoints associated with the Extension should be registered with private network access in the provided Service Directory (https://cloud.google.com/service-directory/docs/configuring-private-network-access). If the service contains more than one endpoint with a network, the service will arbitrarilty choose one of the endpoints to use for extension execution.
+  &quot;privateServiceConnectConfig&quot;: { # PrivateExtensionConfig configuration for the extension. # Optional. The PrivateServiceConnect config for the extension. If specified, the service endpoints associated with the Extension should be [registered with private network access in the provided Service Directory](https://cloud.google.com/service-directory/docs/configuring-private-network-access). If the service contains more than one endpoint with a network, the service will arbitrarilty choose one of the endpoints to use for extension execution.
     &quot;serviceDirectory&quot;: &quot;A String&quot;, # Required. The Service Directory resource name in which the service endpoints associated to the extension are registered. Format: `projects/{project_id}/locations/{location_id}/namespaces/{namespace_id}/services/{service_id}` - The Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) should be granted `servicedirectory.viewer` and `servicedirectory.pscAuthorizedService` roles on the resource.
   },
   &quot;runtimeConfig&quot;: { # Runtime configuration to run the extension. # Optional. Runtime config controlling the runtime behavior of this Extension.
@@ -824,11 +883,13 @@ Args:
     &quot;defaultParams&quot;: { # Optional. Default parameters that will be set for all the execution of this extension. If specified, the parameter values can be overridden by values in [[ExecuteExtensionRequest.operation_params]] at request time. The struct should be in a form of map with param name as the key and actual param value as the value. E.g. If this operation requires a param &quot;name&quot; to be set to &quot;abc&quot;. you can set this to something like {&quot;name&quot;: &quot;abc&quot;}.
       &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
     },
-    &quot;vertexAiSearchRuntimeConfig&quot;: { # Runtime configuration for Vertext AI Search extension.
-      &quot;appId&quot;: &quot;A String&quot;, # Vertex AI Search App ID. This is used to construct the search request. By setting this app_id, API will construct the serving config which is required to call search API for the user. The app_id and serving_config_name cannot both be empty at the same time.
-      &quot;servingConfigName&quot;: &quot;A String&quot;, # [Deprecated] Please use app_id instead. Vertex AI Search serving config name. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/servingConfigs/{serving_config}`
+    &quot;vertexAiSearchRuntimeConfig&quot;: { # Runtime configuration for Vertex AI Search extension.
+      &quot;engineId&quot;: &quot;A String&quot;, # Optional. Vertex AI Search engine ID. This is used to construct the search request. By setting this engine_id, API will construct the serving config using the default value to call search API for the user. The engine_id and serving_config_name cannot both be empty at the same time.
+      &quot;servingConfigName&quot;: &quot;A String&quot;, # Optional. Vertex AI Search serving config name. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/servingConfigs/{serving_config}`
     },
   },
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;toolUseExamples&quot;: [ # Optional. Examples to illustrate the usage of the extension as a tool.
     { # A single example of the tool usage.
       &quot;displayName&quot;: &quot;A String&quot;, # Required. The display name for example.
@@ -850,7 +911,7 @@ Args:
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Timestamp when this Extension was most recently updated.
 }
 
-  updateMask: string, Required. Mask specifying which fields to update. Supported fields: * `display_name` * `description` * `tool_use_examples`
+  updateMask: string, Required. Mask specifying which fields to update. Supported fields: * `display_name` * `description` * `runtime_config` * `tool_use_examples` * `manifest.description`
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -866,13 +927,16 @@ Returns:
   &quot;etag&quot;: &quot;A String&quot;, # Optional. Used to perform consistent read-modify-write updates. If not set, a blind &quot;overwrite&quot; update happens.
   &quot;extensionOperations&quot;: [ # Output only. Supported operations.
     { # Operation of an extension.
-      &quot;functionDeclaration&quot;: { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name and parameters. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client. # Output only. Structured representation of a function declaration as defined by the OpenAPI Spec.
+      &quot;functionDeclaration&quot;: { # Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3). Included in this declaration are the function name, description, parameters and response type. This FunctionDeclaration is a representation of a block of code that can be used as a `Tool` by the model and executed by the client. # Output only. Structured representation of a function declaration as defined by the OpenAPI Spec.
         &quot;description&quot;: &quot;A String&quot;, # Optional. Description and purpose of the function. Model uses it to decide how and whether to call the function.
         &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots and dashes, with a maximum length of 64.
-        &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+        &quot;parameters&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the parameters to this function in JSON Schema Object format. Reflects the Open API 3.03 Parameter Object. string Key: the name of the parameter. Parameter names are case sensitive. Schema Value: the Schema defining the type used for the parameter. For function with no parameters, this can be left unset. Parameter names must start with a letter or an underscore and must only contain chars a-z, A-Z, 0-9, or underscores with a maximum length of 64. Example with 1 required and 1 optional parameter: type: OBJECT properties: param1: type: STRING param2: type: INTEGER required: - param1
+          &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+            # Object with schema name: GoogleCloudAiplatformV1beta1Schema
+          ],
           &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
           &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-          &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+          &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
             &quot;A String&quot;,
           ],
           &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -891,16 +955,22 @@ Returns:
           &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
             &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1beta1Schema
           },
+          &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+            &quot;A String&quot;,
+          ],
           &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
             &quot;A String&quot;,
           ],
           &quot;title&quot;: &quot;A String&quot;, # Optional. The title of the Schema.
           &quot;type&quot;: &quot;A String&quot;, # Optional. The type of the data.
         },
-        &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+        &quot;response&quot;: { # Schema is used to define the format of input/output data. Represents a select subset of an [OpenAPI 3.0 schema object](https://spec.openapis.org/oas/v3.0.3#schema-object). More fields may be added in the future as needed. # Optional. Describes the output from this function in JSON Schema format. Reflects the Open API 3.03 Response Object. The Schema defines the type used for the response value of the function.
+          &quot;anyOf&quot;: [ # Optional. The value should be validated against any (one or more) of the subschemas in the list.
+            # Object with schema name: GoogleCloudAiplatformV1beta1Schema
+          ],
           &quot;default&quot;: &quot;&quot;, # Optional. Default value of the data.
           &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the data.
-          &quot;enum&quot;: [ # Optional. Possible values of the element of Type.STRING with enum format. For example we can define an Enum Direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]}
+          &quot;enum&quot;: [ # Optional. Possible values of the element of primitive type with enum format. Examples: 1. We can define direction as : {type:STRING, format:enum, enum:[&quot;EAST&quot;, NORTH&quot;, &quot;SOUTH&quot;, &quot;WEST&quot;]} 2. We can define apartment number as : {type:INTEGER, format:enum, enum:[&quot;101&quot;, &quot;201&quot;, &quot;301&quot;]}
             &quot;A String&quot;,
           ],
           &quot;example&quot;: &quot;&quot;, # Optional. Example of the object. Will only populated when the object is the root.
@@ -919,6 +989,9 @@ Returns:
           &quot;properties&quot;: { # Optional. SCHEMA FIELDS FOR TYPE OBJECT Properties of Type.OBJECT.
             &quot;a_key&quot;: # Object with schema name: GoogleCloudAiplatformV1beta1Schema
           },
+          &quot;propertyOrdering&quot;: [ # Optional. The order of the properties. Not a standard field in open api spec. Only used to support the order of the properties.
+            &quot;A String&quot;,
+          ],
           &quot;required&quot;: [ # Optional. Required properties of Type.OBJECT.
             &quot;A String&quot;,
           ],
@@ -936,7 +1009,8 @@ Returns:
     },
     &quot;authConfig&quot;: { # Auth configuration to run the extension. # Required. Immutable. Type of auth supported by this extension.
       &quot;apiKeyConfig&quot;: { # Config for authentication with API key. # Config for API key auth.
-        &quot;apiKeySecret&quot;: &quot;A String&quot;, # Required. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+        &quot;apiKeySecret&quot;: &quot;A String&quot;, # Optional. The name of the SecretManager secret version resource storing the API key. Format: `projects/{project}/secrets/{secrete}/versions/{version}` - If both `api_key_secret` and `api_key_string` are specified, this field takes precedence over `api_key_string`. - If specified, the `secretmanager.versions.access` permission should be granted to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) on the specified resource.
+        &quot;apiKeyString&quot;: &quot;A String&quot;, # Optional. The API key to be used in the request directly.
         &quot;httpElementLocation&quot;: &quot;A String&quot;, # Required. The location of the API key.
         &quot;name&quot;: &quot;A String&quot;, # Required. The parameter name of the API key. E.g. If the API request is &quot;https://example.com/act?api_key=&quot;, &quot;api_key&quot; would be the parameter name.
       },
@@ -956,11 +1030,11 @@ Returns:
         &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used to generate an OpenID Connect (OIDC)-compatible JWT token signed by the Google OIDC Provider (accounts.google.com) for extension endpoint (https://cloud.google.com/iam/docs/create-short-lived-credentials-direct#sa-credentials-oidc). - The audience for the token will be set to the URL in the server url defined in the OpenApi spec. - If the service account is provided, the service account should grant `iam.serviceAccounts.getOpenIdToken` permission to Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents).
       },
     },
-    &quot;description&quot;: &quot;A String&quot;, # Required. The natural language description shown to the LLM. It should describe the usage of the extension, and is essential for the LLM to perform reasoning.
+    &quot;description&quot;: &quot;A String&quot;, # Required. The natural language description shown to the LLM. It should describe the usage of the extension, and is essential for the LLM to perform reasoning. e.g., if the extension is a data store, you can let the LLM know what data it contains.
     &quot;name&quot;: &quot;A String&quot;, # Required. Extension name shown to the LLM. The name can be up to 128 characters long.
   },
   &quot;name&quot;: &quot;A String&quot;, # Identifier. The resource name of the Extension.
-  &quot;privateServiceConnectConfig&quot;: { # PrivateExtensionConfig configuration for the extension. # Optional. The PrivateServiceConnect config for the extension. If specified, the service endpoints associated with the Extension should be registered with private network access in the provided Service Directory (https://cloud.google.com/service-directory/docs/configuring-private-network-access). If the service contains more than one endpoint with a network, the service will arbitrarilty choose one of the endpoints to use for extension execution.
+  &quot;privateServiceConnectConfig&quot;: { # PrivateExtensionConfig configuration for the extension. # Optional. The PrivateServiceConnect config for the extension. If specified, the service endpoints associated with the Extension should be [registered with private network access in the provided Service Directory](https://cloud.google.com/service-directory/docs/configuring-private-network-access). If the service contains more than one endpoint with a network, the service will arbitrarilty choose one of the endpoints to use for extension execution.
     &quot;serviceDirectory&quot;: &quot;A String&quot;, # Required. The Service Directory resource name in which the service endpoints associated to the extension are registered. Format: `projects/{project_id}/locations/{location_id}/namespaces/{namespace_id}/services/{service_id}` - The Vertex AI Extension Service Agent (https://cloud.google.com/vertex-ai/docs/general/access-control#service-agents) should be granted `servicedirectory.viewer` and `servicedirectory.pscAuthorizedService` roles on the resource.
   },
   &quot;runtimeConfig&quot;: { # Runtime configuration to run the extension. # Optional. Runtime config controlling the runtime behavior of this Extension.
@@ -971,11 +1045,13 @@ Returns:
     &quot;defaultParams&quot;: { # Optional. Default parameters that will be set for all the execution of this extension. If specified, the parameter values can be overridden by values in [[ExecuteExtensionRequest.operation_params]] at request time. The struct should be in a form of map with param name as the key and actual param value as the value. E.g. If this operation requires a param &quot;name&quot; to be set to &quot;abc&quot;. you can set this to something like {&quot;name&quot;: &quot;abc&quot;}.
       &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
     },
-    &quot;vertexAiSearchRuntimeConfig&quot;: { # Runtime configuration for Vertext AI Search extension.
-      &quot;appId&quot;: &quot;A String&quot;, # Vertex AI Search App ID. This is used to construct the search request. By setting this app_id, API will construct the serving config which is required to call search API for the user. The app_id and serving_config_name cannot both be empty at the same time.
-      &quot;servingConfigName&quot;: &quot;A String&quot;, # [Deprecated] Please use app_id instead. Vertex AI Search serving config name. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/servingConfigs/{serving_config}`
+    &quot;vertexAiSearchRuntimeConfig&quot;: { # Runtime configuration for Vertex AI Search extension.
+      &quot;engineId&quot;: &quot;A String&quot;, # Optional. Vertex AI Search engine ID. This is used to construct the search request. By setting this engine_id, API will construct the serving config using the default value to call search API for the user. The engine_id and serving_config_name cannot both be empty at the same time.
+      &quot;servingConfigName&quot;: &quot;A String&quot;, # Optional. Vertex AI Search serving config name. Format: `projects/{project}/locations/{location}/collections/{collection}/engines/{engine}/servingConfigs/{serving_config}`
     },
   },
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;toolUseExamples&quot;: [ # Optional. Examples to illustrate the usage of the extension as a tool.
     { # A single example of the tool usage.
       &quot;displayName&quot;: &quot;A String&quot;, # Required. The display name for example.
@@ -1012,6 +1088,14 @@ Args:
     { # The base structured datatype containing multi-part content of a message. A `Content` includes a `role` field designating the producer of the `Content` and a `parts` field containing multi-part data that contains the content of the message turn.
       &quot;parts&quot;: [ # Required. Ordered `Parts` that constitute a single message. Parts may have different IANA MIME types.
         { # A datatype containing media that is part of a multi-part `Content` message. A `Part` consists of data which has an associated datatype. A `Part` can only contain one of the accepted types in `Part.data`. A `Part` must have a fixed IANA MIME type identifying the type and subtype of the media if `inline_data` or `file_data` field is filled with raw bytes.
+          &quot;codeExecutionResult&quot;: { # Result of executing the [ExecutableCode]. Always follows a `part` containing the [ExecutableCode]. # Optional. Result of executing the [ExecutableCode].
+            &quot;outcome&quot;: &quot;A String&quot;, # Required. Outcome of the code execution.
+            &quot;output&quot;: &quot;A String&quot;, # Optional. Contains stdout when code execution is successful, stderr or other description otherwise.
+          },
+          &quot;executableCode&quot;: { # Code generated by the model that is meant to be executed, and the result returned to the model. Generated when using the [FunctionDeclaration] tool and [FunctionCallingConfig] mode is set to [Mode.CODE]. # Optional. Code generated by the model that is meant to be executed.
+            &quot;code&quot;: &quot;A String&quot;, # Required. The code to be executed.
+            &quot;language&quot;: &quot;A String&quot;, # Required. Programming language of the `code`.
+          },
           &quot;fileData&quot;: { # URI based data. # Optional. URI based data.
             &quot;fileUri&quot;: &quot;A String&quot;, # Required. URI.
             &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
@@ -1024,15 +1108,16 @@ Args:
           },
           &quot;functionResponse&quot;: { # The result output from a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function is used as context to the model. This should contain the result of a [FunctionCall] made based on model prediction. # Optional. The result output of a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function call. It is used as context to the model.
             &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name].
-            &quot;response&quot;: { # Required. The function response in JSON object format.
+            &quot;response&quot;: { # Required. The function response in JSON object format. Use &quot;output&quot; key to specify function output and &quot;error&quot; key to specify error details (if any). If &quot;output&quot; and &quot;error&quot; keys are not specified, then whole &quot;response&quot; is treated as function output.
               &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
             },
           },
-          &quot;inlineData&quot;: { # Content blob. It&#x27;s preferred to send as text directly rather than raw bytes. # Optional. Inlined bytes data.
+          &quot;inlineData&quot;: { # Content blob. # Optional. Inlined bytes data.
             &quot;data&quot;: &quot;A String&quot;, # Required. Raw bytes.
             &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
           },
           &quot;text&quot;: &quot;A String&quot;, # Optional. Text part (can be code).
+          &quot;thought&quot;: True or False, # Optional. Indicates if the part is thought from the model.
           &quot;videoMetadata&quot;: { # Metadata describes the input video content. # Optional. Video metadata. The metadata should only be specified while the video data is presented in inline_data or file_data.
             &quot;endOffset&quot;: &quot;A String&quot;, # Optional. The end offset of the video.
             &quot;startOffset&quot;: &quot;A String&quot;, # Optional. The start offset of the video.
@@ -1058,6 +1143,14 @@ Returns:
     { # The base structured datatype containing multi-part content of a message. A `Content` includes a `role` field designating the producer of the `Content` and a `parts` field containing multi-part data that contains the content of the message turn.
       &quot;parts&quot;: [ # Required. Ordered `Parts` that constitute a single message. Parts may have different IANA MIME types.
         { # A datatype containing media that is part of a multi-part `Content` message. A `Part` consists of data which has an associated datatype. A `Part` can only contain one of the accepted types in `Part.data`. A `Part` must have a fixed IANA MIME type identifying the type and subtype of the media if `inline_data` or `file_data` field is filled with raw bytes.
+          &quot;codeExecutionResult&quot;: { # Result of executing the [ExecutableCode]. Always follows a `part` containing the [ExecutableCode]. # Optional. Result of executing the [ExecutableCode].
+            &quot;outcome&quot;: &quot;A String&quot;, # Required. Outcome of the code execution.
+            &quot;output&quot;: &quot;A String&quot;, # Optional. Contains stdout when code execution is successful, stderr or other description otherwise.
+          },
+          &quot;executableCode&quot;: { # Code generated by the model that is meant to be executed, and the result returned to the model. Generated when using the [FunctionDeclaration] tool and [FunctionCallingConfig] mode is set to [Mode.CODE]. # Optional. Code generated by the model that is meant to be executed.
+            &quot;code&quot;: &quot;A String&quot;, # Required. The code to be executed.
+            &quot;language&quot;: &quot;A String&quot;, # Required. Programming language of the `code`.
+          },
           &quot;fileData&quot;: { # URI based data. # Optional. URI based data.
             &quot;fileUri&quot;: &quot;A String&quot;, # Required. URI.
             &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
@@ -1070,15 +1163,16 @@ Returns:
           },
           &quot;functionResponse&quot;: { # The result output from a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function is used as context to the model. This should contain the result of a [FunctionCall] made based on model prediction. # Optional. The result output of a [FunctionCall] that contains a string representing the [FunctionDeclaration.name] and a structured JSON object containing any output from the function call. It is used as context to the model.
             &quot;name&quot;: &quot;A String&quot;, # Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name].
-            &quot;response&quot;: { # Required. The function response in JSON object format.
+            &quot;response&quot;: { # Required. The function response in JSON object format. Use &quot;output&quot; key to specify function output and &quot;error&quot; key to specify error details (if any). If &quot;output&quot; and &quot;error&quot; keys are not specified, then whole &quot;response&quot; is treated as function output.
               &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
             },
           },
-          &quot;inlineData&quot;: { # Content blob. It&#x27;s preferred to send as text directly rather than raw bytes. # Optional. Inlined bytes data.
+          &quot;inlineData&quot;: { # Content blob. # Optional. Inlined bytes data.
             &quot;data&quot;: &quot;A String&quot;, # Required. Raw bytes.
             &quot;mimeType&quot;: &quot;A String&quot;, # Required. The IANA standard MIME type of the source data.
           },
           &quot;text&quot;: &quot;A String&quot;, # Optional. Text part (can be code).
+          &quot;thought&quot;: True or False, # Optional. Indicates if the part is thought from the model.
           &quot;videoMetadata&quot;: { # Metadata describes the input video content. # Optional. Video metadata. The metadata should only be specified while the video data is presented in inline_data or file_data.
             &quot;endOffset&quot;: &quot;A String&quot;, # Optional. The end offset of the video.
             &quot;startOffset&quot;: &quot;A String&quot;, # Optional. The start offset of the video.

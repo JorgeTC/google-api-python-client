@@ -259,6 +259,12 @@ Args:
 
 {
   &quot;apiProxyType&quot;: &quot;A String&quot;, # Optional. API Proxy type supported by the environment. The type can be set when creating the Environment and cannot be changed.
+  &quot;clientIpResolutionConfig&quot;: { # Configuration for resolving the client ip. # Optional. The algorithm to resolve IP. This will affect Analytics, API Security, and other features that use the client ip. To remove a client ip resolution config, update the field to an empty value. Example: &#x27;{ &quot;clientIpResolutionConfig&quot; = {} }&#x27; For more information, see: https://cloud.google.com/apigee/docs/api-platform/system-administration/client-ip-resolution.
+    &quot;headerIndexAlgorithm&quot;: { # Resolves the client ip based on a custom header. # Resolves the client ip based on a custom header.
+      &quot;ipHeaderIndex&quot;: 42, # Required. The index of the ip in the header. Positive indices 0, 1, 2, 3 chooses indices from the left (first ips) Negative indices -1, -2, -3 chooses indices from the right (last ips)
+      &quot;ipHeaderName&quot;: &quot;A String&quot;, # Required. The name of the header to extract the client ip from. We are currently only supporting the X-Forwarded-For header.
+    },
+  },
   &quot;createdAt&quot;: &quot;A String&quot;, # Output only. Creation time of this environment as milliseconds since epoch.
   &quot;deploymentType&quot;: &quot;A String&quot;, # Optional. Deployment type supported by the environment. The deployment type can be set when creating the environment and cannot be changed. When you enable archive deployment, you will be **prevented from performing** a [subset of actions](/apigee/docs/api-platform/local-development/overview#prevented-actions) within the environment, including: * Managing the deployment of API proxy or shared flow revisions * Creating, updating, or deleting resource files * Creating, updating, or deleting target servers
   &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the environment.
@@ -365,6 +371,12 @@ Returns:
 
     {
   &quot;apiProxyType&quot;: &quot;A String&quot;, # Optional. API Proxy type supported by the environment. The type can be set when creating the Environment and cannot be changed.
+  &quot;clientIpResolutionConfig&quot;: { # Configuration for resolving the client ip. # Optional. The algorithm to resolve IP. This will affect Analytics, API Security, and other features that use the client ip. To remove a client ip resolution config, update the field to an empty value. Example: &#x27;{ &quot;clientIpResolutionConfig&quot; = {} }&#x27; For more information, see: https://cloud.google.com/apigee/docs/api-platform/system-administration/client-ip-resolution.
+    &quot;headerIndexAlgorithm&quot;: { # Resolves the client ip based on a custom header. # Resolves the client ip based on a custom header.
+      &quot;ipHeaderIndex&quot;: 42, # Required. The index of the ip in the header. Positive indices 0, 1, 2, 3 chooses indices from the left (first ips) Negative indices -1, -2, -3 chooses indices from the right (last ips)
+      &quot;ipHeaderName&quot;: &quot;A String&quot;, # Required. The name of the header to extract the client ip from. We are currently only supporting the X-Forwarded-For header.
+    },
+  },
   &quot;createdAt&quot;: &quot;A String&quot;, # Output only. Creation time of this environment as milliseconds since epoch.
   &quot;deploymentType&quot;: &quot;A String&quot;, # Optional. Deployment type supported by the environment. The deployment type can be set when creating the environment and cannot be changed. When you enable archive deployment, you will be **prevented from performing** a [subset of actions](/apigee/docs/api-platform/local-development/overview#prevented-actions) within the environment, including: * Managing the deployment of API proxy or shared flow revisions * Creating, updating, or deleting resource files * Creating, updating, or deleting target servers
   &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the environment.
@@ -409,7 +421,7 @@ Returns:
   &quot;advancedApiOpsConfig&quot;: { # Configuration for the Advanced API Ops add-on. # Configuration for the Advanced API Ops add-on.
     &quot;enabled&quot;: True or False, # Flag that specifies whether the Advanced API Ops add-on is enabled.
   },
-  &quot;analyticsConfig&quot;: { # Configuration for the Analytics add-on. # Configuration for the Analytics add-on.
+  &quot;analyticsConfig&quot;: { # Configuration for the Analytics add-on. # Configuration for the Analytics add-on. Only used in organizations.environments.addonsConfig.
     &quot;enabled&quot;: True or False, # Whether the Analytics add-on is enabled.
     &quot;expireTimeMillis&quot;: &quot;A String&quot;, # Output only. Time at which the Analytics add-on expires in milliseconds since epoch. If unspecified, the add-on will never expire.
     &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the Analytics add-on.
@@ -528,6 +540,12 @@ Returns:
     &quot;uid&quot;: &quot;A String&quot;, # UID is to detect if config is recreated after deletion. The add-on config will only be deleted when the environment itself gets deleted, thus it will always be the same as the UID of EnvironmentConfig.
   },
   &quot;arcConfigLocation&quot;: &quot;A String&quot;, # The location for the config blob of API Runtime Control, aka Envoy Adapter, for op-based authentication as a URI, e.g. a Cloud Storage URI. This is only used by Envoy-based gateways.
+  &quot;clientIpResolutionConfig&quot;: { # Configuration for resolving the client ip. # The algorithm to resolve IP.
+    &quot;headerIndexAlgorithm&quot;: { # Resolves the client ip based on a custom header. # Resolves the client ip based on a custom header.
+      &quot;ipHeaderIndex&quot;: 42, # The index of the ip in the header. (By default, value is 0 if missing)
+      &quot;ipHeaderName&quot;: &quot;A String&quot;, # The name of the header to extract the client ip from.
+    },
+  },
   &quot;createTime&quot;: &quot;A String&quot;, # Time that the environment configuration was created.
   &quot;dataCollectors&quot;: [ # List of data collectors used by the deployments in the environment.
     { # Data collector and its configuration.
@@ -794,6 +812,12 @@ Args:
 
 {
   &quot;apiProxyType&quot;: &quot;A String&quot;, # Optional. API Proxy type supported by the environment. The type can be set when creating the Environment and cannot be changed.
+  &quot;clientIpResolutionConfig&quot;: { # Configuration for resolving the client ip. # Optional. The algorithm to resolve IP. This will affect Analytics, API Security, and other features that use the client ip. To remove a client ip resolution config, update the field to an empty value. Example: &#x27;{ &quot;clientIpResolutionConfig&quot; = {} }&#x27; For more information, see: https://cloud.google.com/apigee/docs/api-platform/system-administration/client-ip-resolution.
+    &quot;headerIndexAlgorithm&quot;: { # Resolves the client ip based on a custom header. # Resolves the client ip based on a custom header.
+      &quot;ipHeaderIndex&quot;: 42, # Required. The index of the ip in the header. Positive indices 0, 1, 2, 3 chooses indices from the left (first ips) Negative indices -1, -2, -3 chooses indices from the right (last ips)
+      &quot;ipHeaderName&quot;: &quot;A String&quot;, # Required. The name of the header to extract the client ip from. We are currently only supporting the X-Forwarded-For header.
+    },
+  },
   &quot;createdAt&quot;: &quot;A String&quot;, # Output only. Creation time of this environment as milliseconds since epoch.
   &quot;deploymentType&quot;: &quot;A String&quot;, # Optional. Deployment type supported by the environment. The deployment type can be set when creating the environment and cannot be changed. When you enable archive deployment, you will be **prevented from performing** a [subset of actions](/apigee/docs/api-platform/local-development/overview#prevented-actions) within the environment, including: * Managing the deployment of API proxy or shared flow revisions * Creating, updating, or deleting resource files * Creating, updating, or deleting target servers
   &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the environment.
@@ -1019,6 +1043,12 @@ Args:
 
 {
   &quot;apiProxyType&quot;: &quot;A String&quot;, # Optional. API Proxy type supported by the environment. The type can be set when creating the Environment and cannot be changed.
+  &quot;clientIpResolutionConfig&quot;: { # Configuration for resolving the client ip. # Optional. The algorithm to resolve IP. This will affect Analytics, API Security, and other features that use the client ip. To remove a client ip resolution config, update the field to an empty value. Example: &#x27;{ &quot;clientIpResolutionConfig&quot; = {} }&#x27; For more information, see: https://cloud.google.com/apigee/docs/api-platform/system-administration/client-ip-resolution.
+    &quot;headerIndexAlgorithm&quot;: { # Resolves the client ip based on a custom header. # Resolves the client ip based on a custom header.
+      &quot;ipHeaderIndex&quot;: 42, # Required. The index of the ip in the header. Positive indices 0, 1, 2, 3 chooses indices from the left (first ips) Negative indices -1, -2, -3 chooses indices from the right (last ips)
+      &quot;ipHeaderName&quot;: &quot;A String&quot;, # Required. The name of the header to extract the client ip from. We are currently only supporting the X-Forwarded-For header.
+    },
+  },
   &quot;createdAt&quot;: &quot;A String&quot;, # Output only. Creation time of this environment as milliseconds since epoch.
   &quot;deploymentType&quot;: &quot;A String&quot;, # Optional. Deployment type supported by the environment. The deployment type can be set when creating the environment and cannot be changed. When you enable archive deployment, you will be **prevented from performing** a [subset of actions](/apigee/docs/api-platform/local-development/overview#prevented-actions) within the environment, including: * Managing the deployment of API proxy or shared flow revisions * Creating, updating, or deleting resource files * Creating, updating, or deleting target servers
   &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the environment.
@@ -1054,6 +1084,12 @@ Returns:
 
     {
   &quot;apiProxyType&quot;: &quot;A String&quot;, # Optional. API Proxy type supported by the environment. The type can be set when creating the Environment and cannot be changed.
+  &quot;clientIpResolutionConfig&quot;: { # Configuration for resolving the client ip. # Optional. The algorithm to resolve IP. This will affect Analytics, API Security, and other features that use the client ip. To remove a client ip resolution config, update the field to an empty value. Example: &#x27;{ &quot;clientIpResolutionConfig&quot; = {} }&#x27; For more information, see: https://cloud.google.com/apigee/docs/api-platform/system-administration/client-ip-resolution.
+    &quot;headerIndexAlgorithm&quot;: { # Resolves the client ip based on a custom header. # Resolves the client ip based on a custom header.
+      &quot;ipHeaderIndex&quot;: 42, # Required. The index of the ip in the header. Positive indices 0, 1, 2, 3 chooses indices from the left (first ips) Negative indices -1, -2, -3 chooses indices from the right (last ips)
+      &quot;ipHeaderName&quot;: &quot;A String&quot;, # Required. The name of the header to extract the client ip from. We are currently only supporting the X-Forwarded-For header.
+    },
+  },
   &quot;createdAt&quot;: &quot;A String&quot;, # Output only. Creation time of this environment as milliseconds since epoch.
   &quot;deploymentType&quot;: &quot;A String&quot;, # Optional. Deployment type supported by the environment. The deployment type can be set when creating the environment and cannot be changed. When you enable archive deployment, you will be **prevented from performing** a [subset of actions](/apigee/docs/api-platform/local-development/overview#prevented-actions) within the environment, including: * Managing the deployment of API proxy or shared flow revisions * Creating, updating, or deleting resource files * Creating, updating, or deleting target servers
   &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the environment.
@@ -1167,6 +1203,12 @@ Args:
 
 {
   &quot;apiProxyType&quot;: &quot;A String&quot;, # Optional. API Proxy type supported by the environment. The type can be set when creating the Environment and cannot be changed.
+  &quot;clientIpResolutionConfig&quot;: { # Configuration for resolving the client ip. # Optional. The algorithm to resolve IP. This will affect Analytics, API Security, and other features that use the client ip. To remove a client ip resolution config, update the field to an empty value. Example: &#x27;{ &quot;clientIpResolutionConfig&quot; = {} }&#x27; For more information, see: https://cloud.google.com/apigee/docs/api-platform/system-administration/client-ip-resolution.
+    &quot;headerIndexAlgorithm&quot;: { # Resolves the client ip based on a custom header. # Resolves the client ip based on a custom header.
+      &quot;ipHeaderIndex&quot;: 42, # Required. The index of the ip in the header. Positive indices 0, 1, 2, 3 chooses indices from the left (first ips) Negative indices -1, -2, -3 chooses indices from the right (last ips)
+      &quot;ipHeaderName&quot;: &quot;A String&quot;, # Required. The name of the header to extract the client ip from. We are currently only supporting the X-Forwarded-For header.
+    },
+  },
   &quot;createdAt&quot;: &quot;A String&quot;, # Output only. Creation time of this environment as milliseconds since epoch.
   &quot;deploymentType&quot;: &quot;A String&quot;, # Optional. Deployment type supported by the environment. The deployment type can be set when creating the environment and cannot be changed. When you enable archive deployment, you will be **prevented from performing** a [subset of actions](/apigee/docs/api-platform/local-development/overview#prevented-actions) within the environment, including: * Managing the deployment of API proxy or shared flow revisions * Creating, updating, or deleting resource files * Creating, updating, or deleting target servers
   &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the environment.
@@ -1202,6 +1244,12 @@ Returns:
 
     {
   &quot;apiProxyType&quot;: &quot;A String&quot;, # Optional. API Proxy type supported by the environment. The type can be set when creating the Environment and cannot be changed.
+  &quot;clientIpResolutionConfig&quot;: { # Configuration for resolving the client ip. # Optional. The algorithm to resolve IP. This will affect Analytics, API Security, and other features that use the client ip. To remove a client ip resolution config, update the field to an empty value. Example: &#x27;{ &quot;clientIpResolutionConfig&quot; = {} }&#x27; For more information, see: https://cloud.google.com/apigee/docs/api-platform/system-administration/client-ip-resolution.
+    &quot;headerIndexAlgorithm&quot;: { # Resolves the client ip based on a custom header. # Resolves the client ip based on a custom header.
+      &quot;ipHeaderIndex&quot;: 42, # Required. The index of the ip in the header. Positive indices 0, 1, 2, 3 chooses indices from the left (first ips) Negative indices -1, -2, -3 chooses indices from the right (last ips)
+      &quot;ipHeaderName&quot;: &quot;A String&quot;, # Required. The name of the header to extract the client ip from. We are currently only supporting the X-Forwarded-For header.
+    },
+  },
   &quot;createdAt&quot;: &quot;A String&quot;, # Output only. Creation time of this environment as milliseconds since epoch.
   &quot;deploymentType&quot;: &quot;A String&quot;, # Optional. Deployment type supported by the environment. The deployment type can be set when creating the environment and cannot be changed. When you enable archive deployment, you will be **prevented from performing** a [subset of actions](/apigee/docs/api-platform/local-development/overview#prevented-actions) within the environment, including: * Managing the deployment of API proxy or shared flow revisions * Creating, updating, or deleting resource files * Creating, updating, or deleting target servers
   &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the environment.

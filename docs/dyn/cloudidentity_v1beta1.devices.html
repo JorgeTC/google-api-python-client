@@ -161,7 +161,7 @@ Args:
 
 { # Request message for creating a Company Owned device.
   &quot;customer&quot;: &quot;A String&quot;, # Optional. [Resource name](https://cloud.google.com/apis/design/resource_names) of the customer. If you&#x27;re using this API for your own organization, use `customers/my_customer` If you&#x27;re using this API to manage another organization, use `customers/{customer_id}`, where customer_id is the customer to whom the device belongs.
-  &quot;device&quot;: { # A Device within the Cloud Identity Devices API. Represents a Device known to Google Cloud, independent of the device ownership, type, and whether it is assigned or in use by a user. # Required. The device to be created. The name field within this device is ignored in the create method. A new name is created by the method, and returned within the response. Only the fields `device_type`, `serial_number` and `asset_tag` (if present) are used to create the device. All other fields are ignored. The `device_type` and `serial_number` fields are required.
+  &quot;device&quot;: { # A Device within the Cloud Identity Devices API. Represents a Device known to Google Cloud, independent of the device ownership, type, and whether it is assigned or in use by a user. Important: Device API scopes require that you use domain-wide delegation to access the API. For more information, see [Set up the Devices API](https://cloud.google.com/identity/docs/how-to/setup-devices). # Required. The device to be created. The name field within this device is ignored in the create method. A new name is created by the method, and returned within the response. Only the fields `device_type`, `serial_number` and `asset_tag` (if present) are used to create the device. All other fields are ignored. The `device_type` and `serial_number` fields are required.
     &quot;androidSpecificAttributes&quot;: { # Resource representing the Android specific attributes of a Device. # Output only. Attributes specific to Android devices.
       &quot;ctsProfileMatch&quot;: True or False, # Whether the device passes Android CTS compliance.
       &quot;enabledUnknownSources&quot;: True or False, # Whether applications from unknown sources can be installed on device.
@@ -188,14 +188,14 @@ Args:
     &quot;enabledUsbDebugging&quot;: True or False, # Output only. Whether USB debugging is enabled on device.
     &quot;encryptionState&quot;: &quot;A String&quot;, # Output only. Device encryption state.
     &quot;endpointVerificationSpecificAttributes&quot;: { # Resource representing the [Endpoint Verification-specific attributes](https://cloud.google.com/endpoint-verification/docs/device-information) of a device. # Output only. Attributes specific to [Endpoint Verification](https://cloud.google.com/endpoint-verification/docs/overview) devices.
-      &quot;additionalSignals&quot;: { # Additional signals reported by Endpoint Verification. It includes the following attributes: 1. Non-configurable attributes: hotfixes, av_installed, av_enabled, windows_domain_name, is_os_native_firewall_enabled, and is_secure_boot_enabled. 2. Configurable attributes: file_config, registry_config, and plist_config.
+      &quot;additionalSignals&quot;: { # [Additional signals](https://cloud.google.com/endpoint-verification/docs/device-information) reported by Endpoint Verification. It includes the following attributes: * Non-configurable attributes: hotfixes, av_installed, av_enabled, windows_domain_name, is_os_native_firewall_enabled, and is_secure_boot_enabled. * [Configurable attributes](https://cloud.google.com/endpoint-verification/docs/collect-config-attributes): file, folder, and binary attributes; registry entries; and properties in a plist.
         &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
       },
       &quot;browserAttributes&quot;: [ # Details of browser profiles reported by Endpoint Verification.
-        { # Contains information about browser profiles reported by the Endpoint Verification extension.
-          &quot;chromeBrowserInfo&quot;: { # Browser-specific fields reported by the Endpoint Verification extension. LINT.IfChange # Represents the current state of the [Chrome browser attributes](https://cloud.google.com/access-context-manager/docs/browser-attributes) sent by the Endpoint Verification extension.
+        { # Contains information about browser profiles reported by the [Endpoint Verification extension](https://chromewebstore.google.com/detail/endpoint-verification/callobklhcbilhphinckomhgkigmfocg?pli=1).
+          &quot;chromeBrowserInfo&quot;: { # Browser-specific fields reported by the [Endpoint Verification extension](https://chromewebstore.google.com/detail/endpoint-verification/callobklhcbilhphinckomhgkigmfocg?pli=1). # Represents the current state of the [Chrome browser attributes](https://cloud.google.com/access-context-manager/docs/browser-attributes) sent by the [Endpoint Verification extension](https://chromewebstore.google.com/detail/endpoint-verification/callobklhcbilhphinckomhgkigmfocg?pli=1).
             &quot;browserManagementState&quot;: &quot;A String&quot;, # Output only. Browser&#x27;s management state.
-            &quot;browserVersion&quot;: &quot;A String&quot;, # Version of the request initiating browser.
+            &quot;browserVersion&quot;: &quot;A String&quot;, # Version of the request initiating browser. E.g. `91.0.4442.4`.
             &quot;isBuiltInDnsClientEnabled&quot;: True or False, # Current state of [built-in DNS client](https://chromeenterprise.google/policies/#BuiltInDnsClientEnabled).
             &quot;isBulkDataEntryAnalysisEnabled&quot;: True or False, # Current state of [bulk data analysis](https://chromeenterprise.google/policies/#OnBulkDataEntryEnterpriseConnector). Set to true if provider list from Chrome is non-empty.
             &quot;isChromeCleanupEnabled&quot;: True or False, # Current state of [Chrome Cleanup](https://chromeenterprise.google/policies/#ChromeCleanupEnabled).
@@ -210,7 +210,7 @@ Args:
             &quot;safeBrowsingProtectionLevel&quot;: &quot;A String&quot;, # Current state of [Safe Browsing protection level](https://chromeenterprise.google/policies/#SafeBrowsingProtectionLevel).
           },
           &quot;chromeProfileId&quot;: &quot;A String&quot;, # Chrome profile ID that is exposed by the Chrome API. It is unique for each device.
-          &quot;lastProfileSyncTime&quot;: &quot;A String&quot;, # Timestamp in milliseconds since Epoch when the profile/gcm id was last synced.
+          &quot;lastProfileSyncTime&quot;: &quot;A String&quot;, # Timestamp in milliseconds since the Unix epoch when the profile/gcm id was last synced.
         },
       ],
       &quot;certificateAttributes&quot;: [ # Details of certificates.
@@ -336,7 +336,7 @@ Args:
 Returns:
   An object of the form:
 
-    { # A Device within the Cloud Identity Devices API. Represents a Device known to Google Cloud, independent of the device ownership, type, and whether it is assigned or in use by a user.
+    { # A Device within the Cloud Identity Devices API. Represents a Device known to Google Cloud, independent of the device ownership, type, and whether it is assigned or in use by a user. Important: Device API scopes require that you use domain-wide delegation to access the API. For more information, see [Set up the Devices API](https://cloud.google.com/identity/docs/how-to/setup-devices).
   &quot;androidSpecificAttributes&quot;: { # Resource representing the Android specific attributes of a Device. # Output only. Attributes specific to Android devices.
     &quot;ctsProfileMatch&quot;: True or False, # Whether the device passes Android CTS compliance.
     &quot;enabledUnknownSources&quot;: True or False, # Whether applications from unknown sources can be installed on device.
@@ -363,14 +363,14 @@ Returns:
   &quot;enabledUsbDebugging&quot;: True or False, # Output only. Whether USB debugging is enabled on device.
   &quot;encryptionState&quot;: &quot;A String&quot;, # Output only. Device encryption state.
   &quot;endpointVerificationSpecificAttributes&quot;: { # Resource representing the [Endpoint Verification-specific attributes](https://cloud.google.com/endpoint-verification/docs/device-information) of a device. # Output only. Attributes specific to [Endpoint Verification](https://cloud.google.com/endpoint-verification/docs/overview) devices.
-    &quot;additionalSignals&quot;: { # Additional signals reported by Endpoint Verification. It includes the following attributes: 1. Non-configurable attributes: hotfixes, av_installed, av_enabled, windows_domain_name, is_os_native_firewall_enabled, and is_secure_boot_enabled. 2. Configurable attributes: file_config, registry_config, and plist_config.
+    &quot;additionalSignals&quot;: { # [Additional signals](https://cloud.google.com/endpoint-verification/docs/device-information) reported by Endpoint Verification. It includes the following attributes: * Non-configurable attributes: hotfixes, av_installed, av_enabled, windows_domain_name, is_os_native_firewall_enabled, and is_secure_boot_enabled. * [Configurable attributes](https://cloud.google.com/endpoint-verification/docs/collect-config-attributes): file, folder, and binary attributes; registry entries; and properties in a plist.
       &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
     },
     &quot;browserAttributes&quot;: [ # Details of browser profiles reported by Endpoint Verification.
-      { # Contains information about browser profiles reported by the Endpoint Verification extension.
-        &quot;chromeBrowserInfo&quot;: { # Browser-specific fields reported by the Endpoint Verification extension. LINT.IfChange # Represents the current state of the [Chrome browser attributes](https://cloud.google.com/access-context-manager/docs/browser-attributes) sent by the Endpoint Verification extension.
+      { # Contains information about browser profiles reported by the [Endpoint Verification extension](https://chromewebstore.google.com/detail/endpoint-verification/callobklhcbilhphinckomhgkigmfocg?pli=1).
+        &quot;chromeBrowserInfo&quot;: { # Browser-specific fields reported by the [Endpoint Verification extension](https://chromewebstore.google.com/detail/endpoint-verification/callobklhcbilhphinckomhgkigmfocg?pli=1). # Represents the current state of the [Chrome browser attributes](https://cloud.google.com/access-context-manager/docs/browser-attributes) sent by the [Endpoint Verification extension](https://chromewebstore.google.com/detail/endpoint-verification/callobklhcbilhphinckomhgkigmfocg?pli=1).
           &quot;browserManagementState&quot;: &quot;A String&quot;, # Output only. Browser&#x27;s management state.
-          &quot;browserVersion&quot;: &quot;A String&quot;, # Version of the request initiating browser.
+          &quot;browserVersion&quot;: &quot;A String&quot;, # Version of the request initiating browser. E.g. `91.0.4442.4`.
           &quot;isBuiltInDnsClientEnabled&quot;: True or False, # Current state of [built-in DNS client](https://chromeenterprise.google/policies/#BuiltInDnsClientEnabled).
           &quot;isBulkDataEntryAnalysisEnabled&quot;: True or False, # Current state of [bulk data analysis](https://chromeenterprise.google/policies/#OnBulkDataEntryEnterpriseConnector). Set to true if provider list from Chrome is non-empty.
           &quot;isChromeCleanupEnabled&quot;: True or False, # Current state of [Chrome Cleanup](https://chromeenterprise.google/policies/#ChromeCleanupEnabled).
@@ -385,7 +385,7 @@ Returns:
           &quot;safeBrowsingProtectionLevel&quot;: &quot;A String&quot;, # Current state of [Safe Browsing protection level](https://chromeenterprise.google/policies/#SafeBrowsingProtectionLevel).
         },
         &quot;chromeProfileId&quot;: &quot;A String&quot;, # Chrome profile ID that is exposed by the Chrome API. It is unique for each device.
-        &quot;lastProfileSyncTime&quot;: &quot;A String&quot;, # Timestamp in milliseconds since Epoch when the profile/gcm id was last synced.
+        &quot;lastProfileSyncTime&quot;: &quot;A String&quot;, # Timestamp in milliseconds since the Unix epoch when the profile/gcm id was last synced.
       },
     ],
     &quot;certificateAttributes&quot;: [ # Details of certificates.
@@ -456,7 +456,7 @@ Returns:
 
     { # Response message that is returned from the ListDevices method.
   &quot;devices&quot;: [ # Devices meeting the list restrictions.
-    { # A Device within the Cloud Identity Devices API. Represents a Device known to Google Cloud, independent of the device ownership, type, and whether it is assigned or in use by a user.
+    { # A Device within the Cloud Identity Devices API. Represents a Device known to Google Cloud, independent of the device ownership, type, and whether it is assigned or in use by a user. Important: Device API scopes require that you use domain-wide delegation to access the API. For more information, see [Set up the Devices API](https://cloud.google.com/identity/docs/how-to/setup-devices).
       &quot;androidSpecificAttributes&quot;: { # Resource representing the Android specific attributes of a Device. # Output only. Attributes specific to Android devices.
         &quot;ctsProfileMatch&quot;: True or False, # Whether the device passes Android CTS compliance.
         &quot;enabledUnknownSources&quot;: True or False, # Whether applications from unknown sources can be installed on device.
@@ -483,14 +483,14 @@ Returns:
       &quot;enabledUsbDebugging&quot;: True or False, # Output only. Whether USB debugging is enabled on device.
       &quot;encryptionState&quot;: &quot;A String&quot;, # Output only. Device encryption state.
       &quot;endpointVerificationSpecificAttributes&quot;: { # Resource representing the [Endpoint Verification-specific attributes](https://cloud.google.com/endpoint-verification/docs/device-information) of a device. # Output only. Attributes specific to [Endpoint Verification](https://cloud.google.com/endpoint-verification/docs/overview) devices.
-        &quot;additionalSignals&quot;: { # Additional signals reported by Endpoint Verification. It includes the following attributes: 1. Non-configurable attributes: hotfixes, av_installed, av_enabled, windows_domain_name, is_os_native_firewall_enabled, and is_secure_boot_enabled. 2. Configurable attributes: file_config, registry_config, and plist_config.
+        &quot;additionalSignals&quot;: { # [Additional signals](https://cloud.google.com/endpoint-verification/docs/device-information) reported by Endpoint Verification. It includes the following attributes: * Non-configurable attributes: hotfixes, av_installed, av_enabled, windows_domain_name, is_os_native_firewall_enabled, and is_secure_boot_enabled. * [Configurable attributes](https://cloud.google.com/endpoint-verification/docs/collect-config-attributes): file, folder, and binary attributes; registry entries; and properties in a plist.
           &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
         },
         &quot;browserAttributes&quot;: [ # Details of browser profiles reported by Endpoint Verification.
-          { # Contains information about browser profiles reported by the Endpoint Verification extension.
-            &quot;chromeBrowserInfo&quot;: { # Browser-specific fields reported by the Endpoint Verification extension. LINT.IfChange # Represents the current state of the [Chrome browser attributes](https://cloud.google.com/access-context-manager/docs/browser-attributes) sent by the Endpoint Verification extension.
+          { # Contains information about browser profiles reported by the [Endpoint Verification extension](https://chromewebstore.google.com/detail/endpoint-verification/callobklhcbilhphinckomhgkigmfocg?pli=1).
+            &quot;chromeBrowserInfo&quot;: { # Browser-specific fields reported by the [Endpoint Verification extension](https://chromewebstore.google.com/detail/endpoint-verification/callobklhcbilhphinckomhgkigmfocg?pli=1). # Represents the current state of the [Chrome browser attributes](https://cloud.google.com/access-context-manager/docs/browser-attributes) sent by the [Endpoint Verification extension](https://chromewebstore.google.com/detail/endpoint-verification/callobklhcbilhphinckomhgkigmfocg?pli=1).
               &quot;browserManagementState&quot;: &quot;A String&quot;, # Output only. Browser&#x27;s management state.
-              &quot;browserVersion&quot;: &quot;A String&quot;, # Version of the request initiating browser.
+              &quot;browserVersion&quot;: &quot;A String&quot;, # Version of the request initiating browser. E.g. `91.0.4442.4`.
               &quot;isBuiltInDnsClientEnabled&quot;: True or False, # Current state of [built-in DNS client](https://chromeenterprise.google/policies/#BuiltInDnsClientEnabled).
               &quot;isBulkDataEntryAnalysisEnabled&quot;: True or False, # Current state of [bulk data analysis](https://chromeenterprise.google/policies/#OnBulkDataEntryEnterpriseConnector). Set to true if provider list from Chrome is non-empty.
               &quot;isChromeCleanupEnabled&quot;: True or False, # Current state of [Chrome Cleanup](https://chromeenterprise.google/policies/#ChromeCleanupEnabled).
@@ -505,7 +505,7 @@ Returns:
               &quot;safeBrowsingProtectionLevel&quot;: &quot;A String&quot;, # Current state of [Safe Browsing protection level](https://chromeenterprise.google/policies/#SafeBrowsingProtectionLevel).
             },
             &quot;chromeProfileId&quot;: &quot;A String&quot;, # Chrome profile ID that is exposed by the Chrome API. It is unique for each device.
-            &quot;lastProfileSyncTime&quot;: &quot;A String&quot;, # Timestamp in milliseconds since Epoch when the profile/gcm id was last synced.
+            &quot;lastProfileSyncTime&quot;: &quot;A String&quot;, # Timestamp in milliseconds since the Unix epoch when the profile/gcm id was last synced.
           },
         ],
         &quot;certificateAttributes&quot;: [ # Details of certificates.

@@ -80,6 +80,11 @@ h1, h2, h3 {
 <p class="firstline">Returns the aptArtifacts Resource.</p>
 
 <p class="toc_element">
+  <code><a href="artifactregistry_v1.projects.locations.repositories.attachments.html">attachments()</a></code>
+</p>
+<p class="firstline">Returns the attachments Resource.</p>
+
+<p class="toc_element">
   <code><a href="artifactregistry_v1.projects.locations.repositories.dockerImages.html">dockerImages()</a></code>
 </p>
 <p class="firstline">Returns the dockerImages Resource.</p>
@@ -130,6 +135,11 @@ h1, h2, h3 {
 <p class="firstline">Returns the pythonPackages Resource.</p>
 
 <p class="toc_element">
+  <code><a href="artifactregistry_v1.projects.locations.repositories.rules.html">rules()</a></code>
+</p>
+<p class="firstline">Returns the rules Resource.</p>
+
+<p class="toc_element">
   <code><a href="artifactregistry_v1.projects.locations.repositories.yumArtifacts.html">yumArtifacts()</a></code>
 </p>
 <p class="firstline">Returns the yumArtifacts Resource.</p>
@@ -150,7 +160,7 @@ h1, h2, h3 {
   <code><a href="#getIamPolicy">getIamPolicy(resource, options_requestedPolicyVersion=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Gets the IAM policy for a given resource.</p>
 <p class="toc_element">
-  <code><a href="#list">list(parent, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
+  <code><a href="#list">list(parent, filter=None, orderBy=None, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Lists repositories.</p>
 <p class="toc_element">
   <code><a href="#list_next">list_next()</a></code></p>
@@ -209,7 +219,7 @@ Args:
   &quot;cleanupPolicyDryRun&quot;: True or False, # Optional. If true, the cleanup pipeline is prevented from deleting versions in this repository.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the repository was created.
   &quot;description&quot;: &quot;A String&quot;, # The user-provided description of the repository.
-  &quot;disallowUnspecifiedMode&quot;: True or False, # Optional. If this is true, aunspecified repo type will be treated as error. Is used for new repo types that don&#x27;t have any specific fields. Right now is used by AOSS team when creating repos for customers.
+  &quot;disallowUnspecifiedMode&quot;: True or False, # Optional. If this is true, an unspecified repo type will be treated as error rather than defaulting to standard.
   &quot;dockerConfig&quot;: { # DockerRepositoryConfig is docker related repository details. Provides additional configuration details for repositories of the docker format type. # Docker repository config contains repository level configuration for the repositories of docker type.
     &quot;immutableTags&quot;: True or False, # The repository which enabled this flag prevents all tags from being modified, moved or deleted. This does not prevent tags from being created.
   },
@@ -224,6 +234,7 @@ Args:
   },
   &quot;mode&quot;: &quot;A String&quot;, # Optional. The mode of the repository.
   &quot;name&quot;: &quot;A String&quot;, # The name of the repository, for example: `projects/p1/locations/us-central1/repositories/repo1`. For each location in a project, repository names must be unique.
+  &quot;registryUri&quot;: &quot;A String&quot;, # Output only. The repository endpoint, for example: `us-docker.pkg.dev/my-proj/my-repo`.
   &quot;remoteRepositoryConfig&quot;: { # Remote repository configuration. # Configuration specific for a Remote Repository.
     &quot;aptRepository&quot;: { # Configuration for an Apt remote repository. # Specific settings for an Apt remote repository.
       &quot;customRepository&quot;: { # Customer-specified publicly available remote repository. # Customer-specified remote repository.
@@ -233,6 +244,9 @@ Args:
         &quot;repositoryBase&quot;: &quot;A String&quot;, # A common public repository base for Apt.
         &quot;repositoryPath&quot;: &quot;A String&quot;, # A custom field to define a path to a specific repository from the base.
       },
+    },
+    &quot;commonRepository&quot;: { # Common remote repository settings type. # Common remote repository settings. Used as the remote repository upstream URL.
+      &quot;uri&quot;: &quot;A String&quot;, # Required. A common public repository base for remote repository.
     },
     &quot;description&quot;: &quot;A String&quot;, # The description of the remote source.
     &quot;disableUpstreamValidation&quot;: True or False, # Input only. A create/update remote repo option to avoid making a HEAD/GET request to validate a remote repo and any supplied upstream credentials.
@@ -280,7 +294,7 @@ Args:
   &quot;satisfiesPzs&quot;: True or False, # Output only. If set, the repository satisfies physical zone separation.
   &quot;sizeBytes&quot;: &quot;A String&quot;, # Output only. The size, in bytes, of all artifact storage in this repository. Repositories that are generally available or in public preview use this to calculate storage costs.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time when the repository was last updated.
-  &quot;virtualRepositoryConfig&quot;: { # LINT.IfChange Virtual repository configuration. # Configuration specific for a Virtual Repository.
+  &quot;virtualRepositoryConfig&quot;: { # Virtual repository configuration. # Configuration specific for a Virtual Repository.
     &quot;upstreamPolicies&quot;: [ # Policies that configure the upstream artifacts distributed by the Virtual Repository. Upstream policies cannot be set on a standard repository.
       { # Artifact policy configuration for the repository contents.
         &quot;id&quot;: &quot;A String&quot;, # The user-provided ID of the upstream policy.
@@ -288,6 +302,12 @@ Args:
         &quot;repository&quot;: &quot;A String&quot;, # A reference to the repository resource, for example: `projects/p1/locations/us-central1/repositories/repo1`.
       },
     ],
+  },
+  &quot;vulnerabilityScanningConfig&quot;: { # Config on whether to perform vulnerability scanning for resources in this repository, as well as output fields describing current state. # Optional. Config and state for vulnerability scanning of resources within this Repository.
+    &quot;enablementConfig&quot;: &quot;A String&quot;, # Optional. Config for whether this repository has vulnerability scanning disabled.
+    &quot;enablementState&quot;: &quot;A String&quot;, # Output only. State of feature enablement, combining repository enablement config and API enablement state.
+    &quot;enablementStateReason&quot;: &quot;A String&quot;, # Output only. Reason for the repository state.
+    &quot;lastEnableTime&quot;: &quot;A String&quot;, # Output only. The last time this repository config was enabled.
   },
 }
 
@@ -400,7 +420,7 @@ Returns:
   &quot;cleanupPolicyDryRun&quot;: True or False, # Optional. If true, the cleanup pipeline is prevented from deleting versions in this repository.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the repository was created.
   &quot;description&quot;: &quot;A String&quot;, # The user-provided description of the repository.
-  &quot;disallowUnspecifiedMode&quot;: True or False, # Optional. If this is true, aunspecified repo type will be treated as error. Is used for new repo types that don&#x27;t have any specific fields. Right now is used by AOSS team when creating repos for customers.
+  &quot;disallowUnspecifiedMode&quot;: True or False, # Optional. If this is true, an unspecified repo type will be treated as error rather than defaulting to standard.
   &quot;dockerConfig&quot;: { # DockerRepositoryConfig is docker related repository details. Provides additional configuration details for repositories of the docker format type. # Docker repository config contains repository level configuration for the repositories of docker type.
     &quot;immutableTags&quot;: True or False, # The repository which enabled this flag prevents all tags from being modified, moved or deleted. This does not prevent tags from being created.
   },
@@ -415,6 +435,7 @@ Returns:
   },
   &quot;mode&quot;: &quot;A String&quot;, # Optional. The mode of the repository.
   &quot;name&quot;: &quot;A String&quot;, # The name of the repository, for example: `projects/p1/locations/us-central1/repositories/repo1`. For each location in a project, repository names must be unique.
+  &quot;registryUri&quot;: &quot;A String&quot;, # Output only. The repository endpoint, for example: `us-docker.pkg.dev/my-proj/my-repo`.
   &quot;remoteRepositoryConfig&quot;: { # Remote repository configuration. # Configuration specific for a Remote Repository.
     &quot;aptRepository&quot;: { # Configuration for an Apt remote repository. # Specific settings for an Apt remote repository.
       &quot;customRepository&quot;: { # Customer-specified publicly available remote repository. # Customer-specified remote repository.
@@ -424,6 +445,9 @@ Returns:
         &quot;repositoryBase&quot;: &quot;A String&quot;, # A common public repository base for Apt.
         &quot;repositoryPath&quot;: &quot;A String&quot;, # A custom field to define a path to a specific repository from the base.
       },
+    },
+    &quot;commonRepository&quot;: { # Common remote repository settings type. # Common remote repository settings. Used as the remote repository upstream URL.
+      &quot;uri&quot;: &quot;A String&quot;, # Required. A common public repository base for remote repository.
     },
     &quot;description&quot;: &quot;A String&quot;, # The description of the remote source.
     &quot;disableUpstreamValidation&quot;: True or False, # Input only. A create/update remote repo option to avoid making a HEAD/GET request to validate a remote repo and any supplied upstream credentials.
@@ -471,7 +495,7 @@ Returns:
   &quot;satisfiesPzs&quot;: True or False, # Output only. If set, the repository satisfies physical zone separation.
   &quot;sizeBytes&quot;: &quot;A String&quot;, # Output only. The size, in bytes, of all artifact storage in this repository. Repositories that are generally available or in public preview use this to calculate storage costs.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time when the repository was last updated.
-  &quot;virtualRepositoryConfig&quot;: { # LINT.IfChange Virtual repository configuration. # Configuration specific for a Virtual Repository.
+  &quot;virtualRepositoryConfig&quot;: { # Virtual repository configuration. # Configuration specific for a Virtual Repository.
     &quot;upstreamPolicies&quot;: [ # Policies that configure the upstream artifacts distributed by the Virtual Repository. Upstream policies cannot be set on a standard repository.
       { # Artifact policy configuration for the repository contents.
         &quot;id&quot;: &quot;A String&quot;, # The user-provided ID of the upstream policy.
@@ -479,6 +503,12 @@ Returns:
         &quot;repository&quot;: &quot;A String&quot;, # A reference to the repository resource, for example: `projects/p1/locations/us-central1/repositories/repo1`.
       },
     ],
+  },
+  &quot;vulnerabilityScanningConfig&quot;: { # Config on whether to perform vulnerability scanning for resources in this repository, as well as output fields describing current state. # Optional. Config and state for vulnerability scanning of resources within this Repository.
+    &quot;enablementConfig&quot;: &quot;A String&quot;, # Optional. Config for whether this repository has vulnerability scanning disabled.
+    &quot;enablementState&quot;: &quot;A String&quot;, # Output only. State of feature enablement, combining repository enablement config and API enablement state.
+    &quot;enablementStateReason&quot;: &quot;A String&quot;, # Output only. Reason for the repository state.
+    &quot;lastEnableTime&quot;: &quot;A String&quot;, # Output only. The last time this repository config was enabled.
   },
 }</pre>
 </div>
@@ -519,11 +549,13 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="list">list(parent, pageSize=None, pageToken=None, x__xgafv=None)</code>
+    <code class="details" id="list">list(parent, filter=None, orderBy=None, pageSize=None, pageToken=None, x__xgafv=None)</code>
   <pre>Lists repositories.
 
 Args:
   parent: string, Required. The name of the parent resource whose repositories will be listed. (required)
+  filter: string, Optional. An expression for filtering the results of the request. Filter rules are case insensitive. The fields eligible for filtering are: * `name` Examples of using a filter: To filter the results of your request to repositories with the name `my-repo` in project `my-project` in the `us-central` region, append the following filter expression to your request: * `name=&quot;projects/my-project/locations/us-central1/repositories/my-repo&quot;` You can also use wildcards to match any number of characters before or after the value: * `name=&quot;projects/my-project/locations/us-central1/repositories/my-*&quot;` * `name=&quot;projects/my-project/locations/us-central1/repositories/*repo&quot;` * `name=&quot;projects/my-project/locations/us-central1/repositories/*repo*&quot;`
+  orderBy: string, Optional. The field to order the results by.
   pageSize: integer, The maximum number of repositories to return. Maximum page size is 1,000.
   pageToken: string, The next_page_token value returned from a previous list request, if any.
   x__xgafv: string, V1 error format.
@@ -567,7 +599,7 @@ Returns:
       &quot;cleanupPolicyDryRun&quot;: True or False, # Optional. If true, the cleanup pipeline is prevented from deleting versions in this repository.
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the repository was created.
       &quot;description&quot;: &quot;A String&quot;, # The user-provided description of the repository.
-      &quot;disallowUnspecifiedMode&quot;: True or False, # Optional. If this is true, aunspecified repo type will be treated as error. Is used for new repo types that don&#x27;t have any specific fields. Right now is used by AOSS team when creating repos for customers.
+      &quot;disallowUnspecifiedMode&quot;: True or False, # Optional. If this is true, an unspecified repo type will be treated as error rather than defaulting to standard.
       &quot;dockerConfig&quot;: { # DockerRepositoryConfig is docker related repository details. Provides additional configuration details for repositories of the docker format type. # Docker repository config contains repository level configuration for the repositories of docker type.
         &quot;immutableTags&quot;: True or False, # The repository which enabled this flag prevents all tags from being modified, moved or deleted. This does not prevent tags from being created.
       },
@@ -582,6 +614,7 @@ Returns:
       },
       &quot;mode&quot;: &quot;A String&quot;, # Optional. The mode of the repository.
       &quot;name&quot;: &quot;A String&quot;, # The name of the repository, for example: `projects/p1/locations/us-central1/repositories/repo1`. For each location in a project, repository names must be unique.
+      &quot;registryUri&quot;: &quot;A String&quot;, # Output only. The repository endpoint, for example: `us-docker.pkg.dev/my-proj/my-repo`.
       &quot;remoteRepositoryConfig&quot;: { # Remote repository configuration. # Configuration specific for a Remote Repository.
         &quot;aptRepository&quot;: { # Configuration for an Apt remote repository. # Specific settings for an Apt remote repository.
           &quot;customRepository&quot;: { # Customer-specified publicly available remote repository. # Customer-specified remote repository.
@@ -591,6 +624,9 @@ Returns:
             &quot;repositoryBase&quot;: &quot;A String&quot;, # A common public repository base for Apt.
             &quot;repositoryPath&quot;: &quot;A String&quot;, # A custom field to define a path to a specific repository from the base.
           },
+        },
+        &quot;commonRepository&quot;: { # Common remote repository settings type. # Common remote repository settings. Used as the remote repository upstream URL.
+          &quot;uri&quot;: &quot;A String&quot;, # Required. A common public repository base for remote repository.
         },
         &quot;description&quot;: &quot;A String&quot;, # The description of the remote source.
         &quot;disableUpstreamValidation&quot;: True or False, # Input only. A create/update remote repo option to avoid making a HEAD/GET request to validate a remote repo and any supplied upstream credentials.
@@ -638,7 +674,7 @@ Returns:
       &quot;satisfiesPzs&quot;: True or False, # Output only. If set, the repository satisfies physical zone separation.
       &quot;sizeBytes&quot;: &quot;A String&quot;, # Output only. The size, in bytes, of all artifact storage in this repository. Repositories that are generally available or in public preview use this to calculate storage costs.
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time when the repository was last updated.
-      &quot;virtualRepositoryConfig&quot;: { # LINT.IfChange Virtual repository configuration. # Configuration specific for a Virtual Repository.
+      &quot;virtualRepositoryConfig&quot;: { # Virtual repository configuration. # Configuration specific for a Virtual Repository.
         &quot;upstreamPolicies&quot;: [ # Policies that configure the upstream artifacts distributed by the Virtual Repository. Upstream policies cannot be set on a standard repository.
           { # Artifact policy configuration for the repository contents.
             &quot;id&quot;: &quot;A String&quot;, # The user-provided ID of the upstream policy.
@@ -646,6 +682,12 @@ Returns:
             &quot;repository&quot;: &quot;A String&quot;, # A reference to the repository resource, for example: `projects/p1/locations/us-central1/repositories/repo1`.
           },
         ],
+      },
+      &quot;vulnerabilityScanningConfig&quot;: { # Config on whether to perform vulnerability scanning for resources in this repository, as well as output fields describing current state. # Optional. Config and state for vulnerability scanning of resources within this Repository.
+        &quot;enablementConfig&quot;: &quot;A String&quot;, # Optional. Config for whether this repository has vulnerability scanning disabled.
+        &quot;enablementState&quot;: &quot;A String&quot;, # Output only. State of feature enablement, combining repository enablement config and API enablement state.
+        &quot;enablementStateReason&quot;: &quot;A String&quot;, # Output only. Reason for the repository state.
+        &quot;lastEnableTime&quot;: &quot;A String&quot;, # Output only. The last time this repository config was enabled.
       },
     },
   ],
@@ -705,7 +747,7 @@ Args:
   &quot;cleanupPolicyDryRun&quot;: True or False, # Optional. If true, the cleanup pipeline is prevented from deleting versions in this repository.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the repository was created.
   &quot;description&quot;: &quot;A String&quot;, # The user-provided description of the repository.
-  &quot;disallowUnspecifiedMode&quot;: True or False, # Optional. If this is true, aunspecified repo type will be treated as error. Is used for new repo types that don&#x27;t have any specific fields. Right now is used by AOSS team when creating repos for customers.
+  &quot;disallowUnspecifiedMode&quot;: True or False, # Optional. If this is true, an unspecified repo type will be treated as error rather than defaulting to standard.
   &quot;dockerConfig&quot;: { # DockerRepositoryConfig is docker related repository details. Provides additional configuration details for repositories of the docker format type. # Docker repository config contains repository level configuration for the repositories of docker type.
     &quot;immutableTags&quot;: True or False, # The repository which enabled this flag prevents all tags from being modified, moved or deleted. This does not prevent tags from being created.
   },
@@ -720,6 +762,7 @@ Args:
   },
   &quot;mode&quot;: &quot;A String&quot;, # Optional. The mode of the repository.
   &quot;name&quot;: &quot;A String&quot;, # The name of the repository, for example: `projects/p1/locations/us-central1/repositories/repo1`. For each location in a project, repository names must be unique.
+  &quot;registryUri&quot;: &quot;A String&quot;, # Output only. The repository endpoint, for example: `us-docker.pkg.dev/my-proj/my-repo`.
   &quot;remoteRepositoryConfig&quot;: { # Remote repository configuration. # Configuration specific for a Remote Repository.
     &quot;aptRepository&quot;: { # Configuration for an Apt remote repository. # Specific settings for an Apt remote repository.
       &quot;customRepository&quot;: { # Customer-specified publicly available remote repository. # Customer-specified remote repository.
@@ -729,6 +772,9 @@ Args:
         &quot;repositoryBase&quot;: &quot;A String&quot;, # A common public repository base for Apt.
         &quot;repositoryPath&quot;: &quot;A String&quot;, # A custom field to define a path to a specific repository from the base.
       },
+    },
+    &quot;commonRepository&quot;: { # Common remote repository settings type. # Common remote repository settings. Used as the remote repository upstream URL.
+      &quot;uri&quot;: &quot;A String&quot;, # Required. A common public repository base for remote repository.
     },
     &quot;description&quot;: &quot;A String&quot;, # The description of the remote source.
     &quot;disableUpstreamValidation&quot;: True or False, # Input only. A create/update remote repo option to avoid making a HEAD/GET request to validate a remote repo and any supplied upstream credentials.
@@ -776,7 +822,7 @@ Args:
   &quot;satisfiesPzs&quot;: True or False, # Output only. If set, the repository satisfies physical zone separation.
   &quot;sizeBytes&quot;: &quot;A String&quot;, # Output only. The size, in bytes, of all artifact storage in this repository. Repositories that are generally available or in public preview use this to calculate storage costs.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time when the repository was last updated.
-  &quot;virtualRepositoryConfig&quot;: { # LINT.IfChange Virtual repository configuration. # Configuration specific for a Virtual Repository.
+  &quot;virtualRepositoryConfig&quot;: { # Virtual repository configuration. # Configuration specific for a Virtual Repository.
     &quot;upstreamPolicies&quot;: [ # Policies that configure the upstream artifacts distributed by the Virtual Repository. Upstream policies cannot be set on a standard repository.
       { # Artifact policy configuration for the repository contents.
         &quot;id&quot;: &quot;A String&quot;, # The user-provided ID of the upstream policy.
@@ -784,6 +830,12 @@ Args:
         &quot;repository&quot;: &quot;A String&quot;, # A reference to the repository resource, for example: `projects/p1/locations/us-central1/repositories/repo1`.
       },
     ],
+  },
+  &quot;vulnerabilityScanningConfig&quot;: { # Config on whether to perform vulnerability scanning for resources in this repository, as well as output fields describing current state. # Optional. Config and state for vulnerability scanning of resources within this Repository.
+    &quot;enablementConfig&quot;: &quot;A String&quot;, # Optional. Config for whether this repository has vulnerability scanning disabled.
+    &quot;enablementState&quot;: &quot;A String&quot;, # Output only. State of feature enablement, combining repository enablement config and API enablement state.
+    &quot;enablementStateReason&quot;: &quot;A String&quot;, # Output only. Reason for the repository state.
+    &quot;lastEnableTime&quot;: &quot;A String&quot;, # Output only. The last time this repository config was enabled.
   },
 }
 
@@ -826,7 +878,7 @@ Returns:
   &quot;cleanupPolicyDryRun&quot;: True or False, # Optional. If true, the cleanup pipeline is prevented from deleting versions in this repository.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the repository was created.
   &quot;description&quot;: &quot;A String&quot;, # The user-provided description of the repository.
-  &quot;disallowUnspecifiedMode&quot;: True or False, # Optional. If this is true, aunspecified repo type will be treated as error. Is used for new repo types that don&#x27;t have any specific fields. Right now is used by AOSS team when creating repos for customers.
+  &quot;disallowUnspecifiedMode&quot;: True or False, # Optional. If this is true, an unspecified repo type will be treated as error rather than defaulting to standard.
   &quot;dockerConfig&quot;: { # DockerRepositoryConfig is docker related repository details. Provides additional configuration details for repositories of the docker format type. # Docker repository config contains repository level configuration for the repositories of docker type.
     &quot;immutableTags&quot;: True or False, # The repository which enabled this flag prevents all tags from being modified, moved or deleted. This does not prevent tags from being created.
   },
@@ -841,6 +893,7 @@ Returns:
   },
   &quot;mode&quot;: &quot;A String&quot;, # Optional. The mode of the repository.
   &quot;name&quot;: &quot;A String&quot;, # The name of the repository, for example: `projects/p1/locations/us-central1/repositories/repo1`. For each location in a project, repository names must be unique.
+  &quot;registryUri&quot;: &quot;A String&quot;, # Output only. The repository endpoint, for example: `us-docker.pkg.dev/my-proj/my-repo`.
   &quot;remoteRepositoryConfig&quot;: { # Remote repository configuration. # Configuration specific for a Remote Repository.
     &quot;aptRepository&quot;: { # Configuration for an Apt remote repository. # Specific settings for an Apt remote repository.
       &quot;customRepository&quot;: { # Customer-specified publicly available remote repository. # Customer-specified remote repository.
@@ -850,6 +903,9 @@ Returns:
         &quot;repositoryBase&quot;: &quot;A String&quot;, # A common public repository base for Apt.
         &quot;repositoryPath&quot;: &quot;A String&quot;, # A custom field to define a path to a specific repository from the base.
       },
+    },
+    &quot;commonRepository&quot;: { # Common remote repository settings type. # Common remote repository settings. Used as the remote repository upstream URL.
+      &quot;uri&quot;: &quot;A String&quot;, # Required. A common public repository base for remote repository.
     },
     &quot;description&quot;: &quot;A String&quot;, # The description of the remote source.
     &quot;disableUpstreamValidation&quot;: True or False, # Input only. A create/update remote repo option to avoid making a HEAD/GET request to validate a remote repo and any supplied upstream credentials.
@@ -897,7 +953,7 @@ Returns:
   &quot;satisfiesPzs&quot;: True or False, # Output only. If set, the repository satisfies physical zone separation.
   &quot;sizeBytes&quot;: &quot;A String&quot;, # Output only. The size, in bytes, of all artifact storage in this repository. Repositories that are generally available or in public preview use this to calculate storage costs.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time when the repository was last updated.
-  &quot;virtualRepositoryConfig&quot;: { # LINT.IfChange Virtual repository configuration. # Configuration specific for a Virtual Repository.
+  &quot;virtualRepositoryConfig&quot;: { # Virtual repository configuration. # Configuration specific for a Virtual Repository.
     &quot;upstreamPolicies&quot;: [ # Policies that configure the upstream artifacts distributed by the Virtual Repository. Upstream policies cannot be set on a standard repository.
       { # Artifact policy configuration for the repository contents.
         &quot;id&quot;: &quot;A String&quot;, # The user-provided ID of the upstream policy.
@@ -905,6 +961,12 @@ Returns:
         &quot;repository&quot;: &quot;A String&quot;, # A reference to the repository resource, for example: `projects/p1/locations/us-central1/repositories/repo1`.
       },
     ],
+  },
+  &quot;vulnerabilityScanningConfig&quot;: { # Config on whether to perform vulnerability scanning for resources in this repository, as well as output fields describing current state. # Optional. Config and state for vulnerability scanning of resources within this Repository.
+    &quot;enablementConfig&quot;: &quot;A String&quot;, # Optional. Config for whether this repository has vulnerability scanning disabled.
+    &quot;enablementState&quot;: &quot;A String&quot;, # Output only. State of feature enablement, combining repository enablement config and API enablement state.
+    &quot;enablementStateReason&quot;: &quot;A String&quot;, # Output only. Reason for the repository state.
+    &quot;lastEnableTime&quot;: &quot;A String&quot;, # Output only. The last time this repository config was enabled.
   },
 }</pre>
 </div>

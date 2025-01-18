@@ -119,8 +119,8 @@ Args:
   body: object, The request body.
     The object takes the form of:
 
-{ # The ServiceConnectionPolicy resource. Next id: 12
-  &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionMap was created.
+{ # The ServiceConnectionPolicy resource.
+  &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionPolicy was created.
   &quot;description&quot;: &quot;A String&quot;, # A description of this resource.
   &quot;etag&quot;: &quot;A String&quot;, # Optional. The etag is computed by the server, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
   &quot;infrastructure&quot;: &quot;A String&quot;, # Output only. The type of underlying resources used to create the connection.
@@ -130,7 +130,11 @@ Args:
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The name of a ServiceConnectionPolicy. Format: projects/{project}/locations/{location}/serviceConnectionPolicies/{service_connection_policy} See: https://google.aip.dev/122#fields-representing-resource-names
   &quot;network&quot;: &quot;A String&quot;, # The resource path of the consumer network. Example: - projects/{projectNumOrId}/global/networks/{resourceId}.
   &quot;pscConfig&quot;: { # Configuration used for Private Service Connect connections. Used when Infrastructure is PSC. # Configuration used for Private Service Connect connections. Used when Infrastructure is PSC.
+    &quot;allowedGoogleProducersResourceHierarchyLevel&quot;: [ # Optional. List of Projects, Folders, or Organizations from where the Producer instance can be within. For example, a network administrator can provide both &#x27;organizations/foo&#x27; and &#x27;projects/bar&#x27; as allowed_google_producers_resource_hierarchy_levels. This allowlists this network to connect with any Producer instance within the &#x27;foo&#x27; organization or the &#x27;bar&#x27; project. By default, allowed_google_producers_resource_hierarchy_level is empty. The format for each allowed_google_producers_resource_hierarchy_level is / where is one of &#x27;projects&#x27;, &#x27;folders&#x27;, or &#x27;organizations&#x27; and is either the ID or the number of the resource type. Format for each allowed_google_producers_resource_hierarchy_level value: &#x27;projects/&#x27; or &#x27;folders/&#x27; or &#x27;organizations/&#x27; Eg. [projects/my-project-id, projects/567, folders/891, organizations/123]
+      &quot;A String&quot;,
+    ],
     &quot;limit&quot;: &quot;A String&quot;, # Optional. Max number of PSC connections for this policy.
+    &quot;producerInstanceLocation&quot;: &quot;A String&quot;, # Required. ProducerInstanceLocation is used to specify which authorization mechanism to use to determine which projects the Producer instance can be within.
     &quot;subnetworks&quot;: [ # The resource paths of subnetworks to use for IP address management. Example: projects/{projectNumOrId}/regions/{region}/subnetworks/{resourceId}.
       &quot;A String&quot;,
     ],
@@ -140,7 +144,7 @@ Args:
       &quot;consumerAddress&quot;: &quot;A String&quot;, # The resource reference of the consumer address.
       &quot;consumerForwardingRule&quot;: &quot;A String&quot;, # The resource reference of the PSC Forwarding Rule within the consumer VPC.
       &quot;consumerTargetProject&quot;: &quot;A String&quot;, # The project where the PSC connection is created.
-      &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The most recent error during operating this connection.
+      &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The most recent error during operating this connection. Deprecated, please use error_info instead.
         &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
         &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
           {
@@ -151,21 +155,26 @@ Args:
       },
       &quot;errorInfo&quot;: { # Describes the cause of the error with structured details. Example of an error when contacting the &quot;pubsub.googleapis.com&quot; API when it is not enabled: { &quot;reason&quot;: &quot;API_DISABLED&quot; &quot;domain&quot;: &quot;googleapis.com&quot; &quot;metadata&quot;: { &quot;resource&quot;: &quot;projects/123&quot;, &quot;service&quot;: &quot;pubsub.googleapis.com&quot; } } This response indicates that the pubsub.googleapis.com API is not enabled. Example of an error that is returned when attempting to create a Spanner instance in a region that is out of stock: { &quot;reason&quot;: &quot;STOCKOUT&quot; &quot;domain&quot;: &quot;spanner.googleapis.com&quot;, &quot;metadata&quot;: { &quot;availableRegions&quot;: &quot;us-central1,us-east2&quot; } } # Output only. The error info for the latest error during operating this connection.
         &quot;domain&quot;: &quot;A String&quot;, # The logical grouping to which the &quot;reason&quot; belongs. The error domain is typically the registered service name of the tool or product that generates the error. Example: &quot;pubsub.googleapis.com&quot;. If the error is generated by some common infrastructure, the error domain must be a globally unique value that identifies the infrastructure. For Google API infrastructure, the error domain is &quot;googleapis.com&quot;.
-        &quot;metadata&quot;: { # Additional structured details about this error. Keys must match /a-z+/ but should ideally be lowerCamelCase. Also they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than {&quot;instanceLimit&quot;: &quot;100/request&quot;}, should be returned as, {&quot;instanceLimitPerRequest&quot;: &quot;100&quot;}, if the client exceeds the number of instances that can be created in a single (batch) request.
+        &quot;metadata&quot;: { # Additional structured details about this error. Keys must match a regular expression of `a-z+` but should ideally be lowerCamelCase. Also, they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than `{&quot;instanceLimit&quot;: &quot;100/request&quot;}`, should be returned as, `{&quot;instanceLimitPerRequest&quot;: &quot;100&quot;}`, if the client exceeds the number of instances that can be created in a single (batch) request.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;reason&quot;: &quot;A String&quot;, # The reason of the error. This is a constant value that identifies the proximate cause of the error. Error reasons are unique within a particular domain of errors. This should be at most 63 characters and match a regular expression of `A-Z+[A-Z0-9]`, which represents UPPER_SNAKE_CASE.
       },
       &quot;errorType&quot;: &quot;A String&quot;, # The error type indicates whether the error is consumer facing, producer facing or system internal.
       &quot;gceOperation&quot;: &quot;A String&quot;, # The last Compute Engine operation to setup PSC connection.
-      &quot;producerInstanceId&quot;: &quot;A String&quot;, # Immutable. An immutable identifier for the producer instance.
+      &quot;ipVersion&quot;: &quot;A String&quot;, # The requested IP version for the PSC connection.
+      &quot;producerInstanceId&quot;: &quot;A String&quot;, # Immutable. Deprecated. Use producer_instance_metadata instead. An immutable identifier for the producer instance.
+      &quot;producerInstanceMetadata&quot;: { # Immutable. An immutable map for the producer instance metadata.
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
       &quot;pscConnectionId&quot;: &quot;A String&quot;, # The PSC connection id of the PSC forwarding rule.
       &quot;selectedSubnetwork&quot;: &quot;A String&quot;, # Output only. The URI of the subnetwork selected to allocate IP address for this connection.
+      &quot;serviceClass&quot;: &quot;A String&quot;, # Output only. [Output only] The service class associated with this PSC Connection. The value is derived from the SCPolicy and matches the service class name provided by the customer.
       &quot;state&quot;: &quot;A String&quot;, # State of the PSC Connection
     },
   ],
-  &quot;serviceClass&quot;: &quot;A String&quot;, # The service class identifier for which this ServiceConnectionPolicy is for. The service class identifier is a unique, symbolic representation of a ServiceClass. It is provided by the Service Producer. Google services have a prefix of gcp. For example, gcp-cloud-sql. 3rd party services do not. For example, test-service-a3dfcx.
-  &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionMap was updated.
+  &quot;serviceClass&quot;: &quot;A String&quot;, # The service class identifier for which this ServiceConnectionPolicy is for. The service class identifier is a unique, symbolic representation of a ServiceClass. It is provided by the Service Producer. Google services have a prefix of gcp or google-cloud. For example, gcp-memorystore-redis or google-cloud-sql. 3rd party services do not. For example, test-service-a3dfcx.
+  &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionPolicy was updated.
 }
 
   requestId: string, Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes since the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).
@@ -250,8 +259,8 @@ Args:
 Returns:
   An object of the form:
 
-    { # The ServiceConnectionPolicy resource. Next id: 12
-  &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionMap was created.
+    { # The ServiceConnectionPolicy resource.
+  &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionPolicy was created.
   &quot;description&quot;: &quot;A String&quot;, # A description of this resource.
   &quot;etag&quot;: &quot;A String&quot;, # Optional. The etag is computed by the server, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
   &quot;infrastructure&quot;: &quot;A String&quot;, # Output only. The type of underlying resources used to create the connection.
@@ -261,7 +270,11 @@ Returns:
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The name of a ServiceConnectionPolicy. Format: projects/{project}/locations/{location}/serviceConnectionPolicies/{service_connection_policy} See: https://google.aip.dev/122#fields-representing-resource-names
   &quot;network&quot;: &quot;A String&quot;, # The resource path of the consumer network. Example: - projects/{projectNumOrId}/global/networks/{resourceId}.
   &quot;pscConfig&quot;: { # Configuration used for Private Service Connect connections. Used when Infrastructure is PSC. # Configuration used for Private Service Connect connections. Used when Infrastructure is PSC.
+    &quot;allowedGoogleProducersResourceHierarchyLevel&quot;: [ # Optional. List of Projects, Folders, or Organizations from where the Producer instance can be within. For example, a network administrator can provide both &#x27;organizations/foo&#x27; and &#x27;projects/bar&#x27; as allowed_google_producers_resource_hierarchy_levels. This allowlists this network to connect with any Producer instance within the &#x27;foo&#x27; organization or the &#x27;bar&#x27; project. By default, allowed_google_producers_resource_hierarchy_level is empty. The format for each allowed_google_producers_resource_hierarchy_level is / where is one of &#x27;projects&#x27;, &#x27;folders&#x27;, or &#x27;organizations&#x27; and is either the ID or the number of the resource type. Format for each allowed_google_producers_resource_hierarchy_level value: &#x27;projects/&#x27; or &#x27;folders/&#x27; or &#x27;organizations/&#x27; Eg. [projects/my-project-id, projects/567, folders/891, organizations/123]
+      &quot;A String&quot;,
+    ],
     &quot;limit&quot;: &quot;A String&quot;, # Optional. Max number of PSC connections for this policy.
+    &quot;producerInstanceLocation&quot;: &quot;A String&quot;, # Required. ProducerInstanceLocation is used to specify which authorization mechanism to use to determine which projects the Producer instance can be within.
     &quot;subnetworks&quot;: [ # The resource paths of subnetworks to use for IP address management. Example: projects/{projectNumOrId}/regions/{region}/subnetworks/{resourceId}.
       &quot;A String&quot;,
     ],
@@ -271,7 +284,7 @@ Returns:
       &quot;consumerAddress&quot;: &quot;A String&quot;, # The resource reference of the consumer address.
       &quot;consumerForwardingRule&quot;: &quot;A String&quot;, # The resource reference of the PSC Forwarding Rule within the consumer VPC.
       &quot;consumerTargetProject&quot;: &quot;A String&quot;, # The project where the PSC connection is created.
-      &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The most recent error during operating this connection.
+      &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The most recent error during operating this connection. Deprecated, please use error_info instead.
         &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
         &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
           {
@@ -282,21 +295,26 @@ Returns:
       },
       &quot;errorInfo&quot;: { # Describes the cause of the error with structured details. Example of an error when contacting the &quot;pubsub.googleapis.com&quot; API when it is not enabled: { &quot;reason&quot;: &quot;API_DISABLED&quot; &quot;domain&quot;: &quot;googleapis.com&quot; &quot;metadata&quot;: { &quot;resource&quot;: &quot;projects/123&quot;, &quot;service&quot;: &quot;pubsub.googleapis.com&quot; } } This response indicates that the pubsub.googleapis.com API is not enabled. Example of an error that is returned when attempting to create a Spanner instance in a region that is out of stock: { &quot;reason&quot;: &quot;STOCKOUT&quot; &quot;domain&quot;: &quot;spanner.googleapis.com&quot;, &quot;metadata&quot;: { &quot;availableRegions&quot;: &quot;us-central1,us-east2&quot; } } # Output only. The error info for the latest error during operating this connection.
         &quot;domain&quot;: &quot;A String&quot;, # The logical grouping to which the &quot;reason&quot; belongs. The error domain is typically the registered service name of the tool or product that generates the error. Example: &quot;pubsub.googleapis.com&quot;. If the error is generated by some common infrastructure, the error domain must be a globally unique value that identifies the infrastructure. For Google API infrastructure, the error domain is &quot;googleapis.com&quot;.
-        &quot;metadata&quot;: { # Additional structured details about this error. Keys must match /a-z+/ but should ideally be lowerCamelCase. Also they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than {&quot;instanceLimit&quot;: &quot;100/request&quot;}, should be returned as, {&quot;instanceLimitPerRequest&quot;: &quot;100&quot;}, if the client exceeds the number of instances that can be created in a single (batch) request.
+        &quot;metadata&quot;: { # Additional structured details about this error. Keys must match a regular expression of `a-z+` but should ideally be lowerCamelCase. Also, they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than `{&quot;instanceLimit&quot;: &quot;100/request&quot;}`, should be returned as, `{&quot;instanceLimitPerRequest&quot;: &quot;100&quot;}`, if the client exceeds the number of instances that can be created in a single (batch) request.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;reason&quot;: &quot;A String&quot;, # The reason of the error. This is a constant value that identifies the proximate cause of the error. Error reasons are unique within a particular domain of errors. This should be at most 63 characters and match a regular expression of `A-Z+[A-Z0-9]`, which represents UPPER_SNAKE_CASE.
       },
       &quot;errorType&quot;: &quot;A String&quot;, # The error type indicates whether the error is consumer facing, producer facing or system internal.
       &quot;gceOperation&quot;: &quot;A String&quot;, # The last Compute Engine operation to setup PSC connection.
-      &quot;producerInstanceId&quot;: &quot;A String&quot;, # Immutable. An immutable identifier for the producer instance.
+      &quot;ipVersion&quot;: &quot;A String&quot;, # The requested IP version for the PSC connection.
+      &quot;producerInstanceId&quot;: &quot;A String&quot;, # Immutable. Deprecated. Use producer_instance_metadata instead. An immutable identifier for the producer instance.
+      &quot;producerInstanceMetadata&quot;: { # Immutable. An immutable map for the producer instance metadata.
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
       &quot;pscConnectionId&quot;: &quot;A String&quot;, # The PSC connection id of the PSC forwarding rule.
       &quot;selectedSubnetwork&quot;: &quot;A String&quot;, # Output only. The URI of the subnetwork selected to allocate IP address for this connection.
+      &quot;serviceClass&quot;: &quot;A String&quot;, # Output only. [Output only] The service class associated with this PSC Connection. The value is derived from the SCPolicy and matches the service class name provided by the customer.
       &quot;state&quot;: &quot;A String&quot;, # State of the PSC Connection
     },
   ],
-  &quot;serviceClass&quot;: &quot;A String&quot;, # The service class identifier for which this ServiceConnectionPolicy is for. The service class identifier is a unique, symbolic representation of a ServiceClass. It is provided by the Service Producer. Google services have a prefix of gcp. For example, gcp-cloud-sql. 3rd party services do not. For example, test-service-a3dfcx.
-  &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionMap was updated.
+  &quot;serviceClass&quot;: &quot;A String&quot;, # The service class identifier for which this ServiceConnectionPolicy is for. The service class identifier is a unique, symbolic representation of a ServiceClass. It is provided by the Service Producer. Google services have a prefix of gcp or google-cloud. For example, gcp-memorystore-redis or google-cloud-sql. 3rd party services do not. For example, test-service-a3dfcx.
+  &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionPolicy was updated.
 }</pre>
 </div>
 
@@ -369,8 +387,8 @@ Returns:
     { # Response for ListServiceConnectionPolicies.
   &quot;nextPageToken&quot;: &quot;A String&quot;, # The next pagination token in the List response. It should be used as page_token for the following request. An empty value means no more result.
   &quot;serviceConnectionPolicies&quot;: [ # ServiceConnectionPolicies to be returned.
-    { # The ServiceConnectionPolicy resource. Next id: 12
-      &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionMap was created.
+    { # The ServiceConnectionPolicy resource.
+      &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionPolicy was created.
       &quot;description&quot;: &quot;A String&quot;, # A description of this resource.
       &quot;etag&quot;: &quot;A String&quot;, # Optional. The etag is computed by the server, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
       &quot;infrastructure&quot;: &quot;A String&quot;, # Output only. The type of underlying resources used to create the connection.
@@ -380,7 +398,11 @@ Returns:
       &quot;name&quot;: &quot;A String&quot;, # Immutable. The name of a ServiceConnectionPolicy. Format: projects/{project}/locations/{location}/serviceConnectionPolicies/{service_connection_policy} See: https://google.aip.dev/122#fields-representing-resource-names
       &quot;network&quot;: &quot;A String&quot;, # The resource path of the consumer network. Example: - projects/{projectNumOrId}/global/networks/{resourceId}.
       &quot;pscConfig&quot;: { # Configuration used for Private Service Connect connections. Used when Infrastructure is PSC. # Configuration used for Private Service Connect connections. Used when Infrastructure is PSC.
+        &quot;allowedGoogleProducersResourceHierarchyLevel&quot;: [ # Optional. List of Projects, Folders, or Organizations from where the Producer instance can be within. For example, a network administrator can provide both &#x27;organizations/foo&#x27; and &#x27;projects/bar&#x27; as allowed_google_producers_resource_hierarchy_levels. This allowlists this network to connect with any Producer instance within the &#x27;foo&#x27; organization or the &#x27;bar&#x27; project. By default, allowed_google_producers_resource_hierarchy_level is empty. The format for each allowed_google_producers_resource_hierarchy_level is / where is one of &#x27;projects&#x27;, &#x27;folders&#x27;, or &#x27;organizations&#x27; and is either the ID or the number of the resource type. Format for each allowed_google_producers_resource_hierarchy_level value: &#x27;projects/&#x27; or &#x27;folders/&#x27; or &#x27;organizations/&#x27; Eg. [projects/my-project-id, projects/567, folders/891, organizations/123]
+          &quot;A String&quot;,
+        ],
         &quot;limit&quot;: &quot;A String&quot;, # Optional. Max number of PSC connections for this policy.
+        &quot;producerInstanceLocation&quot;: &quot;A String&quot;, # Required. ProducerInstanceLocation is used to specify which authorization mechanism to use to determine which projects the Producer instance can be within.
         &quot;subnetworks&quot;: [ # The resource paths of subnetworks to use for IP address management. Example: projects/{projectNumOrId}/regions/{region}/subnetworks/{resourceId}.
           &quot;A String&quot;,
         ],
@@ -390,7 +412,7 @@ Returns:
           &quot;consumerAddress&quot;: &quot;A String&quot;, # The resource reference of the consumer address.
           &quot;consumerForwardingRule&quot;: &quot;A String&quot;, # The resource reference of the PSC Forwarding Rule within the consumer VPC.
           &quot;consumerTargetProject&quot;: &quot;A String&quot;, # The project where the PSC connection is created.
-          &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The most recent error during operating this connection.
+          &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The most recent error during operating this connection. Deprecated, please use error_info instead.
             &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
             &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
               {
@@ -401,21 +423,26 @@ Returns:
           },
           &quot;errorInfo&quot;: { # Describes the cause of the error with structured details. Example of an error when contacting the &quot;pubsub.googleapis.com&quot; API when it is not enabled: { &quot;reason&quot;: &quot;API_DISABLED&quot; &quot;domain&quot;: &quot;googleapis.com&quot; &quot;metadata&quot;: { &quot;resource&quot;: &quot;projects/123&quot;, &quot;service&quot;: &quot;pubsub.googleapis.com&quot; } } This response indicates that the pubsub.googleapis.com API is not enabled. Example of an error that is returned when attempting to create a Spanner instance in a region that is out of stock: { &quot;reason&quot;: &quot;STOCKOUT&quot; &quot;domain&quot;: &quot;spanner.googleapis.com&quot;, &quot;metadata&quot;: { &quot;availableRegions&quot;: &quot;us-central1,us-east2&quot; } } # Output only. The error info for the latest error during operating this connection.
             &quot;domain&quot;: &quot;A String&quot;, # The logical grouping to which the &quot;reason&quot; belongs. The error domain is typically the registered service name of the tool or product that generates the error. Example: &quot;pubsub.googleapis.com&quot;. If the error is generated by some common infrastructure, the error domain must be a globally unique value that identifies the infrastructure. For Google API infrastructure, the error domain is &quot;googleapis.com&quot;.
-            &quot;metadata&quot;: { # Additional structured details about this error. Keys must match /a-z+/ but should ideally be lowerCamelCase. Also they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than {&quot;instanceLimit&quot;: &quot;100/request&quot;}, should be returned as, {&quot;instanceLimitPerRequest&quot;: &quot;100&quot;}, if the client exceeds the number of instances that can be created in a single (batch) request.
+            &quot;metadata&quot;: { # Additional structured details about this error. Keys must match a regular expression of `a-z+` but should ideally be lowerCamelCase. Also, they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than `{&quot;instanceLimit&quot;: &quot;100/request&quot;}`, should be returned as, `{&quot;instanceLimitPerRequest&quot;: &quot;100&quot;}`, if the client exceeds the number of instances that can be created in a single (batch) request.
               &quot;a_key&quot;: &quot;A String&quot;,
             },
             &quot;reason&quot;: &quot;A String&quot;, # The reason of the error. This is a constant value that identifies the proximate cause of the error. Error reasons are unique within a particular domain of errors. This should be at most 63 characters and match a regular expression of `A-Z+[A-Z0-9]`, which represents UPPER_SNAKE_CASE.
           },
           &quot;errorType&quot;: &quot;A String&quot;, # The error type indicates whether the error is consumer facing, producer facing or system internal.
           &quot;gceOperation&quot;: &quot;A String&quot;, # The last Compute Engine operation to setup PSC connection.
-          &quot;producerInstanceId&quot;: &quot;A String&quot;, # Immutable. An immutable identifier for the producer instance.
+          &quot;ipVersion&quot;: &quot;A String&quot;, # The requested IP version for the PSC connection.
+          &quot;producerInstanceId&quot;: &quot;A String&quot;, # Immutable. Deprecated. Use producer_instance_metadata instead. An immutable identifier for the producer instance.
+          &quot;producerInstanceMetadata&quot;: { # Immutable. An immutable map for the producer instance metadata.
+            &quot;a_key&quot;: &quot;A String&quot;,
+          },
           &quot;pscConnectionId&quot;: &quot;A String&quot;, # The PSC connection id of the PSC forwarding rule.
           &quot;selectedSubnetwork&quot;: &quot;A String&quot;, # Output only. The URI of the subnetwork selected to allocate IP address for this connection.
+          &quot;serviceClass&quot;: &quot;A String&quot;, # Output only. [Output only] The service class associated with this PSC Connection. The value is derived from the SCPolicy and matches the service class name provided by the customer.
           &quot;state&quot;: &quot;A String&quot;, # State of the PSC Connection
         },
       ],
-      &quot;serviceClass&quot;: &quot;A String&quot;, # The service class identifier for which this ServiceConnectionPolicy is for. The service class identifier is a unique, symbolic representation of a ServiceClass. It is provided by the Service Producer. Google services have a prefix of gcp. For example, gcp-cloud-sql. 3rd party services do not. For example, test-service-a3dfcx.
-      &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionMap was updated.
+      &quot;serviceClass&quot;: &quot;A String&quot;, # The service class identifier for which this ServiceConnectionPolicy is for. The service class identifier is a unique, symbolic representation of a ServiceClass. It is provided by the Service Producer. Google services have a prefix of gcp or google-cloud. For example, gcp-memorystore-redis or google-cloud-sql. 3rd party services do not. For example, test-service-a3dfcx.
+      &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionPolicy was updated.
     },
   ],
   &quot;unreachable&quot;: [ # Locations that could not be reached.
@@ -447,8 +474,8 @@ Args:
   body: object, The request body.
     The object takes the form of:
 
-{ # The ServiceConnectionPolicy resource. Next id: 12
-  &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionMap was created.
+{ # The ServiceConnectionPolicy resource.
+  &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionPolicy was created.
   &quot;description&quot;: &quot;A String&quot;, # A description of this resource.
   &quot;etag&quot;: &quot;A String&quot;, # Optional. The etag is computed by the server, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
   &quot;infrastructure&quot;: &quot;A String&quot;, # Output only. The type of underlying resources used to create the connection.
@@ -458,7 +485,11 @@ Args:
   &quot;name&quot;: &quot;A String&quot;, # Immutable. The name of a ServiceConnectionPolicy. Format: projects/{project}/locations/{location}/serviceConnectionPolicies/{service_connection_policy} See: https://google.aip.dev/122#fields-representing-resource-names
   &quot;network&quot;: &quot;A String&quot;, # The resource path of the consumer network. Example: - projects/{projectNumOrId}/global/networks/{resourceId}.
   &quot;pscConfig&quot;: { # Configuration used for Private Service Connect connections. Used when Infrastructure is PSC. # Configuration used for Private Service Connect connections. Used when Infrastructure is PSC.
+    &quot;allowedGoogleProducersResourceHierarchyLevel&quot;: [ # Optional. List of Projects, Folders, or Organizations from where the Producer instance can be within. For example, a network administrator can provide both &#x27;organizations/foo&#x27; and &#x27;projects/bar&#x27; as allowed_google_producers_resource_hierarchy_levels. This allowlists this network to connect with any Producer instance within the &#x27;foo&#x27; organization or the &#x27;bar&#x27; project. By default, allowed_google_producers_resource_hierarchy_level is empty. The format for each allowed_google_producers_resource_hierarchy_level is / where is one of &#x27;projects&#x27;, &#x27;folders&#x27;, or &#x27;organizations&#x27; and is either the ID or the number of the resource type. Format for each allowed_google_producers_resource_hierarchy_level value: &#x27;projects/&#x27; or &#x27;folders/&#x27; or &#x27;organizations/&#x27; Eg. [projects/my-project-id, projects/567, folders/891, organizations/123]
+      &quot;A String&quot;,
+    ],
     &quot;limit&quot;: &quot;A String&quot;, # Optional. Max number of PSC connections for this policy.
+    &quot;producerInstanceLocation&quot;: &quot;A String&quot;, # Required. ProducerInstanceLocation is used to specify which authorization mechanism to use to determine which projects the Producer instance can be within.
     &quot;subnetworks&quot;: [ # The resource paths of subnetworks to use for IP address management. Example: projects/{projectNumOrId}/regions/{region}/subnetworks/{resourceId}.
       &quot;A String&quot;,
     ],
@@ -468,7 +499,7 @@ Args:
       &quot;consumerAddress&quot;: &quot;A String&quot;, # The resource reference of the consumer address.
       &quot;consumerForwardingRule&quot;: &quot;A String&quot;, # The resource reference of the PSC Forwarding Rule within the consumer VPC.
       &quot;consumerTargetProject&quot;: &quot;A String&quot;, # The project where the PSC connection is created.
-      &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The most recent error during operating this connection.
+      &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The most recent error during operating this connection. Deprecated, please use error_info instead.
         &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
         &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
           {
@@ -479,21 +510,26 @@ Args:
       },
       &quot;errorInfo&quot;: { # Describes the cause of the error with structured details. Example of an error when contacting the &quot;pubsub.googleapis.com&quot; API when it is not enabled: { &quot;reason&quot;: &quot;API_DISABLED&quot; &quot;domain&quot;: &quot;googleapis.com&quot; &quot;metadata&quot;: { &quot;resource&quot;: &quot;projects/123&quot;, &quot;service&quot;: &quot;pubsub.googleapis.com&quot; } } This response indicates that the pubsub.googleapis.com API is not enabled. Example of an error that is returned when attempting to create a Spanner instance in a region that is out of stock: { &quot;reason&quot;: &quot;STOCKOUT&quot; &quot;domain&quot;: &quot;spanner.googleapis.com&quot;, &quot;metadata&quot;: { &quot;availableRegions&quot;: &quot;us-central1,us-east2&quot; } } # Output only. The error info for the latest error during operating this connection.
         &quot;domain&quot;: &quot;A String&quot;, # The logical grouping to which the &quot;reason&quot; belongs. The error domain is typically the registered service name of the tool or product that generates the error. Example: &quot;pubsub.googleapis.com&quot;. If the error is generated by some common infrastructure, the error domain must be a globally unique value that identifies the infrastructure. For Google API infrastructure, the error domain is &quot;googleapis.com&quot;.
-        &quot;metadata&quot;: { # Additional structured details about this error. Keys must match /a-z+/ but should ideally be lowerCamelCase. Also they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than {&quot;instanceLimit&quot;: &quot;100/request&quot;}, should be returned as, {&quot;instanceLimitPerRequest&quot;: &quot;100&quot;}, if the client exceeds the number of instances that can be created in a single (batch) request.
+        &quot;metadata&quot;: { # Additional structured details about this error. Keys must match a regular expression of `a-z+` but should ideally be lowerCamelCase. Also, they must be limited to 64 characters in length. When identifying the current value of an exceeded limit, the units should be contained in the key, not the value. For example, rather than `{&quot;instanceLimit&quot;: &quot;100/request&quot;}`, should be returned as, `{&quot;instanceLimitPerRequest&quot;: &quot;100&quot;}`, if the client exceeds the number of instances that can be created in a single (batch) request.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
         &quot;reason&quot;: &quot;A String&quot;, # The reason of the error. This is a constant value that identifies the proximate cause of the error. Error reasons are unique within a particular domain of errors. This should be at most 63 characters and match a regular expression of `A-Z+[A-Z0-9]`, which represents UPPER_SNAKE_CASE.
       },
       &quot;errorType&quot;: &quot;A String&quot;, # The error type indicates whether the error is consumer facing, producer facing or system internal.
       &quot;gceOperation&quot;: &quot;A String&quot;, # The last Compute Engine operation to setup PSC connection.
-      &quot;producerInstanceId&quot;: &quot;A String&quot;, # Immutable. An immutable identifier for the producer instance.
+      &quot;ipVersion&quot;: &quot;A String&quot;, # The requested IP version for the PSC connection.
+      &quot;producerInstanceId&quot;: &quot;A String&quot;, # Immutable. Deprecated. Use producer_instance_metadata instead. An immutable identifier for the producer instance.
+      &quot;producerInstanceMetadata&quot;: { # Immutable. An immutable map for the producer instance metadata.
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
       &quot;pscConnectionId&quot;: &quot;A String&quot;, # The PSC connection id of the PSC forwarding rule.
       &quot;selectedSubnetwork&quot;: &quot;A String&quot;, # Output only. The URI of the subnetwork selected to allocate IP address for this connection.
+      &quot;serviceClass&quot;: &quot;A String&quot;, # Output only. [Output only] The service class associated with this PSC Connection. The value is derived from the SCPolicy and matches the service class name provided by the customer.
       &quot;state&quot;: &quot;A String&quot;, # State of the PSC Connection
     },
   ],
-  &quot;serviceClass&quot;: &quot;A String&quot;, # The service class identifier for which this ServiceConnectionPolicy is for. The service class identifier is a unique, symbolic representation of a ServiceClass. It is provided by the Service Producer. Google services have a prefix of gcp. For example, gcp-cloud-sql. 3rd party services do not. For example, test-service-a3dfcx.
-  &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionMap was updated.
+  &quot;serviceClass&quot;: &quot;A String&quot;, # The service class identifier for which this ServiceConnectionPolicy is for. The service class identifier is a unique, symbolic representation of a ServiceClass. It is provided by the Service Producer. Google services have a prefix of gcp or google-cloud. For example, gcp-memorystore-redis or google-cloud-sql. 3rd party services do not. For example, test-service-a3dfcx.
+  &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Time when the ServiceConnectionPolicy was updated.
 }
 
   requestId: string, Optional. An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. The server will guarantee that for at least 60 minutes since the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).

@@ -388,9 +388,66 @@
 "scopes": [
 "https://www.googleapis.com/auth/cloud-platform"
 ]
+},
+"exportProjectMetadata": {
+"description": "Export generated customer metadata for a given project.",
+"flatPath": "v2/projects/{projectsId}/locations/{locationsId}:exportProjectMetadata",
+"httpMethod": "GET",
+"id": "run.projects.locations.exportProjectMetadata",
+"parameterOrder": [
+"name"
+],
+"parameters": {
+"name": {
+"description": "Required. The name of the project of which metadata should be exported. Format: `projects/{project_id_or_number}/locations/{location}` for Project in a given location.",
+"location": "path",
+"pattern": "^projects/[^/]+/locations/[^/]+$",
+"required": true,
+"type": "string"
+}
+},
+"path": "v2/{+name}:exportProjectMetadata",
+"response": {
+"$ref": "GoogleCloudRunV2Metadata"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform"
+]
 }
 },
 "resources": {
+"builds": {
+"methods": {
+"submit": {
+"description": "Submits a build in a given project.",
+"flatPath": "v2/projects/{projectsId}/locations/{locationsId}/builds:submit",
+"httpMethod": "POST",
+"id": "run.projects.locations.builds.submit",
+"parameterOrder": [
+"parent"
+],
+"parameters": {
+"parent": {
+"description": "Required. The project and location to build in. Location must be a region, e.g., 'us-central1' or 'global' if the global builder is to be used. Format: `projects/{project}/locations/{location}`",
+"location": "path",
+"pattern": "^projects/[^/]+/locations/[^/]+$",
+"required": true,
+"type": "string"
+}
+},
+"path": "v2/{+parent}/builds:submit",
+"request": {
+"$ref": "GoogleCloudRunV2SubmitBuildRequest"
+},
+"response": {
+"$ref": "GoogleCloudRunV2SubmitBuildResponse"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform"
+]
+}
+}
+},
 "jobs": {
 "methods": {
 "create": {
@@ -523,7 +580,7 @@
 ]
 },
 "list": {
-"description": "Lists Jobs.",
+"description": "Lists Jobs. Results are sorted by creation time, descending.",
 "flatPath": "v2/projects/{projectsId}/locations/{locationsId}/jobs",
 "httpMethod": "GET",
 "id": "run.projects.locations.jobs.list",
@@ -811,7 +868,7 @@
 ]
 },
 "list": {
-"description": "Lists Executions from a Job.",
+"description": "Lists Executions from a Job. Results are sorted by creation time, descending.",
 "flatPath": "v2/projects/{projectsId}/locations/{locationsId}/jobs/{jobsId}/executions",
 "httpMethod": "GET",
 "id": "run.projects.locations.jobs.executions.list",
@@ -1182,7 +1239,7 @@
 ]
 },
 "list": {
-"description": "Lists Services.",
+"description": "Lists Services. Results are sorted by creation time, descending.",
 "flatPath": "v2/projects/{projectsId}/locations/{locationsId}/services",
 "httpMethod": "GET",
 "id": "run.projects.locations.services.list",
@@ -1420,7 +1477,7 @@
 ]
 },
 "list": {
-"description": "Lists Revisions from a given Service, or from a given location.",
+"description": "Lists Revisions from a given Service, or from a given location. Results are sorted by creation time, descending.",
 "flatPath": "v2/projects/{projectsId}/locations/{locationsId}/services/{servicesId}/revisions",
 "httpMethod": "GET",
 "id": "run.projects.locations.services.revisions.list",
@@ -1469,7 +1526,7 @@
 }
 }
 },
-"revision": "20240503",
+"revision": "20250103",
 "rootUrl": "https://run.googleapis.com/",
 "schemas": {
 "GoogleCloudRunV2BinaryAuthorization": {
@@ -1481,12 +1538,51 @@
 "type": "string"
 },
 "policy": {
-"description": "Optional. The path to a binary authorization policy. Format: projects/{project}/platforms/cloudRun/{policy-name}",
+"description": "Optional. The path to a binary authorization policy. Format: `projects/{project}/platforms/cloudRun/{policy-name}`",
 "type": "string"
 },
 "useDefault": {
 "description": "Optional. If True, indicates to use the default project's binary authorization policy. If False, binary authorization will be disabled.",
 "type": "boolean"
+}
+},
+"type": "object"
+},
+"GoogleCloudRunV2BuildpacksBuild": {
+"description": "Build the source using Buildpacks.",
+"id": "GoogleCloudRunV2BuildpacksBuild",
+"properties": {
+"baseImage": {
+"description": "Optional. The base image used to opt into automatic base image updates.",
+"type": "string"
+},
+"cacheImageUri": {
+"description": "Optional. cache_image_uri is the GCR/AR URL where the cache image will be stored. cache_image_uri is optional and omitting it will disable caching. This URL must be stable across builds. It is used to derive a build-specific temporary URL by substituting the tag with the build ID. The build will clean up the temporary image on a best-effort basis.",
+"type": "string"
+},
+"enableAutomaticUpdates": {
+"description": "Optional. Whether or not the application container will be enrolled in automatic base image updates. When true, the application will be built on a scratch base image, so the base layers can be appended at run time.",
+"type": "boolean"
+},
+"environmentVariables": {
+"additionalProperties": {
+"type": "string"
+},
+"description": "Optional. User-provided build-time environment variables.",
+"type": "object"
+},
+"functionTarget": {
+"description": "Optional. Name of the function target if the source is a function source. Required for function builds.",
+"type": "string"
+},
+"projectDescriptor": {
+"description": "Optional. project_descriptor stores the path to the project descriptor file. When empty, it means that there is no project descriptor file in the source.",
+"type": "string"
+},
+"runtime": {
+"deprecated": true,
+"description": "The runtime name, e.g. 'go113'. Leave blank for generic builds.",
+"type": "string"
 }
 },
 "type": "object"
@@ -1787,6 +1883,12 @@
 },
 "type": "object"
 },
+"GoogleCloudRunV2DockerBuild": {
+"description": "Build the source using Docker. This means the source has a Dockerfile.",
+"id": "GoogleCloudRunV2DockerBuild",
+"properties": {},
+"type": "object"
+},
 "GoogleCloudRunV2EmptyDirVolumeSource": {
 "description": "In memory (tmpfs) ephemeral storage. It is ephemeral in the sense that when the sandbox is taken down, the data is destroyed with it (it does not persist across sandbox runs).",
 "id": "GoogleCloudRunV2EmptyDirVolumeSource",
@@ -1819,7 +1921,7 @@
 "type": "string"
 },
 "value": {
-"description": "Variable references $(VAR_NAME) are expanded using the previous defined environment variables in the container and any route environment variables. If a variable cannot be resolved, the reference in the input string will be unchanged. The $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME). Escaped references will never be expanded, regardless of whether the variable exists or not. Defaults to \"\", and the maximum length is 32768 bytes.",
+"description": "Literal value of the environment variable. Defaults to \"\", and the maximum length is 32768 bytes. Variable references are not supported in Cloud Run.",
 "type": "string"
 },
 "valueSource": {
@@ -2029,6 +2131,26 @@
 "description": "Reference to an Execution. Use /Executions.GetExecution with the given name to get full execution including the latest status.",
 "id": "GoogleCloudRunV2ExecutionReference",
 "properties": {
+"completionStatus": {
+"description": "Status for the execution completion.",
+"enum": [
+"COMPLETION_STATUS_UNSPECIFIED",
+"EXECUTION_SUCCEEDED",
+"EXECUTION_FAILED",
+"EXECUTION_RUNNING",
+"EXECUTION_PENDING",
+"EXECUTION_CANCELLED"
+],
+"enumDescriptions": [
+"The default value. This value is used if the state is omitted.",
+"Job execution has succeeded.",
+"Job execution has failed.",
+"Job execution is running normally.",
+"Waiting for backing resources to be provisioned.",
+"Job execution has been cancelled by the user."
+],
+"type": "string"
+},
 "completionTime": {
 "description": "Creation timestamp of the execution.",
 "format": "google-datetime",
@@ -2036,6 +2158,11 @@
 },
 "createTime": {
 "description": "Creation timestamp of the execution.",
+"format": "google-datetime",
+"type": "string"
+},
+"deleteTime": {
+"description": "The deletion time of the execution. It is only populated as a response to a Delete request.",
 "format": "google-datetime",
 "type": "string"
 },
@@ -2143,6 +2270,13 @@
 "bucket": {
 "description": "Cloud Storage Bucket name.",
 "type": "string"
+},
+"mountOptions": {
+"description": "A list of additional flags to pass to the gcsfuse CLI. Options should be specified without the leading \"--\".",
+"items": {
+"type": "string"
+},
+"type": "array"
 },
 "readOnly": {
 "description": "If true, the volume will be mounted as read only for all mounts.",
@@ -2282,7 +2416,7 @@
 "type": "string"
 },
 "deleteTime": {
-"description": "Output only. The deletion time.",
+"description": "Output only. The deletion time. It is only populated as a response to a Delete request.",
 "format": "google-datetime",
 "readOnly": true,
 "type": "string"
@@ -2365,6 +2499,10 @@
 "description": "Output only. Returns true if the Job is currently being acted upon by the system to bring it into the desired state. When a new Job is created, or an existing one is updated, Cloud Run will asynchronously perform all necessary steps to bring the Job to the desired state. This process is called reconciliation. While reconciliation is in process, `observed_generation` and `latest_succeeded_execution`, will have transient values that might mismatch the intended state: Once reconciliation is over (and this field is false), there are two possible outcomes: reconciliation succeeded and the state matches the Job, or there was an error, and reconciliation failed. This state can be found in `terminal_condition.state`. If reconciliation succeeded, the following fields will match: `observed_generation` and `generation`, `latest_succeeded_execution` and `latest_created_execution`. If reconciliation failed, `observed_generation` and `latest_succeeded_execution` will have the state of the last succeeded execution or empty for newly created Job. Additional information on the failure can be found in `terminal_condition` and `conditions`.",
 "readOnly": true,
 "type": "boolean"
+},
+"runExecutionToken": {
+"description": "A unique string used as a suffix for creating a new execution. The Job will become ready when the execution is successfully completed. The sum of job name and token length must be fewer than 63 characters.",
+"type": "string"
 },
 "satisfiesPzs": {
 "description": "Output only. Reserved for future use.",
@@ -2814,6 +2952,10 @@
 "description": "Email address of the IAM service account associated with the revision of the service. The service account represents the identity of the running revision, and determines what permissions the revision has.",
 "type": "string"
 },
+"serviceMesh": {
+"$ref": "GoogleCloudRunV2ServiceMesh",
+"description": "Enables service mesh connectivity."
+},
 "sessionAffinity": {
 "description": "Enable session affinity.",
 "type": "boolean"
@@ -2853,7 +2995,7 @@
 "id": "GoogleCloudRunV2RevisionScaling",
 "properties": {
 "maxInstanceCount": {
-"description": "Optional. Maximum number of serving instances that this resource should have.",
+"description": "Optional. Maximum number of serving instances that this resource should have. When unspecified, the field is set to the server default value of 100. For more information see https://cloud.google.com/run/docs/configuring/max-instances",
 "format": "int32",
 "type": "integer"
 },
@@ -2899,6 +3041,25 @@
 "description": "A reference to a customer managed encryption key (CMEK) to use to encrypt this container image. For more information, go to https://cloud.google.com/run/docs/securing/using-cmek",
 "type": "string"
 },
+"encryptionKeyRevocationAction": {
+"description": "Optional. The action to take if the encryption key is revoked.",
+"enum": [
+"ENCRYPTION_KEY_REVOCATION_ACTION_UNSPECIFIED",
+"PREVENT_NEW",
+"SHUTDOWN"
+],
+"enumDescriptions": [
+"Unspecified",
+"Prevents the creation of new instances.",
+"Shuts down existing instances, and prevents creation of new ones."
+],
+"type": "string"
+},
+"encryptionKeyShutdownDuration": {
+"description": "Optional. If encryption_key_revocation_action is SHUTDOWN, the duration before shutting down all instances. The minimum increment is 1 hour.",
+"format": "google-duration",
+"type": "string"
+},
 "executionEnvironment": {
 "description": "Optional. The sandbox environment to host this Revision.",
 "enum": [
@@ -2925,7 +3086,7 @@
 "type": "object"
 },
 "maxInstanceRequestConcurrency": {
-"description": "Optional. Sets the maximum number of requests that each serving instance can receive.",
+"description": "Optional. Sets the maximum number of requests that each serving instance can receive. If not specified or 0, concurrency defaults to 80 when requested `CPU >= 1` and defaults to 1 when requested `CPU < 1`.",
 "format": "int32",
 "type": "integer"
 },
@@ -2944,6 +3105,10 @@
 "serviceAccount": {
 "description": "Optional. Email address of the IAM service account associated with the revision of the service. The service account represents the identity of the running revision, and determines what permissions the revision has. If not provided, the revision will use the project's default service account.",
 "type": "string"
+},
+"serviceMesh": {
+"$ref": "GoogleCloudRunV2ServiceMesh",
+"description": "Optional. Enables service mesh connectivity."
 },
 "sessionAffinity": {
 "description": "Optional. Enable session affinity.",
@@ -3007,7 +3172,7 @@
 "id": "GoogleCloudRunV2SecretVolumeSource",
 "properties": {
 "defaultMode": {
-"description": "Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 777 (a=rwx), set to 0777 (octal) or 511 (base-10). For chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.",
+"description": "Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.",
 "format": "int32",
 "type": "integer"
 },
@@ -3079,7 +3244,7 @@
 "type": "boolean"
 },
 "deleteTime": {
-"description": "Output only. The deletion time.",
+"description": "Output only. The deletion time. It is only populated as a response to a Delete request.",
 "format": "google-datetime",
 "readOnly": true,
 "type": "string"
@@ -3122,6 +3287,10 @@
 "No ingress traffic is allowed."
 ],
 "type": "string"
+},
+"invokerIamDisabled": {
+"description": "Optional. Disables IAM permission check for run.routes.invoke for callers of this service. This feature is available by invitation only. For more information, visit https://cloud.google.com/run/docs/securing/managing-access#invoker_check.",
+"type": "boolean"
 },
 "labels": {
 "additionalProperties": {
@@ -3232,6 +3401,25 @@
 "description": "Output only. The main URI in which this Service is serving traffic.",
 "readOnly": true,
 "type": "string"
+},
+"urls": {
+"description": "Output only. All URLs serving traffic for this Service.",
+"items": {
+"type": "string"
+},
+"readOnly": true,
+"type": "array"
+}
+},
+"type": "object"
+},
+"GoogleCloudRunV2ServiceMesh": {
+"description": "Settings for Cloud Service Mesh. For more information see https://cloud.google.com/service-mesh/docs/overview.",
+"id": "GoogleCloudRunV2ServiceMesh",
+"properties": {
+"mesh": {
+"description": "The Mesh resource name. Format: `projects/{project}/locations/global/meshes/{mesh}`, where `{project}` can be project id or number.",
+"type": "string"
 }
 },
 "type": "object"
@@ -3240,10 +3428,111 @@
 "description": "Scaling settings applied at the service level rather than at the revision level.",
 "id": "GoogleCloudRunV2ServiceScaling",
 "properties": {
-"minInstanceCount": {
-"description": "Optional. total min instances for the service. This number of instances is divided among all revisions with specified traffic based on the percent of traffic they are receiving. (BETA)",
+"manualInstanceCount": {
+"description": "Optional. total instance count for the service in manual scaling mode. This number of instances is divided among all revisions with specified traffic based on the percent of traffic they are receiving.",
 "format": "int32",
 "type": "integer"
+},
+"maxInstanceCount": {
+"description": "Optional. total max instances for the service. This number of instances is divided among all revisions with specified traffic based on the percent of traffic they are receiving.",
+"format": "int32",
+"type": "integer"
+},
+"minInstanceCount": {
+"description": "Optional. total min instances for the service. This number of instances is divided among all revisions with specified traffic based on the percent of traffic they are receiving.",
+"format": "int32",
+"type": "integer"
+},
+"scalingMode": {
+"description": "Optional. The scaling mode for the service.",
+"enum": [
+"SCALING_MODE_UNSPECIFIED",
+"AUTOMATIC",
+"MANUAL"
+],
+"enumDescriptions": [
+"Unspecified.",
+"Scale based on traffic between min and max instances.",
+"Scale to exactly min instances and ignore max instances."
+],
+"type": "string"
+}
+},
+"type": "object"
+},
+"GoogleCloudRunV2StorageSource": {
+"description": "Location of the source in an archive file in Google Cloud Storage.",
+"id": "GoogleCloudRunV2StorageSource",
+"properties": {
+"bucket": {
+"description": "Required. Google Cloud Storage bucket containing the source (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).",
+"type": "string"
+},
+"generation": {
+"description": "Optional. Google Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.",
+"format": "int64",
+"type": "string"
+},
+"object": {
+"description": "Required. Google Cloud Storage object containing the source. This object must be a gzipped archive file (`.tar.gz`) containing source to build.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"GoogleCloudRunV2SubmitBuildRequest": {
+"description": "Request message for submitting a Build.",
+"id": "GoogleCloudRunV2SubmitBuildRequest",
+"properties": {
+"buildpackBuild": {
+"$ref": "GoogleCloudRunV2BuildpacksBuild",
+"description": "Build the source using Buildpacks."
+},
+"dockerBuild": {
+"$ref": "GoogleCloudRunV2DockerBuild",
+"description": "Build the source using Docker. This means the source has a Dockerfile."
+},
+"imageUri": {
+"description": "Required. Artifact Registry URI to store the built image.",
+"type": "string"
+},
+"serviceAccount": {
+"description": "Optional. The service account to use for the build. If not set, the default Cloud Build service account for the project will be used.",
+"type": "string"
+},
+"storageSource": {
+"$ref": "GoogleCloudRunV2StorageSource",
+"description": "Required. Source for the build."
+},
+"tags": {
+"description": "Optional. Additional tags to annotate the build.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+"workerPool": {
+"description": "Optional. Name of the Cloud Build Custom Worker Pool that should be used to build the function. The format of this field is `projects/{project}/locations/{region}/workerPools/{workerPool}` where `{project}` and `{region}` are the project id and region respectively where the worker pool is defined and `{workerPool}` is the short name of the worker pool.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"GoogleCloudRunV2SubmitBuildResponse": {
+"description": "Response message for submitting a Build.",
+"id": "GoogleCloudRunV2SubmitBuildResponse",
+"properties": {
+"baseImageUri": {
+"description": "URI of the base builder image in Artifact Registry being used in the build. Used to opt into automatic base image updates.",
+"type": "string"
+},
+"baseImageWarning": {
+"description": "Warning message for the base image.",
+"type": "string"
+},
+"buildOperation": {
+"$ref": "GoogleLongrunningOperation",
+"description": "Cloud Build operation to be polled via CloudBuild API."
 }
 },
 "type": "object"
@@ -3606,7 +3895,7 @@
 "id": "GoogleCloudRunV2VersionToPath",
 "properties": {
 "mode": {
-"description": "Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume's default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 777 (a=rwx), set to 0777 (octal) or 511 (base-10). For chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.",
+"description": "Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume's default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.",
 "format": "int32",
 "type": "integer"
 },
@@ -3672,7 +3961,7 @@
 "id": "GoogleCloudRunV2VpcAccess",
 "properties": {
 "connector": {
-"description": "VPC Access connector name. Format: projects/{project}/locations/{location}/connectors/{connector}, where {project} can be project id or number. For more information on sending traffic to a VPC network via a connector, visit https://cloud.google.com/run/docs/configuring/vpc-connectors.",
+"description": "VPC Access connector name. Format: `projects/{project}/locations/{location}/connectors/{connector}`, where `{project}` can be project id or number. For more information on sending traffic to a VPC network via a connector, visit https://cloud.google.com/run/docs/configuring/vpc-connectors.",
 "type": "string"
 },
 "egress": {
@@ -3913,7 +4202,7 @@
 },
 "source": {
 "$ref": "GoogleDevtoolsCloudbuildV1Source",
-"description": "The location of the source files to build."
+"description": "Optional. The location of the source files to build."
 },
 "sourceProvenance": {
 "$ref": "GoogleDevtoolsCloudbuildV1SourceProvenance",
@@ -4064,16 +4353,18 @@
 "description": "Optional. Option to specify how default logs buckets are setup.",
 "enum": [
 "DEFAULT_LOGS_BUCKET_BEHAVIOR_UNSPECIFIED",
-"REGIONAL_USER_OWNED_BUCKET"
+"REGIONAL_USER_OWNED_BUCKET",
+"LEGACY_BUCKET"
 ],
 "enumDescriptions": [
 "Unspecified.",
-"Bucket is located in user-owned project in the same region as the build. The builder service account must have access to create and write to Cloud Storage buckets in the build project."
+"Bucket is located in user-owned project in the same region as the build. The builder service account must have access to create and write to Cloud Storage buckets in the build project.",
+"Bucket is located in a Google-owned project and is not regionalized."
 ],
 "type": "string"
 },
 "diskSizeGb": {
-"description": "Requested disk size for the VM that runs the build. Note that this is *NOT* \"disk free\"; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 2000GB; builds that request more than the maximum are rejected with an error.",
+"description": "Requested disk size for the VM that runs the build. Note that this is *NOT* \"disk free\"; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 4000GB; builds that request more than the maximum are rejected with an error.",
 "format": "int64",
 "type": "string"
 },
@@ -4380,7 +4671,7 @@ false
 "id": "GoogleDevtoolsCloudbuildV1ConnectedRepository",
 "properties": {
 "dir": {
-"description": "Directory, relative to the source root, in which to run the build.",
+"description": "Optional. Directory, relative to the source root, in which to run the build.",
 "type": "string"
 },
 "repository": {
@@ -4388,7 +4679,7 @@ false
 "type": "string"
 },
 "revision": {
-"description": "The revision to fetch from the Git repository such as a branch, a tag, a commit SHA, or any Git ref.",
+"description": "Required. The revision to fetch from the Git repository such as a branch, a tag, a commit SHA, or any Git ref.",
 "type": "string"
 }
 },
@@ -4476,15 +4767,15 @@ false
 "id": "GoogleDevtoolsCloudbuildV1GitSource",
 "properties": {
 "dir": {
-"description": "Directory, relative to the source root, in which to run the build. This must be a relative path. If a step's `dir` is specified and is an absolute path, this value is ignored for that step's execution.",
+"description": "Optional. Directory, relative to the source root, in which to run the build. This must be a relative path. If a step's `dir` is specified and is an absolute path, this value is ignored for that step's execution.",
 "type": "string"
 },
 "revision": {
-"description": "The revision to fetch from the Git repository such as a branch, a tag, a commit SHA, or any Git ref. Cloud Build uses `git fetch` to fetch the revision from the Git repository; therefore make sure that the string you provide for `revision` is parsable by the command. For information on string values accepted by `git fetch`, see https://git-scm.com/docs/gitrevisions#_specifying_revisions. For information on `git fetch`, see https://git-scm.com/docs/git-fetch.",
+"description": "Optional. The revision to fetch from the Git repository such as a branch, a tag, a commit SHA, or any Git ref. Cloud Build uses `git fetch` to fetch the revision from the Git repository; therefore make sure that the string you provide for `revision` is parsable by the command. For information on string values accepted by `git fetch`, see https://git-scm.com/docs/gitrevisions#_specifying_revisions. For information on `git fetch`, see https://git-scm.com/docs/git-fetch.",
 "type": "string"
 },
 "url": {
-"description": "Location of the Git repo to build. This will be used as a `git remote`, see https://git-scm.com/docs/git-remote.",
+"description": "Required. Location of the Git repo to build. This will be used as a `git remote`, see https://git-scm.com/docs/git-remote.",
 "type": "string"
 }
 },
@@ -4523,7 +4814,7 @@ false
 "id": "GoogleDevtoolsCloudbuildV1HttpConfig",
 "properties": {
 "proxySecretVersionName": {
-"description": "SecretVersion resource of the HTTP proxy URL. The proxy URL should be in format protocol://@]proxyhost[:port].",
+"description": "SecretVersion resource of the HTTP proxy URL. The Service Account used in the build (either the default Service Account or user-specified Service Account) should have `secretmanager.versions.access` permissions on this secret. The proxy URL should be in format `protocol://@]proxyhost[:port]`.",
 "type": "string"
 }
 },
@@ -4632,26 +4923,26 @@ false
 "type": "string"
 },
 "dir": {
-"description": "Directory, relative to the source root, in which to run the build. This must be a relative path. If a step's `dir` is specified and is an absolute path, this value is ignored for that step's execution.",
+"description": "Optional. Directory, relative to the source root, in which to run the build. This must be a relative path. If a step's `dir` is specified and is an absolute path, this value is ignored for that step's execution.",
 "type": "string"
 },
 "invertRegex": {
-"description": "Only trigger a build if the revision regex does NOT match the revision regex.",
+"description": "Optional. Only trigger a build if the revision regex does NOT match the revision regex.",
 "type": "boolean"
 },
 "projectId": {
-"description": "ID of the project that owns the Cloud Source Repository. If omitted, the project ID requesting the build is assumed.",
+"description": "Optional. ID of the project that owns the Cloud Source Repository. If omitted, the project ID requesting the build is assumed.",
 "type": "string"
 },
 "repoName": {
-"description": "Name of the Cloud Source Repository.",
+"description": "Required. Name of the Cloud Source Repository.",
 "type": "string"
 },
 "substitutions": {
 "additionalProperties": {
 "type": "string"
 },
-"description": "Substitutions to use in a triggered build. Should only be used with RunBuildTrigger",
+"description": "Optional. Substitutions to use in a triggered build. Should only be used with RunBuildTrigger",
 "type": "object"
 },
 "tagName": {
@@ -4856,12 +5147,12 @@ false
 "type": "string"
 },
 "generation": {
-"description": "Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.",
+"description": "Optional. Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.",
 "format": "int64",
 "type": "string"
 },
 "object": {
-"description": "Cloud Storage object containing the source. This object must be a zipped (`.zip`) or gzipped archive file (`.tar.gz`) containing source to build.",
+"description": "Required. Cloud Storage object containing the source. This object must be a zipped (`.zip`) or gzipped archive file (`.tar.gz`) containing source to build.",
 "type": "string"
 },
 "sourceFetcher": {
@@ -4886,7 +5177,7 @@ false
 "id": "GoogleDevtoolsCloudbuildV1StorageSourceManifest",
 "properties": {
 "bucket": {
-"description": "Cloud Storage bucket containing the source manifest (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).",
+"description": "Required. Cloud Storage bucket containing the source manifest (see [Bucket Name Requirements](https://cloud.google.com/storage/docs/bucket-naming#requirements)).",
 "type": "string"
 },
 "generation": {
@@ -4895,7 +5186,7 @@ false
 "type": "string"
 },
 "object": {
-"description": "Cloud Storage object containing the source manifest. This object must be a JSON file.",
+"description": "Required. Cloud Storage object containing the source manifest. This object must be a JSON file.",
 "type": "string"
 }
 },
@@ -5307,12 +5598,12 @@ false
 "type": "integer"
 },
 "message": {
-"description": "Detail message",
+"description": "Detail message copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional string message = 3;",
 "type": "string"
 },
 "messageSet": {
 "$ref": "Proto2BridgeMessageSet",
-"description": "message_set associates an arbitrary proto message with the status."
+"description": "message_set associates an arbitrary proto message with the status. copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional proto2.bridge.MessageSet message_set = 5;"
 },
 "space": {
 "description": "The following are usually only present when code != 0 Space to which this status belongs",

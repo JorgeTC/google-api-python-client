@@ -4869,7 +4869,7 @@
 "type": "string"
 },
 "targetingType": {
-"description": "Required. Identifies the type of this assigned targeting option. Supported targeting types: * `TARGETING_TYPE_CHANNEL` * `TARGETING_TYPE_DIGITAL_CONTENT_LABEL_EXCLUSION` * `TARGETING_TYPE_OMID` * `TARGETING_TYPE_SENSITIVE_CATEGORY_EXCLUSION` * `TARGETING_TYPE_YOUTUBE_VIDEO` * `TARGETING_TYPE_YOUTUBE_CHANNEL`",
+"description": "Required. Identifies the type of this assigned targeting option. Supported targeting types: * `TARGETING_TYPE_CHANNEL` * `TARGETING_TYPE_DIGITAL_CONTENT_LABEL_EXCLUSION` * `TARGETING_TYPE_OMID` * `TARGETING_TYPE_SENSITIVE_CATEGORY_EXCLUSION` * `TARGETING_TYPE_YOUTUBE_VIDEO` * `TARGETING_TYPE_YOUTUBE_CHANNEL` * `TARGETING_TYPE_KEYWORD`",
 "enum": [
 "TARGETING_TYPE_UNSPECIFIED",
 "TARGETING_TYPE_CHANNEL",
@@ -5026,7 +5026,7 @@
 "type": "string"
 },
 "targetingType": {
-"description": "Required. Identifies the type of assigned targeting options to list. Supported targeting types: * `TARGETING_TYPE_CHANNEL` * `TARGETING_TYPE_DIGITAL_CONTENT_LABEL_EXCLUSION` * `TARGETING_TYPE_OMID` * `TARGETING_TYPE_SENSITIVE_CATEGORY_EXCLUSION` * `TARGETING_TYPE_YOUTUBE_VIDEO` * `TARGETING_TYPE_YOUTUBE_CHANNEL`",
+"description": "Required. Identifies the type of assigned targeting options to list. Supported targeting types: * `TARGETING_TYPE_CHANNEL` * `TARGETING_TYPE_DIGITAL_CONTENT_LABEL_EXCLUSION` * `TARGETING_TYPE_OMID` * `TARGETING_TYPE_SENSITIVE_CATEGORY_EXCLUSION` * `TARGETING_TYPE_YOUTUBE_VIDEO` * `TARGETING_TYPE_YOUTUBE_CHANNEL` * `TARGETING_TYPE_KEYWORD`",
 "enum": [
 "TARGETING_TYPE_UNSPECIFIED",
 "TARGETING_TYPE_CHANNEL",
@@ -6322,7 +6322,7 @@
 "type": "string"
 },
 "pageSize": {
-"description": "Requested page size. Must be between `1` and `200`. If unspecified will default to `100`. Returns error code `INVALID_ARGUMENT` if an invalid value is specified.",
+"description": "Requested page size. Must be between `1` and `5000`. If unspecified, this value defaults to `100`. Returns error code `INVALID_ARGUMENT` if an invalid value is specified.",
 "format": "int32",
 "location": "query",
 "type": "integer"
@@ -9267,7 +9267,7 @@
 }
 }
 },
-"revision": "20240509",
+"revision": "20241212",
 "rootUrl": "https://displayvideo.googleapis.com/",
 "schemas": {
 "ActivateManualTriggerRequest": {
@@ -9421,11 +9421,11 @@
 "type": "object"
 },
 "Adloox": {
-"description": "Details of Adloox settings.",
+"description": "Details of Adloox brand safety settings.",
 "id": "Adloox",
 "properties": {
 "excludedAdlooxCategories": {
-"description": "Adloox's brand safety settings.",
+"description": "Adloox categories to exclude.",
 "items": {
 "enum": [
 "ADLOOX_UNSPECIFIED",
@@ -9439,7 +9439,7 @@
 "FRAUD"
 ],
 "enumDescriptions": [
-"This enum is only a placeholder and it doesn't specify any Adloox option.",
+"Default value when a Adloox category is not specified or is unknown in this version.",
 "Adult content (hard).",
 "Adult content (soft).",
 "Illegal content.",
@@ -9472,7 +9472,7 @@
 },
 "billingConfig": {
 "$ref": "AdvertiserBillingConfig",
-"description": "Optional. Required. Billing related settings of the advertiser."
+"description": "Required. Billing related settings of the advertiser."
 },
 "creativeConfig": {
 "$ref": "AdvertiserCreativeConfig",
@@ -9561,7 +9561,7 @@
 "id": "AdvertiserBillingConfig",
 "properties": {
 "billingProfileId": {
-"description": "Optional. The ID of a billing profile assigned to the advertiser.",
+"description": "Required. The ID of a billing profile assigned to the advertiser.",
 "format": "int64",
 "type": "string"
 }
@@ -9881,7 +9881,12 @@
 "ASSET_ROLE_IOS_APP_ID",
 "ASSET_ROLE_RATING",
 "ASSET_ROLE_ICON",
-"ASSET_ROLE_COVER_IMAGE"
+"ASSET_ROLE_COVER_IMAGE",
+"ASSET_ROLE_BACKGROUND_COLOR",
+"ASSET_ROLE_ACCENT_COLOR",
+"ASSET_ROLE_REQUIRE_LOGO",
+"ASSET_ROLE_REQUIRE_IMAGE",
+"ASSET_ROLE_ENABLE_ASSET_ENHANCEMENTS"
 ],
 "enumDescriptions": [
 "Asset role is not specified or is unknown in this version.",
@@ -9900,7 +9905,12 @@
 "The ID of an iOS app in the Apple app store. This ID number can be found in the Apple App Store URL as the string of numbers directly after \"id\". For example, in https://apps.apple.com/us/app/gmail-email-by-google/id422689480 the ID is 422689480. Assets of this role are read-only.",
 "The rating of an app in the Google play store or iOS app store. Note that this value is not automatically synced with the actual rating in the store. It will always be the one provided when save the creative. Assets of this role are read-only.",
 "The icon of a creative. This role is only supported and required in following creative_type: * `CREATIVE_TYPE_NATIVE` * `CREATIVE_TYPE_NATIVE_SITE_SQUARE`",
-"The cover image of a native video creative. This role is only supported and required in following creative_type: * `CREATIVE_TYPE_VIDEO`"
+"The cover image of a native video creative. This role is only supported and required in following creative_type: * `CREATIVE_TYPE_VIDEO`",
+"The main color to use in a creative. This role is only supported and required in following creative_type: * `CREATIVE_TYPE_ASSET_BASED_CREATIVE`",
+"The accent color to use in a creative. This role is only supported and required in following creative_type: * `CREATIVE_TYPE_ASSET_BASED_CREATIVE`",
+"Whether the creative must use a logo asset. This role is only supported and required in following creative_type: * `CREATIVE_TYPE_ASSET_BASED_CREATIVE`",
+"Whether the creative must use an image asset. This role is only supported and required in following creative_type: * `CREATIVE_TYPE_ASSET_BASED_CREATIVE`",
+"Whether asset enhancements can be applied to the creative. This role is only supported and required in following creative_type: * `CREATIVE_TYPE_ASSET_BASED_CREATIVE`"
 ],
 "type": "string"
 }
@@ -12331,7 +12341,9 @@
 "SDF_VERSION_5_4",
 "SDF_VERSION_5_5",
 "SDF_VERSION_6",
-"SDF_VERSION_7"
+"SDF_VERSION_7",
+"SDF_VERSION_7_1",
+"SDF_VERSION_8"
 ],
 "enumDeprecated": [
 false,
@@ -12344,6 +12356,8 @@ true,
 true,
 true,
 true,
+true,
+false,
 false,
 false,
 false
@@ -12361,7 +12375,9 @@ false
 "SDF version 5.4",
 "SDF version 5.5",
 "SDF version 6",
-"SDF version 7. Read the [v7 migration guide](/display-video/api/structured-data-file/v7-migration-guide) before migrating to this version."
+"SDF version 7. Read the [v7 migration guide](/display-video/api/structured-data-file/v7-migration-guide) before migrating to this version.",
+"SDF version 7.1. Read the [v7 migration guide](/display-video/api/structured-data-file/v7-migration-guide) before migrating to this version.",
+"SDF version 8. Read the [v8 migration guide](/display-video/api/structured-data-file/v8-migration-guide) before migrating to this version."
 ],
 "type": "string"
 }
@@ -12470,7 +12486,8 @@ false
 "CREATIVE_TYPE_AUDIO",
 "CREATIVE_TYPE_PUBLISHER_HOSTED",
 "CREATIVE_TYPE_NATIVE_VIDEO",
-"CREATIVE_TYPE_TEMPLATED_APP_INSTALL_VIDEO"
+"CREATIVE_TYPE_TEMPLATED_APP_INSTALL_VIDEO",
+"CREATIVE_TYPE_ASSET_BASED_CREATIVE"
 ],
 "enumDescriptions": [
 "Type value is not specified or is unknown in this version.",
@@ -12487,7 +12504,8 @@ false
 "Audio creative. Create and update methods are supported for this creative type if the hosting_source is `HOSTING_SOURCE_HOSTED`",
 "Publisher hosted creative. Create and update methods are **not** supported for this creative type.",
 "Native video creative. Create and update methods are supported for this creative type if the hosting_source is `HOSTING_SOURCE_HOSTED`",
-"Templated app install mobile video creative. Create and update methods are **not** supported for this creative type."
+"Templated app install mobile video creative. Create and update methods are **not** supported for this creative type.",
+"Asset based creative. Create and update methods are supported for this creative type if the hosting_source is `HOSTING_SOURCE_HOSTED`."
 ],
 "type": "string"
 },
@@ -12747,7 +12765,8 @@ false
 "CREATIVE_TYPE_AUDIO",
 "CREATIVE_TYPE_PUBLISHER_HOSTED",
 "CREATIVE_TYPE_NATIVE_VIDEO",
-"CREATIVE_TYPE_TEMPLATED_APP_INSTALL_VIDEO"
+"CREATIVE_TYPE_TEMPLATED_APP_INSTALL_VIDEO",
+"CREATIVE_TYPE_ASSET_BASED_CREATIVE"
 ],
 "enumDescriptions": [
 "Type value is not specified or is unknown in this version.",
@@ -12764,7 +12783,8 @@ false
 "Audio creative. Create and update methods are supported for this creative type if the hosting_source is `HOSTING_SOURCE_HOSTED`",
 "Publisher hosted creative. Create and update methods are **not** supported for this creative type.",
 "Native video creative. Create and update methods are supported for this creative type if the hosting_source is `HOSTING_SOURCE_HOSTED`",
-"Templated app install mobile video creative. Create and update methods are **not** supported for this creative type."
+"Templated app install mobile video creative. Create and update methods are **not** supported for this creative type.",
+"Asset based creative. Create and update methods are supported for this creative type if the hosting_source is `HOSTING_SOURCE_HOSTED`."
 ],
 "type": "string"
 },
@@ -13326,14 +13346,16 @@ false
 "DEVICE_TYPE_COMPUTER",
 "DEVICE_TYPE_CONNECTED_TV",
 "DEVICE_TYPE_SMART_PHONE",
-"DEVICE_TYPE_TABLET"
+"DEVICE_TYPE_TABLET",
+"DEVICE_TYPE_CONNECTED_DEVICE"
 ],
 "enumDescriptions": [
 "Default value when device type is not specified in this version. This enum is a placeholder for default value and does not represent a real device type option.",
 "Computer.",
 "Connected TV.",
 "Smart phone.",
-"Tablet."
+"Tablet.",
+"Connected device."
 ],
 "type": "string"
 },
@@ -13357,14 +13379,16 @@ false
 "DEVICE_TYPE_COMPUTER",
 "DEVICE_TYPE_CONNECTED_TV",
 "DEVICE_TYPE_SMART_PHONE",
-"DEVICE_TYPE_TABLET"
+"DEVICE_TYPE_TABLET",
+"DEVICE_TYPE_CONNECTED_DEVICE"
 ],
 "enumDescriptions": [
 "Default value when device type is not specified in this version. This enum is a placeholder for default value and does not represent a real device type option.",
 "Computer.",
 "Connected TV.",
 "Smart phone.",
-"Tablet."
+"Tablet.",
+"Connected device."
 ],
 "readOnly": true,
 "type": "string"
@@ -14102,7 +14126,10 @@ false
 "EXCHANGE_UNITY_GBID",
 "EXCHANGE_CHARTBOOST_GBID",
 "EXCHANGE_ADMOST_GBID",
-"EXCHANGE_TOPON_GBID"
+"EXCHANGE_TOPON_GBID",
+"EXCHANGE_NETFLIX",
+"EXCHANGE_CORE",
+"EXCHANGE_TUBI"
 ],
 "enumDescriptions": [
 "Exchange is not specified or is unknown in this version.",
@@ -14186,7 +14213,10 @@ false
 "Unity LevelPlay.",
 "Chartboost Mediation.",
 "AdMost.",
-"TopOn."
+"TopOn.",
+"Netflix.",
+"Core.",
+"Tubi."
 ],
 "type": "string"
 }
@@ -14295,7 +14325,10 @@ false
 "EXCHANGE_UNITY_GBID",
 "EXCHANGE_CHARTBOOST_GBID",
 "EXCHANGE_ADMOST_GBID",
-"EXCHANGE_TOPON_GBID"
+"EXCHANGE_TOPON_GBID",
+"EXCHANGE_NETFLIX",
+"EXCHANGE_CORE",
+"EXCHANGE_TUBI"
 ],
 "enumDescriptions": [
 "Exchange is not specified or is unknown in this version.",
@@ -14379,7 +14412,10 @@ false
 "Unity LevelPlay.",
 "Chartboost Mediation.",
 "AdMost.",
-"TopOn."
+"TopOn.",
+"Netflix.",
+"Core.",
+"Tubi."
 ],
 "type": "string"
 },
@@ -14489,7 +14525,10 @@ false
 "EXCHANGE_UNITY_GBID",
 "EXCHANGE_CHARTBOOST_GBID",
 "EXCHANGE_ADMOST_GBID",
-"EXCHANGE_TOPON_GBID"
+"EXCHANGE_TOPON_GBID",
+"EXCHANGE_NETFLIX",
+"EXCHANGE_CORE",
+"EXCHANGE_TUBI"
 ],
 "enumDescriptions": [
 "Exchange is not specified or is unknown in this version.",
@@ -14573,7 +14612,10 @@ false
 "Unity LevelPlay.",
 "Chartboost Mediation.",
 "AdMost.",
-"TopOn."
+"TopOn.",
+"Netflix.",
+"Core.",
+"Tubi."
 ],
 "type": "string"
 },
@@ -14684,7 +14726,10 @@ false
 "EXCHANGE_UNITY_GBID",
 "EXCHANGE_CHARTBOOST_GBID",
 "EXCHANGE_ADMOST_GBID",
-"EXCHANGE_TOPON_GBID"
+"EXCHANGE_TOPON_GBID",
+"EXCHANGE_NETFLIX",
+"EXCHANGE_CORE",
+"EXCHANGE_TUBI"
 ],
 "enumDescriptions": [
 "Exchange is not specified or is unknown in this version.",
@@ -14768,7 +14813,10 @@ false
 "Unity LevelPlay.",
 "Chartboost Mediation.",
 "AdMost.",
-"TopOn."
+"TopOn.",
+"Netflix.",
+"Core.",
+"Tubi."
 ],
 "readOnly": true,
 "type": "string"
@@ -15730,7 +15778,10 @@ false
 "EXCHANGE_UNITY_GBID",
 "EXCHANGE_CHARTBOOST_GBID",
 "EXCHANGE_ADMOST_GBID",
-"EXCHANGE_TOPON_GBID"
+"EXCHANGE_TOPON_GBID",
+"EXCHANGE_NETFLIX",
+"EXCHANGE_CORE",
+"EXCHANGE_TUBI"
 ],
 "enumDescriptions": [
 "Exchange is not specified or is unknown in this version.",
@@ -15814,7 +15865,10 @@ false
 "Unity LevelPlay.",
 "Chartboost Mediation.",
 "AdMost.",
-"TopOn."
+"TopOn.",
+"Netflix.",
+"Core.",
+"Tubi."
 ],
 "type": "string"
 },
@@ -16178,7 +16232,7 @@ true
 },
 "pacing": {
 "$ref": "Pacing",
-"description": "Required. The budget spending speed setting of the insertion order."
+"description": "Required. The budget spending speed setting of the insertion order. pacing_type `PACING_TYPE_ASAP` is not compatible with pacing_period `PACING_PERIOD_FLIGHT`."
 },
 "partnerCosts": {
 "description": "The partner costs associated with the insertion order. If absent or empty in CreateInsertionOrder method, the newly created insertion order will inherit partner costs from the partner settings.",
@@ -16641,7 +16695,10 @@ true
 "EXCHANGE_UNITY_GBID",
 "EXCHANGE_CHARTBOOST_GBID",
 "EXCHANGE_ADMOST_GBID",
-"EXCHANGE_TOPON_GBID"
+"EXCHANGE_TOPON_GBID",
+"EXCHANGE_NETFLIX",
+"EXCHANGE_CORE",
+"EXCHANGE_TUBI"
 ],
 "enumDescriptions": [
 "Exchange is not specified or is unknown in this version.",
@@ -16725,7 +16782,10 @@ true
 "Unity LevelPlay.",
 "Chartboost Mediation.",
 "AdMost.",
-"TopOn."
+"TopOn.",
+"Netflix.",
+"Core.",
+"Tubi."
 ],
 "type": "string"
 },
@@ -18828,7 +18888,7 @@ true
 "type": "string"
 },
 "pacingType": {
-"description": "Required. The type of pacing that defines how the budget amount will be spent across the pacing_period.",
+"description": "Required. The type of pacing that defines how the budget amount will be spent across the pacing_period. `PACING_TYPE_ASAP` is not compatible with pacing_period `PACING_PERIOD_FLIGHT` for insertion orders.",
 "enum": [
 "PACING_TYPE_UNSPECIFIED",
 "PACING_TYPE_AHEAD",
@@ -18900,8 +18960,8 @@ true
 "Advertiser ID. If selected, all filter IDs must be Advertiser IDs that belong to the Partner specified in CreateSdfDownloadTaskRequest.",
 "Campaign ID. If selected, all filter IDs must be Campaign IDs that belong to the Advertiser or Partner specified in CreateSdfDownloadTaskRequest.",
 "Media Product ID. If selected, all filter IDs must be Media Product IDs that belong to the Advertiser or Partner specified in CreateSdfDownloadTaskRequest. Can only be used for downloading `FILE_TYPE_MEDIA_PRODUCT`.",
-"Insertion Order ID. If selected, all filter IDs must be Insertion Order IDs that belong to the Advertiser or Partner specified in CreateSdfDownloadTaskRequest. Can only be used for downloading `FILE_TYPE_INSERTION_ORDER`, `FILE_TYPE_LINE_ITEM`, `FILE_TYPE_AD_GROUP`, and `FILE_TYPE_AD`.",
-"Line Item ID. If selected, all filter IDs must be Line Item IDs that belong to the Advertiser or Partner specified in CreateSdfDownloadTaskRequest. Can only be used for downloading `FILE_TYPE_LINE_ITEM`, `FILE_TYPE_AD_GROUP`, and `FILE_TYPE_AD`."
+"Insertion Order ID. If selected, all filter IDs must be Insertion Order IDs that belong to the Advertiser or Partner specified in CreateSdfDownloadTaskRequest. Can only be used for downloading `FILE_TYPE_INSERTION_ORDER`, `FILE_TYPE_LINE_ITEM`, `FILE_TYPE_LINE_ITEM_QA`, `FILE_TYPE_AD_GROUP`, `FILE_TYPE_AD_GROUP_QA`, and `FILE_TYPE_AD`.",
+"Line Item ID. If selected, all filter IDs must be Line Item IDs that belong to the Advertiser or Partner specified in CreateSdfDownloadTaskRequest. Can only be used for downloading `FILE_TYPE_LINE_ITEM`, `FILE_TYPE_LINE_ITEM_QA`,`FILE_TYPE_AD_GROUP`, `FILE_TYPE_AD_GROUP_QA`, and `FILE_TYPE_AD`."
 ],
 "type": "string"
 }
@@ -19235,6 +19295,7 @@ false
 "PERFORMANCE_GOAL_TYPE_VIEWABILITY",
 "PERFORMANCE_GOAL_TYPE_CPIAVC",
 "PERFORMANCE_GOAL_TYPE_CPE",
+"PERFORMANCE_GOAL_TYPE_CPV",
 "PERFORMANCE_GOAL_TYPE_CLICK_CVR",
 "PERFORMANCE_GOAL_TYPE_IMPRESSION_CVR",
 "PERFORMANCE_GOAL_TYPE_VCPM",
@@ -19252,6 +19313,7 @@ false
 "The performance goal is set in Viewability percentage.",
 "The performance goal is set as CPIAVC (cost per impression audible and visible at completion).",
 "The performance goal is set in CPE (cost per engagement).",
+"The performance goal is set in CPV (cost per view).",
 "The performance goal is set in click conversion rate (conversions per click) percentage.",
 "The performance goal is set in impression conversion rate (conversions per impression) percentage.",
 "The performance goal is set in VCPM (cost per thousand viewable impressions).",
@@ -19757,6 +19819,7 @@ false
 "type": "array"
 },
 "publisherReviewStatuses": {
+"deprecated": true,
 "description": "Publisher review statuses for the creative.",
 "items": {
 "$ref": "PublisherReviewStatus"
@@ -19826,7 +19889,9 @@ false
 "SDF_VERSION_5_4",
 "SDF_VERSION_5_5",
 "SDF_VERSION_6",
-"SDF_VERSION_7"
+"SDF_VERSION_7",
+"SDF_VERSION_7_1",
+"SDF_VERSION_8"
 ],
 "enumDeprecated": [
 false,
@@ -19839,6 +19904,8 @@ true,
 true,
 true,
 true,
+true,
+false,
 false,
 false,
 false
@@ -19856,7 +19923,9 @@ false
 "SDF version 5.4",
 "SDF version 5.5",
 "SDF version 6",
-"SDF version 7. Read the [v7 migration guide](/display-video/api/structured-data-file/v7-migration-guide) before migrating to this version."
+"SDF version 7. Read the [v7 migration guide](/display-video/api/structured-data-file/v7-migration-guide) before migrating to this version.",
+"SDF version 7.1. Read the [v7 migration guide](/display-video/api/structured-data-file/v7-migration-guide) before migrating to this version.",
+"SDF version 8. Read the [v8 migration guide](/display-video/api/structured-data-file/v8-migration-guide) before migrating to this version."
 ],
 "type": "string"
 }
@@ -19903,7 +19972,9 @@ false
 "SDF_VERSION_5_4",
 "SDF_VERSION_5_5",
 "SDF_VERSION_6",
-"SDF_VERSION_7"
+"SDF_VERSION_7",
+"SDF_VERSION_7_1",
+"SDF_VERSION_8"
 ],
 "enumDeprecated": [
 false,
@@ -19916,6 +19987,8 @@ true,
 true,
 true,
 true,
+true,
+false,
 false,
 false,
 false
@@ -19933,7 +20006,9 @@ false
 "SDF version 5.4",
 "SDF version 5.5",
 "SDF version 6",
-"SDF version 7. Read the [v7 migration guide](/display-video/api/structured-data-file/v7-migration-guide) before migrating to this version."
+"SDF version 7. Read the [v7 migration guide](/display-video/api/structured-data-file/v7-migration-guide) before migrating to this version.",
+"SDF version 7.1. Read the [v7 migration guide](/display-video/api/structured-data-file/v7-migration-guide) before migrating to this version.",
+"SDF version 8. Read the [v8 migration guide](/display-video/api/structured-data-file/v8-migration-guide) before migrating to this version."
 ],
 "type": "string"
 }
@@ -20038,8 +20113,8 @@ false
 "Content related to motor vehicle, aviation or other transportation accidents.",
 "Issues that evoke strong, opposing views and spark debate. These include issues that are controversial in most countries and markets (such as abortion), as well as those that are controversial in specific countries and markets (such as immigration reform in the United States).",
 "Content which may be considered shocking or disturbing, such as violent news stories, stunts, or toilet humor.",
-"YouTube videos embedded on websites outside of YouTube.com. Only applicable to YouTube and Partners line items.",
-"Video of live events streamed over the internet. Only applicable to YouTube and Partners line items."
+"YouTube videos embedded on websites outside of YouTube.com.",
+"Video of live events streamed over the internet."
 ],
 "type": "string"
 }
@@ -20093,8 +20168,8 @@ false
 "Content related to motor vehicle, aviation or other transportation accidents.",
 "Issues that evoke strong, opposing views and spark debate. These include issues that are controversial in most countries and markets (such as abortion), as well as those that are controversial in specific countries and markets (such as immigration reform in the United States).",
 "Content which may be considered shocking or disturbing, such as violent news stories, stunts, or toilet humor.",
-"YouTube videos embedded on websites outside of YouTube.com. Only applicable to YouTube and Partners line items.",
-"Video of live events streamed over the internet. Only applicable to YouTube and Partners line items."
+"YouTube videos embedded on websites outside of YouTube.com.",
+"Video of live events streamed over the internet."
 ],
 "readOnly": true,
 "type": "string"

@@ -94,6 +94,9 @@ h1, h2, h3 {
   <code><a href="#create">create(parent, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Creates a new execution using the latest revision of the given workflow. For more information, see Execute a workflow.</p>
 <p class="toc_element">
+  <code><a href="#deleteExecutionHistory">deleteExecutionHistory(name, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Deletes all step entries for an execution.</p>
+<p class="toc_element">
   <code><a href="#exportData">exportData(name, x__xgafv=None)</a></code></p>
 <p class="firstline">Returns all metadata stored about an execution, excluding most data that is already accessible using other API methods.</p>
 <p class="toc_element">
@@ -150,12 +153,13 @@ Returns:
       ],
     },
   },
+  &quot;executionHistoryLevel&quot;: &quot;A String&quot;, # Optional. Describes the level of the execution history feature to apply to this execution. If not specified, the level of the execution history feature will be determined by its workflow&#x27;s execution history level. If the value is different from its workflow&#x27;s value, it will override the workflow&#x27;s execution history level for this exeuction.
   &quot;labels&quot;: { # Labels associated with this execution. Labels can contain at most 64 entries. Keys and values can be no longer than 63 characters and can only contain lowercase letters, numeric characters, underscores, and dashes. Label keys must start with a letter. International characters are allowed. By default, labels are inherited from the workflow but are overridden by any labels associated with the execution.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the execution. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution}
   &quot;result&quot;: &quot;A String&quot;, # Output only. Output of the execution represented as a JSON string. The value can only be present if the execution&#x27;s state is `SUCCEEDED`.
-  &quot;startTime&quot;: &quot;A String&quot;, # Output only. Marks the beginning of execution.
+  &quot;startTime&quot;: &quot;A String&quot;, # Output only. Marks the beginning of execution. Note that this will be the same as `createTime` for executions that start immediately.
   &quot;state&quot;: &quot;A String&quot;, # Output only. Current state of the execution.
   &quot;stateError&quot;: { # Describes an error related to the current state of the Execution resource. # Output only. Error regarding the state of the Execution resource. For example, this field will have error details if the execution data is unavailable due to revoked KMS key permissions.
     &quot;details&quot;: &quot;A String&quot;, # Provides specifics about the error.
@@ -211,12 +215,13 @@ Args:
       ],
     },
   },
+  &quot;executionHistoryLevel&quot;: &quot;A String&quot;, # Optional. Describes the level of the execution history feature to apply to this execution. If not specified, the level of the execution history feature will be determined by its workflow&#x27;s execution history level. If the value is different from its workflow&#x27;s value, it will override the workflow&#x27;s execution history level for this exeuction.
   &quot;labels&quot;: { # Labels associated with this execution. Labels can contain at most 64 entries. Keys and values can be no longer than 63 characters and can only contain lowercase letters, numeric characters, underscores, and dashes. Label keys must start with a letter. International characters are allowed. By default, labels are inherited from the workflow but are overridden by any labels associated with the execution.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the execution. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution}
   &quot;result&quot;: &quot;A String&quot;, # Output only. Output of the execution represented as a JSON string. The value can only be present if the execution&#x27;s state is `SUCCEEDED`.
-  &quot;startTime&quot;: &quot;A String&quot;, # Output only. Marks the beginning of execution.
+  &quot;startTime&quot;: &quot;A String&quot;, # Output only. Marks the beginning of execution. Note that this will be the same as `createTime` for executions that start immediately.
   &quot;state&quot;: &quot;A String&quot;, # Output only. Current state of the execution.
   &quot;stateError&quot;: { # Describes an error related to the current state of the Execution resource. # Output only. Error regarding the state of the Execution resource. For example, this field will have error details if the execution data is unavailable due to revoked KMS key permissions.
     &quot;details&quot;: &quot;A String&quot;, # Provides specifics about the error.
@@ -265,12 +270,13 @@ Returns:
       ],
     },
   },
+  &quot;executionHistoryLevel&quot;: &quot;A String&quot;, # Optional. Describes the level of the execution history feature to apply to this execution. If not specified, the level of the execution history feature will be determined by its workflow&#x27;s execution history level. If the value is different from its workflow&#x27;s value, it will override the workflow&#x27;s execution history level for this exeuction.
   &quot;labels&quot;: { # Labels associated with this execution. Labels can contain at most 64 entries. Keys and values can be no longer than 63 characters and can only contain lowercase letters, numeric characters, underscores, and dashes. Label keys must start with a letter. International characters are allowed. By default, labels are inherited from the workflow but are overridden by any labels associated with the execution.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the execution. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution}
   &quot;result&quot;: &quot;A String&quot;, # Output only. Output of the execution represented as a JSON string. The value can only be present if the execution&#x27;s state is `SUCCEEDED`.
-  &quot;startTime&quot;: &quot;A String&quot;, # Output only. Marks the beginning of execution.
+  &quot;startTime&quot;: &quot;A String&quot;, # Output only. Marks the beginning of execution. Note that this will be the same as `createTime` for executions that start immediately.
   &quot;state&quot;: &quot;A String&quot;, # Output only. Current state of the execution.
   &quot;stateError&quot;: { # Describes an error related to the current state of the Execution resource. # Output only. Error regarding the state of the Execution resource. For example, this field will have error details if the execution data is unavailable due to revoked KMS key permissions.
     &quot;details&quot;: &quot;A String&quot;, # Provides specifics about the error.
@@ -285,6 +291,30 @@ Returns:
     ],
   },
   &quot;workflowRevisionId&quot;: &quot;A String&quot;, # Output only. Revision of the workflow this execution is using.
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="deleteExecutionHistory">deleteExecutionHistory(name, body=None, x__xgafv=None)</code>
+  <pre>Deletes all step entries for an execution.
+
+Args:
+  name: string, Required. Name of the execution for which step entries should be deleted. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution} (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # Request for the DeleteExecutionHistory method.
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # A generic empty message that you can re-use to avoid defining duplicated empty messages in your APIs. A typical example is to use it as the request or the response type of an API method. For instance: service Foo { rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty); }
 }</pre>
 </div>
 
@@ -350,12 +380,13 @@ Returns:
       ],
     },
   },
+  &quot;executionHistoryLevel&quot;: &quot;A String&quot;, # Optional. Describes the level of the execution history feature to apply to this execution. If not specified, the level of the execution history feature will be determined by its workflow&#x27;s execution history level. If the value is different from its workflow&#x27;s value, it will override the workflow&#x27;s execution history level for this exeuction.
   &quot;labels&quot;: { # Labels associated with this execution. Labels can contain at most 64 entries. Keys and values can be no longer than 63 characters and can only contain lowercase letters, numeric characters, underscores, and dashes. Label keys must start with a letter. International characters are allowed. By default, labels are inherited from the workflow but are overridden by any labels associated with the execution.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the execution. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution}
   &quot;result&quot;: &quot;A String&quot;, # Output only. Output of the execution represented as a JSON string. The value can only be present if the execution&#x27;s state is `SUCCEEDED`.
-  &quot;startTime&quot;: &quot;A String&quot;, # Output only. Marks the beginning of execution.
+  &quot;startTime&quot;: &quot;A String&quot;, # Output only. Marks the beginning of execution. Note that this will be the same as `createTime` for executions that start immediately.
   &quot;state&quot;: &quot;A String&quot;, # Output only. Current state of the execution.
   &quot;stateError&quot;: { # Describes an error related to the current state of the Execution resource. # Output only. Error regarding the state of the Execution resource. For example, this field will have error details if the execution data is unavailable due to revoked KMS key permissions.
     &quot;details&quot;: &quot;A String&quot;, # Provides specifics about the error.
@@ -379,7 +410,7 @@ Returns:
 
 Args:
   parent: string, Required. Name of the workflow for which the executions should be listed. Format: projects/{project}/locations/{location}/workflows/{workflow} (required)
-  filter: string, Optional. Filters applied to the `[Executions.ListExecutions]` results. The following fields are supported for filtering: `executionId`, `state`, `createTime`, `startTime`, `endTime`, `duration`, `workflowRevisionId`, `stepName`, and `label`. For details, see AIP-160. For example, if you are using the Google APIs Explorer: `state=&quot;SUCCEEDED&quot;` or `startTime&gt;&quot;2023-08-01&quot; AND state=&quot;FAILED&quot;`
+  filter: string, Optional. Filters applied to the `[Executions.ListExecutions]` results. The following fields are supported for filtering: `executionId`, `state`, `createTime`, `startTime`, `endTime`, `duration`, `workflowRevisionId`, `stepName`, `label`, and `disableConcurrencyQuotaOverflowBuffering`. For details, see AIP-160. For more information, see Filter executions. For example, if you are using the Google APIs Explorer: `state=&quot;SUCCEEDED&quot;` or `startTime&gt;&quot;2023-08-01&quot; AND state=&quot;FAILED&quot;`
   orderBy: string, Optional. Comma-separated list of fields that specify the ordering applied to the `[Executions.ListExecutions]` results. By default the ordering is based on descending `createTime`. The following fields are supported for ordering: `executionId`, `state`, `createTime`, `startTime`, `endTime`, `duration`, and `workflowRevisionId`. For details, see AIP-132.
   pageSize: integer, Maximum number of executions to return per call. Max supported value depends on the selected Execution view: it&#x27;s 1000 for BASIC and 100 for FULL. The default value used if the field is not specified is 100, regardless of the selected view. Values greater than the max value will be coerced down to it.
   pageToken: string, A page token, received from a previous `ListExecutions` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListExecutions` must match the call that provided the page token. Note that pagination is applied to dynamic data. The list of executions returned can change between page requests.
@@ -422,12 +453,13 @@ Returns:
           ],
         },
       },
+      &quot;executionHistoryLevel&quot;: &quot;A String&quot;, # Optional. Describes the level of the execution history feature to apply to this execution. If not specified, the level of the execution history feature will be determined by its workflow&#x27;s execution history level. If the value is different from its workflow&#x27;s value, it will override the workflow&#x27;s execution history level for this exeuction.
       &quot;labels&quot;: { # Labels associated with this execution. Labels can contain at most 64 entries. Keys and values can be no longer than 63 characters and can only contain lowercase letters, numeric characters, underscores, and dashes. Label keys must start with a letter. International characters are allowed. By default, labels are inherited from the workflow but are overridden by any labels associated with the execution.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the execution. Format: projects/{project}/locations/{location}/workflows/{workflow}/executions/{execution}
       &quot;result&quot;: &quot;A String&quot;, # Output only. Output of the execution represented as a JSON string. The value can only be present if the execution&#x27;s state is `SUCCEEDED`.
-      &quot;startTime&quot;: &quot;A String&quot;, # Output only. Marks the beginning of execution.
+      &quot;startTime&quot;: &quot;A String&quot;, # Output only. Marks the beginning of execution. Note that this will be the same as `createTime` for executions that start immediately.
       &quot;state&quot;: &quot;A String&quot;, # Output only. Current state of the execution.
       &quot;stateError&quot;: { # Describes an error related to the current state of the Execution resource. # Output only. Error regarding the state of the Execution resource. For example, this field will have error details if the execution data is unavailable due to revoked KMS key permissions.
         &quot;details&quot;: &quot;A String&quot;, # Provides specifics about the error.

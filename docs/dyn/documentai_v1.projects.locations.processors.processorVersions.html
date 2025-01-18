@@ -157,6 +157,12 @@ Args:
         42,
       ],
     },
+    &quot;layoutConfig&quot;: { # Serving config for layout parser processor. # Optional. Only applicable to `LAYOUT_PARSER_PROCESSOR`. Returns error if set on other processor types.
+      &quot;chunkingConfig&quot;: { # Serving config for chunking. # Optional. Config for chunking in layout parser processor.
+        &quot;chunkSize&quot;: 42, # Optional. The chunk sizes to use when splitting documents, in order of level.
+        &quot;includeAncestorHeadings&quot;: True or False, # Optional. Whether or not to include ancestor headings when splitting.
+      },
+    },
     &quot;ocrConfig&quot;: { # Config for Document OCR. # Only applicable to `OCR_PROCESSOR` and `FORM_PARSER_PROCESSOR`. Returns error if set on other processor types.
       &quot;advancedOcrOptions&quot;: [ # A list of advanced OCR options to further fine-tune OCR behavior. Current valid values are: - `legacy_layout`: a heuristics layout detection algorithm, which serves as an alternative to the current ML-based layout detection algorithm. Customers can choose the best suitable layout algorithm based on their situation.
         &quot;A String&quot;,
@@ -430,6 +436,16 @@ Returns:
       &quot;skipNamingValidation&quot;: True or False, # If set, we will skip the naming format validation in the schema. So the string values in `DocumentSchema.EntityType.name` and `DocumentSchema.EntityType.Property.name` will not be checked.
     },
   },
+  &quot;genAiModelInfo&quot;: { # Information about Generative AI model-based processor versions. # Output only. Information about Generative AI model-based processor versions.
+    &quot;customGenAiModelInfo&quot;: { # Information for a custom Generative AI model created by the user. These are created with `Create New Version` in either the `Call foundation model` or `Fine tuning` tabs. # Information for a custom Generative AI model created by the user.
+      &quot;baseProcessorVersionId&quot;: &quot;A String&quot;, # The base processor version ID for the custom model.
+      &quot;customModelType&quot;: &quot;A String&quot;, # The type of custom model created by the user.
+    },
+    &quot;foundationGenAiModelInfo&quot;: { # Information for a pretrained Google-managed foundation model. # Information for a pretrained Google-managed foundation model.
+      &quot;finetuningAllowed&quot;: True or False, # Whether finetuning is allowed for this base processor version.
+      &quot;minTrainLabeledDocuments&quot;: 42, # The minimum number of labeled documents in the training dataset required for finetuning.
+    },
+  },
   &quot;googleManaged&quot;: True or False, # Output only. Denotes that this `ProcessorVersion` is managed by Google.
   &quot;kmsKeyName&quot;: &quot;A String&quot;, # The KMS key name used for encryption.
   &quot;kmsKeyVersionName&quot;: &quot;A String&quot;, # The KMS key version with which data is encrypted.
@@ -465,6 +481,8 @@ Returns:
   },
   &quot;modelType&quot;: &quot;A String&quot;, # Output only. The model type of this processor version.
   &quot;name&quot;: &quot;A String&quot;, # Identifier. The resource name of the processor version. Format: `projects/{project}/locations/{location}/processors/{processor}/processorVersions/{processor_version}`
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the processor version.
 }</pre>
 </div>
@@ -527,6 +545,16 @@ Returns:
           &quot;skipNamingValidation&quot;: True or False, # If set, we will skip the naming format validation in the schema. So the string values in `DocumentSchema.EntityType.name` and `DocumentSchema.EntityType.Property.name` will not be checked.
         },
       },
+      &quot;genAiModelInfo&quot;: { # Information about Generative AI model-based processor versions. # Output only. Information about Generative AI model-based processor versions.
+        &quot;customGenAiModelInfo&quot;: { # Information for a custom Generative AI model created by the user. These are created with `Create New Version` in either the `Call foundation model` or `Fine tuning` tabs. # Information for a custom Generative AI model created by the user.
+          &quot;baseProcessorVersionId&quot;: &quot;A String&quot;, # The base processor version ID for the custom model.
+          &quot;customModelType&quot;: &quot;A String&quot;, # The type of custom model created by the user.
+        },
+        &quot;foundationGenAiModelInfo&quot;: { # Information for a pretrained Google-managed foundation model. # Information for a pretrained Google-managed foundation model.
+          &quot;finetuningAllowed&quot;: True or False, # Whether finetuning is allowed for this base processor version.
+          &quot;minTrainLabeledDocuments&quot;: 42, # The minimum number of labeled documents in the training dataset required for finetuning.
+        },
+      },
       &quot;googleManaged&quot;: True or False, # Output only. Denotes that this `ProcessorVersion` is managed by Google.
       &quot;kmsKeyName&quot;: &quot;A String&quot;, # The KMS key name used for encryption.
       &quot;kmsKeyVersionName&quot;: &quot;A String&quot;, # The KMS key version with which data is encrypted.
@@ -562,6 +590,8 @@ Returns:
       },
       &quot;modelType&quot;: &quot;A String&quot;, # Output only. The model type of this processor version.
       &quot;name&quot;: &quot;A String&quot;, # Identifier. The resource name of the processor version. Format: `projects/{project}/locations/{location}/processors/{processor}/processorVersions/{processor_version}`
+      &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+      &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
       &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the processor version.
     },
   ],
@@ -597,8 +627,99 @@ Args:
     &quot;gcsUri&quot;: &quot;A String&quot;, # The Cloud Storage object uri.
     &quot;mimeType&quot;: &quot;A String&quot;, # An IANA MIME type (RFC6838) of the content.
   },
+  &quot;imagelessMode&quot;: True or False, # Optional. Option to remove images from the document.
   &quot;inlineDocument&quot;: { # Document represents the canonical document resource in Document AI. It is an interchange format that provides insights into documents and allows for collaboration between users and Document AI to iterate and optimize for quality. # An inline document proto.
+    &quot;chunkedDocument&quot;: { # Represents the chunks that the document is divided into. # Document chunked based on chunking config.
+      &quot;chunks&quot;: [ # List of chunks.
+        { # Represents a chunk.
+          &quot;chunkId&quot;: &quot;A String&quot;, # ID of the chunk.
+          &quot;content&quot;: &quot;A String&quot;, # Text content of the chunk.
+          &quot;pageFooters&quot;: [ # Page footers associated with the chunk.
+            { # Represents the page footer associated with the chunk.
+              &quot;pageSpan&quot;: { # Represents where the chunk starts and ends in the document. # Page span of the footer.
+                &quot;pageEnd&quot;: 42, # Page where chunk ends in the document.
+                &quot;pageStart&quot;: 42, # Page where chunk starts in the document.
+              },
+              &quot;text&quot;: &quot;A String&quot;, # Footer in text format.
+            },
+          ],
+          &quot;pageHeaders&quot;: [ # Page headers associated with the chunk.
+            { # Represents the page header associated with the chunk.
+              &quot;pageSpan&quot;: { # Represents where the chunk starts and ends in the document. # Page span of the header.
+                &quot;pageEnd&quot;: 42, # Page where chunk ends in the document.
+                &quot;pageStart&quot;: 42, # Page where chunk starts in the document.
+              },
+              &quot;text&quot;: &quot;A String&quot;, # Header in text format.
+            },
+          ],
+          &quot;pageSpan&quot;: { # Represents where the chunk starts and ends in the document. # Page span of the chunk.
+            &quot;pageEnd&quot;: 42, # Page where chunk ends in the document.
+            &quot;pageStart&quot;: 42, # Page where chunk starts in the document.
+          },
+          &quot;sourceBlockIds&quot;: [ # Unused.
+            &quot;A String&quot;,
+          ],
+        },
+      ],
+    },
     &quot;content&quot;: &quot;A String&quot;, # Optional. Inline document content, represented as a stream of bytes. Note: As with all `bytes` fields, protobuffers use a pure binary representation, whereas JSON representations use base64.
+    &quot;documentLayout&quot;: { # Represents the parsed layout of a document as a collection of blocks that the document is divided into. # Parsed layout of the document.
+      &quot;blocks&quot;: [ # List of blocks in the document.
+        { # Represents a block. A block could be one of the various types (text, table, list) supported.
+          &quot;blockId&quot;: &quot;A String&quot;, # ID of the block.
+          &quot;listBlock&quot;: { # Represents a list type block. # Block consisting of list content/structure.
+            &quot;listEntries&quot;: [ # List entries that constitute a list block.
+              { # Represents an entry in the list.
+                &quot;blocks&quot;: [ # A list entry is a list of blocks. Repeated blocks support further hierarchies and nested blocks.
+                  # Object with schema name: GoogleCloudDocumentaiV1DocumentDocumentLayoutDocumentLayoutBlock
+                ],
+              },
+            ],
+            &quot;type&quot;: &quot;A String&quot;, # Type of the list_entries (if exist). Available options are `ordered` and `unordered`.
+          },
+          &quot;pageSpan&quot;: { # Represents where the block starts and ends in the document. # Page span of the block.
+            &quot;pageEnd&quot;: 42, # Page where block ends in the document.
+            &quot;pageStart&quot;: 42, # Page where block starts in the document.
+          },
+          &quot;tableBlock&quot;: { # Represents a table type block. # Block consisting of table content/structure.
+            &quot;bodyRows&quot;: [ # Body rows containing main table content.
+              { # Represents a row in a table.
+                &quot;cells&quot;: [ # A table row is a list of table cells.
+                  { # Represents a cell in a table row.
+                    &quot;blocks&quot;: [ # A table cell is a list of blocks. Repeated blocks support further hierarchies and nested blocks.
+                      # Object with schema name: GoogleCloudDocumentaiV1DocumentDocumentLayoutDocumentLayoutBlock
+                    ],
+                    &quot;colSpan&quot;: 42, # How many columns this cell spans.
+                    &quot;rowSpan&quot;: 42, # How many rows this cell spans.
+                  },
+                ],
+              },
+            ],
+            &quot;caption&quot;: &quot;A String&quot;, # Table caption/title.
+            &quot;headerRows&quot;: [ # Header rows at the top of the table.
+              { # Represents a row in a table.
+                &quot;cells&quot;: [ # A table row is a list of table cells.
+                  { # Represents a cell in a table row.
+                    &quot;blocks&quot;: [ # A table cell is a list of blocks. Repeated blocks support further hierarchies and nested blocks.
+                      # Object with schema name: GoogleCloudDocumentaiV1DocumentDocumentLayoutDocumentLayoutBlock
+                    ],
+                    &quot;colSpan&quot;: 42, # How many columns this cell spans.
+                    &quot;rowSpan&quot;: 42, # How many rows this cell spans.
+                  },
+                ],
+              },
+            ],
+          },
+          &quot;textBlock&quot;: { # Represents a text type block. # Block consisting of text content.
+            &quot;blocks&quot;: [ # A text block could further have child blocks. Repeated blocks support further hierarchies and nested blocks.
+              # Object with schema name: GoogleCloudDocumentaiV1DocumentDocumentLayoutDocumentLayoutBlock
+            ],
+            &quot;text&quot;: &quot;A String&quot;, # Text content stored in the block.
+            &quot;type&quot;: &quot;A String&quot;, # Type of the text in the block. Available options are: `paragraph`, `subtitle`, `heading-1`, `heading-2`, `heading-3`, `heading-4`, `heading-5`, `header`, `footer`.
+          },
+        },
+      ],
+    },
     &quot;entities&quot;: [ # A list of entities detected on Document.text. For document shards, entities in this list may cross shard boundaries.
       { # An entity that could be a phrase in the text or a property that belongs to the document. It is a known entity type, such as a person, an organization, or location.
         &quot;confidence&quot;: 3.14, # Optional. Confidence of detected Schema entity. Range `[0, 1]`.
@@ -606,21 +727,21 @@ Args:
         &quot;mentionId&quot;: &quot;A String&quot;, # Optional. Deprecated. Use `id` field instead.
         &quot;mentionText&quot;: &quot;A String&quot;, # Optional. Text value of the entity e.g. `1600 Amphitheatre Pkwy`.
         &quot;normalizedValue&quot;: { # Parsed and normalized entity value. # Optional. Normalized entity value. Absent if the extracted value could not be converted or the type (e.g. address) is not supported for certain parsers. This field is also only populated for certain supported document types.
-          &quot;addressValue&quot;: { # Represents a postal address, e.g. for postal delivery or payments addresses. Given a postal address, a postal service can deliver items to a premise, P.O. Box or similar. It is not intended to model geographical locations (roads, towns, mountains). In typical usage an address would be created via user input or from importing existing data, depending on the type of process. Advice on address input / editing: - Use an internationalization-ready address widget such as https://github.com/google/libaddressinput) - Users should not be presented with UI elements for input or editing of fields outside countries where that field is used. For more guidance on how to use this schema, please see: https://support.google.com/business/answer/6397478 # Postal address. See also: https://github.com/googleapis/googleapis/blob/master/google/type/postal_address.proto
-            &quot;addressLines&quot;: [ # Unstructured address lines describing the lower levels of an address. Because values in address_lines do not have type information and may sometimes contain multiple values in a single field (e.g. &quot;Austin, TX&quot;), it is important that the line order is clear. The order of address lines should be &quot;envelope order&quot; for the country/region of the address. In places where this can vary (e.g. Japan), address_language is used to make it explicit (e.g. &quot;ja&quot; for large-to-small ordering and &quot;ja-Latn&quot; or &quot;en&quot; for small-to-large). This way, the most specific line of an address can be selected based on the language. The minimum permitted structural representation of an address consists of a region_code with all remaining information placed in the address_lines. It would be possible to format such an address very approximately without geocoding, but no semantic reasoning could be made about any of the address components until it was at least partially resolved. Creating an address only containing a region_code and address_lines, and then geocoding is the recommended way to handle completely unstructured addresses (as opposed to guessing which parts of the address should be localities or administrative areas).
+          &quot;addressValue&quot;: { # Represents a postal address. For example for postal delivery or payments addresses. Given a postal address, a postal service can deliver items to a premise, P.O. Box or similar. It is not intended to model geographical locations (roads, towns, mountains). In typical usage an address would be created by user input or from importing existing data, depending on the type of process. Advice on address input / editing: - Use an internationalization-ready address widget such as https://github.com/google/libaddressinput) - Users should not be presented with UI elements for input or editing of fields outside countries where that field is used. For more guidance on how to use this schema, see: https://support.google.com/business/answer/6397478 # Postal address. See also: https://github.com/googleapis/googleapis/blob/master/google/type/postal_address.proto
+            &quot;addressLines&quot;: [ # Unstructured address lines describing the lower levels of an address. Because values in address_lines do not have type information and may sometimes contain multiple values in a single field (For example &quot;Austin, TX&quot;), it is important that the line order is clear. The order of address lines should be &quot;envelope order&quot; for the country/region of the address. In places where this can vary (For example Japan), address_language is used to make it explicit (For example &quot;ja&quot; for large-to-small ordering and &quot;ja-Latn&quot; or &quot;en&quot; for small-to-large). This way, the most specific line of an address can be selected based on the language. The minimum permitted structural representation of an address consists of a region_code with all remaining information placed in the address_lines. It would be possible to format such an address very approximately without geocoding, but no semantic reasoning could be made about any of the address components until it was at least partially resolved. Creating an address only containing a region_code and address_lines, and then geocoding is the recommended way to handle completely unstructured addresses (as opposed to guessing which parts of the address should be localities or administrative areas).
               &quot;A String&quot;,
             ],
-            &quot;administrativeArea&quot;: &quot;A String&quot;, # Optional. Highest administrative subdivision which is used for postal addresses of a country or region. For example, this can be a state, a province, an oblast, or a prefecture. Specifically, for Spain this is the province and not the autonomous community (e.g. &quot;Barcelona&quot; and not &quot;Catalonia&quot;). Many countries don&#x27;t use an administrative area in postal addresses. E.g. in Switzerland this should be left unpopulated.
+            &quot;administrativeArea&quot;: &quot;A String&quot;, # Optional. Highest administrative subdivision which is used for postal addresses of a country or region. For example, this can be a state, a province, an oblast, or a prefecture. Specifically, for Spain this is the province and not the autonomous community (For example &quot;Barcelona&quot; and not &quot;Catalonia&quot;). Many countries don&#x27;t use an administrative area in postal addresses. For example in Switzerland this should be left unpopulated.
             &quot;languageCode&quot;: &quot;A String&quot;, # Optional. BCP-47 language code of the contents of this address (if known). This is often the UI language of the input form or is expected to match one of the languages used in the address&#x27; country/region, or their transliterated equivalents. This can affect formatting in certain countries, but is not critical to the correctness of the data and will never affect any validation or other non-formatting related operations. If this value is not known, it should be omitted (rather than specifying a possibly incorrect default). Examples: &quot;zh-Hant&quot;, &quot;ja&quot;, &quot;ja-Latn&quot;, &quot;en&quot;.
             &quot;locality&quot;: &quot;A String&quot;, # Optional. Generally refers to the city/town portion of the address. Examples: US city, IT comune, UK post town. In regions of the world where localities are not well defined or do not fit into this structure well, leave locality empty and use address_lines.
             &quot;organization&quot;: &quot;A String&quot;, # Optional. The name of the organization at the address.
-            &quot;postalCode&quot;: &quot;A String&quot;, # Optional. Postal code of the address. Not all countries use or require postal codes to be present, but where they are used, they may trigger additional validation with other parts of the address (e.g. state/zip validation in the U.S.A.).
+            &quot;postalCode&quot;: &quot;A String&quot;, # Optional. Postal code of the address. Not all countries use or require postal codes to be present, but where they are used, they may trigger additional validation with other parts of the address (For example state/zip validation in the U.S.A.).
             &quot;recipients&quot;: [ # Optional. The recipient at the address. This field may, under certain circumstances, contain multiline information. For example, it might contain &quot;care of&quot; information.
               &quot;A String&quot;,
             ],
             &quot;regionCode&quot;: &quot;A String&quot;, # Required. CLDR region code of the country/region of the address. This is never inferred and it is up to the user to ensure the value is correct. See https://cldr.unicode.org/ and https://www.unicode.org/cldr/charts/30/supplemental/territory_information.html for details. Example: &quot;CH&quot; for Switzerland.
             &quot;revision&quot;: 42, # The schema revision of the `PostalAddress`. This must be set to 0, which is the latest revision. All new revisions **must** be backward compatible with old revisions.
-            &quot;sortingCode&quot;: &quot;A String&quot;, # Optional. Additional, country-specific, sorting code. This is not used in most regions. Where it is used, the value is either a string like &quot;CEDEX&quot;, optionally followed by a number (e.g. &quot;CEDEX 7&quot;), or just a number alone, representing the &quot;sector code&quot; (Jamaica), &quot;delivery area indicator&quot; (Malawi) or &quot;post office indicator&quot; (e.g. Côte d&#x27;Ivoire).
+            &quot;sortingCode&quot;: &quot;A String&quot;, # Optional. Additional, country-specific, sorting code. This is not used in most regions. Where it is used, the value is either a string like &quot;CEDEX&quot;, optionally followed by a number (For example &quot;CEDEX 7&quot;), or just a number alone, representing the &quot;sector code&quot; (Jamaica), &quot;delivery area indicator&quot; (Malawi) or &quot;post office indicator&quot; (For example Côte d&#x27;Ivoire).
             &quot;sublocality&quot;: &quot;A String&quot;, # Optional. Sublocality of the address. For example, this can be neighborhoods, boroughs, districts.
           },
           &quot;booleanValue&quot;: True or False, # Boolean value. Can be used for entities with binary values, or for checkboxes.
@@ -637,8 +758,8 @@ Args:
             &quot;nanos&quot;: 42, # Optional. Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999, defaults to 0.
             &quot;seconds&quot;: 42, # Optional. Seconds of minutes of the time. Must normally be from 0 to 59, defaults to 0. An API may allow the value 60 if it allows leap-seconds.
             &quot;timeZone&quot;: { # Represents a time zone from the [IANA Time Zone Database](https://www.iana.org/time-zones). # Time zone.
-              &quot;id&quot;: &quot;A String&quot;, # IANA Time Zone Database time zone, e.g. &quot;America/New_York&quot;.
-              &quot;version&quot;: &quot;A String&quot;, # Optional. IANA Time Zone Database version number, e.g. &quot;2019a&quot;.
+              &quot;id&quot;: &quot;A String&quot;, # IANA Time Zone Database time zone. For example &quot;America/New_York&quot;.
+              &quot;version&quot;: &quot;A String&quot;, # Optional. IANA Time Zone Database version number. For example &quot;2019a&quot;.
             },
             &quot;utcOffset&quot;: &quot;A String&quot;, # UTC offset. Must be whole seconds, between -18 hours and +18 hours. For example, a UTC offset of -4:00 would be represented as { seconds: -14400 }.
             &quot;year&quot;: 42, # Optional. Year of date. Must be from 1 to 9999, or 0 if specifying a datetime without a year.
@@ -1454,6 +1575,12 @@ Args:
         42,
       ],
     },
+    &quot;layoutConfig&quot;: { # Serving config for layout parser processor. # Optional. Only applicable to `LAYOUT_PARSER_PROCESSOR`. Returns error if set on other processor types.
+      &quot;chunkingConfig&quot;: { # Serving config for chunking. # Optional. Config for chunking in layout parser processor.
+        &quot;chunkSize&quot;: 42, # Optional. The chunk sizes to use when splitting documents, in order of level.
+        &quot;includeAncestorHeadings&quot;: True or False, # Optional. Whether or not to include ancestor headings when splitting.
+      },
+    },
     &quot;ocrConfig&quot;: { # Config for Document OCR. # Only applicable to `OCR_PROCESSOR` and `FORM_PARSER_PROCESSOR`. Returns error if set on other processor types.
       &quot;advancedOcrOptions&quot;: [ # A list of advanced OCR options to further fine-tune OCR behavior. Current valid values are: - `legacy_layout`: a heuristics layout detection algorithm, which serves as an alternative to the current ML-based layout detection algorithm. Customers can choose the best suitable layout algorithm based on their situation.
         &quot;A String&quot;,
@@ -1525,7 +1652,97 @@ Returns:
 
     { # Response message for the ProcessDocument method.
   &quot;document&quot;: { # Document represents the canonical document resource in Document AI. It is an interchange format that provides insights into documents and allows for collaboration between users and Document AI to iterate and optimize for quality. # The document payload, will populate fields based on the processor&#x27;s behavior.
+    &quot;chunkedDocument&quot;: { # Represents the chunks that the document is divided into. # Document chunked based on chunking config.
+      &quot;chunks&quot;: [ # List of chunks.
+        { # Represents a chunk.
+          &quot;chunkId&quot;: &quot;A String&quot;, # ID of the chunk.
+          &quot;content&quot;: &quot;A String&quot;, # Text content of the chunk.
+          &quot;pageFooters&quot;: [ # Page footers associated with the chunk.
+            { # Represents the page footer associated with the chunk.
+              &quot;pageSpan&quot;: { # Represents where the chunk starts and ends in the document. # Page span of the footer.
+                &quot;pageEnd&quot;: 42, # Page where chunk ends in the document.
+                &quot;pageStart&quot;: 42, # Page where chunk starts in the document.
+              },
+              &quot;text&quot;: &quot;A String&quot;, # Footer in text format.
+            },
+          ],
+          &quot;pageHeaders&quot;: [ # Page headers associated with the chunk.
+            { # Represents the page header associated with the chunk.
+              &quot;pageSpan&quot;: { # Represents where the chunk starts and ends in the document. # Page span of the header.
+                &quot;pageEnd&quot;: 42, # Page where chunk ends in the document.
+                &quot;pageStart&quot;: 42, # Page where chunk starts in the document.
+              },
+              &quot;text&quot;: &quot;A String&quot;, # Header in text format.
+            },
+          ],
+          &quot;pageSpan&quot;: { # Represents where the chunk starts and ends in the document. # Page span of the chunk.
+            &quot;pageEnd&quot;: 42, # Page where chunk ends in the document.
+            &quot;pageStart&quot;: 42, # Page where chunk starts in the document.
+          },
+          &quot;sourceBlockIds&quot;: [ # Unused.
+            &quot;A String&quot;,
+          ],
+        },
+      ],
+    },
     &quot;content&quot;: &quot;A String&quot;, # Optional. Inline document content, represented as a stream of bytes. Note: As with all `bytes` fields, protobuffers use a pure binary representation, whereas JSON representations use base64.
+    &quot;documentLayout&quot;: { # Represents the parsed layout of a document as a collection of blocks that the document is divided into. # Parsed layout of the document.
+      &quot;blocks&quot;: [ # List of blocks in the document.
+        { # Represents a block. A block could be one of the various types (text, table, list) supported.
+          &quot;blockId&quot;: &quot;A String&quot;, # ID of the block.
+          &quot;listBlock&quot;: { # Represents a list type block. # Block consisting of list content/structure.
+            &quot;listEntries&quot;: [ # List entries that constitute a list block.
+              { # Represents an entry in the list.
+                &quot;blocks&quot;: [ # A list entry is a list of blocks. Repeated blocks support further hierarchies and nested blocks.
+                  # Object with schema name: GoogleCloudDocumentaiV1DocumentDocumentLayoutDocumentLayoutBlock
+                ],
+              },
+            ],
+            &quot;type&quot;: &quot;A String&quot;, # Type of the list_entries (if exist). Available options are `ordered` and `unordered`.
+          },
+          &quot;pageSpan&quot;: { # Represents where the block starts and ends in the document. # Page span of the block.
+            &quot;pageEnd&quot;: 42, # Page where block ends in the document.
+            &quot;pageStart&quot;: 42, # Page where block starts in the document.
+          },
+          &quot;tableBlock&quot;: { # Represents a table type block. # Block consisting of table content/structure.
+            &quot;bodyRows&quot;: [ # Body rows containing main table content.
+              { # Represents a row in a table.
+                &quot;cells&quot;: [ # A table row is a list of table cells.
+                  { # Represents a cell in a table row.
+                    &quot;blocks&quot;: [ # A table cell is a list of blocks. Repeated blocks support further hierarchies and nested blocks.
+                      # Object with schema name: GoogleCloudDocumentaiV1DocumentDocumentLayoutDocumentLayoutBlock
+                    ],
+                    &quot;colSpan&quot;: 42, # How many columns this cell spans.
+                    &quot;rowSpan&quot;: 42, # How many rows this cell spans.
+                  },
+                ],
+              },
+            ],
+            &quot;caption&quot;: &quot;A String&quot;, # Table caption/title.
+            &quot;headerRows&quot;: [ # Header rows at the top of the table.
+              { # Represents a row in a table.
+                &quot;cells&quot;: [ # A table row is a list of table cells.
+                  { # Represents a cell in a table row.
+                    &quot;blocks&quot;: [ # A table cell is a list of blocks. Repeated blocks support further hierarchies and nested blocks.
+                      # Object with schema name: GoogleCloudDocumentaiV1DocumentDocumentLayoutDocumentLayoutBlock
+                    ],
+                    &quot;colSpan&quot;: 42, # How many columns this cell spans.
+                    &quot;rowSpan&quot;: 42, # How many rows this cell spans.
+                  },
+                ],
+              },
+            ],
+          },
+          &quot;textBlock&quot;: { # Represents a text type block. # Block consisting of text content.
+            &quot;blocks&quot;: [ # A text block could further have child blocks. Repeated blocks support further hierarchies and nested blocks.
+              # Object with schema name: GoogleCloudDocumentaiV1DocumentDocumentLayoutDocumentLayoutBlock
+            ],
+            &quot;text&quot;: &quot;A String&quot;, # Text content stored in the block.
+            &quot;type&quot;: &quot;A String&quot;, # Type of the text in the block. Available options are: `paragraph`, `subtitle`, `heading-1`, `heading-2`, `heading-3`, `heading-4`, `heading-5`, `header`, `footer`.
+          },
+        },
+      ],
+    },
     &quot;entities&quot;: [ # A list of entities detected on Document.text. For document shards, entities in this list may cross shard boundaries.
       { # An entity that could be a phrase in the text or a property that belongs to the document. It is a known entity type, such as a person, an organization, or location.
         &quot;confidence&quot;: 3.14, # Optional. Confidence of detected Schema entity. Range `[0, 1]`.
@@ -1533,21 +1750,21 @@ Returns:
         &quot;mentionId&quot;: &quot;A String&quot;, # Optional. Deprecated. Use `id` field instead.
         &quot;mentionText&quot;: &quot;A String&quot;, # Optional. Text value of the entity e.g. `1600 Amphitheatre Pkwy`.
         &quot;normalizedValue&quot;: { # Parsed and normalized entity value. # Optional. Normalized entity value. Absent if the extracted value could not be converted or the type (e.g. address) is not supported for certain parsers. This field is also only populated for certain supported document types.
-          &quot;addressValue&quot;: { # Represents a postal address, e.g. for postal delivery or payments addresses. Given a postal address, a postal service can deliver items to a premise, P.O. Box or similar. It is not intended to model geographical locations (roads, towns, mountains). In typical usage an address would be created via user input or from importing existing data, depending on the type of process. Advice on address input / editing: - Use an internationalization-ready address widget such as https://github.com/google/libaddressinput) - Users should not be presented with UI elements for input or editing of fields outside countries where that field is used. For more guidance on how to use this schema, please see: https://support.google.com/business/answer/6397478 # Postal address. See also: https://github.com/googleapis/googleapis/blob/master/google/type/postal_address.proto
-            &quot;addressLines&quot;: [ # Unstructured address lines describing the lower levels of an address. Because values in address_lines do not have type information and may sometimes contain multiple values in a single field (e.g. &quot;Austin, TX&quot;), it is important that the line order is clear. The order of address lines should be &quot;envelope order&quot; for the country/region of the address. In places where this can vary (e.g. Japan), address_language is used to make it explicit (e.g. &quot;ja&quot; for large-to-small ordering and &quot;ja-Latn&quot; or &quot;en&quot; for small-to-large). This way, the most specific line of an address can be selected based on the language. The minimum permitted structural representation of an address consists of a region_code with all remaining information placed in the address_lines. It would be possible to format such an address very approximately without geocoding, but no semantic reasoning could be made about any of the address components until it was at least partially resolved. Creating an address only containing a region_code and address_lines, and then geocoding is the recommended way to handle completely unstructured addresses (as opposed to guessing which parts of the address should be localities or administrative areas).
+          &quot;addressValue&quot;: { # Represents a postal address. For example for postal delivery or payments addresses. Given a postal address, a postal service can deliver items to a premise, P.O. Box or similar. It is not intended to model geographical locations (roads, towns, mountains). In typical usage an address would be created by user input or from importing existing data, depending on the type of process. Advice on address input / editing: - Use an internationalization-ready address widget such as https://github.com/google/libaddressinput) - Users should not be presented with UI elements for input or editing of fields outside countries where that field is used. For more guidance on how to use this schema, see: https://support.google.com/business/answer/6397478 # Postal address. See also: https://github.com/googleapis/googleapis/blob/master/google/type/postal_address.proto
+            &quot;addressLines&quot;: [ # Unstructured address lines describing the lower levels of an address. Because values in address_lines do not have type information and may sometimes contain multiple values in a single field (For example &quot;Austin, TX&quot;), it is important that the line order is clear. The order of address lines should be &quot;envelope order&quot; for the country/region of the address. In places where this can vary (For example Japan), address_language is used to make it explicit (For example &quot;ja&quot; for large-to-small ordering and &quot;ja-Latn&quot; or &quot;en&quot; for small-to-large). This way, the most specific line of an address can be selected based on the language. The minimum permitted structural representation of an address consists of a region_code with all remaining information placed in the address_lines. It would be possible to format such an address very approximately without geocoding, but no semantic reasoning could be made about any of the address components until it was at least partially resolved. Creating an address only containing a region_code and address_lines, and then geocoding is the recommended way to handle completely unstructured addresses (as opposed to guessing which parts of the address should be localities or administrative areas).
               &quot;A String&quot;,
             ],
-            &quot;administrativeArea&quot;: &quot;A String&quot;, # Optional. Highest administrative subdivision which is used for postal addresses of a country or region. For example, this can be a state, a province, an oblast, or a prefecture. Specifically, for Spain this is the province and not the autonomous community (e.g. &quot;Barcelona&quot; and not &quot;Catalonia&quot;). Many countries don&#x27;t use an administrative area in postal addresses. E.g. in Switzerland this should be left unpopulated.
+            &quot;administrativeArea&quot;: &quot;A String&quot;, # Optional. Highest administrative subdivision which is used for postal addresses of a country or region. For example, this can be a state, a province, an oblast, or a prefecture. Specifically, for Spain this is the province and not the autonomous community (For example &quot;Barcelona&quot; and not &quot;Catalonia&quot;). Many countries don&#x27;t use an administrative area in postal addresses. For example in Switzerland this should be left unpopulated.
             &quot;languageCode&quot;: &quot;A String&quot;, # Optional. BCP-47 language code of the contents of this address (if known). This is often the UI language of the input form or is expected to match one of the languages used in the address&#x27; country/region, or their transliterated equivalents. This can affect formatting in certain countries, but is not critical to the correctness of the data and will never affect any validation or other non-formatting related operations. If this value is not known, it should be omitted (rather than specifying a possibly incorrect default). Examples: &quot;zh-Hant&quot;, &quot;ja&quot;, &quot;ja-Latn&quot;, &quot;en&quot;.
             &quot;locality&quot;: &quot;A String&quot;, # Optional. Generally refers to the city/town portion of the address. Examples: US city, IT comune, UK post town. In regions of the world where localities are not well defined or do not fit into this structure well, leave locality empty and use address_lines.
             &quot;organization&quot;: &quot;A String&quot;, # Optional. The name of the organization at the address.
-            &quot;postalCode&quot;: &quot;A String&quot;, # Optional. Postal code of the address. Not all countries use or require postal codes to be present, but where they are used, they may trigger additional validation with other parts of the address (e.g. state/zip validation in the U.S.A.).
+            &quot;postalCode&quot;: &quot;A String&quot;, # Optional. Postal code of the address. Not all countries use or require postal codes to be present, but where they are used, they may trigger additional validation with other parts of the address (For example state/zip validation in the U.S.A.).
             &quot;recipients&quot;: [ # Optional. The recipient at the address. This field may, under certain circumstances, contain multiline information. For example, it might contain &quot;care of&quot; information.
               &quot;A String&quot;,
             ],
             &quot;regionCode&quot;: &quot;A String&quot;, # Required. CLDR region code of the country/region of the address. This is never inferred and it is up to the user to ensure the value is correct. See https://cldr.unicode.org/ and https://www.unicode.org/cldr/charts/30/supplemental/territory_information.html for details. Example: &quot;CH&quot; for Switzerland.
             &quot;revision&quot;: 42, # The schema revision of the `PostalAddress`. This must be set to 0, which is the latest revision. All new revisions **must** be backward compatible with old revisions.
-            &quot;sortingCode&quot;: &quot;A String&quot;, # Optional. Additional, country-specific, sorting code. This is not used in most regions. Where it is used, the value is either a string like &quot;CEDEX&quot;, optionally followed by a number (e.g. &quot;CEDEX 7&quot;), or just a number alone, representing the &quot;sector code&quot; (Jamaica), &quot;delivery area indicator&quot; (Malawi) or &quot;post office indicator&quot; (e.g. Côte d&#x27;Ivoire).
+            &quot;sortingCode&quot;: &quot;A String&quot;, # Optional. Additional, country-specific, sorting code. This is not used in most regions. Where it is used, the value is either a string like &quot;CEDEX&quot;, optionally followed by a number (For example &quot;CEDEX 7&quot;), or just a number alone, representing the &quot;sector code&quot; (Jamaica), &quot;delivery area indicator&quot; (Malawi) or &quot;post office indicator&quot; (For example Côte d&#x27;Ivoire).
             &quot;sublocality&quot;: &quot;A String&quot;, # Optional. Sublocality of the address. For example, this can be neighborhoods, boroughs, districts.
           },
           &quot;booleanValue&quot;: True or False, # Boolean value. Can be used for entities with binary values, or for checkboxes.
@@ -1564,8 +1781,8 @@ Returns:
             &quot;nanos&quot;: 42, # Optional. Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999, defaults to 0.
             &quot;seconds&quot;: 42, # Optional. Seconds of minutes of the time. Must normally be from 0 to 59, defaults to 0. An API may allow the value 60 if it allows leap-seconds.
             &quot;timeZone&quot;: { # Represents a time zone from the [IANA Time Zone Database](https://www.iana.org/time-zones). # Time zone.
-              &quot;id&quot;: &quot;A String&quot;, # IANA Time Zone Database time zone, e.g. &quot;America/New_York&quot;.
-              &quot;version&quot;: &quot;A String&quot;, # Optional. IANA Time Zone Database version number, e.g. &quot;2019a&quot;.
+              &quot;id&quot;: &quot;A String&quot;, # IANA Time Zone Database time zone. For example &quot;America/New_York&quot;.
+              &quot;version&quot;: &quot;A String&quot;, # Optional. IANA Time Zone Database version number. For example &quot;2019a&quot;.
             },
             &quot;utcOffset&quot;: &quot;A String&quot;, # UTC offset. Must be whole seconds, between -18 hours and +18 hours. For example, a UTC offset of -4:00 would be represented as { seconds: -14400 }.
             &quot;year&quot;: 42, # Optional. Year of date. Must be from 1 to 9999, or 0 if specifying a datetime without a year.
@@ -2495,6 +2712,16 @@ Args:
         &quot;skipNamingValidation&quot;: True or False, # If set, we will skip the naming format validation in the schema. So the string values in `DocumentSchema.EntityType.name` and `DocumentSchema.EntityType.Property.name` will not be checked.
       },
     },
+    &quot;genAiModelInfo&quot;: { # Information about Generative AI model-based processor versions. # Output only. Information about Generative AI model-based processor versions.
+      &quot;customGenAiModelInfo&quot;: { # Information for a custom Generative AI model created by the user. These are created with `Create New Version` in either the `Call foundation model` or `Fine tuning` tabs. # Information for a custom Generative AI model created by the user.
+        &quot;baseProcessorVersionId&quot;: &quot;A String&quot;, # The base processor version ID for the custom model.
+        &quot;customModelType&quot;: &quot;A String&quot;, # The type of custom model created by the user.
+      },
+      &quot;foundationGenAiModelInfo&quot;: { # Information for a pretrained Google-managed foundation model. # Information for a pretrained Google-managed foundation model.
+        &quot;finetuningAllowed&quot;: True or False, # Whether finetuning is allowed for this base processor version.
+        &quot;minTrainLabeledDocuments&quot;: 42, # The minimum number of labeled documents in the training dataset required for finetuning.
+      },
+    },
     &quot;googleManaged&quot;: True or False, # Output only. Denotes that this `ProcessorVersion` is managed by Google.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # The KMS key name used for encryption.
     &quot;kmsKeyVersionName&quot;: &quot;A String&quot;, # The KMS key version with which data is encrypted.
@@ -2530,6 +2757,8 @@ Args:
     },
     &quot;modelType&quot;: &quot;A String&quot;, # Output only. The model type of this processor version.
     &quot;name&quot;: &quot;A String&quot;, # Identifier. The resource name of the processor version. Format: `projects/{project}/locations/{location}/processors/{processor}/processorVersions/{processor_version}`
+    &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+    &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
     &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the processor version.
   },
 }

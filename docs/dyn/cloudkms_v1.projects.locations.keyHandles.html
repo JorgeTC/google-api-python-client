@@ -84,8 +84,11 @@ h1, h2, h3 {
   <code><a href="#get">get(name, x__xgafv=None)</a></code></p>
 <p class="firstline">Returns the KeyHandle.</p>
 <p class="toc_element">
-  <code><a href="#list">list(parent, filter=None, x__xgafv=None)</a></code></p>
+  <code><a href="#list">list(parent, filter=None, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Lists KeyHandles.</p>
+<p class="toc_element">
+  <code><a href="#list_next">list_next()</a></code></p>
+<p class="firstline">Retrieves the next page of results.</p>
 <h3>Method Details</h3>
 <div class="method">
     <code class="details" id="close">close()</code>
@@ -103,7 +106,7 @@ Args:
 
 { # Resource-oriented representation of a request to Cloud KMS Autokey and the resulting provisioning of a CryptoKey.
   &quot;kmsKey&quot;: &quot;A String&quot;, # Output only. Name of a CryptoKey that has been provisioned for Customer Managed Encryption Key (CMEK) use in the KeyHandle project and location for the requested resource type. The CryptoKey project will reflect the value configured in the AutokeyConfig on the resource project&#x27;s ancestor folder at the time of the KeyHandle creation. If more than one ancestor folder has a configured AutokeyConfig, the nearest of these configurations is used.
-  &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. Name of the KeyHandle resource, e.g. `projects/{PROJECT_ID}/locations/{LOCATION}/keyHandles/{KEY_HANDLE_ID}`.
+  &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the KeyHandle resource, e.g. `projects/{PROJECT_ID}/locations/{LOCATION}/keyHandles/{KEY_HANDLE_ID}`.
   &quot;resourceTypeSelector&quot;: &quot;A String&quot;, # Required. Indicates the resource type that the resulting CryptoKey is meant to protect, e.g. `{SERVICE}.googleapis.com/{TYPE}`. See documentation for supported resource types.
 }
 
@@ -153,18 +156,20 @@ Returns:
 
     { # Resource-oriented representation of a request to Cloud KMS Autokey and the resulting provisioning of a CryptoKey.
   &quot;kmsKey&quot;: &quot;A String&quot;, # Output only. Name of a CryptoKey that has been provisioned for Customer Managed Encryption Key (CMEK) use in the KeyHandle project and location for the requested resource type. The CryptoKey project will reflect the value configured in the AutokeyConfig on the resource project&#x27;s ancestor folder at the time of the KeyHandle creation. If more than one ancestor folder has a configured AutokeyConfig, the nearest of these configurations is used.
-  &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. Name of the KeyHandle resource, e.g. `projects/{PROJECT_ID}/locations/{LOCATION}/keyHandles/{KEY_HANDLE_ID}`.
+  &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the KeyHandle resource, e.g. `projects/{PROJECT_ID}/locations/{LOCATION}/keyHandles/{KEY_HANDLE_ID}`.
   &quot;resourceTypeSelector&quot;: &quot;A String&quot;, # Required. Indicates the resource type that the resulting CryptoKey is meant to protect, e.g. `{SERVICE}.googleapis.com/{TYPE}`. See documentation for supported resource types.
 }</pre>
 </div>
 
 <div class="method">
-    <code class="details" id="list">list(parent, filter=None, x__xgafv=None)</code>
+    <code class="details" id="list">list(parent, filter=None, pageSize=None, pageToken=None, x__xgafv=None)</code>
   <pre>Lists KeyHandles.
 
 Args:
   parent: string, Required. Name of the resource project and location from which to list KeyHandles, e.g. `projects/{PROJECT_ID}/locations/{LOCATION}`. (required)
   filter: string, Optional. Filter to apply when listing KeyHandles, e.g. `resource_type_selector=&quot;{SERVICE}.googleapis.com/{TYPE}&quot;`.
+  pageSize: integer, Optional. Optional limit on the number of KeyHandles to include in the response. The service may return fewer than this value. Further KeyHandles can subsequently be obtained by including the ListKeyHandlesResponse.next_page_token in a subsequent request. If unspecified, at most 100 KeyHandles will be returned.
+  pageToken: string, Optional. Optional pagination token, returned earlier via ListKeyHandlesResponse.next_page_token.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -177,11 +182,26 @@ Returns:
   &quot;keyHandles&quot;: [ # Resulting KeyHandles.
     { # Resource-oriented representation of a request to Cloud KMS Autokey and the resulting provisioning of a CryptoKey.
       &quot;kmsKey&quot;: &quot;A String&quot;, # Output only. Name of a CryptoKey that has been provisioned for Customer Managed Encryption Key (CMEK) use in the KeyHandle project and location for the requested resource type. The CryptoKey project will reflect the value configured in the AutokeyConfig on the resource project&#x27;s ancestor folder at the time of the KeyHandle creation. If more than one ancestor folder has a configured AutokeyConfig, the nearest of these configurations is used.
-      &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. Name of the KeyHandle resource, e.g. `projects/{PROJECT_ID}/locations/{LOCATION}/keyHandles/{KEY_HANDLE_ID}`.
+      &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the KeyHandle resource, e.g. `projects/{PROJECT_ID}/locations/{LOCATION}/keyHandles/{KEY_HANDLE_ID}`.
       &quot;resourceTypeSelector&quot;: &quot;A String&quot;, # Required. Indicates the resource type that the resulting CryptoKey is meant to protect, e.g. `{SERVICE}.googleapis.com/{TYPE}`. See documentation for supported resource types.
     },
   ],
+  &quot;nextPageToken&quot;: &quot;A String&quot;, # A token to retrieve next page of results. Pass this value in ListKeyHandlesRequest.page_token to retrieve the next page of results.
 }</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="list_next">list_next()</code>
+  <pre>Retrieves the next page of results.
+
+        Args:
+          previous_request: The request for the previous page. (required)
+          previous_response: The response from the request for the previous page. (required)
+
+        Returns:
+          A request object that you can call &#x27;execute()&#x27; on to request the next
+          page. Returns None if there are no more items in the collection.
+        </pre>
 </div>
 
 </body></html>

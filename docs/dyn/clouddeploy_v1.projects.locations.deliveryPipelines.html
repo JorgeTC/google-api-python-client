@@ -133,12 +133,12 @@ h1, h2, h3 {
   <pre>Creates a new DeliveryPipeline in a given project and location.
 
 Args:
-  parent: string, Required. The parent collection in which the `DeliveryPipeline` should be created. Format should be `projects/{project_id}/locations/{location_name}`. (required)
+  parent: string, Required. The parent collection in which the `DeliveryPipeline` must be created. The format is `projects/{project_id}/locations/{location_name}`. (required)
   body: object, The request body.
     The object takes the form of:
 
 { # A `DeliveryPipeline` resource in the Cloud Deploy API. A `DeliveryPipeline` defines a pipeline through which a Skaffold configuration can progress.
-  &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy.
+  &quot;annotations&quot;: { # Optional. User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;condition&quot;: { # PipelineCondition contains all conditions relevant to a Delivery Pipeline. # Output only. Information around the state of the Delivery Pipeline.
@@ -159,14 +159,14 @@ Args:
     },
   },
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time at which the pipeline was created.
-  &quot;description&quot;: &quot;A String&quot;, # Description of the `DeliveryPipeline`. Max length is 255 characters.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the `DeliveryPipeline`. Max length is 255 characters.
   &quot;etag&quot;: &quot;A String&quot;, # This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
   &quot;labels&quot;: { # Labels are attributes that can be set and used by both the user and by Cloud Deploy. Labels must meet the following constraints: * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. * All characters must use UTF-8 encoding, and international characters are allowed. * Keys must start with a lowercase letter or international character. * Each resource is limited to a maximum of 64 labels. Both keys and values are additionally constrained to be &lt;= 128 bytes.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
-  &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `DeliveryPipeline`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}`. The `deliveryPipeline` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
-  &quot;serialPipeline&quot;: { # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`. # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`.
-    &quot;stages&quot;: [ # Each stage specifies configuration for a `Target`. The ordering of this list defines the promotion flow.
+  &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the `DeliveryPipeline`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}`. The `deliveryPipeline` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
+  &quot;serialPipeline&quot;: { # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`. # Optional. SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`.
+    &quot;stages&quot;: [ # Optional. Each stage specifies configuration for a `Target`. The ordering of this list defines the promotion flow.
       { # Stage specifies a location to which to deploy.
         &quot;deployParameters&quot;: [ # Optional. The deploy parameters to use for the target in this stage.
           { # DeployParameters contains deploy parameters information.
@@ -178,13 +178,13 @@ Args:
             },
           },
         ],
-        &quot;profiles&quot;: [ # Skaffold profiles to use when rendering the manifest for this stage&#x27;s `Target`.
+        &quot;profiles&quot;: [ # Optional. Skaffold profiles to use when rendering the manifest for this stage&#x27;s `Target`.
           &quot;A String&quot;,
         ],
         &quot;strategy&quot;: { # Strategy contains deployment strategy information. # Optional. The strategy to use for a `Rollout` to this stage.
-          &quot;canary&quot;: { # Canary represents the canary deployment strategy. # Canary deployment strategy provides progressive percentage based deployments to a Target.
-            &quot;canaryDeployment&quot;: { # CanaryDeployment represents the canary deployment configuration # Configures the progressive based deployment for a Target.
-              &quot;percentages&quot;: [ # Required. The percentage based deployments that will occur as a part of a `Rollout`. List is expected in ascending order and each integer n is 0 &lt;= n &lt; 100.
+          &quot;canary&quot;: { # Canary represents the canary deployment strategy. # Optional. Canary deployment strategy provides progressive percentage based deployments to a Target.
+            &quot;canaryDeployment&quot;: { # CanaryDeployment represents the canary deployment configuration # Optional. Configures the progressive based deployment for a Target.
+              &quot;percentages&quot;: [ # Required. The percentage based deployments that will occur as a part of a `Rollout`. List is expected in ascending order and each integer n is 0 &lt;= n &lt; 100. If the GatewayServiceMesh is configured for Kubernetes, then the range for n is 0 &lt;= n &lt;= 100.
                 42,
               ],
               &quot;postdeploy&quot;: { # Postdeploy contains the postdeploy job configuration information. # Optional. Configuration for the postdeploy job of the last phase. If this is not configured, there will be no postdeploy job for this phase.
@@ -197,9 +197,9 @@ Args:
                   &quot;A String&quot;,
                 ],
               },
-              &quot;verify&quot;: True or False, # Whether to run verify tests after each percentage deployment.
+              &quot;verify&quot;: True or False, # Optional. Whether to run verify tests after each percentage deployment.
             },
-            &quot;customCanaryDeployment&quot;: { # CustomCanaryDeployment represents the custom canary deployment configuration. # Configures the progressive based deployment for a Target, but allows customizing at the phase level where a phase represents each of the percentage deployments.
+            &quot;customCanaryDeployment&quot;: { # CustomCanaryDeployment represents the custom canary deployment configuration. # Optional. Configures the progressive based deployment for a Target, but allows customizing at the phase level where a phase represents each of the percentage deployments.
               &quot;phaseConfigs&quot;: [ # Required. Configuration for each phase in the canary deployment in the order executed.
                 { # PhaseConfig represents the configuration for a phase in the custom canary deployment.
                   &quot;percentage&quot;: 42, # Required. Percentage deployment for the phase.
@@ -214,16 +214,16 @@ Args:
                       &quot;A String&quot;,
                     ],
                   },
-                  &quot;profiles&quot;: [ # Skaffold profiles to use when rendering the manifest for this phase. These are in addition to the profiles list specified in the `DeliveryPipeline` stage.
+                  &quot;profiles&quot;: [ # Optional. Skaffold profiles to use when rendering the manifest for this phase. These are in addition to the profiles list specified in the `DeliveryPipeline` stage.
                     &quot;A String&quot;,
                   ],
-                  &quot;verify&quot;: True or False, # Whether to run verify tests after the deployment.
+                  &quot;verify&quot;: True or False, # Optional. Whether to run verify tests after the deployment.
                 },
               ],
             },
             &quot;runtimeConfig&quot;: { # RuntimeConfig contains the runtime specific configurations for a deployment strategy. # Optional. Runtime specific configurations for the deployment strategy. The runtime configuration is used to determine how Cloud Deploy will split traffic to enable a progressive deployment.
-              &quot;cloudRun&quot;: { # CloudRunConfig contains the Cloud Run runtime configuration. # Cloud Run runtime configuration.
-                &quot;automaticTrafficControl&quot;: True or False, # Whether Cloud Deploy should update the traffic stanza in a Cloud Run Service on the user&#x27;s behalf to facilitate traffic splitting. This is required to be true for CanaryDeployments, but optional for CustomCanaryDeployments.
+              &quot;cloudRun&quot;: { # CloudRunConfig contains the Cloud Run runtime configuration. # Optional. Cloud Run runtime configuration.
+                &quot;automaticTrafficControl&quot;: True or False, # Optional. Whether Cloud Deploy should update the traffic stanza in a Cloud Run Service on the user&#x27;s behalf to facilitate traffic splitting. This is required to be true for CanaryDeployments, but optional for CustomCanaryDeployments.
                 &quot;canaryRevisionTags&quot;: [ # Optional. A list of tags that are added to the canary revision while the canary phase is in progress.
                   &quot;A String&quot;,
                 ],
@@ -234,23 +234,31 @@ Args:
                   &quot;A String&quot;,
                 ],
               },
-              &quot;kubernetes&quot;: { # KubernetesConfig contains the Kubernetes runtime configuration. # Kubernetes runtime configuration.
-                &quot;gatewayServiceMesh&quot;: { # Information about the Kubernetes Gateway API service mesh configuration. # Kubernetes Gateway API service mesh configuration.
+              &quot;kubernetes&quot;: { # KubernetesConfig contains the Kubernetes runtime configuration. # Optional. Kubernetes runtime configuration.
+                &quot;gatewayServiceMesh&quot;: { # Information about the Kubernetes Gateway API service mesh configuration. # Optional. Kubernetes Gateway API service mesh configuration.
                   &quot;deployment&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Deployment whose traffic is managed by the specified HTTPRoute and Service.
                   &quot;httpRoute&quot;: &quot;A String&quot;, # Required. Name of the Gateway API HTTPRoute.
+                  &quot;podSelectorLabel&quot;: &quot;A String&quot;, # Optional. The label to use when selecting Pods for the Deployment and Service resources. This label must already be present in both resources.
+                  &quot;routeDestinations&quot;: { # Information about route destinations for the Gateway API service mesh. # Optional. Route destinations allow configuring the Gateway API HTTPRoute to be deployed to additional clusters. This option is available for multi-cluster service mesh set ups that require the route to exist in the clusters that call the service. If unspecified, the HTTPRoute will only be deployed to the Target cluster.
+                    &quot;destinationIds&quot;: [ # Required. The clusters where the Gateway API HTTPRoute resource will be deployed to. Valid entries include the associated entities IDs configured in the Target resource and &quot;@self&quot; to include the Target cluster.
+                      &quot;A String&quot;,
+                    ],
+                    &quot;propagateService&quot;: True or False, # Optional. Whether to propagate the Kubernetes Service to the route destination clusters. The Service will always be deployed to the Target cluster even if the HTTPRoute is not. This option may be used to facilitiate successful DNS lookup in the route destination clusters. Can only be set to true if destinations are specified.
+                  },
                   &quot;routeUpdateWaitTime&quot;: &quot;A String&quot;, # Optional. The time to wait for route updates to propagate. The maximum configurable time is 3 hours, in seconds format. If unspecified, there is no wait time.
                   &quot;service&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Service.
                   &quot;stableCutbackDuration&quot;: &quot;A String&quot;, # Optional. The amount of time to migrate traffic back from the canary Service to the original Service during the stable phase deployment. If specified, must be between 15s and 3600s. If unspecified, there is no cutback time.
                 },
-                &quot;serviceNetworking&quot;: { # Information about the Kubernetes Service networking configuration. # Kubernetes Service networking configuration.
+                &quot;serviceNetworking&quot;: { # Information about the Kubernetes Service networking configuration. # Optional. Kubernetes Service networking configuration.
                   &quot;deployment&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Deployment whose traffic is managed by the specified Service.
                   &quot;disablePodOverprovisioning&quot;: True or False, # Optional. Whether to disable Pod overprovisioning. If Pod overprovisioning is disabled then Cloud Deploy will limit the number of total Pods used for the deployment strategy to the number of Pods the Deployment has on the cluster.
+                  &quot;podSelectorLabel&quot;: &quot;A String&quot;, # Optional. The label to use when selecting Pods for the Deployment resource. This label must already be present in the Deployment.
                   &quot;service&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Service.
                 },
               },
             },
           },
-          &quot;standard&quot;: { # Standard represents the standard deployment strategy. # Standard deployment strategy executes a single deploy and allows verifying the deployment.
+          &quot;standard&quot;: { # Standard represents the standard deployment strategy. # Optional. Standard deployment strategy executes a single deploy and allows verifying the deployment.
             &quot;postdeploy&quot;: { # Postdeploy contains the postdeploy job configuration information. # Optional. Configuration for the postdeploy job. If this is not configured, postdeploy job will not be present.
               &quot;actions&quot;: [ # Optional. A sequence of Skaffold custom actions to invoke during execution of the postdeploy job.
                 &quot;A String&quot;,
@@ -261,14 +269,14 @@ Args:
                 &quot;A String&quot;,
               ],
             },
-            &quot;verify&quot;: True or False, # Whether to verify a deployment.
+            &quot;verify&quot;: True or False, # Optional. Whether to verify a deployment.
           },
         },
-        &quot;targetId&quot;: &quot;A String&quot;, # The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
+        &quot;targetId&quot;: &quot;A String&quot;, # Optional. The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
       },
     ],
   },
-  &quot;suspended&quot;: True or False, # When suspended, no new releases or rollouts can be created, but in-progress ones will complete.
+  &quot;suspended&quot;: True or False, # Optional. When suspended, no new releases or rollouts can be created, but in-progress ones will complete.
   &quot;uid&quot;: &quot;A String&quot;, # Output only. Unique identifier of the `DeliveryPipeline`.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Most recent time at which the pipeline was updated.
 }
@@ -310,7 +318,7 @@ Returns:
   <pre>Deletes a single DeliveryPipeline.
 
 Args:
-  name: string, Required. The name of the `DeliveryPipeline` to delete. Format should be `projects/{project_id}/locations/{location_name}/deliveryPipelines/{pipeline_name}`. (required)
+  name: string, Required. The name of the `DeliveryPipeline` to delete. The format is `projects/{project_id}/locations/{location_name}/deliveryPipelines/{pipeline_name}`. (required)
   allowMissing: boolean, Optional. If set to true, then deleting an already deleted or non-existing `DeliveryPipeline` will succeed.
   etag: string, Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
   force: boolean, Optional. If set to true, all child resources under this pipeline will also be deleted. Otherwise, the request will only work if the pipeline has no child resources.
@@ -360,7 +368,7 @@ Returns:
   An object of the form:
 
     { # A `DeliveryPipeline` resource in the Cloud Deploy API. A `DeliveryPipeline` defines a pipeline through which a Skaffold configuration can progress.
-  &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy.
+  &quot;annotations&quot;: { # Optional. User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;condition&quot;: { # PipelineCondition contains all conditions relevant to a Delivery Pipeline. # Output only. Information around the state of the Delivery Pipeline.
@@ -381,14 +389,14 @@ Returns:
     },
   },
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time at which the pipeline was created.
-  &quot;description&quot;: &quot;A String&quot;, # Description of the `DeliveryPipeline`. Max length is 255 characters.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the `DeliveryPipeline`. Max length is 255 characters.
   &quot;etag&quot;: &quot;A String&quot;, # This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
   &quot;labels&quot;: { # Labels are attributes that can be set and used by both the user and by Cloud Deploy. Labels must meet the following constraints: * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. * All characters must use UTF-8 encoding, and international characters are allowed. * Keys must start with a lowercase letter or international character. * Each resource is limited to a maximum of 64 labels. Both keys and values are additionally constrained to be &lt;= 128 bytes.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
-  &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `DeliveryPipeline`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}`. The `deliveryPipeline` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
-  &quot;serialPipeline&quot;: { # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`. # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`.
-    &quot;stages&quot;: [ # Each stage specifies configuration for a `Target`. The ordering of this list defines the promotion flow.
+  &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the `DeliveryPipeline`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}`. The `deliveryPipeline` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
+  &quot;serialPipeline&quot;: { # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`. # Optional. SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`.
+    &quot;stages&quot;: [ # Optional. Each stage specifies configuration for a `Target`. The ordering of this list defines the promotion flow.
       { # Stage specifies a location to which to deploy.
         &quot;deployParameters&quot;: [ # Optional. The deploy parameters to use for the target in this stage.
           { # DeployParameters contains deploy parameters information.
@@ -400,13 +408,13 @@ Returns:
             },
           },
         ],
-        &quot;profiles&quot;: [ # Skaffold profiles to use when rendering the manifest for this stage&#x27;s `Target`.
+        &quot;profiles&quot;: [ # Optional. Skaffold profiles to use when rendering the manifest for this stage&#x27;s `Target`.
           &quot;A String&quot;,
         ],
         &quot;strategy&quot;: { # Strategy contains deployment strategy information. # Optional. The strategy to use for a `Rollout` to this stage.
-          &quot;canary&quot;: { # Canary represents the canary deployment strategy. # Canary deployment strategy provides progressive percentage based deployments to a Target.
-            &quot;canaryDeployment&quot;: { # CanaryDeployment represents the canary deployment configuration # Configures the progressive based deployment for a Target.
-              &quot;percentages&quot;: [ # Required. The percentage based deployments that will occur as a part of a `Rollout`. List is expected in ascending order and each integer n is 0 &lt;= n &lt; 100.
+          &quot;canary&quot;: { # Canary represents the canary deployment strategy. # Optional. Canary deployment strategy provides progressive percentage based deployments to a Target.
+            &quot;canaryDeployment&quot;: { # CanaryDeployment represents the canary deployment configuration # Optional. Configures the progressive based deployment for a Target.
+              &quot;percentages&quot;: [ # Required. The percentage based deployments that will occur as a part of a `Rollout`. List is expected in ascending order and each integer n is 0 &lt;= n &lt; 100. If the GatewayServiceMesh is configured for Kubernetes, then the range for n is 0 &lt;= n &lt;= 100.
                 42,
               ],
               &quot;postdeploy&quot;: { # Postdeploy contains the postdeploy job configuration information. # Optional. Configuration for the postdeploy job of the last phase. If this is not configured, there will be no postdeploy job for this phase.
@@ -419,9 +427,9 @@ Returns:
                   &quot;A String&quot;,
                 ],
               },
-              &quot;verify&quot;: True or False, # Whether to run verify tests after each percentage deployment.
+              &quot;verify&quot;: True or False, # Optional. Whether to run verify tests after each percentage deployment.
             },
-            &quot;customCanaryDeployment&quot;: { # CustomCanaryDeployment represents the custom canary deployment configuration. # Configures the progressive based deployment for a Target, but allows customizing at the phase level where a phase represents each of the percentage deployments.
+            &quot;customCanaryDeployment&quot;: { # CustomCanaryDeployment represents the custom canary deployment configuration. # Optional. Configures the progressive based deployment for a Target, but allows customizing at the phase level where a phase represents each of the percentage deployments.
               &quot;phaseConfigs&quot;: [ # Required. Configuration for each phase in the canary deployment in the order executed.
                 { # PhaseConfig represents the configuration for a phase in the custom canary deployment.
                   &quot;percentage&quot;: 42, # Required. Percentage deployment for the phase.
@@ -436,16 +444,16 @@ Returns:
                       &quot;A String&quot;,
                     ],
                   },
-                  &quot;profiles&quot;: [ # Skaffold profiles to use when rendering the manifest for this phase. These are in addition to the profiles list specified in the `DeliveryPipeline` stage.
+                  &quot;profiles&quot;: [ # Optional. Skaffold profiles to use when rendering the manifest for this phase. These are in addition to the profiles list specified in the `DeliveryPipeline` stage.
                     &quot;A String&quot;,
                   ],
-                  &quot;verify&quot;: True or False, # Whether to run verify tests after the deployment.
+                  &quot;verify&quot;: True or False, # Optional. Whether to run verify tests after the deployment.
                 },
               ],
             },
             &quot;runtimeConfig&quot;: { # RuntimeConfig contains the runtime specific configurations for a deployment strategy. # Optional. Runtime specific configurations for the deployment strategy. The runtime configuration is used to determine how Cloud Deploy will split traffic to enable a progressive deployment.
-              &quot;cloudRun&quot;: { # CloudRunConfig contains the Cloud Run runtime configuration. # Cloud Run runtime configuration.
-                &quot;automaticTrafficControl&quot;: True or False, # Whether Cloud Deploy should update the traffic stanza in a Cloud Run Service on the user&#x27;s behalf to facilitate traffic splitting. This is required to be true for CanaryDeployments, but optional for CustomCanaryDeployments.
+              &quot;cloudRun&quot;: { # CloudRunConfig contains the Cloud Run runtime configuration. # Optional. Cloud Run runtime configuration.
+                &quot;automaticTrafficControl&quot;: True or False, # Optional. Whether Cloud Deploy should update the traffic stanza in a Cloud Run Service on the user&#x27;s behalf to facilitate traffic splitting. This is required to be true for CanaryDeployments, but optional for CustomCanaryDeployments.
                 &quot;canaryRevisionTags&quot;: [ # Optional. A list of tags that are added to the canary revision while the canary phase is in progress.
                   &quot;A String&quot;,
                 ],
@@ -456,23 +464,31 @@ Returns:
                   &quot;A String&quot;,
                 ],
               },
-              &quot;kubernetes&quot;: { # KubernetesConfig contains the Kubernetes runtime configuration. # Kubernetes runtime configuration.
-                &quot;gatewayServiceMesh&quot;: { # Information about the Kubernetes Gateway API service mesh configuration. # Kubernetes Gateway API service mesh configuration.
+              &quot;kubernetes&quot;: { # KubernetesConfig contains the Kubernetes runtime configuration. # Optional. Kubernetes runtime configuration.
+                &quot;gatewayServiceMesh&quot;: { # Information about the Kubernetes Gateway API service mesh configuration. # Optional. Kubernetes Gateway API service mesh configuration.
                   &quot;deployment&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Deployment whose traffic is managed by the specified HTTPRoute and Service.
                   &quot;httpRoute&quot;: &quot;A String&quot;, # Required. Name of the Gateway API HTTPRoute.
+                  &quot;podSelectorLabel&quot;: &quot;A String&quot;, # Optional. The label to use when selecting Pods for the Deployment and Service resources. This label must already be present in both resources.
+                  &quot;routeDestinations&quot;: { # Information about route destinations for the Gateway API service mesh. # Optional. Route destinations allow configuring the Gateway API HTTPRoute to be deployed to additional clusters. This option is available for multi-cluster service mesh set ups that require the route to exist in the clusters that call the service. If unspecified, the HTTPRoute will only be deployed to the Target cluster.
+                    &quot;destinationIds&quot;: [ # Required. The clusters where the Gateway API HTTPRoute resource will be deployed to. Valid entries include the associated entities IDs configured in the Target resource and &quot;@self&quot; to include the Target cluster.
+                      &quot;A String&quot;,
+                    ],
+                    &quot;propagateService&quot;: True or False, # Optional. Whether to propagate the Kubernetes Service to the route destination clusters. The Service will always be deployed to the Target cluster even if the HTTPRoute is not. This option may be used to facilitiate successful DNS lookup in the route destination clusters. Can only be set to true if destinations are specified.
+                  },
                   &quot;routeUpdateWaitTime&quot;: &quot;A String&quot;, # Optional. The time to wait for route updates to propagate. The maximum configurable time is 3 hours, in seconds format. If unspecified, there is no wait time.
                   &quot;service&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Service.
                   &quot;stableCutbackDuration&quot;: &quot;A String&quot;, # Optional. The amount of time to migrate traffic back from the canary Service to the original Service during the stable phase deployment. If specified, must be between 15s and 3600s. If unspecified, there is no cutback time.
                 },
-                &quot;serviceNetworking&quot;: { # Information about the Kubernetes Service networking configuration. # Kubernetes Service networking configuration.
+                &quot;serviceNetworking&quot;: { # Information about the Kubernetes Service networking configuration. # Optional. Kubernetes Service networking configuration.
                   &quot;deployment&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Deployment whose traffic is managed by the specified Service.
                   &quot;disablePodOverprovisioning&quot;: True or False, # Optional. Whether to disable Pod overprovisioning. If Pod overprovisioning is disabled then Cloud Deploy will limit the number of total Pods used for the deployment strategy to the number of Pods the Deployment has on the cluster.
+                  &quot;podSelectorLabel&quot;: &quot;A String&quot;, # Optional. The label to use when selecting Pods for the Deployment resource. This label must already be present in the Deployment.
                   &quot;service&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Service.
                 },
               },
             },
           },
-          &quot;standard&quot;: { # Standard represents the standard deployment strategy. # Standard deployment strategy executes a single deploy and allows verifying the deployment.
+          &quot;standard&quot;: { # Standard represents the standard deployment strategy. # Optional. Standard deployment strategy executes a single deploy and allows verifying the deployment.
             &quot;postdeploy&quot;: { # Postdeploy contains the postdeploy job configuration information. # Optional. Configuration for the postdeploy job. If this is not configured, postdeploy job will not be present.
               &quot;actions&quot;: [ # Optional. A sequence of Skaffold custom actions to invoke during execution of the postdeploy job.
                 &quot;A String&quot;,
@@ -483,14 +499,14 @@ Returns:
                 &quot;A String&quot;,
               ],
             },
-            &quot;verify&quot;: True or False, # Whether to verify a deployment.
+            &quot;verify&quot;: True or False, # Optional. Whether to verify a deployment.
           },
         },
-        &quot;targetId&quot;: &quot;A String&quot;, # The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
+        &quot;targetId&quot;: &quot;A String&quot;, # Optional. The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
       },
     ],
   },
-  &quot;suspended&quot;: True or False, # When suspended, no new releases or rollouts can be created, but in-progress ones will complete.
+  &quot;suspended&quot;: True or False, # Optional. When suspended, no new releases or rollouts can be created, but in-progress ones will complete.
   &quot;uid&quot;: &quot;A String&quot;, # Output only. Unique identifier of the `DeliveryPipeline`.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Most recent time at which the pipeline was updated.
 }</pre>
@@ -565,7 +581,7 @@ Returns:
     { # The response object from `ListDeliveryPipelines`.
   &quot;deliveryPipelines&quot;: [ # The `DeliveryPipeline` objects.
     { # A `DeliveryPipeline` resource in the Cloud Deploy API. A `DeliveryPipeline` defines a pipeline through which a Skaffold configuration can progress.
-      &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy.
+      &quot;annotations&quot;: { # Optional. User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;condition&quot;: { # PipelineCondition contains all conditions relevant to a Delivery Pipeline. # Output only. Information around the state of the Delivery Pipeline.
@@ -586,14 +602,14 @@ Returns:
         },
       },
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time at which the pipeline was created.
-      &quot;description&quot;: &quot;A String&quot;, # Description of the `DeliveryPipeline`. Max length is 255 characters.
+      &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the `DeliveryPipeline`. Max length is 255 characters.
       &quot;etag&quot;: &quot;A String&quot;, # This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
       &quot;labels&quot;: { # Labels are attributes that can be set and used by both the user and by Cloud Deploy. Labels must meet the following constraints: * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. * All characters must use UTF-8 encoding, and international characters are allowed. * Keys must start with a lowercase letter or international character. * Each resource is limited to a maximum of 64 labels. Both keys and values are additionally constrained to be &lt;= 128 bytes.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
-      &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `DeliveryPipeline`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}`. The `deliveryPipeline` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
-      &quot;serialPipeline&quot;: { # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`. # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`.
-        &quot;stages&quot;: [ # Each stage specifies configuration for a `Target`. The ordering of this list defines the promotion flow.
+      &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the `DeliveryPipeline`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}`. The `deliveryPipeline` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
+      &quot;serialPipeline&quot;: { # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`. # Optional. SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`.
+        &quot;stages&quot;: [ # Optional. Each stage specifies configuration for a `Target`. The ordering of this list defines the promotion flow.
           { # Stage specifies a location to which to deploy.
             &quot;deployParameters&quot;: [ # Optional. The deploy parameters to use for the target in this stage.
               { # DeployParameters contains deploy parameters information.
@@ -605,13 +621,13 @@ Returns:
                 },
               },
             ],
-            &quot;profiles&quot;: [ # Skaffold profiles to use when rendering the manifest for this stage&#x27;s `Target`.
+            &quot;profiles&quot;: [ # Optional. Skaffold profiles to use when rendering the manifest for this stage&#x27;s `Target`.
               &quot;A String&quot;,
             ],
             &quot;strategy&quot;: { # Strategy contains deployment strategy information. # Optional. The strategy to use for a `Rollout` to this stage.
-              &quot;canary&quot;: { # Canary represents the canary deployment strategy. # Canary deployment strategy provides progressive percentage based deployments to a Target.
-                &quot;canaryDeployment&quot;: { # CanaryDeployment represents the canary deployment configuration # Configures the progressive based deployment for a Target.
-                  &quot;percentages&quot;: [ # Required. The percentage based deployments that will occur as a part of a `Rollout`. List is expected in ascending order and each integer n is 0 &lt;= n &lt; 100.
+              &quot;canary&quot;: { # Canary represents the canary deployment strategy. # Optional. Canary deployment strategy provides progressive percentage based deployments to a Target.
+                &quot;canaryDeployment&quot;: { # CanaryDeployment represents the canary deployment configuration # Optional. Configures the progressive based deployment for a Target.
+                  &quot;percentages&quot;: [ # Required. The percentage based deployments that will occur as a part of a `Rollout`. List is expected in ascending order and each integer n is 0 &lt;= n &lt; 100. If the GatewayServiceMesh is configured for Kubernetes, then the range for n is 0 &lt;= n &lt;= 100.
                     42,
                   ],
                   &quot;postdeploy&quot;: { # Postdeploy contains the postdeploy job configuration information. # Optional. Configuration for the postdeploy job of the last phase. If this is not configured, there will be no postdeploy job for this phase.
@@ -624,9 +640,9 @@ Returns:
                       &quot;A String&quot;,
                     ],
                   },
-                  &quot;verify&quot;: True or False, # Whether to run verify tests after each percentage deployment.
+                  &quot;verify&quot;: True or False, # Optional. Whether to run verify tests after each percentage deployment.
                 },
-                &quot;customCanaryDeployment&quot;: { # CustomCanaryDeployment represents the custom canary deployment configuration. # Configures the progressive based deployment for a Target, but allows customizing at the phase level where a phase represents each of the percentage deployments.
+                &quot;customCanaryDeployment&quot;: { # CustomCanaryDeployment represents the custom canary deployment configuration. # Optional. Configures the progressive based deployment for a Target, but allows customizing at the phase level where a phase represents each of the percentage deployments.
                   &quot;phaseConfigs&quot;: [ # Required. Configuration for each phase in the canary deployment in the order executed.
                     { # PhaseConfig represents the configuration for a phase in the custom canary deployment.
                       &quot;percentage&quot;: 42, # Required. Percentage deployment for the phase.
@@ -641,16 +657,16 @@ Returns:
                           &quot;A String&quot;,
                         ],
                       },
-                      &quot;profiles&quot;: [ # Skaffold profiles to use when rendering the manifest for this phase. These are in addition to the profiles list specified in the `DeliveryPipeline` stage.
+                      &quot;profiles&quot;: [ # Optional. Skaffold profiles to use when rendering the manifest for this phase. These are in addition to the profiles list specified in the `DeliveryPipeline` stage.
                         &quot;A String&quot;,
                       ],
-                      &quot;verify&quot;: True or False, # Whether to run verify tests after the deployment.
+                      &quot;verify&quot;: True or False, # Optional. Whether to run verify tests after the deployment.
                     },
                   ],
                 },
                 &quot;runtimeConfig&quot;: { # RuntimeConfig contains the runtime specific configurations for a deployment strategy. # Optional. Runtime specific configurations for the deployment strategy. The runtime configuration is used to determine how Cloud Deploy will split traffic to enable a progressive deployment.
-                  &quot;cloudRun&quot;: { # CloudRunConfig contains the Cloud Run runtime configuration. # Cloud Run runtime configuration.
-                    &quot;automaticTrafficControl&quot;: True or False, # Whether Cloud Deploy should update the traffic stanza in a Cloud Run Service on the user&#x27;s behalf to facilitate traffic splitting. This is required to be true for CanaryDeployments, but optional for CustomCanaryDeployments.
+                  &quot;cloudRun&quot;: { # CloudRunConfig contains the Cloud Run runtime configuration. # Optional. Cloud Run runtime configuration.
+                    &quot;automaticTrafficControl&quot;: True or False, # Optional. Whether Cloud Deploy should update the traffic stanza in a Cloud Run Service on the user&#x27;s behalf to facilitate traffic splitting. This is required to be true for CanaryDeployments, but optional for CustomCanaryDeployments.
                     &quot;canaryRevisionTags&quot;: [ # Optional. A list of tags that are added to the canary revision while the canary phase is in progress.
                       &quot;A String&quot;,
                     ],
@@ -661,23 +677,31 @@ Returns:
                       &quot;A String&quot;,
                     ],
                   },
-                  &quot;kubernetes&quot;: { # KubernetesConfig contains the Kubernetes runtime configuration. # Kubernetes runtime configuration.
-                    &quot;gatewayServiceMesh&quot;: { # Information about the Kubernetes Gateway API service mesh configuration. # Kubernetes Gateway API service mesh configuration.
+                  &quot;kubernetes&quot;: { # KubernetesConfig contains the Kubernetes runtime configuration. # Optional. Kubernetes runtime configuration.
+                    &quot;gatewayServiceMesh&quot;: { # Information about the Kubernetes Gateway API service mesh configuration. # Optional. Kubernetes Gateway API service mesh configuration.
                       &quot;deployment&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Deployment whose traffic is managed by the specified HTTPRoute and Service.
                       &quot;httpRoute&quot;: &quot;A String&quot;, # Required. Name of the Gateway API HTTPRoute.
+                      &quot;podSelectorLabel&quot;: &quot;A String&quot;, # Optional. The label to use when selecting Pods for the Deployment and Service resources. This label must already be present in both resources.
+                      &quot;routeDestinations&quot;: { # Information about route destinations for the Gateway API service mesh. # Optional. Route destinations allow configuring the Gateway API HTTPRoute to be deployed to additional clusters. This option is available for multi-cluster service mesh set ups that require the route to exist in the clusters that call the service. If unspecified, the HTTPRoute will only be deployed to the Target cluster.
+                        &quot;destinationIds&quot;: [ # Required. The clusters where the Gateway API HTTPRoute resource will be deployed to. Valid entries include the associated entities IDs configured in the Target resource and &quot;@self&quot; to include the Target cluster.
+                          &quot;A String&quot;,
+                        ],
+                        &quot;propagateService&quot;: True or False, # Optional. Whether to propagate the Kubernetes Service to the route destination clusters. The Service will always be deployed to the Target cluster even if the HTTPRoute is not. This option may be used to facilitiate successful DNS lookup in the route destination clusters. Can only be set to true if destinations are specified.
+                      },
                       &quot;routeUpdateWaitTime&quot;: &quot;A String&quot;, # Optional. The time to wait for route updates to propagate. The maximum configurable time is 3 hours, in seconds format. If unspecified, there is no wait time.
                       &quot;service&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Service.
                       &quot;stableCutbackDuration&quot;: &quot;A String&quot;, # Optional. The amount of time to migrate traffic back from the canary Service to the original Service during the stable phase deployment. If specified, must be between 15s and 3600s. If unspecified, there is no cutback time.
                     },
-                    &quot;serviceNetworking&quot;: { # Information about the Kubernetes Service networking configuration. # Kubernetes Service networking configuration.
+                    &quot;serviceNetworking&quot;: { # Information about the Kubernetes Service networking configuration. # Optional. Kubernetes Service networking configuration.
                       &quot;deployment&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Deployment whose traffic is managed by the specified Service.
                       &quot;disablePodOverprovisioning&quot;: True or False, # Optional. Whether to disable Pod overprovisioning. If Pod overprovisioning is disabled then Cloud Deploy will limit the number of total Pods used for the deployment strategy to the number of Pods the Deployment has on the cluster.
+                      &quot;podSelectorLabel&quot;: &quot;A String&quot;, # Optional. The label to use when selecting Pods for the Deployment resource. This label must already be present in the Deployment.
                       &quot;service&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Service.
                     },
                   },
                 },
               },
-              &quot;standard&quot;: { # Standard represents the standard deployment strategy. # Standard deployment strategy executes a single deploy and allows verifying the deployment.
+              &quot;standard&quot;: { # Standard represents the standard deployment strategy. # Optional. Standard deployment strategy executes a single deploy and allows verifying the deployment.
                 &quot;postdeploy&quot;: { # Postdeploy contains the postdeploy job configuration information. # Optional. Configuration for the postdeploy job. If this is not configured, postdeploy job will not be present.
                   &quot;actions&quot;: [ # Optional. A sequence of Skaffold custom actions to invoke during execution of the postdeploy job.
                     &quot;A String&quot;,
@@ -688,14 +712,14 @@ Returns:
                     &quot;A String&quot;,
                   ],
                 },
-                &quot;verify&quot;: True or False, # Whether to verify a deployment.
+                &quot;verify&quot;: True or False, # Optional. Whether to verify a deployment.
               },
             },
-            &quot;targetId&quot;: &quot;A String&quot;, # The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
+            &quot;targetId&quot;: &quot;A String&quot;, # Optional. The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
           },
         ],
       },
-      &quot;suspended&quot;: True or False, # When suspended, no new releases or rollouts can be created, but in-progress ones will complete.
+      &quot;suspended&quot;: True or False, # Optional. When suspended, no new releases or rollouts can be created, but in-progress ones will complete.
       &quot;uid&quot;: &quot;A String&quot;, # Output only. Unique identifier of the `DeliveryPipeline`.
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Most recent time at which the pipeline was updated.
     },
@@ -726,12 +750,12 @@ Returns:
   <pre>Updates the parameters of a single DeliveryPipeline.
 
 Args:
-  name: string, Optional. Name of the `DeliveryPipeline`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}`. The `deliveryPipeline` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?` (required)
+  name: string, Identifier. Name of the `DeliveryPipeline`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}`. The `deliveryPipeline` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?` (required)
   body: object, The request body.
     The object takes the form of:
 
 { # A `DeliveryPipeline` resource in the Cloud Deploy API. A `DeliveryPipeline` defines a pipeline through which a Skaffold configuration can progress.
-  &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy.
+  &quot;annotations&quot;: { # Optional. User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;condition&quot;: { # PipelineCondition contains all conditions relevant to a Delivery Pipeline. # Output only. Information around the state of the Delivery Pipeline.
@@ -752,14 +776,14 @@ Args:
     },
   },
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time at which the pipeline was created.
-  &quot;description&quot;: &quot;A String&quot;, # Description of the `DeliveryPipeline`. Max length is 255 characters.
+  &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the `DeliveryPipeline`. Max length is 255 characters.
   &quot;etag&quot;: &quot;A String&quot;, # This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
   &quot;labels&quot;: { # Labels are attributes that can be set and used by both the user and by Cloud Deploy. Labels must meet the following constraints: * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. * All characters must use UTF-8 encoding, and international characters are allowed. * Keys must start with a lowercase letter or international character. * Each resource is limited to a maximum of 64 labels. Both keys and values are additionally constrained to be &lt;= 128 bytes.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
-  &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `DeliveryPipeline`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}`. The `deliveryPipeline` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
-  &quot;serialPipeline&quot;: { # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`. # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`.
-    &quot;stages&quot;: [ # Each stage specifies configuration for a `Target`. The ordering of this list defines the promotion flow.
+  &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the `DeliveryPipeline`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}`. The `deliveryPipeline` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
+  &quot;serialPipeline&quot;: { # SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`. # Optional. SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`.
+    &quot;stages&quot;: [ # Optional. Each stage specifies configuration for a `Target`. The ordering of this list defines the promotion flow.
       { # Stage specifies a location to which to deploy.
         &quot;deployParameters&quot;: [ # Optional. The deploy parameters to use for the target in this stage.
           { # DeployParameters contains deploy parameters information.
@@ -771,13 +795,13 @@ Args:
             },
           },
         ],
-        &quot;profiles&quot;: [ # Skaffold profiles to use when rendering the manifest for this stage&#x27;s `Target`.
+        &quot;profiles&quot;: [ # Optional. Skaffold profiles to use when rendering the manifest for this stage&#x27;s `Target`.
           &quot;A String&quot;,
         ],
         &quot;strategy&quot;: { # Strategy contains deployment strategy information. # Optional. The strategy to use for a `Rollout` to this stage.
-          &quot;canary&quot;: { # Canary represents the canary deployment strategy. # Canary deployment strategy provides progressive percentage based deployments to a Target.
-            &quot;canaryDeployment&quot;: { # CanaryDeployment represents the canary deployment configuration # Configures the progressive based deployment for a Target.
-              &quot;percentages&quot;: [ # Required. The percentage based deployments that will occur as a part of a `Rollout`. List is expected in ascending order and each integer n is 0 &lt;= n &lt; 100.
+          &quot;canary&quot;: { # Canary represents the canary deployment strategy. # Optional. Canary deployment strategy provides progressive percentage based deployments to a Target.
+            &quot;canaryDeployment&quot;: { # CanaryDeployment represents the canary deployment configuration # Optional. Configures the progressive based deployment for a Target.
+              &quot;percentages&quot;: [ # Required. The percentage based deployments that will occur as a part of a `Rollout`. List is expected in ascending order and each integer n is 0 &lt;= n &lt; 100. If the GatewayServiceMesh is configured for Kubernetes, then the range for n is 0 &lt;= n &lt;= 100.
                 42,
               ],
               &quot;postdeploy&quot;: { # Postdeploy contains the postdeploy job configuration information. # Optional. Configuration for the postdeploy job of the last phase. If this is not configured, there will be no postdeploy job for this phase.
@@ -790,9 +814,9 @@ Args:
                   &quot;A String&quot;,
                 ],
               },
-              &quot;verify&quot;: True or False, # Whether to run verify tests after each percentage deployment.
+              &quot;verify&quot;: True or False, # Optional. Whether to run verify tests after each percentage deployment.
             },
-            &quot;customCanaryDeployment&quot;: { # CustomCanaryDeployment represents the custom canary deployment configuration. # Configures the progressive based deployment for a Target, but allows customizing at the phase level where a phase represents each of the percentage deployments.
+            &quot;customCanaryDeployment&quot;: { # CustomCanaryDeployment represents the custom canary deployment configuration. # Optional. Configures the progressive based deployment for a Target, but allows customizing at the phase level where a phase represents each of the percentage deployments.
               &quot;phaseConfigs&quot;: [ # Required. Configuration for each phase in the canary deployment in the order executed.
                 { # PhaseConfig represents the configuration for a phase in the custom canary deployment.
                   &quot;percentage&quot;: 42, # Required. Percentage deployment for the phase.
@@ -807,16 +831,16 @@ Args:
                       &quot;A String&quot;,
                     ],
                   },
-                  &quot;profiles&quot;: [ # Skaffold profiles to use when rendering the manifest for this phase. These are in addition to the profiles list specified in the `DeliveryPipeline` stage.
+                  &quot;profiles&quot;: [ # Optional. Skaffold profiles to use when rendering the manifest for this phase. These are in addition to the profiles list specified in the `DeliveryPipeline` stage.
                     &quot;A String&quot;,
                   ],
-                  &quot;verify&quot;: True or False, # Whether to run verify tests after the deployment.
+                  &quot;verify&quot;: True or False, # Optional. Whether to run verify tests after the deployment.
                 },
               ],
             },
             &quot;runtimeConfig&quot;: { # RuntimeConfig contains the runtime specific configurations for a deployment strategy. # Optional. Runtime specific configurations for the deployment strategy. The runtime configuration is used to determine how Cloud Deploy will split traffic to enable a progressive deployment.
-              &quot;cloudRun&quot;: { # CloudRunConfig contains the Cloud Run runtime configuration. # Cloud Run runtime configuration.
-                &quot;automaticTrafficControl&quot;: True or False, # Whether Cloud Deploy should update the traffic stanza in a Cloud Run Service on the user&#x27;s behalf to facilitate traffic splitting. This is required to be true for CanaryDeployments, but optional for CustomCanaryDeployments.
+              &quot;cloudRun&quot;: { # CloudRunConfig contains the Cloud Run runtime configuration. # Optional. Cloud Run runtime configuration.
+                &quot;automaticTrafficControl&quot;: True or False, # Optional. Whether Cloud Deploy should update the traffic stanza in a Cloud Run Service on the user&#x27;s behalf to facilitate traffic splitting. This is required to be true for CanaryDeployments, but optional for CustomCanaryDeployments.
                 &quot;canaryRevisionTags&quot;: [ # Optional. A list of tags that are added to the canary revision while the canary phase is in progress.
                   &quot;A String&quot;,
                 ],
@@ -827,23 +851,31 @@ Args:
                   &quot;A String&quot;,
                 ],
               },
-              &quot;kubernetes&quot;: { # KubernetesConfig contains the Kubernetes runtime configuration. # Kubernetes runtime configuration.
-                &quot;gatewayServiceMesh&quot;: { # Information about the Kubernetes Gateway API service mesh configuration. # Kubernetes Gateway API service mesh configuration.
+              &quot;kubernetes&quot;: { # KubernetesConfig contains the Kubernetes runtime configuration. # Optional. Kubernetes runtime configuration.
+                &quot;gatewayServiceMesh&quot;: { # Information about the Kubernetes Gateway API service mesh configuration. # Optional. Kubernetes Gateway API service mesh configuration.
                   &quot;deployment&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Deployment whose traffic is managed by the specified HTTPRoute and Service.
                   &quot;httpRoute&quot;: &quot;A String&quot;, # Required. Name of the Gateway API HTTPRoute.
+                  &quot;podSelectorLabel&quot;: &quot;A String&quot;, # Optional. The label to use when selecting Pods for the Deployment and Service resources. This label must already be present in both resources.
+                  &quot;routeDestinations&quot;: { # Information about route destinations for the Gateway API service mesh. # Optional. Route destinations allow configuring the Gateway API HTTPRoute to be deployed to additional clusters. This option is available for multi-cluster service mesh set ups that require the route to exist in the clusters that call the service. If unspecified, the HTTPRoute will only be deployed to the Target cluster.
+                    &quot;destinationIds&quot;: [ # Required. The clusters where the Gateway API HTTPRoute resource will be deployed to. Valid entries include the associated entities IDs configured in the Target resource and &quot;@self&quot; to include the Target cluster.
+                      &quot;A String&quot;,
+                    ],
+                    &quot;propagateService&quot;: True or False, # Optional. Whether to propagate the Kubernetes Service to the route destination clusters. The Service will always be deployed to the Target cluster even if the HTTPRoute is not. This option may be used to facilitiate successful DNS lookup in the route destination clusters. Can only be set to true if destinations are specified.
+                  },
                   &quot;routeUpdateWaitTime&quot;: &quot;A String&quot;, # Optional. The time to wait for route updates to propagate. The maximum configurable time is 3 hours, in seconds format. If unspecified, there is no wait time.
                   &quot;service&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Service.
                   &quot;stableCutbackDuration&quot;: &quot;A String&quot;, # Optional. The amount of time to migrate traffic back from the canary Service to the original Service during the stable phase deployment. If specified, must be between 15s and 3600s. If unspecified, there is no cutback time.
                 },
-                &quot;serviceNetworking&quot;: { # Information about the Kubernetes Service networking configuration. # Kubernetes Service networking configuration.
+                &quot;serviceNetworking&quot;: { # Information about the Kubernetes Service networking configuration. # Optional. Kubernetes Service networking configuration.
                   &quot;deployment&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Deployment whose traffic is managed by the specified Service.
                   &quot;disablePodOverprovisioning&quot;: True or False, # Optional. Whether to disable Pod overprovisioning. If Pod overprovisioning is disabled then Cloud Deploy will limit the number of total Pods used for the deployment strategy to the number of Pods the Deployment has on the cluster.
+                  &quot;podSelectorLabel&quot;: &quot;A String&quot;, # Optional. The label to use when selecting Pods for the Deployment resource. This label must already be present in the Deployment.
                   &quot;service&quot;: &quot;A String&quot;, # Required. Name of the Kubernetes Service.
                 },
               },
             },
           },
-          &quot;standard&quot;: { # Standard represents the standard deployment strategy. # Standard deployment strategy executes a single deploy and allows verifying the deployment.
+          &quot;standard&quot;: { # Standard represents the standard deployment strategy. # Optional. Standard deployment strategy executes a single deploy and allows verifying the deployment.
             &quot;postdeploy&quot;: { # Postdeploy contains the postdeploy job configuration information. # Optional. Configuration for the postdeploy job. If this is not configured, postdeploy job will not be present.
               &quot;actions&quot;: [ # Optional. A sequence of Skaffold custom actions to invoke during execution of the postdeploy job.
                 &quot;A String&quot;,
@@ -854,21 +886,21 @@ Args:
                 &quot;A String&quot;,
               ],
             },
-            &quot;verify&quot;: True or False, # Whether to verify a deployment.
+            &quot;verify&quot;: True or False, # Optional. Whether to verify a deployment.
           },
         },
-        &quot;targetId&quot;: &quot;A String&quot;, # The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
+        &quot;targetId&quot;: &quot;A String&quot;, # Optional. The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
       },
     ],
   },
-  &quot;suspended&quot;: True or False, # When suspended, no new releases or rollouts can be created, but in-progress ones will complete.
+  &quot;suspended&quot;: True or False, # Optional. When suspended, no new releases or rollouts can be created, but in-progress ones will complete.
   &quot;uid&quot;: &quot;A String&quot;, # Output only. Unique identifier of the `DeliveryPipeline`.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Most recent time at which the pipeline was updated.
 }
 
   allowMissing: boolean, Optional. If set to true, updating a `DeliveryPipeline` that does not exist will result in the creation of a new `DeliveryPipeline`.
   requestId: string, Optional. A request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server knows to ignore the request if it has already been completed. The server guarantees that for at least 60 minutes after the first request. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported (00000000-0000-0000-0000-000000000000).
-  updateMask: string, Required. Field mask is used to specify the fields to be overwritten in the `DeliveryPipeline` resource by the update. The fields specified in the update_mask are relative to the resource, not the full request. A field will be overwritten if it&#x27;s in the mask. If the user doesn&#x27;t provide a mask then all fields are overwritten.
+  updateMask: string, Required. Field mask is used to specify the fields to be overwritten by the update in the `DeliveryPipeline` resource. The fields specified in the update_mask are relative to the resource, not the full request. A field will be overwritten if it&#x27;s in the mask. If the user doesn&#x27;t provide a mask then all fields are overwritten.
   validateOnly: boolean, Optional. If set to true, the request is validated and the user is provided with an expected result, but no actual change is made.
   x__xgafv: string, V1 error format.
     Allowed values
@@ -904,15 +936,19 @@ Returns:
   <pre>Creates a `Rollout` to roll back the specified target.
 
 Args:
-  name: string, Required. The `DeliveryPipeline` for which the rollback `Rollout` should be created. Format should be `projects/{project_id}/locations/{location_name}/deliveryPipelines/{pipeline_name}`. (required)
+  name: string, Required. The `DeliveryPipeline` for which the rollback `Rollout` must be created. The format is `projects/{project_id}/locations/{location_name}/deliveryPipelines/{pipeline_name}`. (required)
   body: object, The request body.
     The object takes the form of:
 
 { # The request object for `RollbackTarget`.
+  &quot;overrideDeployPolicy&quot;: [ # Optional. Deploy policies to override. Format is `projects/{project}/locations/{location}/deployPolicies/{deploy_policy}`.
+    &quot;A String&quot;,
+  ],
   &quot;releaseId&quot;: &quot;A String&quot;, # Optional. ID of the `Release` to roll back to. If this isn&#x27;t specified, the previous successful `Rollout` to the specified target will be used to determine the `Release`.
   &quot;rollbackConfig&quot;: { # Configs for the Rollback rollout. # Optional. Configs for the rollback `Rollout`.
     &quot;rollout&quot;: { # A `Rollout` resource in the Cloud Deploy API. A `Rollout` contains information around a specific deployment to a `Target`. # Optional. The rollback `Rollout` to create.
-      &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
+      &quot;activeRepairAutomationRun&quot;: &quot;A String&quot;, # Output only. The AutomationRun actively repairing the rollout.
+      &quot;annotations&quot;: { # Optional. User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;approvalState&quot;: &quot;A String&quot;, # Output only. Approval state of the `Rollout`.
@@ -923,7 +959,7 @@ Args:
       &quot;deployFailureCause&quot;: &quot;A String&quot;, # Output only. The reason this rollout failed. This will always be unspecified while the rollout is in progress.
       &quot;deployStartTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Rollout` started deploying.
       &quot;deployingBuild&quot;: &quot;A String&quot;, # Output only. The resource name of the Cloud Build `Build` object that is used to deploy the Rollout. Format is `projects/{project}/locations/{location}/builds/{build}`.
-      &quot;description&quot;: &quot;A String&quot;, # Description of the `Rollout` for user purposes. Max length is 255 characters.
+      &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the `Rollout` for user purposes. Max length is 255 characters.
       &quot;enqueueTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Rollout` was enqueued.
       &quot;etag&quot;: &quot;A String&quot;, # This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
       &quot;failureReason&quot;: &quot;A String&quot;, # Output only. Additional information about the rollout failure, if available.
@@ -932,12 +968,11 @@ Args:
       },
       &quot;metadata&quot;: { # Metadata includes information associated with a `Rollout`. # Output only. Metadata contains information about the rollout.
         &quot;automation&quot;: { # AutomationRolloutMetadata contains Automation-related actions that were performed on a rollout. # Output only. AutomationRolloutMetadata contains the information about the interactions between Automation service and this rollout.
-          &quot;advanceAutomationRuns&quot;: [ # Output only. The IDs of the AutomationRuns initiated by an advance rollout rule.
+          &quot;advanceAutomationRuns&quot;: [ # Output only. The names of the AutomationRuns initiated by an advance rollout rule.
             &quot;A String&quot;,
           ],
-          &quot;currentRepairAutomationRun&quot;: &quot;A String&quot;, # Output only. The current AutomationRun repairing the rollout.
-          &quot;promoteAutomationRun&quot;: &quot;A String&quot;, # Output only. The ID of the AutomationRun initiated by a promote release rule.
-          &quot;repairAutomationRuns&quot;: [ # Output only. The IDs of the AutomationRuns initiated by a repair rollout rule.
+          &quot;promoteAutomationRun&quot;: &quot;A String&quot;, # Output only. The name of the AutomationRun initiated by a promote release rule.
+          &quot;repairAutomationRuns&quot;: [ # Output only. The names of the AutomationRuns initiated by a repair rollout rule.
             &quot;A String&quot;,
           ],
         },
@@ -955,7 +990,7 @@ Args:
           },
         },
       },
-      &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `Rollout`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/releases/{release}/rollouts/{rollout}`. The `rollout` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
+      &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the `Rollout`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/releases/{release}/rollouts/{rollout}`. The `rollout` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
       &quot;phases&quot;: [ # Output only. The phases that represent the workflows of this `Rollout`.
         { # Phase represents a collection of jobs that are logically grouped together for a `Rollout`.
           &quot;childRolloutJobs&quot;: { # ChildRollouts job composition # Output only. ChildRollout job composition.
@@ -1142,7 +1177,8 @@ Returns:
     { # The response object from `RollbackTarget`.
   &quot;rollbackConfig&quot;: { # Configs for the Rollback rollout. # The config of the rollback `Rollout` created or will be created.
     &quot;rollout&quot;: { # A `Rollout` resource in the Cloud Deploy API. A `Rollout` contains information around a specific deployment to a `Target`. # Optional. The rollback `Rollout` to create.
-      &quot;annotations&quot;: { # User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
+      &quot;activeRepairAutomationRun&quot;: &quot;A String&quot;, # Output only. The AutomationRun actively repairing the rollout.
+      &quot;annotations&quot;: { # Optional. User annotations. These attributes can only be set and used by the user, and not by Cloud Deploy. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;approvalState&quot;: &quot;A String&quot;, # Output only. Approval state of the `Rollout`.
@@ -1153,7 +1189,7 @@ Returns:
       &quot;deployFailureCause&quot;: &quot;A String&quot;, # Output only. The reason this rollout failed. This will always be unspecified while the rollout is in progress.
       &quot;deployStartTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Rollout` started deploying.
       &quot;deployingBuild&quot;: &quot;A String&quot;, # Output only. The resource name of the Cloud Build `Build` object that is used to deploy the Rollout. Format is `projects/{project}/locations/{location}/builds/{build}`.
-      &quot;description&quot;: &quot;A String&quot;, # Description of the `Rollout` for user purposes. Max length is 255 characters.
+      &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the `Rollout` for user purposes. Max length is 255 characters.
       &quot;enqueueTime&quot;: &quot;A String&quot;, # Output only. Time at which the `Rollout` was enqueued.
       &quot;etag&quot;: &quot;A String&quot;, # This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
       &quot;failureReason&quot;: &quot;A String&quot;, # Output only. Additional information about the rollout failure, if available.
@@ -1162,12 +1198,11 @@ Returns:
       },
       &quot;metadata&quot;: { # Metadata includes information associated with a `Rollout`. # Output only. Metadata contains information about the rollout.
         &quot;automation&quot;: { # AutomationRolloutMetadata contains Automation-related actions that were performed on a rollout. # Output only. AutomationRolloutMetadata contains the information about the interactions between Automation service and this rollout.
-          &quot;advanceAutomationRuns&quot;: [ # Output only. The IDs of the AutomationRuns initiated by an advance rollout rule.
+          &quot;advanceAutomationRuns&quot;: [ # Output only. The names of the AutomationRuns initiated by an advance rollout rule.
             &quot;A String&quot;,
           ],
-          &quot;currentRepairAutomationRun&quot;: &quot;A String&quot;, # Output only. The current AutomationRun repairing the rollout.
-          &quot;promoteAutomationRun&quot;: &quot;A String&quot;, # Output only. The ID of the AutomationRun initiated by a promote release rule.
-          &quot;repairAutomationRuns&quot;: [ # Output only. The IDs of the AutomationRuns initiated by a repair rollout rule.
+          &quot;promoteAutomationRun&quot;: &quot;A String&quot;, # Output only. The name of the AutomationRun initiated by a promote release rule.
+          &quot;repairAutomationRuns&quot;: [ # Output only. The names of the AutomationRuns initiated by a repair rollout rule.
             &quot;A String&quot;,
           ],
         },
@@ -1185,7 +1220,7 @@ Returns:
           },
         },
       },
-      &quot;name&quot;: &quot;A String&quot;, # Optional. Name of the `Rollout`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/releases/{release}/rollouts/{rollout}`. The `rollout` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
+      &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the `Rollout`. Format is `projects/{project}/locations/{location}/deliveryPipelines/{deliveryPipeline}/releases/{release}/rollouts/{rollout}`. The `rollout` component must match `[a-z]([a-z0-9-]{0,61}[a-z0-9])?`
       &quot;phases&quot;: [ # Output only. The phases that represent the workflows of this `Rollout`.
         { # Phase represents a collection of jobs that are logically grouped together for a `Rollout`.
           &quot;childRolloutJobs&quot;: { # ChildRollouts job composition # Output only. ChildRollout job composition.

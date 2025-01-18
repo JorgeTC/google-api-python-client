@@ -99,6 +99,9 @@ h1, h2, h3 {
   <code><a href="#patch">patch(name, body=None, updateMask=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Updates the configurations of a node.</p>
 <p class="toc_element">
+  <code><a href="#performMaintenance">performMaintenance(name, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Perform manual maintenance on a node.</p>
+<p class="toc_element">
   <code><a href="#simulateMaintenanceEvent">simulateMaintenanceEvent(name, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Simulates a maintenance event.</p>
 <p class="toc_element">
@@ -156,13 +159,22 @@ Args:
   },
   &quot;multisliceNode&quot;: True or False, # Output only. Whether the Node belongs to a Multislice group.
   &quot;name&quot;: &quot;A String&quot;, # Output only. Immutable. The name of the TPU.
-  &quot;networkConfig&quot;: { # Network related configurations. # Network configurations for the TPU node.
+  &quot;networkConfig&quot;: { # Network related configurations. # Network configurations for the TPU node. network_config and network_configs are mutually exclusive, you can only specify one of them. If both are specified, an error will be returned.
     &quot;canIpForward&quot;: True or False, # Allows the TPU node to send and receive packets with non-matching destination or source IPs. This is required if you plan to use the TPU workers to forward routes.
     &quot;enableExternalIps&quot;: True or False, # Indicates that external IP addresses would be associated with the TPU workers. If set to false, the specified subnetwork or network should have Private Google Access enabled.
     &quot;network&quot;: &quot;A String&quot;, # The name of the network for the TPU node. It must be a preexisting Google Compute Engine network. If none is provided, &quot;default&quot; will be used.
     &quot;queueCount&quot;: 42, # Optional. Specifies networking queue count for TPU VM instance&#x27;s network interface.
     &quot;subnetwork&quot;: &quot;A String&quot;, # The name of the subnetwork for the TPU node. It must be a preexisting Google Compute Engine subnetwork. If none is provided, &quot;default&quot; will be used.
   },
+  &quot;networkConfigs&quot;: [ # Optional. Repeated network configurations for the TPU node. This field is used to specify multiple networks configs for the TPU node. network_config and network_configs are mutually exclusive, you can only specify one of them. If both are specified, an error will be returned.
+    { # Network related configurations.
+      &quot;canIpForward&quot;: True or False, # Allows the TPU node to send and receive packets with non-matching destination or source IPs. This is required if you plan to use the TPU workers to forward routes.
+      &quot;enableExternalIps&quot;: True or False, # Indicates that external IP addresses would be associated with the TPU workers. If set to false, the specified subnetwork or network should have Private Google Access enabled.
+      &quot;network&quot;: &quot;A String&quot;, # The name of the network for the TPU node. It must be a preexisting Google Compute Engine network. If none is provided, &quot;default&quot; will be used.
+      &quot;queueCount&quot;: 42, # Optional. Specifies networking queue count for TPU VM instance&#x27;s network interface.
+      &quot;subnetwork&quot;: &quot;A String&quot;, # The name of the subnetwork for the TPU node. It must be a preexisting Google Compute Engine subnetwork. If none is provided, &quot;default&quot; will be used.
+    },
+  ],
   &quot;networkEndpoints&quot;: [ # Output only. The network endpoints where TPU workers can be accessed and sent work. It is recommended that runtime clients of the node reach out to the 0th entry in this map first.
     { # A network endpoint over which a TPU worker can be reached.
       &quot;accessConfig&quot;: { # An access config attached to the TPU worker. # The access config for the TPU worker.
@@ -200,6 +212,14 @@ Args:
   &quot;tags&quot;: [ # Tags to apply to the TPU Node. Tags are used to identify valid sources or targets for network firewalls.
     &quot;A String&quot;,
   ],
+  &quot;upcomingMaintenance&quot;: { # Upcoming Maintenance notification information. # Output only. Upcoming maintenance on this TPU node.
+    &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
+    &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+    &quot;maintenanceStatus&quot;: &quot;A String&quot;, # The status of the maintenance.
+    &quot;type&quot;: &quot;A String&quot;, # Defines the type of maintenance.
+    &quot;windowEndTime&quot;: &quot;A String&quot;, # The time by which the maintenance disruption will be completed. This timestamp value is in RFC3339 text format.
+    &quot;windowStartTime&quot;: &quot;A String&quot;, # The current start time of the maintenance window. This timestamp value is in RFC3339 text format.
+  },
 }
 
   nodeId: string, The unqualified resource name.
@@ -317,13 +337,22 @@ Returns:
   },
   &quot;multisliceNode&quot;: True or False, # Output only. Whether the Node belongs to a Multislice group.
   &quot;name&quot;: &quot;A String&quot;, # Output only. Immutable. The name of the TPU.
-  &quot;networkConfig&quot;: { # Network related configurations. # Network configurations for the TPU node.
+  &quot;networkConfig&quot;: { # Network related configurations. # Network configurations for the TPU node. network_config and network_configs are mutually exclusive, you can only specify one of them. If both are specified, an error will be returned.
     &quot;canIpForward&quot;: True or False, # Allows the TPU node to send and receive packets with non-matching destination or source IPs. This is required if you plan to use the TPU workers to forward routes.
     &quot;enableExternalIps&quot;: True or False, # Indicates that external IP addresses would be associated with the TPU workers. If set to false, the specified subnetwork or network should have Private Google Access enabled.
     &quot;network&quot;: &quot;A String&quot;, # The name of the network for the TPU node. It must be a preexisting Google Compute Engine network. If none is provided, &quot;default&quot; will be used.
     &quot;queueCount&quot;: 42, # Optional. Specifies networking queue count for TPU VM instance&#x27;s network interface.
     &quot;subnetwork&quot;: &quot;A String&quot;, # The name of the subnetwork for the TPU node. It must be a preexisting Google Compute Engine subnetwork. If none is provided, &quot;default&quot; will be used.
   },
+  &quot;networkConfigs&quot;: [ # Optional. Repeated network configurations for the TPU node. This field is used to specify multiple networks configs for the TPU node. network_config and network_configs are mutually exclusive, you can only specify one of them. If both are specified, an error will be returned.
+    { # Network related configurations.
+      &quot;canIpForward&quot;: True or False, # Allows the TPU node to send and receive packets with non-matching destination or source IPs. This is required if you plan to use the TPU workers to forward routes.
+      &quot;enableExternalIps&quot;: True or False, # Indicates that external IP addresses would be associated with the TPU workers. If set to false, the specified subnetwork or network should have Private Google Access enabled.
+      &quot;network&quot;: &quot;A String&quot;, # The name of the network for the TPU node. It must be a preexisting Google Compute Engine network. If none is provided, &quot;default&quot; will be used.
+      &quot;queueCount&quot;: 42, # Optional. Specifies networking queue count for TPU VM instance&#x27;s network interface.
+      &quot;subnetwork&quot;: &quot;A String&quot;, # The name of the subnetwork for the TPU node. It must be a preexisting Google Compute Engine subnetwork. If none is provided, &quot;default&quot; will be used.
+    },
+  ],
   &quot;networkEndpoints&quot;: [ # Output only. The network endpoints where TPU workers can be accessed and sent work. It is recommended that runtime clients of the node reach out to the 0th entry in this map first.
     { # A network endpoint over which a TPU worker can be reached.
       &quot;accessConfig&quot;: { # An access config attached to the TPU worker. # The access config for the TPU worker.
@@ -361,6 +390,14 @@ Returns:
   &quot;tags&quot;: [ # Tags to apply to the TPU Node. Tags are used to identify valid sources or targets for network firewalls.
     &quot;A String&quot;,
   ],
+  &quot;upcomingMaintenance&quot;: { # Upcoming Maintenance notification information. # Output only. Upcoming maintenance on this TPU node.
+    &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
+    &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+    &quot;maintenanceStatus&quot;: &quot;A String&quot;, # The status of the maintenance.
+    &quot;type&quot;: &quot;A String&quot;, # Defines the type of maintenance.
+    &quot;windowEndTime&quot;: &quot;A String&quot;, # The time by which the maintenance disruption will be completed. This timestamp value is in RFC3339 text format.
+    &quot;windowStartTime&quot;: &quot;A String&quot;, # The current start time of the maintenance window. This timestamp value is in RFC3339 text format.
+  },
 }</pre>
 </div>
 
@@ -459,13 +496,22 @@ Returns:
       },
       &quot;multisliceNode&quot;: True or False, # Output only. Whether the Node belongs to a Multislice group.
       &quot;name&quot;: &quot;A String&quot;, # Output only. Immutable. The name of the TPU.
-      &quot;networkConfig&quot;: { # Network related configurations. # Network configurations for the TPU node.
+      &quot;networkConfig&quot;: { # Network related configurations. # Network configurations for the TPU node. network_config and network_configs are mutually exclusive, you can only specify one of them. If both are specified, an error will be returned.
         &quot;canIpForward&quot;: True or False, # Allows the TPU node to send and receive packets with non-matching destination or source IPs. This is required if you plan to use the TPU workers to forward routes.
         &quot;enableExternalIps&quot;: True or False, # Indicates that external IP addresses would be associated with the TPU workers. If set to false, the specified subnetwork or network should have Private Google Access enabled.
         &quot;network&quot;: &quot;A String&quot;, # The name of the network for the TPU node. It must be a preexisting Google Compute Engine network. If none is provided, &quot;default&quot; will be used.
         &quot;queueCount&quot;: 42, # Optional. Specifies networking queue count for TPU VM instance&#x27;s network interface.
         &quot;subnetwork&quot;: &quot;A String&quot;, # The name of the subnetwork for the TPU node. It must be a preexisting Google Compute Engine subnetwork. If none is provided, &quot;default&quot; will be used.
       },
+      &quot;networkConfigs&quot;: [ # Optional. Repeated network configurations for the TPU node. This field is used to specify multiple networks configs for the TPU node. network_config and network_configs are mutually exclusive, you can only specify one of them. If both are specified, an error will be returned.
+        { # Network related configurations.
+          &quot;canIpForward&quot;: True or False, # Allows the TPU node to send and receive packets with non-matching destination or source IPs. This is required if you plan to use the TPU workers to forward routes.
+          &quot;enableExternalIps&quot;: True or False, # Indicates that external IP addresses would be associated with the TPU workers. If set to false, the specified subnetwork or network should have Private Google Access enabled.
+          &quot;network&quot;: &quot;A String&quot;, # The name of the network for the TPU node. It must be a preexisting Google Compute Engine network. If none is provided, &quot;default&quot; will be used.
+          &quot;queueCount&quot;: 42, # Optional. Specifies networking queue count for TPU VM instance&#x27;s network interface.
+          &quot;subnetwork&quot;: &quot;A String&quot;, # The name of the subnetwork for the TPU node. It must be a preexisting Google Compute Engine subnetwork. If none is provided, &quot;default&quot; will be used.
+        },
+      ],
       &quot;networkEndpoints&quot;: [ # Output only. The network endpoints where TPU workers can be accessed and sent work. It is recommended that runtime clients of the node reach out to the 0th entry in this map first.
         { # A network endpoint over which a TPU worker can be reached.
           &quot;accessConfig&quot;: { # An access config attached to the TPU worker. # The access config for the TPU worker.
@@ -503,6 +549,14 @@ Returns:
       &quot;tags&quot;: [ # Tags to apply to the TPU Node. Tags are used to identify valid sources or targets for network firewalls.
         &quot;A String&quot;,
       ],
+      &quot;upcomingMaintenance&quot;: { # Upcoming Maintenance notification information. # Output only. Upcoming maintenance on this TPU node.
+        &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
+        &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+        &quot;maintenanceStatus&quot;: &quot;A String&quot;, # The status of the maintenance.
+        &quot;type&quot;: &quot;A String&quot;, # Defines the type of maintenance.
+        &quot;windowEndTime&quot;: &quot;A String&quot;, # The time by which the maintenance disruption will be completed. This timestamp value is in RFC3339 text format.
+        &quot;windowStartTime&quot;: &quot;A String&quot;, # The current start time of the maintenance window. This timestamp value is in RFC3339 text format.
+      },
     },
   ],
   &quot;unreachable&quot;: [ # Locations that could not be reached.
@@ -568,13 +622,22 @@ Args:
   },
   &quot;multisliceNode&quot;: True or False, # Output only. Whether the Node belongs to a Multislice group.
   &quot;name&quot;: &quot;A String&quot;, # Output only. Immutable. The name of the TPU.
-  &quot;networkConfig&quot;: { # Network related configurations. # Network configurations for the TPU node.
+  &quot;networkConfig&quot;: { # Network related configurations. # Network configurations for the TPU node. network_config and network_configs are mutually exclusive, you can only specify one of them. If both are specified, an error will be returned.
     &quot;canIpForward&quot;: True or False, # Allows the TPU node to send and receive packets with non-matching destination or source IPs. This is required if you plan to use the TPU workers to forward routes.
     &quot;enableExternalIps&quot;: True or False, # Indicates that external IP addresses would be associated with the TPU workers. If set to false, the specified subnetwork or network should have Private Google Access enabled.
     &quot;network&quot;: &quot;A String&quot;, # The name of the network for the TPU node. It must be a preexisting Google Compute Engine network. If none is provided, &quot;default&quot; will be used.
     &quot;queueCount&quot;: 42, # Optional. Specifies networking queue count for TPU VM instance&#x27;s network interface.
     &quot;subnetwork&quot;: &quot;A String&quot;, # The name of the subnetwork for the TPU node. It must be a preexisting Google Compute Engine subnetwork. If none is provided, &quot;default&quot; will be used.
   },
+  &quot;networkConfigs&quot;: [ # Optional. Repeated network configurations for the TPU node. This field is used to specify multiple networks configs for the TPU node. network_config and network_configs are mutually exclusive, you can only specify one of them. If both are specified, an error will be returned.
+    { # Network related configurations.
+      &quot;canIpForward&quot;: True or False, # Allows the TPU node to send and receive packets with non-matching destination or source IPs. This is required if you plan to use the TPU workers to forward routes.
+      &quot;enableExternalIps&quot;: True or False, # Indicates that external IP addresses would be associated with the TPU workers. If set to false, the specified subnetwork or network should have Private Google Access enabled.
+      &quot;network&quot;: &quot;A String&quot;, # The name of the network for the TPU node. It must be a preexisting Google Compute Engine network. If none is provided, &quot;default&quot; will be used.
+      &quot;queueCount&quot;: 42, # Optional. Specifies networking queue count for TPU VM instance&#x27;s network interface.
+      &quot;subnetwork&quot;: &quot;A String&quot;, # The name of the subnetwork for the TPU node. It must be a preexisting Google Compute Engine subnetwork. If none is provided, &quot;default&quot; will be used.
+    },
+  ],
   &quot;networkEndpoints&quot;: [ # Output only. The network endpoints where TPU workers can be accessed and sent work. It is recommended that runtime clients of the node reach out to the 0th entry in this map first.
     { # A network endpoint over which a TPU worker can be reached.
       &quot;accessConfig&quot;: { # An access config attached to the TPU worker. # The access config for the TPU worker.
@@ -612,9 +675,58 @@ Args:
   &quot;tags&quot;: [ # Tags to apply to the TPU Node. Tags are used to identify valid sources or targets for network firewalls.
     &quot;A String&quot;,
   ],
+  &quot;upcomingMaintenance&quot;: { # Upcoming Maintenance notification information. # Output only. Upcoming maintenance on this TPU node.
+    &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
+    &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+    &quot;maintenanceStatus&quot;: &quot;A String&quot;, # The status of the maintenance.
+    &quot;type&quot;: &quot;A String&quot;, # Defines the type of maintenance.
+    &quot;windowEndTime&quot;: &quot;A String&quot;, # The time by which the maintenance disruption will be completed. This timestamp value is in RFC3339 text format.
+    &quot;windowStartTime&quot;: &quot;A String&quot;, # The current start time of the maintenance window. This timestamp value is in RFC3339 text format.
+  },
 }
 
   updateMask: string, Required. Mask of fields from Node to update. Supported fields: [description, tags, labels, metadata, network_config.enable_external_ips].
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # This resource represents a long-running operation that is the result of a network API call.
+  &quot;done&quot;: True or False, # If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.
+  &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The error result of the operation in case of failure or cancellation.
+    &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+    &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+      {
+        &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+      },
+    ],
+    &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;metadata&quot;: { # Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+  &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="performMaintenance">performMaintenance(name, body=None, x__xgafv=None)</code>
+  <pre>Perform manual maintenance on a node.
+
+Args:
+  name: string, Required. The resource name. (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # Request for PerformMaintenance.
+}
+
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format

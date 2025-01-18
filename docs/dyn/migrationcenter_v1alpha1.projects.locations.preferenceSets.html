@@ -116,10 +116,10 @@ Args:
     &quot;mssqlToCloudSqlForSqlServerPreferences&quot;: { # Preferences for SQL Server on Cloud SQL. # Optional. Preferences for target SQL Server on Cloud SQL when migrating from source Microsoft SQL server.
       &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
         &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
         },
         &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-        &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+        &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
         &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
         &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
         &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -130,10 +130,10 @@ Args:
     &quot;mysqlToCloudSqlForMysqlPreferences&quot;: { # Preferences for MySQL on Cloud SQL. # Optional. Preferences for target MySQL on Cloud SQL when migrating from source MySQL.
       &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
         &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
         },
         &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-        &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+        &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
         &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
         &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
         &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -142,10 +142,10 @@ Args:
     &quot;postgresqlToCloudSqlForPostgresqlPreferences&quot;: { # Preferences for PostgreSQL on Cloud SQL. # Optional. Preferences for target PostgreSQL on Cloud SQL when migrating from source PostgreSQL.
       &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
         &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
         },
         &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-        &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+        &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
         &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
         &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
         &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -164,13 +164,32 @@ Args:
   &quot;virtualMachinePreferences&quot;: { # VirtualMachinePreferences enables you to create sets of preferences, for example, a geographical location and pricing track, for your migrated virtual machines. The set of preferences influence recommendations for migrating virtual machine assets. # A set of preferences that applies to all virtual machines in the context.
     &quot;commitmentPlan&quot;: &quot;A String&quot;, # Commitment plan to consider when calculating costs for virtual machine insights and recommendations. If you are unsure which value to set, a 3 year commitment plan is often a good value to start with.
     &quot;computeEnginePreferences&quot;: { # The user preferences relating to Compute Engine target platform. # Compute Engine preferences concern insights and recommendations for Compute Engine target.
-      &quot;licenseType&quot;: &quot;A String&quot;, # Overridden by os_pricing_preferences if specified. License type to consider when calculating costs for virtual machine insights and recommendations. If unspecified, costs are calculated based on the default licensing plan.
-      &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations. Not all machine types are available in all zones and regions. # Preferences concerning the machine types to consider on Compute Engine.
+      &quot;licenseType&quot;: &quot;A String&quot;, # License type to consider when calculating costs for operating systems. If unspecified, costs are calculated based on the default licensing plan. If os_pricing_preferences is specified, it overrides this field.
+      &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations for GCE. Not all machine types are available in all zones and regions. # Preferences concerning the machine types to consider on Compute Engine.
         &quot;allowedMachineSeries&quot;: [ # Compute Engine machine series to consider for insights and recommendations. If empty, no restriction is applied on the machine series.
           { # A machine series, for a target product (e.g. Compute Engine, Google Cloud VMware Engine).
             &quot;code&quot;: &quot;A String&quot;, # Code to identify a machine series. Consult this for more details on the available series for Compute Engine: https://cloud.google.com/compute/docs/machine-resource#machine_type_comparison Consult this for more details on the available series for Google Cloud VMware Engine: https://cloud.google.com/vmware-engine/pricing
           },
         ],
+      },
+      &quot;multithreading&quot;: &quot;A String&quot;, # Optional. Preferences for multithreading support on Windows Server.
+      &quot;osPricingPreferences&quot;: { # Pricing options for OS images. # Optional. Pricing options for OS images.
+        &quot;rhel&quot;: { # Pricing options of an OS image. # Optional. Pricing options for RHEL images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;sles&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;slesForSap&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES for SAP images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;windows&quot;: { # Pricing options of an OS image. # Optional. Pricing options for Windows images. No commitment plans are available, set it to unspecified.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
       },
       &quot;persistentDiskType&quot;: &quot;A String&quot;, # Persistent disk type to use. If unspecified (default), all types are considered, based on available usage data.
     },
@@ -198,12 +217,41 @@ Args:
           &quot;nodeName&quot;: &quot;A String&quot;, # Name of the Sole Tenant node. Consult https://cloud.google.com/compute/docs/nodes/sole-tenant-nodes
         },
       ],
+      &quot;osPricingPreferences&quot;: { # Pricing options for OS images. # Optional. Pricing options for OS images.
+        &quot;rhel&quot;: { # Pricing options of an OS image. # Optional. Pricing options for RHEL images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;sles&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;slesForSap&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES for SAP images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;windows&quot;: { # Pricing options of an OS image. # Optional. Pricing options for Windows images. No commitment plans are available, set it to unspecified.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+      },
     },
     &quot;targetProduct&quot;: &quot;A String&quot;, # Target product for assets using this preference set. Specify either target product or business goal, but not both.
     &quot;vmwareEnginePreferences&quot;: { # The user preferences relating to Google Cloud VMware Engine target platform. # Preferences concerning insights and recommendations for Google Cloud VMware Engine.
       &quot;commitmentPlan&quot;: &quot;A String&quot;, # Commitment plan to consider when calculating costs for virtual machine insights and recommendations. If you are unsure which value to set, a 3 year commitment plan is often a good value to start with.
       &quot;cpuOvercommitRatio&quot;: 3.14, # CPU overcommit ratio. Acceptable values are between 1.0 and 8.0, with 0.1 increment.
+      &quot;licenseDiscountPercentage&quot;: 3.14, # Optional. Discount percentage for the license type offered to you by Broadcom. Must be between 0 and 100. Only valid when service_type is set to SERVICE_TYPE_PORTABLE_LICENSE.
+      &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations for VMware Engine. Not all machine types are available in all zones and regions. # Optional. Preferences concerning the machine types to consider on Google Cloud VMware Engine.
+        &quot;allowedMachineSeries&quot;: [ # Optional. VMware Engine on Google Cloud machine series to consider for insights and recommendations. If empty, no restriction is applied on the machine series.
+          { # A machine series, for a target product (e.g. Compute Engine, Google Cloud VMware Engine).
+            &quot;code&quot;: &quot;A String&quot;, # Code to identify a machine series. Consult this for more details on the available series for Compute Engine: https://cloud.google.com/compute/docs/machine-resource#machine_type_comparison Consult this for more details on the available series for Google Cloud VMware Engine: https://cloud.google.com/vmware-engine/pricing
+          },
+        ],
+        &quot;protectedNodes&quot;: &quot;A String&quot;, # Optional. Whether to use VMware Engine Protected offering.
+        &quot;storageOnlyNodes&quot;: &quot;A String&quot;, # Optional. Whether to use storage-only nodes, if those are available.
+      },
       &quot;memoryOvercommitRatio&quot;: 3.14, # Memory overcommit ratio. Acceptable values are 1.0, 1.25, 1.5, 1.75 and 2.0.
+      &quot;serviceType&quot;: &quot;A String&quot;, # Optional. VMWare Service Type (Fully Licensed or Portable License).
       &quot;storageDeduplicationCompressionRatio&quot;: 3.14, # The Deduplication and Compression ratio is based on the logical (Used Before) space required to store data before applying deduplication and compression, in relation to the physical (Used After) space required after applying deduplication and compression. Specifically, the ratio is the Used Before space divided by the Used After space. For example, if the Used Before space is 3 GB, but the physical Used After space is 1 GB, the deduplication and compression ratio is 3x. Acceptable values are between 1.0 and 4.0.
     },
   },
@@ -296,10 +344,10 @@ Returns:
     &quot;mssqlToCloudSqlForSqlServerPreferences&quot;: { # Preferences for SQL Server on Cloud SQL. # Optional. Preferences for target SQL Server on Cloud SQL when migrating from source Microsoft SQL server.
       &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
         &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
         },
         &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-        &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+        &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
         &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
         &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
         &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -310,10 +358,10 @@ Returns:
     &quot;mysqlToCloudSqlForMysqlPreferences&quot;: { # Preferences for MySQL on Cloud SQL. # Optional. Preferences for target MySQL on Cloud SQL when migrating from source MySQL.
       &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
         &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
         },
         &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-        &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+        &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
         &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
         &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
         &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -322,10 +370,10 @@ Returns:
     &quot;postgresqlToCloudSqlForPostgresqlPreferences&quot;: { # Preferences for PostgreSQL on Cloud SQL. # Optional. Preferences for target PostgreSQL on Cloud SQL when migrating from source PostgreSQL.
       &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
         &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
         },
         &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-        &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+        &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
         &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
         &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
         &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -344,13 +392,32 @@ Returns:
   &quot;virtualMachinePreferences&quot;: { # VirtualMachinePreferences enables you to create sets of preferences, for example, a geographical location and pricing track, for your migrated virtual machines. The set of preferences influence recommendations for migrating virtual machine assets. # A set of preferences that applies to all virtual machines in the context.
     &quot;commitmentPlan&quot;: &quot;A String&quot;, # Commitment plan to consider when calculating costs for virtual machine insights and recommendations. If you are unsure which value to set, a 3 year commitment plan is often a good value to start with.
     &quot;computeEnginePreferences&quot;: { # The user preferences relating to Compute Engine target platform. # Compute Engine preferences concern insights and recommendations for Compute Engine target.
-      &quot;licenseType&quot;: &quot;A String&quot;, # Overridden by os_pricing_preferences if specified. License type to consider when calculating costs for virtual machine insights and recommendations. If unspecified, costs are calculated based on the default licensing plan.
-      &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations. Not all machine types are available in all zones and regions. # Preferences concerning the machine types to consider on Compute Engine.
+      &quot;licenseType&quot;: &quot;A String&quot;, # License type to consider when calculating costs for operating systems. If unspecified, costs are calculated based on the default licensing plan. If os_pricing_preferences is specified, it overrides this field.
+      &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations for GCE. Not all machine types are available in all zones and regions. # Preferences concerning the machine types to consider on Compute Engine.
         &quot;allowedMachineSeries&quot;: [ # Compute Engine machine series to consider for insights and recommendations. If empty, no restriction is applied on the machine series.
           { # A machine series, for a target product (e.g. Compute Engine, Google Cloud VMware Engine).
             &quot;code&quot;: &quot;A String&quot;, # Code to identify a machine series. Consult this for more details on the available series for Compute Engine: https://cloud.google.com/compute/docs/machine-resource#machine_type_comparison Consult this for more details on the available series for Google Cloud VMware Engine: https://cloud.google.com/vmware-engine/pricing
           },
         ],
+      },
+      &quot;multithreading&quot;: &quot;A String&quot;, # Optional. Preferences for multithreading support on Windows Server.
+      &quot;osPricingPreferences&quot;: { # Pricing options for OS images. # Optional. Pricing options for OS images.
+        &quot;rhel&quot;: { # Pricing options of an OS image. # Optional. Pricing options for RHEL images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;sles&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;slesForSap&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES for SAP images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;windows&quot;: { # Pricing options of an OS image. # Optional. Pricing options for Windows images. No commitment plans are available, set it to unspecified.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
       },
       &quot;persistentDiskType&quot;: &quot;A String&quot;, # Persistent disk type to use. If unspecified (default), all types are considered, based on available usage data.
     },
@@ -378,12 +445,41 @@ Returns:
           &quot;nodeName&quot;: &quot;A String&quot;, # Name of the Sole Tenant node. Consult https://cloud.google.com/compute/docs/nodes/sole-tenant-nodes
         },
       ],
+      &quot;osPricingPreferences&quot;: { # Pricing options for OS images. # Optional. Pricing options for OS images.
+        &quot;rhel&quot;: { # Pricing options of an OS image. # Optional. Pricing options for RHEL images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;sles&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;slesForSap&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES for SAP images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;windows&quot;: { # Pricing options of an OS image. # Optional. Pricing options for Windows images. No commitment plans are available, set it to unspecified.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+      },
     },
     &quot;targetProduct&quot;: &quot;A String&quot;, # Target product for assets using this preference set. Specify either target product or business goal, but not both.
     &quot;vmwareEnginePreferences&quot;: { # The user preferences relating to Google Cloud VMware Engine target platform. # Preferences concerning insights and recommendations for Google Cloud VMware Engine.
       &quot;commitmentPlan&quot;: &quot;A String&quot;, # Commitment plan to consider when calculating costs for virtual machine insights and recommendations. If you are unsure which value to set, a 3 year commitment plan is often a good value to start with.
       &quot;cpuOvercommitRatio&quot;: 3.14, # CPU overcommit ratio. Acceptable values are between 1.0 and 8.0, with 0.1 increment.
+      &quot;licenseDiscountPercentage&quot;: 3.14, # Optional. Discount percentage for the license type offered to you by Broadcom. Must be between 0 and 100. Only valid when service_type is set to SERVICE_TYPE_PORTABLE_LICENSE.
+      &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations for VMware Engine. Not all machine types are available in all zones and regions. # Optional. Preferences concerning the machine types to consider on Google Cloud VMware Engine.
+        &quot;allowedMachineSeries&quot;: [ # Optional. VMware Engine on Google Cloud machine series to consider for insights and recommendations. If empty, no restriction is applied on the machine series.
+          { # A machine series, for a target product (e.g. Compute Engine, Google Cloud VMware Engine).
+            &quot;code&quot;: &quot;A String&quot;, # Code to identify a machine series. Consult this for more details on the available series for Compute Engine: https://cloud.google.com/compute/docs/machine-resource#machine_type_comparison Consult this for more details on the available series for Google Cloud VMware Engine: https://cloud.google.com/vmware-engine/pricing
+          },
+        ],
+        &quot;protectedNodes&quot;: &quot;A String&quot;, # Optional. Whether to use VMware Engine Protected offering.
+        &quot;storageOnlyNodes&quot;: &quot;A String&quot;, # Optional. Whether to use storage-only nodes, if those are available.
+      },
       &quot;memoryOvercommitRatio&quot;: 3.14, # Memory overcommit ratio. Acceptable values are 1.0, 1.25, 1.5, 1.75 and 2.0.
+      &quot;serviceType&quot;: &quot;A String&quot;, # Optional. VMWare Service Type (Fully Licensed or Portable License).
       &quot;storageDeduplicationCompressionRatio&quot;: 3.14, # The Deduplication and Compression ratio is based on the logical (Used Before) space required to store data before applying deduplication and compression, in relation to the physical (Used After) space required after applying deduplication and compression. Specifically, the ratio is the Used Before space divided by the Used After space. For example, if the Used Before space is 3 GB, but the physical Used After space is 1 GB, the deduplication and compression ratio is 3x. Acceptable values are between 1.0 and 4.0.
     },
   },
@@ -416,10 +512,10 @@ Returns:
         &quot;mssqlToCloudSqlForSqlServerPreferences&quot;: { # Preferences for SQL Server on Cloud SQL. # Optional. Preferences for target SQL Server on Cloud SQL when migrating from source Microsoft SQL server.
           &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
             &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-              &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+              &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
             },
             &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-            &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+            &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
             &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
             &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
             &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -430,10 +526,10 @@ Returns:
         &quot;mysqlToCloudSqlForMysqlPreferences&quot;: { # Preferences for MySQL on Cloud SQL. # Optional. Preferences for target MySQL on Cloud SQL when migrating from source MySQL.
           &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
             &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-              &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+              &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
             },
             &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-            &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+            &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
             &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
             &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
             &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -442,10 +538,10 @@ Returns:
         &quot;postgresqlToCloudSqlForPostgresqlPreferences&quot;: { # Preferences for PostgreSQL on Cloud SQL. # Optional. Preferences for target PostgreSQL on Cloud SQL when migrating from source PostgreSQL.
           &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
             &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-              &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+              &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
             },
             &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-            &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+            &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
             &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
             &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
             &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -464,13 +560,32 @@ Returns:
       &quot;virtualMachinePreferences&quot;: { # VirtualMachinePreferences enables you to create sets of preferences, for example, a geographical location and pricing track, for your migrated virtual machines. The set of preferences influence recommendations for migrating virtual machine assets. # A set of preferences that applies to all virtual machines in the context.
         &quot;commitmentPlan&quot;: &quot;A String&quot;, # Commitment plan to consider when calculating costs for virtual machine insights and recommendations. If you are unsure which value to set, a 3 year commitment plan is often a good value to start with.
         &quot;computeEnginePreferences&quot;: { # The user preferences relating to Compute Engine target platform. # Compute Engine preferences concern insights and recommendations for Compute Engine target.
-          &quot;licenseType&quot;: &quot;A String&quot;, # Overridden by os_pricing_preferences if specified. License type to consider when calculating costs for virtual machine insights and recommendations. If unspecified, costs are calculated based on the default licensing plan.
-          &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations. Not all machine types are available in all zones and regions. # Preferences concerning the machine types to consider on Compute Engine.
+          &quot;licenseType&quot;: &quot;A String&quot;, # License type to consider when calculating costs for operating systems. If unspecified, costs are calculated based on the default licensing plan. If os_pricing_preferences is specified, it overrides this field.
+          &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations for GCE. Not all machine types are available in all zones and regions. # Preferences concerning the machine types to consider on Compute Engine.
             &quot;allowedMachineSeries&quot;: [ # Compute Engine machine series to consider for insights and recommendations. If empty, no restriction is applied on the machine series.
               { # A machine series, for a target product (e.g. Compute Engine, Google Cloud VMware Engine).
                 &quot;code&quot;: &quot;A String&quot;, # Code to identify a machine series. Consult this for more details on the available series for Compute Engine: https://cloud.google.com/compute/docs/machine-resource#machine_type_comparison Consult this for more details on the available series for Google Cloud VMware Engine: https://cloud.google.com/vmware-engine/pricing
               },
             ],
+          },
+          &quot;multithreading&quot;: &quot;A String&quot;, # Optional. Preferences for multithreading support on Windows Server.
+          &quot;osPricingPreferences&quot;: { # Pricing options for OS images. # Optional. Pricing options for OS images.
+            &quot;rhel&quot;: { # Pricing options of an OS image. # Optional. Pricing options for RHEL images.
+              &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+              &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+            },
+            &quot;sles&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES images.
+              &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+              &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+            },
+            &quot;slesForSap&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES for SAP images.
+              &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+              &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+            },
+            &quot;windows&quot;: { # Pricing options of an OS image. # Optional. Pricing options for Windows images. No commitment plans are available, set it to unspecified.
+              &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+              &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+            },
           },
           &quot;persistentDiskType&quot;: &quot;A String&quot;, # Persistent disk type to use. If unspecified (default), all types are considered, based on available usage data.
         },
@@ -498,12 +613,41 @@ Returns:
               &quot;nodeName&quot;: &quot;A String&quot;, # Name of the Sole Tenant node. Consult https://cloud.google.com/compute/docs/nodes/sole-tenant-nodes
             },
           ],
+          &quot;osPricingPreferences&quot;: { # Pricing options for OS images. # Optional. Pricing options for OS images.
+            &quot;rhel&quot;: { # Pricing options of an OS image. # Optional. Pricing options for RHEL images.
+              &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+              &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+            },
+            &quot;sles&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES images.
+              &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+              &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+            },
+            &quot;slesForSap&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES for SAP images.
+              &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+              &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+            },
+            &quot;windows&quot;: { # Pricing options of an OS image. # Optional. Pricing options for Windows images. No commitment plans are available, set it to unspecified.
+              &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+              &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+            },
+          },
         },
         &quot;targetProduct&quot;: &quot;A String&quot;, # Target product for assets using this preference set. Specify either target product or business goal, but not both.
         &quot;vmwareEnginePreferences&quot;: { # The user preferences relating to Google Cloud VMware Engine target platform. # Preferences concerning insights and recommendations for Google Cloud VMware Engine.
           &quot;commitmentPlan&quot;: &quot;A String&quot;, # Commitment plan to consider when calculating costs for virtual machine insights and recommendations. If you are unsure which value to set, a 3 year commitment plan is often a good value to start with.
           &quot;cpuOvercommitRatio&quot;: 3.14, # CPU overcommit ratio. Acceptable values are between 1.0 and 8.0, with 0.1 increment.
+          &quot;licenseDiscountPercentage&quot;: 3.14, # Optional. Discount percentage for the license type offered to you by Broadcom. Must be between 0 and 100. Only valid when service_type is set to SERVICE_TYPE_PORTABLE_LICENSE.
+          &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations for VMware Engine. Not all machine types are available in all zones and regions. # Optional. Preferences concerning the machine types to consider on Google Cloud VMware Engine.
+            &quot;allowedMachineSeries&quot;: [ # Optional. VMware Engine on Google Cloud machine series to consider for insights and recommendations. If empty, no restriction is applied on the machine series.
+              { # A machine series, for a target product (e.g. Compute Engine, Google Cloud VMware Engine).
+                &quot;code&quot;: &quot;A String&quot;, # Code to identify a machine series. Consult this for more details on the available series for Compute Engine: https://cloud.google.com/compute/docs/machine-resource#machine_type_comparison Consult this for more details on the available series for Google Cloud VMware Engine: https://cloud.google.com/vmware-engine/pricing
+              },
+            ],
+            &quot;protectedNodes&quot;: &quot;A String&quot;, # Optional. Whether to use VMware Engine Protected offering.
+            &quot;storageOnlyNodes&quot;: &quot;A String&quot;, # Optional. Whether to use storage-only nodes, if those are available.
+          },
           &quot;memoryOvercommitRatio&quot;: 3.14, # Memory overcommit ratio. Acceptable values are 1.0, 1.25, 1.5, 1.75 and 2.0.
+          &quot;serviceType&quot;: &quot;A String&quot;, # Optional. VMWare Service Type (Fully Licensed or Portable License).
           &quot;storageDeduplicationCompressionRatio&quot;: 3.14, # The Deduplication and Compression ratio is based on the logical (Used Before) space required to store data before applying deduplication and compression, in relation to the physical (Used After) space required after applying deduplication and compression. Specifically, the ratio is the Used Before space divided by the Used After space. For example, if the Used Before space is 3 GB, but the physical Used After space is 1 GB, the deduplication and compression ratio is 3x. Acceptable values are between 1.0 and 4.0.
         },
       },
@@ -544,10 +688,10 @@ Args:
     &quot;mssqlToCloudSqlForSqlServerPreferences&quot;: { # Preferences for SQL Server on Cloud SQL. # Optional. Preferences for target SQL Server on Cloud SQL when migrating from source Microsoft SQL server.
       &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
         &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
         },
         &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-        &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+        &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
         &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
         &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
         &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -558,10 +702,10 @@ Args:
     &quot;mysqlToCloudSqlForMysqlPreferences&quot;: { # Preferences for MySQL on Cloud SQL. # Optional. Preferences for target MySQL on Cloud SQL when migrating from source MySQL.
       &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
         &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
         },
         &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-        &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+        &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
         &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
         &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
         &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -570,10 +714,10 @@ Args:
     &quot;postgresqlToCloudSqlForPostgresqlPreferences&quot;: { # Preferences for PostgreSQL on Cloud SQL. # Optional. Preferences for target PostgreSQL on Cloud SQL when migrating from source PostgreSQL.
       &quot;common&quot;: { # Preferences common to Cloud SQL databases. # Optional. Preferences to Cloud SQL databases.
         &quot;backup&quot;: { # Preferences for database backups. # Optional. Preferences for database backups.
-          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Mode of automated backups.
+          &quot;backupMode&quot;: &quot;A String&quot;, # Optional. Automated backup mode.
         },
         &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. Commitment plan to consider when calculating costs. Only regular CUDs (not flexible) are currently available.
-        &quot;edition&quot;: &quot;A String&quot;, # Optional. Cloud SQL edition. For SQL Server, only Enterprise is available.
+        &quot;edition&quot;: &quot;A String&quot;, # Optional. Preferred Cloud SQL edition.
         &quot;persistentDiskType&quot;: &quot;A String&quot;, # Optional. Persistent disk type to use. If unspecified, a disk type is recommended based on available usage data. For SQL Server, only SSD is available. For MySQL and PostgreSQL, only STANDARD (HDD) and SSD types are available.
         &quot;sizingOptimizationStrategy&quot;: &quot;A String&quot;, # Optional. Sizing optimization strategy of the database. Currently supported for Cloud SQL are just two values: SIZING_OPTIMIZATION_STRATEGY_MODERATE and SIZING_OPTIMIZATION_STRATEGY_SAME_AS_SOURCE. SIZING_OPTIMIZATION_STRATEGY_UNSPECIFIED will behave like SIZING_OPTIMIZATION_STRATEGY_MODERATE.
         &quot;zoneAvailability&quot;: &quot;A String&quot;, # Optional. Preferred zone availability.
@@ -592,13 +736,32 @@ Args:
   &quot;virtualMachinePreferences&quot;: { # VirtualMachinePreferences enables you to create sets of preferences, for example, a geographical location and pricing track, for your migrated virtual machines. The set of preferences influence recommendations for migrating virtual machine assets. # A set of preferences that applies to all virtual machines in the context.
     &quot;commitmentPlan&quot;: &quot;A String&quot;, # Commitment plan to consider when calculating costs for virtual machine insights and recommendations. If you are unsure which value to set, a 3 year commitment plan is often a good value to start with.
     &quot;computeEnginePreferences&quot;: { # The user preferences relating to Compute Engine target platform. # Compute Engine preferences concern insights and recommendations for Compute Engine target.
-      &quot;licenseType&quot;: &quot;A String&quot;, # Overridden by os_pricing_preferences if specified. License type to consider when calculating costs for virtual machine insights and recommendations. If unspecified, costs are calculated based on the default licensing plan.
-      &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations. Not all machine types are available in all zones and regions. # Preferences concerning the machine types to consider on Compute Engine.
+      &quot;licenseType&quot;: &quot;A String&quot;, # License type to consider when calculating costs for operating systems. If unspecified, costs are calculated based on the default licensing plan. If os_pricing_preferences is specified, it overrides this field.
+      &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations for GCE. Not all machine types are available in all zones and regions. # Preferences concerning the machine types to consider on Compute Engine.
         &quot;allowedMachineSeries&quot;: [ # Compute Engine machine series to consider for insights and recommendations. If empty, no restriction is applied on the machine series.
           { # A machine series, for a target product (e.g. Compute Engine, Google Cloud VMware Engine).
             &quot;code&quot;: &quot;A String&quot;, # Code to identify a machine series. Consult this for more details on the available series for Compute Engine: https://cloud.google.com/compute/docs/machine-resource#machine_type_comparison Consult this for more details on the available series for Google Cloud VMware Engine: https://cloud.google.com/vmware-engine/pricing
           },
         ],
+      },
+      &quot;multithreading&quot;: &quot;A String&quot;, # Optional. Preferences for multithreading support on Windows Server.
+      &quot;osPricingPreferences&quot;: { # Pricing options for OS images. # Optional. Pricing options for OS images.
+        &quot;rhel&quot;: { # Pricing options of an OS image. # Optional. Pricing options for RHEL images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;sles&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;slesForSap&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES for SAP images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;windows&quot;: { # Pricing options of an OS image. # Optional. Pricing options for Windows images. No commitment plans are available, set it to unspecified.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
       },
       &quot;persistentDiskType&quot;: &quot;A String&quot;, # Persistent disk type to use. If unspecified (default), all types are considered, based on available usage data.
     },
@@ -626,12 +789,41 @@ Args:
           &quot;nodeName&quot;: &quot;A String&quot;, # Name of the Sole Tenant node. Consult https://cloud.google.com/compute/docs/nodes/sole-tenant-nodes
         },
       ],
+      &quot;osPricingPreferences&quot;: { # Pricing options for OS images. # Optional. Pricing options for OS images.
+        &quot;rhel&quot;: { # Pricing options of an OS image. # Optional. Pricing options for RHEL images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;sles&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;slesForSap&quot;: { # Pricing options of an OS image. # Optional. Pricing options for SLES for SAP images.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+        &quot;windows&quot;: { # Pricing options of an OS image. # Optional. Pricing options for Windows images. No commitment plans are available, set it to unspecified.
+          &quot;commitmentPlan&quot;: &quot;A String&quot;, # Optional. The plan of commitments for committed use discounts (CUD).
+          &quot;licenseType&quot;: &quot;A String&quot;, # Optional. License type for premium images (RHEL, RHEL for SAP, SLES, SLES for SAP, Windows Server).
+        },
+      },
     },
     &quot;targetProduct&quot;: &quot;A String&quot;, # Target product for assets using this preference set. Specify either target product or business goal, but not both.
     &quot;vmwareEnginePreferences&quot;: { # The user preferences relating to Google Cloud VMware Engine target platform. # Preferences concerning insights and recommendations for Google Cloud VMware Engine.
       &quot;commitmentPlan&quot;: &quot;A String&quot;, # Commitment plan to consider when calculating costs for virtual machine insights and recommendations. If you are unsure which value to set, a 3 year commitment plan is often a good value to start with.
       &quot;cpuOvercommitRatio&quot;: 3.14, # CPU overcommit ratio. Acceptable values are between 1.0 and 8.0, with 0.1 increment.
+      &quot;licenseDiscountPercentage&quot;: 3.14, # Optional. Discount percentage for the license type offered to you by Broadcom. Must be between 0 and 100. Only valid when service_type is set to SERVICE_TYPE_PORTABLE_LICENSE.
+      &quot;machinePreferences&quot;: { # The type of machines to consider when calculating virtual machine migration insights and recommendations for VMware Engine. Not all machine types are available in all zones and regions. # Optional. Preferences concerning the machine types to consider on Google Cloud VMware Engine.
+        &quot;allowedMachineSeries&quot;: [ # Optional. VMware Engine on Google Cloud machine series to consider for insights and recommendations. If empty, no restriction is applied on the machine series.
+          { # A machine series, for a target product (e.g. Compute Engine, Google Cloud VMware Engine).
+            &quot;code&quot;: &quot;A String&quot;, # Code to identify a machine series. Consult this for more details on the available series for Compute Engine: https://cloud.google.com/compute/docs/machine-resource#machine_type_comparison Consult this for more details on the available series for Google Cloud VMware Engine: https://cloud.google.com/vmware-engine/pricing
+          },
+        ],
+        &quot;protectedNodes&quot;: &quot;A String&quot;, # Optional. Whether to use VMware Engine Protected offering.
+        &quot;storageOnlyNodes&quot;: &quot;A String&quot;, # Optional. Whether to use storage-only nodes, if those are available.
+      },
       &quot;memoryOvercommitRatio&quot;: 3.14, # Memory overcommit ratio. Acceptable values are 1.0, 1.25, 1.5, 1.75 and 2.0.
+      &quot;serviceType&quot;: &quot;A String&quot;, # Optional. VMWare Service Type (Fully Licensed or Portable License).
       &quot;storageDeduplicationCompressionRatio&quot;: 3.14, # The Deduplication and Compression ratio is based on the logical (Used Before) space required to store data before applying deduplication and compression, in relation to the physical (Used After) space required after applying deduplication and compression. Specifically, the ratio is the Used Before space divided by the Used After space. For example, if the Used Before space is 3 GB, but the physical Used After space is 1 GB, the deduplication and compression ratio is 3x. Acceptable values are between 1.0 and 4.0.
     },
   },

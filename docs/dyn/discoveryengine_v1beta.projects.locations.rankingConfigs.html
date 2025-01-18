@@ -91,7 +91,7 @@ h1, h2, h3 {
   <pre>Ranks a list of text records based on the given input query.
 
 Args:
-  rankingConfig: string, Required. The resource name of the rank service config, such as `projects/{project_num}/locations/{location_id}/rankingConfigs/default_ranking_config`. (required)
+  rankingConfig: string, Required. The resource name of the rank service config, such as `projects/{project_num}/locations/{location}/rankingConfigs/default_ranking_config`. (required)
   body: object, The request body.
     The object takes the form of:
 
@@ -103,11 +103,14 @@ Args:
     { # Record message for RankService.Rank method.
       &quot;content&quot;: &quot;A String&quot;, # The content of the record. Empty by default. At least one of title or content should be set otherwise an INVALID_ARGUMENT error is thrown.
       &quot;id&quot;: &quot;A String&quot;, # The unique ID to represent the record.
-      &quot;score&quot;: 3.14, # The score of this record based on the given query and selected model.
+      &quot;score&quot;: 3.14, # The score of this record based on the given query and selected model. The score will be rounded to 2 decimal places. If the score is close to 0, it will be rounded to 0.0001 to avoid returning unset.
       &quot;title&quot;: &quot;A String&quot;, # The title of the record. Empty by default. At least one of title or content should be set otherwise an INVALID_ARGUMENT error is thrown.
     },
   ],
   &quot;topN&quot;: 42, # The number of results to return. If this is unset or no bigger than zero, returns all results.
+  &quot;userLabels&quot;: { # The user labels applied to a resource must meet the following requirements: * Each resource can have multiple labels, up to a maximum of 64. * Each label must be a key-value pair. * Keys have a minimum length of 1 character and a maximum length of 63 characters and cannot be empty. Values can be empty and have a maximum length of 63 characters. * Keys and values can contain only lowercase letters, numeric characters, underscores, and dashes. All characters must use UTF-8 encoding, and international characters are allowed. * The key portion of a label must be unique. However, you can use the same key with multiple resources. * Keys must start with a lowercase letter or international character. See [Google Cloud Document](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements) for more details.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
 }
 
   x__xgafv: string, V1 error format.
@@ -123,7 +126,7 @@ Returns:
     { # Record message for RankService.Rank method.
       &quot;content&quot;: &quot;A String&quot;, # The content of the record. Empty by default. At least one of title or content should be set otherwise an INVALID_ARGUMENT error is thrown.
       &quot;id&quot;: &quot;A String&quot;, # The unique ID to represent the record.
-      &quot;score&quot;: 3.14, # The score of this record based on the given query and selected model.
+      &quot;score&quot;: 3.14, # The score of this record based on the given query and selected model. The score will be rounded to 2 decimal places. If the score is close to 0, it will be rounded to 0.0001 to avoid returning unset.
       &quot;title&quot;: &quot;A String&quot;, # The title of the record. Empty by default. At least one of title or content should be set otherwise an INVALID_ARGUMENT error is thrown.
     },
   ],

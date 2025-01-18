@@ -236,12 +236,7 @@ Args:
     &quot;finishTime&quot;: &quot;A String&quot;, # Output only. Time at which execution of the build was finished. The difference between finish_time and start_time is the duration of the build&#x27;s execution.
     &quot;gitConfig&quot;: { # GitConfig is a configuration for git operations. # Optional. Configuration for git operations.
       &quot;http&quot;: { # HttpConfig is a configuration for HTTP related git operations. # Configuration for HTTP related git operations.
-        &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The proxy URL should be in format protocol://@]proxyhost[:port].
-        &quot;proxySslCaInfo&quot;: { # Represents a storage location in Cloud Storage # Optional. Cloud Storage object storing the certificate to use with the HTTP proxy.
-          &quot;bucket&quot;: &quot;A String&quot;, # Cloud Storage bucket. See https://cloud.google.com/storage/docs/naming#requirements
-          &quot;generation&quot;: &quot;A String&quot;, # Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
-          &quot;object&quot;: &quot;A String&quot;, # Cloud Storage object. See https://cloud.google.com/storage/docs/naming#objectnames
-        },
+        &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The Service Account used in the build (either the default Service Account or user-specified Service Account) should have `secretmanager.versions.access` permissions on this secret. The proxy URL should be in format `protocol://@]proxyhost[:port]`.
       },
     },
     &quot;id&quot;: &quot;A String&quot;, # Output only. Unique identifier of the build.
@@ -254,7 +249,7 @@ Args:
     &quot;options&quot;: { # Optional arguments to enable specific features of builds. # Special options for this build.
       &quot;automapSubstitutions&quot;: True or False, # Option to include built-in and custom substitutions as env variables for all build steps.
       &quot;defaultLogsBucketBehavior&quot;: &quot;A String&quot;, # Optional. Option to specify how default logs buckets are setup.
-      &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 2000GB; builds that request more than the maximum are rejected with an error.
+      &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 4000GB; builds that request more than the maximum are rejected with an error.
       &quot;dynamicSubstitutions&quot;: True or False, # Option to specify whether or not to apply bash style string operations to the substitutions. NOTE: this is always enabled for triggered builds and cannot be overridden in the build configuration file.
       &quot;env&quot;: [ # A list of global environment variable definitions that will exist for all build steps in this build. If a variable is defined in both globally and in a build step, the variable will use the build step value. The elements are of the form &quot;KEY=VALUE&quot; for the environment variable &quot;KEY&quot; being given the value &quot;VALUE&quot;.
         &quot;A String&quot;,
@@ -534,7 +529,7 @@ Args:
     &quot;uri&quot;: &quot;A String&quot;, # The URI of the repo. Either uri or repository can be specified. If unspecified, the repo from which the trigger invocation originated is assumed to be the repo from which to read the specified path.
   },
   &quot;github&quot;: { # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. Mutually exclusive with `trigger_template`.
-    &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # Optional. The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
+    &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
     &quot;installationId&quot;: &quot;A String&quot;, # The installationID that emits the GitHub event.
     &quot;name&quot;: &quot;A String&quot;, # Name of the repository. For example: The name for https://github.com/googlecloudplatform/cloud-builders is &quot;cloud-builders&quot;.
     &quot;owner&quot;: &quot;A String&quot;, # Owner of the repository. For example: The owner for https://github.com/googlecloudplatform/cloud-builders is &quot;googlecloudplatform&quot;.
@@ -601,7 +596,7 @@ Args:
     &quot;serviceAccountEmail&quot;: &quot;A String&quot;, # Service account that will make the push request.
     &quot;state&quot;: &quot;A String&quot;, # Potential issues with the underlying Pub/Sub subscription configuration. Only populated on get requests.
     &quot;subscription&quot;: &quot;A String&quot;, # Output only. Name of the subscription. Format is `projects/{project}/subscriptions/{subscription}`.
-    &quot;topic&quot;: &quot;A String&quot;, # The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
+    &quot;topic&quot;: &quot;A String&quot;, # Optional. The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
   },
   &quot;repositoryEventConfig&quot;: { # The configuration of a trigger that creates a build whenever an event from Repo API is received. # The configuration of a trigger that creates a build whenever an event from Repo API is received.
     &quot;pullRequest&quot;: { # PullRequestFilter contains filter properties for matching GitHub Pull Requests. # Filter to match changes in pull requests.
@@ -618,7 +613,7 @@ Args:
     &quot;repositoryType&quot;: &quot;A String&quot;, # Output only. The type of the SCM vendor the repository points to.
   },
   &quot;resourceName&quot;: &quot;A String&quot;, # The `Trigger` name with format: `projects/{project}/locations/{location}/triggers/{trigger}`, where {trigger} is a unique identifier generated by the service.
-  &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set, then the standard Cloud Build service account ([PROJECT_NUM]@system.gserviceaccount.com) will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
+  &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set and the legacy Cloud Build service account ([PROJECT_NUM]@cloudbuild.gserviceaccount.com) is the default for the project then it will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
   &quot;sourceToBuild&quot;: { # GitRepoSource describes a repo and ref of a code repository. # The repo and ref of the repository from which to build. This field is used only for those triggers that do not respond to SCM events. Triggers that respond to such events build source at whatever commit caused the event. This field is currently only used by Webhook, Pub/Sub, Manual, and Cron triggers.
     &quot;bitbucketServerConfig&quot;: &quot;A String&quot;, # The full resource name of the bitbucket server config. Format: `projects/{project}/locations/{location}/bitbucketServerConfigs/{id}`.
     &quot;githubEnterpriseConfig&quot;: &quot;A String&quot;, # The full resource name of the github enterprise config. Format: `projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}`. `projects/{project}/githubEnterpriseConfigs/{id}`.
@@ -780,12 +775,7 @@ Returns:
     &quot;finishTime&quot;: &quot;A String&quot;, # Output only. Time at which execution of the build was finished. The difference between finish_time and start_time is the duration of the build&#x27;s execution.
     &quot;gitConfig&quot;: { # GitConfig is a configuration for git operations. # Optional. Configuration for git operations.
       &quot;http&quot;: { # HttpConfig is a configuration for HTTP related git operations. # Configuration for HTTP related git operations.
-        &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The proxy URL should be in format protocol://@]proxyhost[:port].
-        &quot;proxySslCaInfo&quot;: { # Represents a storage location in Cloud Storage # Optional. Cloud Storage object storing the certificate to use with the HTTP proxy.
-          &quot;bucket&quot;: &quot;A String&quot;, # Cloud Storage bucket. See https://cloud.google.com/storage/docs/naming#requirements
-          &quot;generation&quot;: &quot;A String&quot;, # Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
-          &quot;object&quot;: &quot;A String&quot;, # Cloud Storage object. See https://cloud.google.com/storage/docs/naming#objectnames
-        },
+        &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The Service Account used in the build (either the default Service Account or user-specified Service Account) should have `secretmanager.versions.access` permissions on this secret. The proxy URL should be in format `protocol://@]proxyhost[:port]`.
       },
     },
     &quot;id&quot;: &quot;A String&quot;, # Output only. Unique identifier of the build.
@@ -798,7 +788,7 @@ Returns:
     &quot;options&quot;: { # Optional arguments to enable specific features of builds. # Special options for this build.
       &quot;automapSubstitutions&quot;: True or False, # Option to include built-in and custom substitutions as env variables for all build steps.
       &quot;defaultLogsBucketBehavior&quot;: &quot;A String&quot;, # Optional. Option to specify how default logs buckets are setup.
-      &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 2000GB; builds that request more than the maximum are rejected with an error.
+      &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 4000GB; builds that request more than the maximum are rejected with an error.
       &quot;dynamicSubstitutions&quot;: True or False, # Option to specify whether or not to apply bash style string operations to the substitutions. NOTE: this is always enabled for triggered builds and cannot be overridden in the build configuration file.
       &quot;env&quot;: [ # A list of global environment variable definitions that will exist for all build steps in this build. If a variable is defined in both globally and in a build step, the variable will use the build step value. The elements are of the form &quot;KEY=VALUE&quot; for the environment variable &quot;KEY&quot; being given the value &quot;VALUE&quot;.
         &quot;A String&quot;,
@@ -1078,7 +1068,7 @@ Returns:
     &quot;uri&quot;: &quot;A String&quot;, # The URI of the repo. Either uri or repository can be specified. If unspecified, the repo from which the trigger invocation originated is assumed to be the repo from which to read the specified path.
   },
   &quot;github&quot;: { # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. Mutually exclusive with `trigger_template`.
-    &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # Optional. The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
+    &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
     &quot;installationId&quot;: &quot;A String&quot;, # The installationID that emits the GitHub event.
     &quot;name&quot;: &quot;A String&quot;, # Name of the repository. For example: The name for https://github.com/googlecloudplatform/cloud-builders is &quot;cloud-builders&quot;.
     &quot;owner&quot;: &quot;A String&quot;, # Owner of the repository. For example: The owner for https://github.com/googlecloudplatform/cloud-builders is &quot;googlecloudplatform&quot;.
@@ -1145,7 +1135,7 @@ Returns:
     &quot;serviceAccountEmail&quot;: &quot;A String&quot;, # Service account that will make the push request.
     &quot;state&quot;: &quot;A String&quot;, # Potential issues with the underlying Pub/Sub subscription configuration. Only populated on get requests.
     &quot;subscription&quot;: &quot;A String&quot;, # Output only. Name of the subscription. Format is `projects/{project}/subscriptions/{subscription}`.
-    &quot;topic&quot;: &quot;A String&quot;, # The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
+    &quot;topic&quot;: &quot;A String&quot;, # Optional. The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
   },
   &quot;repositoryEventConfig&quot;: { # The configuration of a trigger that creates a build whenever an event from Repo API is received. # The configuration of a trigger that creates a build whenever an event from Repo API is received.
     &quot;pullRequest&quot;: { # PullRequestFilter contains filter properties for matching GitHub Pull Requests. # Filter to match changes in pull requests.
@@ -1162,7 +1152,7 @@ Returns:
     &quot;repositoryType&quot;: &quot;A String&quot;, # Output only. The type of the SCM vendor the repository points to.
   },
   &quot;resourceName&quot;: &quot;A String&quot;, # The `Trigger` name with format: `projects/{project}/locations/{location}/triggers/{trigger}`, where {trigger} is a unique identifier generated by the service.
-  &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set, then the standard Cloud Build service account ([PROJECT_NUM]@system.gserviceaccount.com) will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
+  &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set and the legacy Cloud Build service account ([PROJECT_NUM]@cloudbuild.gserviceaccount.com) is the default for the project then it will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
   &quot;sourceToBuild&quot;: { # GitRepoSource describes a repo and ref of a code repository. # The repo and ref of the repository from which to build. This field is used only for those triggers that do not respond to SCM events. Triggers that respond to such events build source at whatever commit caused the event. This field is currently only used by Webhook, Pub/Sub, Manual, and Cron triggers.
     &quot;bitbucketServerConfig&quot;: &quot;A String&quot;, # The full resource name of the bitbucket server config. Format: `projects/{project}/locations/{location}/bitbucketServerConfigs/{id}`.
     &quot;githubEnterpriseConfig&quot;: &quot;A String&quot;, # The full resource name of the github enterprise config. Format: `projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}`. `projects/{project}/githubEnterpriseConfigs/{id}`.
@@ -1352,12 +1342,7 @@ Returns:
     &quot;finishTime&quot;: &quot;A String&quot;, # Output only. Time at which execution of the build was finished. The difference between finish_time and start_time is the duration of the build&#x27;s execution.
     &quot;gitConfig&quot;: { # GitConfig is a configuration for git operations. # Optional. Configuration for git operations.
       &quot;http&quot;: { # HttpConfig is a configuration for HTTP related git operations. # Configuration for HTTP related git operations.
-        &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The proxy URL should be in format protocol://@]proxyhost[:port].
-        &quot;proxySslCaInfo&quot;: { # Represents a storage location in Cloud Storage # Optional. Cloud Storage object storing the certificate to use with the HTTP proxy.
-          &quot;bucket&quot;: &quot;A String&quot;, # Cloud Storage bucket. See https://cloud.google.com/storage/docs/naming#requirements
-          &quot;generation&quot;: &quot;A String&quot;, # Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
-          &quot;object&quot;: &quot;A String&quot;, # Cloud Storage object. See https://cloud.google.com/storage/docs/naming#objectnames
-        },
+        &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The Service Account used in the build (either the default Service Account or user-specified Service Account) should have `secretmanager.versions.access` permissions on this secret. The proxy URL should be in format `protocol://@]proxyhost[:port]`.
       },
     },
     &quot;id&quot;: &quot;A String&quot;, # Output only. Unique identifier of the build.
@@ -1370,7 +1355,7 @@ Returns:
     &quot;options&quot;: { # Optional arguments to enable specific features of builds. # Special options for this build.
       &quot;automapSubstitutions&quot;: True or False, # Option to include built-in and custom substitutions as env variables for all build steps.
       &quot;defaultLogsBucketBehavior&quot;: &quot;A String&quot;, # Optional. Option to specify how default logs buckets are setup.
-      &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 2000GB; builds that request more than the maximum are rejected with an error.
+      &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 4000GB; builds that request more than the maximum are rejected with an error.
       &quot;dynamicSubstitutions&quot;: True or False, # Option to specify whether or not to apply bash style string operations to the substitutions. NOTE: this is always enabled for triggered builds and cannot be overridden in the build configuration file.
       &quot;env&quot;: [ # A list of global environment variable definitions that will exist for all build steps in this build. If a variable is defined in both globally and in a build step, the variable will use the build step value. The elements are of the form &quot;KEY=VALUE&quot; for the environment variable &quot;KEY&quot; being given the value &quot;VALUE&quot;.
         &quot;A String&quot;,
@@ -1650,7 +1635,7 @@ Returns:
     &quot;uri&quot;: &quot;A String&quot;, # The URI of the repo. Either uri or repository can be specified. If unspecified, the repo from which the trigger invocation originated is assumed to be the repo from which to read the specified path.
   },
   &quot;github&quot;: { # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. Mutually exclusive with `trigger_template`.
-    &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # Optional. The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
+    &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
     &quot;installationId&quot;: &quot;A String&quot;, # The installationID that emits the GitHub event.
     &quot;name&quot;: &quot;A String&quot;, # Name of the repository. For example: The name for https://github.com/googlecloudplatform/cloud-builders is &quot;cloud-builders&quot;.
     &quot;owner&quot;: &quot;A String&quot;, # Owner of the repository. For example: The owner for https://github.com/googlecloudplatform/cloud-builders is &quot;googlecloudplatform&quot;.
@@ -1717,7 +1702,7 @@ Returns:
     &quot;serviceAccountEmail&quot;: &quot;A String&quot;, # Service account that will make the push request.
     &quot;state&quot;: &quot;A String&quot;, # Potential issues with the underlying Pub/Sub subscription configuration. Only populated on get requests.
     &quot;subscription&quot;: &quot;A String&quot;, # Output only. Name of the subscription. Format is `projects/{project}/subscriptions/{subscription}`.
-    &quot;topic&quot;: &quot;A String&quot;, # The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
+    &quot;topic&quot;: &quot;A String&quot;, # Optional. The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
   },
   &quot;repositoryEventConfig&quot;: { # The configuration of a trigger that creates a build whenever an event from Repo API is received. # The configuration of a trigger that creates a build whenever an event from Repo API is received.
     &quot;pullRequest&quot;: { # PullRequestFilter contains filter properties for matching GitHub Pull Requests. # Filter to match changes in pull requests.
@@ -1734,7 +1719,7 @@ Returns:
     &quot;repositoryType&quot;: &quot;A String&quot;, # Output only. The type of the SCM vendor the repository points to.
   },
   &quot;resourceName&quot;: &quot;A String&quot;, # The `Trigger` name with format: `projects/{project}/locations/{location}/triggers/{trigger}`, where {trigger} is a unique identifier generated by the service.
-  &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set, then the standard Cloud Build service account ([PROJECT_NUM]@system.gserviceaccount.com) will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
+  &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set and the legacy Cloud Build service account ([PROJECT_NUM]@cloudbuild.gserviceaccount.com) is the default for the project then it will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
   &quot;sourceToBuild&quot;: { # GitRepoSource describes a repo and ref of a code repository. # The repo and ref of the repository from which to build. This field is used only for those triggers that do not respond to SCM events. Triggers that respond to such events build source at whatever commit caused the event. This field is currently only used by Webhook, Pub/Sub, Manual, and Cron triggers.
     &quot;bitbucketServerConfig&quot;: &quot;A String&quot;, # The full resource name of the bitbucket server config. Format: `projects/{project}/locations/{location}/bitbucketServerConfigs/{id}`.
     &quot;githubEnterpriseConfig&quot;: &quot;A String&quot;, # The full resource name of the github enterprise config. Format: `projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}`. `projects/{project}/githubEnterpriseConfigs/{id}`.
@@ -1908,12 +1893,7 @@ Returns:
         &quot;finishTime&quot;: &quot;A String&quot;, # Output only. Time at which execution of the build was finished. The difference between finish_time and start_time is the duration of the build&#x27;s execution.
         &quot;gitConfig&quot;: { # GitConfig is a configuration for git operations. # Optional. Configuration for git operations.
           &quot;http&quot;: { # HttpConfig is a configuration for HTTP related git operations. # Configuration for HTTP related git operations.
-            &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The proxy URL should be in format protocol://@]proxyhost[:port].
-            &quot;proxySslCaInfo&quot;: { # Represents a storage location in Cloud Storage # Optional. Cloud Storage object storing the certificate to use with the HTTP proxy.
-              &quot;bucket&quot;: &quot;A String&quot;, # Cloud Storage bucket. See https://cloud.google.com/storage/docs/naming#requirements
-              &quot;generation&quot;: &quot;A String&quot;, # Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
-              &quot;object&quot;: &quot;A String&quot;, # Cloud Storage object. See https://cloud.google.com/storage/docs/naming#objectnames
-            },
+            &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The Service Account used in the build (either the default Service Account or user-specified Service Account) should have `secretmanager.versions.access` permissions on this secret. The proxy URL should be in format `protocol://@]proxyhost[:port]`.
           },
         },
         &quot;id&quot;: &quot;A String&quot;, # Output only. Unique identifier of the build.
@@ -1926,7 +1906,7 @@ Returns:
         &quot;options&quot;: { # Optional arguments to enable specific features of builds. # Special options for this build.
           &quot;automapSubstitutions&quot;: True or False, # Option to include built-in and custom substitutions as env variables for all build steps.
           &quot;defaultLogsBucketBehavior&quot;: &quot;A String&quot;, # Optional. Option to specify how default logs buckets are setup.
-          &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 2000GB; builds that request more than the maximum are rejected with an error.
+          &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 4000GB; builds that request more than the maximum are rejected with an error.
           &quot;dynamicSubstitutions&quot;: True or False, # Option to specify whether or not to apply bash style string operations to the substitutions. NOTE: this is always enabled for triggered builds and cannot be overridden in the build configuration file.
           &quot;env&quot;: [ # A list of global environment variable definitions that will exist for all build steps in this build. If a variable is defined in both globally and in a build step, the variable will use the build step value. The elements are of the form &quot;KEY=VALUE&quot; for the environment variable &quot;KEY&quot; being given the value &quot;VALUE&quot;.
             &quot;A String&quot;,
@@ -2206,7 +2186,7 @@ Returns:
         &quot;uri&quot;: &quot;A String&quot;, # The URI of the repo. Either uri or repository can be specified. If unspecified, the repo from which the trigger invocation originated is assumed to be the repo from which to read the specified path.
       },
       &quot;github&quot;: { # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. Mutually exclusive with `trigger_template`.
-        &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # Optional. The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
+        &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
         &quot;installationId&quot;: &quot;A String&quot;, # The installationID that emits the GitHub event.
         &quot;name&quot;: &quot;A String&quot;, # Name of the repository. For example: The name for https://github.com/googlecloudplatform/cloud-builders is &quot;cloud-builders&quot;.
         &quot;owner&quot;: &quot;A String&quot;, # Owner of the repository. For example: The owner for https://github.com/googlecloudplatform/cloud-builders is &quot;googlecloudplatform&quot;.
@@ -2273,7 +2253,7 @@ Returns:
         &quot;serviceAccountEmail&quot;: &quot;A String&quot;, # Service account that will make the push request.
         &quot;state&quot;: &quot;A String&quot;, # Potential issues with the underlying Pub/Sub subscription configuration. Only populated on get requests.
         &quot;subscription&quot;: &quot;A String&quot;, # Output only. Name of the subscription. Format is `projects/{project}/subscriptions/{subscription}`.
-        &quot;topic&quot;: &quot;A String&quot;, # The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
+        &quot;topic&quot;: &quot;A String&quot;, # Optional. The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
       },
       &quot;repositoryEventConfig&quot;: { # The configuration of a trigger that creates a build whenever an event from Repo API is received. # The configuration of a trigger that creates a build whenever an event from Repo API is received.
         &quot;pullRequest&quot;: { # PullRequestFilter contains filter properties for matching GitHub Pull Requests. # Filter to match changes in pull requests.
@@ -2290,7 +2270,7 @@ Returns:
         &quot;repositoryType&quot;: &quot;A String&quot;, # Output only. The type of the SCM vendor the repository points to.
       },
       &quot;resourceName&quot;: &quot;A String&quot;, # The `Trigger` name with format: `projects/{project}/locations/{location}/triggers/{trigger}`, where {trigger} is a unique identifier generated by the service.
-      &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set, then the standard Cloud Build service account ([PROJECT_NUM]@system.gserviceaccount.com) will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
+      &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set and the legacy Cloud Build service account ([PROJECT_NUM]@cloudbuild.gserviceaccount.com) is the default for the project then it will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
       &quot;sourceToBuild&quot;: { # GitRepoSource describes a repo and ref of a code repository. # The repo and ref of the repository from which to build. This field is used only for those triggers that do not respond to SCM events. Triggers that respond to such events build source at whatever commit caused the event. This field is currently only used by Webhook, Pub/Sub, Manual, and Cron triggers.
         &quot;bitbucketServerConfig&quot;: &quot;A String&quot;, # The full resource name of the bitbucket server config. Format: `projects/{project}/locations/{location}/bitbucketServerConfigs/{id}`.
         &quot;githubEnterpriseConfig&quot;: &quot;A String&quot;, # The full resource name of the github enterprise config. Format: `projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}`. `projects/{project}/githubEnterpriseConfigs/{id}`.
@@ -2470,12 +2450,7 @@ Args:
     &quot;finishTime&quot;: &quot;A String&quot;, # Output only. Time at which execution of the build was finished. The difference between finish_time and start_time is the duration of the build&#x27;s execution.
     &quot;gitConfig&quot;: { # GitConfig is a configuration for git operations. # Optional. Configuration for git operations.
       &quot;http&quot;: { # HttpConfig is a configuration for HTTP related git operations. # Configuration for HTTP related git operations.
-        &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The proxy URL should be in format protocol://@]proxyhost[:port].
-        &quot;proxySslCaInfo&quot;: { # Represents a storage location in Cloud Storage # Optional. Cloud Storage object storing the certificate to use with the HTTP proxy.
-          &quot;bucket&quot;: &quot;A String&quot;, # Cloud Storage bucket. See https://cloud.google.com/storage/docs/naming#requirements
-          &quot;generation&quot;: &quot;A String&quot;, # Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
-          &quot;object&quot;: &quot;A String&quot;, # Cloud Storage object. See https://cloud.google.com/storage/docs/naming#objectnames
-        },
+        &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The Service Account used in the build (either the default Service Account or user-specified Service Account) should have `secretmanager.versions.access` permissions on this secret. The proxy URL should be in format `protocol://@]proxyhost[:port]`.
       },
     },
     &quot;id&quot;: &quot;A String&quot;, # Output only. Unique identifier of the build.
@@ -2488,7 +2463,7 @@ Args:
     &quot;options&quot;: { # Optional arguments to enable specific features of builds. # Special options for this build.
       &quot;automapSubstitutions&quot;: True or False, # Option to include built-in and custom substitutions as env variables for all build steps.
       &quot;defaultLogsBucketBehavior&quot;: &quot;A String&quot;, # Optional. Option to specify how default logs buckets are setup.
-      &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 2000GB; builds that request more than the maximum are rejected with an error.
+      &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 4000GB; builds that request more than the maximum are rejected with an error.
       &quot;dynamicSubstitutions&quot;: True or False, # Option to specify whether or not to apply bash style string operations to the substitutions. NOTE: this is always enabled for triggered builds and cannot be overridden in the build configuration file.
       &quot;env&quot;: [ # A list of global environment variable definitions that will exist for all build steps in this build. If a variable is defined in both globally and in a build step, the variable will use the build step value. The elements are of the form &quot;KEY=VALUE&quot; for the environment variable &quot;KEY&quot; being given the value &quot;VALUE&quot;.
         &quot;A String&quot;,
@@ -2768,7 +2743,7 @@ Args:
     &quot;uri&quot;: &quot;A String&quot;, # The URI of the repo. Either uri or repository can be specified. If unspecified, the repo from which the trigger invocation originated is assumed to be the repo from which to read the specified path.
   },
   &quot;github&quot;: { # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. Mutually exclusive with `trigger_template`.
-    &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # Optional. The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
+    &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
     &quot;installationId&quot;: &quot;A String&quot;, # The installationID that emits the GitHub event.
     &quot;name&quot;: &quot;A String&quot;, # Name of the repository. For example: The name for https://github.com/googlecloudplatform/cloud-builders is &quot;cloud-builders&quot;.
     &quot;owner&quot;: &quot;A String&quot;, # Owner of the repository. For example: The owner for https://github.com/googlecloudplatform/cloud-builders is &quot;googlecloudplatform&quot;.
@@ -2835,7 +2810,7 @@ Args:
     &quot;serviceAccountEmail&quot;: &quot;A String&quot;, # Service account that will make the push request.
     &quot;state&quot;: &quot;A String&quot;, # Potential issues with the underlying Pub/Sub subscription configuration. Only populated on get requests.
     &quot;subscription&quot;: &quot;A String&quot;, # Output only. Name of the subscription. Format is `projects/{project}/subscriptions/{subscription}`.
-    &quot;topic&quot;: &quot;A String&quot;, # The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
+    &quot;topic&quot;: &quot;A String&quot;, # Optional. The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
   },
   &quot;repositoryEventConfig&quot;: { # The configuration of a trigger that creates a build whenever an event from Repo API is received. # The configuration of a trigger that creates a build whenever an event from Repo API is received.
     &quot;pullRequest&quot;: { # PullRequestFilter contains filter properties for matching GitHub Pull Requests. # Filter to match changes in pull requests.
@@ -2852,7 +2827,7 @@ Args:
     &quot;repositoryType&quot;: &quot;A String&quot;, # Output only. The type of the SCM vendor the repository points to.
   },
   &quot;resourceName&quot;: &quot;A String&quot;, # The `Trigger` name with format: `projects/{project}/locations/{location}/triggers/{trigger}`, where {trigger} is a unique identifier generated by the service.
-  &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set, then the standard Cloud Build service account ([PROJECT_NUM]@system.gserviceaccount.com) will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
+  &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set and the legacy Cloud Build service account ([PROJECT_NUM]@cloudbuild.gserviceaccount.com) is the default for the project then it will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
   &quot;sourceToBuild&quot;: { # GitRepoSource describes a repo and ref of a code repository. # The repo and ref of the repository from which to build. This field is used only for those triggers that do not respond to SCM events. Triggers that respond to such events build source at whatever commit caused the event. This field is currently only used by Webhook, Pub/Sub, Manual, and Cron triggers.
     &quot;bitbucketServerConfig&quot;: &quot;A String&quot;, # The full resource name of the bitbucket server config. Format: `projects/{project}/locations/{location}/bitbucketServerConfigs/{id}`.
     &quot;githubEnterpriseConfig&quot;: &quot;A String&quot;, # The full resource name of the github enterprise config. Format: `projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}`. `projects/{project}/githubEnterpriseConfigs/{id}`.
@@ -3014,12 +2989,7 @@ Returns:
     &quot;finishTime&quot;: &quot;A String&quot;, # Output only. Time at which execution of the build was finished. The difference between finish_time and start_time is the duration of the build&#x27;s execution.
     &quot;gitConfig&quot;: { # GitConfig is a configuration for git operations. # Optional. Configuration for git operations.
       &quot;http&quot;: { # HttpConfig is a configuration for HTTP related git operations. # Configuration for HTTP related git operations.
-        &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The proxy URL should be in format protocol://@]proxyhost[:port].
-        &quot;proxySslCaInfo&quot;: { # Represents a storage location in Cloud Storage # Optional. Cloud Storage object storing the certificate to use with the HTTP proxy.
-          &quot;bucket&quot;: &quot;A String&quot;, # Cloud Storage bucket. See https://cloud.google.com/storage/docs/naming#requirements
-          &quot;generation&quot;: &quot;A String&quot;, # Cloud Storage generation for the object. If the generation is omitted, the latest generation will be used.
-          &quot;object&quot;: &quot;A String&quot;, # Cloud Storage object. See https://cloud.google.com/storage/docs/naming#objectnames
-        },
+        &quot;proxySecretVersionName&quot;: &quot;A String&quot;, # SecretVersion resource of the HTTP proxy URL. The Service Account used in the build (either the default Service Account or user-specified Service Account) should have `secretmanager.versions.access` permissions on this secret. The proxy URL should be in format `protocol://@]proxyhost[:port]`.
       },
     },
     &quot;id&quot;: &quot;A String&quot;, # Output only. Unique identifier of the build.
@@ -3032,7 +3002,7 @@ Returns:
     &quot;options&quot;: { # Optional arguments to enable specific features of builds. # Special options for this build.
       &quot;automapSubstitutions&quot;: True or False, # Option to include built-in and custom substitutions as env variables for all build steps.
       &quot;defaultLogsBucketBehavior&quot;: &quot;A String&quot;, # Optional. Option to specify how default logs buckets are setup.
-      &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 2000GB; builds that request more than the maximum are rejected with an error.
+      &quot;diskSizeGb&quot;: &quot;A String&quot;, # Requested disk size for the VM that runs the build. Note that this is *NOT* &quot;disk free&quot;; some of the space will be used by the operating system and build utilities. Also note that this is the minimum disk size that will be allocated for the build -- the build may run with a larger disk than requested. At present, the maximum disk size is 4000GB; builds that request more than the maximum are rejected with an error.
       &quot;dynamicSubstitutions&quot;: True or False, # Option to specify whether or not to apply bash style string operations to the substitutions. NOTE: this is always enabled for triggered builds and cannot be overridden in the build configuration file.
       &quot;env&quot;: [ # A list of global environment variable definitions that will exist for all build steps in this build. If a variable is defined in both globally and in a build step, the variable will use the build step value. The elements are of the form &quot;KEY=VALUE&quot; for the environment variable &quot;KEY&quot; being given the value &quot;VALUE&quot;.
         &quot;A String&quot;,
@@ -3312,7 +3282,7 @@ Returns:
     &quot;uri&quot;: &quot;A String&quot;, # The URI of the repo. Either uri or repository can be specified. If unspecified, the repo from which the trigger invocation originated is assumed to be the repo from which to read the specified path.
   },
   &quot;github&quot;: { # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. # GitHubEventsConfig describes the configuration of a trigger that creates a build whenever a GitHub event is received. Mutually exclusive with `trigger_template`.
-    &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # Optional. The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
+    &quot;enterpriseConfigResourceName&quot;: &quot;A String&quot;, # The resource name of the github enterprise config that should be applied to this installation. For example: &quot;projects/{$project_id}/locations/{$location_id}/githubEnterpriseConfigs/{$config_id}&quot;
     &quot;installationId&quot;: &quot;A String&quot;, # The installationID that emits the GitHub event.
     &quot;name&quot;: &quot;A String&quot;, # Name of the repository. For example: The name for https://github.com/googlecloudplatform/cloud-builders is &quot;cloud-builders&quot;.
     &quot;owner&quot;: &quot;A String&quot;, # Owner of the repository. For example: The owner for https://github.com/googlecloudplatform/cloud-builders is &quot;googlecloudplatform&quot;.
@@ -3379,7 +3349,7 @@ Returns:
     &quot;serviceAccountEmail&quot;: &quot;A String&quot;, # Service account that will make the push request.
     &quot;state&quot;: &quot;A String&quot;, # Potential issues with the underlying Pub/Sub subscription configuration. Only populated on get requests.
     &quot;subscription&quot;: &quot;A String&quot;, # Output only. Name of the subscription. Format is `projects/{project}/subscriptions/{subscription}`.
-    &quot;topic&quot;: &quot;A String&quot;, # The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
+    &quot;topic&quot;: &quot;A String&quot;, # Optional. The name of the topic from which this subscription is receiving messages. Format is `projects/{project}/topics/{topic}`.
   },
   &quot;repositoryEventConfig&quot;: { # The configuration of a trigger that creates a build whenever an event from Repo API is received. # The configuration of a trigger that creates a build whenever an event from Repo API is received.
     &quot;pullRequest&quot;: { # PullRequestFilter contains filter properties for matching GitHub Pull Requests. # Filter to match changes in pull requests.
@@ -3396,7 +3366,7 @@ Returns:
     &quot;repositoryType&quot;: &quot;A String&quot;, # Output only. The type of the SCM vendor the repository points to.
   },
   &quot;resourceName&quot;: &quot;A String&quot;, # The `Trigger` name with format: `projects/{project}/locations/{location}/triggers/{trigger}`, where {trigger} is a unique identifier generated by the service.
-  &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set, then the standard Cloud Build service account ([PROJECT_NUM]@system.gserviceaccount.com) will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
+  &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account used for all user-controlled operations including UpdateBuildTrigger, RunBuildTrigger, CreateBuild, and CancelBuild. If no service account is set and the legacy Cloud Build service account ([PROJECT_NUM]@cloudbuild.gserviceaccount.com) is the default for the project then it will be used instead. Format: `projects/{PROJECT_ID}/serviceAccounts/{ACCOUNT_ID_OR_EMAIL}`
   &quot;sourceToBuild&quot;: { # GitRepoSource describes a repo and ref of a code repository. # The repo and ref of the repository from which to build. This field is used only for those triggers that do not respond to SCM events. Triggers that respond to such events build source at whatever commit caused the event. This field is currently only used by Webhook, Pub/Sub, Manual, and Cron triggers.
     &quot;bitbucketServerConfig&quot;: &quot;A String&quot;, # The full resource name of the bitbucket server config. Format: `projects/{project}/locations/{location}/bitbucketServerConfigs/{id}`.
     &quot;githubEnterpriseConfig&quot;: &quot;A String&quot;, # The full resource name of the github enterprise config. Format: `projects/{project}/locations/{location}/githubEnterpriseConfigs/{id}`. `projects/{project}/githubEnterpriseConfigs/{id}`.

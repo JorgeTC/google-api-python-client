@@ -134,7 +134,7 @@ Args:
       &quot;audio&quot;: &quot;A String&quot;, # The natural language speech audio to be processed. A single request can contain up to 2 minutes of speech audio data. The transcribed text cannot contain more than 256 bytes. For non-streaming audio detect intent, both `config` and `audio` must be provided. For streaming audio detect intent, `config` must be provided in the first request and `audio` must be provided in all following requests.
       &quot;config&quot;: { # Instructs the speech recognizer on how to process the audio content. # Required. Instructs the speech recognizer how to process the speech audio.
         &quot;audioEncoding&quot;: &quot;A String&quot;, # Required. Audio encoding of the audio content to process.
-        &quot;bargeInConfig&quot;: { # Configuration of the barge-in behavior. Barge-in instructs the API to return a detected utterance at a proper time while the client is playing back the response audio from a previous request. When the client sees the utterance, it should stop the playback and immediately get ready for receiving the responses for the current request. The barge-in handling requires the client to start streaming audio input as soon as it starts playing back the audio from the previous response. The playback is modeled into two phases: * No barge-in phase: which goes first and during which speech detection should not be carried out. * Barge-in phase: which follows the no barge-in phase and during which the API starts speech detection and may inform the client that an utterance has been detected. Note that no-speech event is not expected in this phase. The client provides this configuration in terms of the durations of those two phases. The durations are measured in terms of the audio length from the the start of the input audio. No-speech event is a response with END_OF_UTTERANCE without any transcript following up. # Configuration of barge-in behavior during the streaming of input audio.
+        &quot;bargeInConfig&quot;: { # Configuration of the barge-in behavior. Barge-in instructs the API to return a detected utterance at a proper time while the client is playing back the response audio from a previous request. When the client sees the utterance, it should stop the playback and immediately get ready for receiving the responses for the current request. The barge-in handling requires the client to start streaming audio input as soon as it starts playing back the audio from the previous response. The playback is modeled into two phases: * No barge-in phase: which goes first and during which speech detection should not be carried out. * Barge-in phase: which follows the no barge-in phase and during which the API starts speech detection and may inform the client that an utterance has been detected. Note that no-speech event is not expected in this phase. The client provides this configuration in terms of the durations of those two phases. The durations are measured in terms of the audio length from the start of the input audio. No-speech event is a response with END_OF_UTTERANCE without any transcript following up. # Configuration of barge-in behavior during the streaming of input audio.
           &quot;noBargeInDuration&quot;: &quot;A String&quot;, # Duration that is not eligible for barge-in at the beginning of the input audio.
           &quot;totalDuration&quot;: &quot;A String&quot;, # Total duration for the playback at the beginning of the input audio.
         },
@@ -197,6 +197,17 @@ Args:
               &quot;conditionBoostSpecs&quot;: [ # Optional. Condition boost specifications. If a document matches multiple conditions in the specifictions, boost scores from these specifications are all applied and combined in a non-linear way. Maximum number of specifications is 20.
                 { # Boost applies to documents which match a condition.
                   &quot;boost&quot;: 3.14, # Optional. Strength of the condition boost, which should be in [-1, 1]. Negative boost means demotion. Default is 0.0. Setting to 1.0 gives the document a big promotion. However, it does not necessarily mean that the boosted document will be the top result at all times, nor that other documents will be excluded. Results could still be shown even when none of them matches the condition. And results that are significantly more relevant to the search query can still trump your heavily favored but irrelevant documents. Setting to -1.0 gives the document a big demotion. However, results that are deeply relevant might still be shown. The document will have an upstream battle to get a fairly high ranking, but it is not blocked out completely. Setting to 0.0 means no boost applied. The boosting condition is ignored.
+                  &quot;boostControlSpec&quot;: { # Specification for custom ranking based on customer specified attribute value. It provides more controls for customized ranking than the simple (condition, boost) combination above. # Optional. Complex specification for custom ranking based on customer defined attribute value.
+                    &quot;attributeType&quot;: &quot;A String&quot;, # Optional. The attribute type to be used to determine the boost amount. The attribute value can be derived from the field value of the specified field_name. In the case of numerical it is straightforward i.e. attribute_value = numerical_field_value. In the case of freshness however, attribute_value = (time.now() - datetime_field_value).
+                    &quot;controlPoints&quot;: [ # Optional. The control points used to define the curve. The monotonic function (defined through the interpolation_type above) passes through the control points listed here.
+                      { # The control points used to define the curve. The curve defined through these control points can only be monotonically increasing or decreasing(constant values are acceptable).
+                        &quot;attributeValue&quot;: &quot;A String&quot;, # Optional. Can be one of: 1. The numerical field value. 2. The duration spec for freshness: The value must be formatted as an XSD `dayTimeDuration` value (a restricted subset of an ISO 8601 duration value). The pattern for this is: `nDnM]`.
+                        &quot;boostAmount&quot;: 3.14, # Optional. The value between -1 to 1 by which to boost the score if the attribute_value evaluates to the value specified above.
+                      },
+                    ],
+                    &quot;fieldName&quot;: &quot;A String&quot;, # Optional. The name of the field whose value will be used to determine the boost amount.
+                    &quot;interpolationType&quot;: &quot;A String&quot;, # Optional. The interpolation type to be applied to connect the control points listed below.
+                  },
                   &quot;condition&quot;: &quot;A String&quot;, # Optional. An expression which specifies a boost condition. The syntax and supported fields are the same as a filter expression. Examples: * To boost documents with document ID &quot;doc_1&quot; or &quot;doc_2&quot;, and color &quot;Red&quot; or &quot;Blue&quot;: * (id: ANY(&quot;doc_1&quot;, &quot;doc_2&quot;)) AND (color: ANY(&quot;Red&quot;,&quot;Blue&quot;))
                 },
               ],
@@ -275,8 +286,9 @@ Returns:
         &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
       },
       &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-        &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-        &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+        &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+        &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+        &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
       },
       &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
         &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -301,8 +313,9 @@ Returns:
           &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
         },
         &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-          &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-          &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+          &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+          &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+          &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
         },
         &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
           &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -328,8 +341,9 @@ Returns:
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-            &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-            &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+            &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+            &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+            &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
           },
           &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
             &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -390,7 +404,7 @@ Returns:
                       },
                       &quot;text&quot;: { # The text response message. # Returns a text response.
                         &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                        &quot;text&quot;: [ # Required. A collection of text responses.
+                        &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                           &quot;A String&quot;,
                         ],
                       },
@@ -447,7 +461,7 @@ Returns:
             },
             &quot;text&quot;: { # The text response message. # Returns a text response.
               &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-              &quot;text&quot;: [ # Required. A collection of text responses.
+              &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                 &quot;A String&quot;,
               ],
             },
@@ -469,6 +483,7 @@ Returns:
           &quot;name&quot;: &quot;A String&quot;, # Output only. The unique identifier of this event handler.
           &quot;targetFlow&quot;: &quot;A String&quot;, # The target flow to transition to. Format: `projects//locations//agents//flows/`.
           &quot;targetPage&quot;: &quot;A String&quot;, # The target page to transition to. Format: `projects//locations//agents//flows//pages/`.
+          &quot;targetPlaybook&quot;: &quot;A String&quot;, # The target playbook to transition to. Format: `projects//locations//agents//playbooks/`.
           &quot;triggerFulfillment&quot;: { # A fulfillment can do one or more of the following actions at the same time: * Generate rich message responses. * Set parameter values. * Call the webhook. Fulfillments can be called at various stages in the Page or Form lifecycle. For example, when a DetectIntentRequest drives a session to enter a new page, the page&#x27;s entry fulfillment can add a static response to the QueryResult in the returning DetectIntentResponse, call the webhook (for example, to load user data from a database), or both. # The fulfillment to call when the event occurs. Handling webhook errors with a fulfillment enabled with webhook could cause infinite loop. It is invalid to specify such fulfillment for a handler handling webhooks.
             &quot;advancedSettings&quot;: { # Hierarchical advanced settings for agent/flow/page/fulfillment/parameter. Settings exposed at lower level overrides the settings exposed at higher level. Overriding occurs at the sub-setting level. For example, the playback_interruption_settings at fulfillment level only overrides the playback_interruption_settings at the agent level, leaving other settings at the agent level unchanged. DTMF settings does not override each other. DTMF settings set at different levels define DTMF detections running in parallel. Hierarchy: Agent-&gt;Flow-&gt;Page-&gt;Fulfillment/Parameter. # Hierarchical advanced settings for this fulfillment. The settings exposed at the lower level overrides the settings exposed at the higher level.
               &quot;audioExportGcsDestination&quot;: { # Google Cloud Storage location for a Dialogflow operation that writes or exports objects (e.g. exported agent or transcripts) outside of Dialogflow. # If present, incoming audio is exported by Dialogflow to the configured Google Cloud Storage destination. Exposed at the following levels: - Agent level - Flow level
@@ -482,8 +497,9 @@ Returns:
                 &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
               },
               &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
               },
               &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                 &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -544,7 +560,7 @@ Returns:
                           },
                           &quot;text&quot;: { # The text response message. # Returns a text response.
                             &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                            &quot;text&quot;: [ # Required. A collection of text responses.
+                            &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                               &quot;A String&quot;,
                             ],
                           },
@@ -601,7 +617,7 @@ Returns:
                 },
                 &quot;text&quot;: { # The text response message. # Returns a text response.
                   &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                  &quot;text&quot;: [ # Required. A collection of text responses.
+                  &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                     &quot;A String&quot;,
                   ],
                 },
@@ -634,8 +650,9 @@ Returns:
                 &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
               },
               &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
               },
               &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                 &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -663,8 +680,9 @@ Returns:
                     &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
                   },
                   &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                    &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                    &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                    &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                    &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                    &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
                   },
                   &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                     &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -725,7 +743,7 @@ Returns:
                               },
                               &quot;text&quot;: { # The text response message. # Returns a text response.
                                 &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                                &quot;text&quot;: [ # Required. A collection of text responses.
+                                &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                                   &quot;A String&quot;,
                                 ],
                               },
@@ -782,7 +800,7 @@ Returns:
                     },
                     &quot;text&quot;: { # The text response message. # Returns a text response.
                       &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                      &quot;text&quot;: [ # Required. A collection of text responses.
+                      &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                         &quot;A String&quot;,
                       ],
                     },
@@ -804,6 +822,7 @@ Returns:
                   &quot;name&quot;: &quot;A String&quot;, # Output only. The unique identifier of this event handler.
                   &quot;targetFlow&quot;: &quot;A String&quot;, # The target flow to transition to. Format: `projects//locations//agents//flows/`.
                   &quot;targetPage&quot;: &quot;A String&quot;, # The target page to transition to. Format: `projects//locations//agents//flows//pages/`.
+                  &quot;targetPlaybook&quot;: &quot;A String&quot;, # The target playbook to transition to. Format: `projects//locations//agents//playbooks/`.
                   &quot;triggerFulfillment&quot;: { # A fulfillment can do one or more of the following actions at the same time: * Generate rich message responses. * Set parameter values. * Call the webhook. Fulfillments can be called at various stages in the Page or Form lifecycle. For example, when a DetectIntentRequest drives a session to enter a new page, the page&#x27;s entry fulfillment can add a static response to the QueryResult in the returning DetectIntentResponse, call the webhook (for example, to load user data from a database), or both. # The fulfillment to call when the event occurs. Handling webhook errors with a fulfillment enabled with webhook could cause infinite loop. It is invalid to specify such fulfillment for a handler handling webhooks.
                     &quot;advancedSettings&quot;: { # Hierarchical advanced settings for agent/flow/page/fulfillment/parameter. Settings exposed at lower level overrides the settings exposed at higher level. Overriding occurs at the sub-setting level. For example, the playback_interruption_settings at fulfillment level only overrides the playback_interruption_settings at the agent level, leaving other settings at the agent level unchanged. DTMF settings does not override each other. DTMF settings set at different levels define DTMF detections running in parallel. Hierarchy: Agent-&gt;Flow-&gt;Page-&gt;Fulfillment/Parameter. # Hierarchical advanced settings for this fulfillment. The settings exposed at the lower level overrides the settings exposed at the higher level.
                       &quot;audioExportGcsDestination&quot;: { # Google Cloud Storage location for a Dialogflow operation that writes or exports objects (e.g. exported agent or transcripts) outside of Dialogflow. # If present, incoming audio is exported by Dialogflow to the configured Google Cloud Storage destination. Exposed at the following levels: - Agent level - Flow level
@@ -817,8 +836,9 @@ Returns:
                         &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
                       },
                       &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                        &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                        &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                        &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                        &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                        &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
                       },
                       &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                         &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -879,7 +899,7 @@ Returns:
                                   },
                                   &quot;text&quot;: { # The text response message. # Returns a text response.
                                     &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                                    &quot;text&quot;: [ # Required. A collection of text responses.
+                                    &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                                       &quot;A String&quot;,
                                     ],
                                   },
@@ -936,7 +956,7 @@ Returns:
                         },
                         &quot;text&quot;: { # The text response message. # Returns a text response.
                           &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                          &quot;text&quot;: [ # Required. A collection of text responses.
+                          &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                             &quot;A String&quot;,
                           ],
                         },
@@ -984,8 +1004,9 @@ Returns:
               &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
             },
             &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-              &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-              &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+              &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+              &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+              &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
             },
             &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
               &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -1046,7 +1067,7 @@ Returns:
                         },
                         &quot;text&quot;: { # The text response message. # Returns a text response.
                           &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                          &quot;text&quot;: [ # Required. A collection of text responses.
+                          &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                             &quot;A String&quot;,
                           ],
                         },
@@ -1103,7 +1124,7 @@ Returns:
               },
               &quot;text&quot;: { # The text response message. # Returns a text response.
                 &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                &quot;text&quot;: [ # Required. A collection of text responses.
+                &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                   &quot;A String&quot;,
                 ],
               },
@@ -1145,8 +1166,9 @@ Returns:
                 &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
               },
               &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
               },
               &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                 &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -1207,7 +1229,7 @@ Returns:
                           },
                           &quot;text&quot;: { # The text response message. # Returns a text response.
                             &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                            &quot;text&quot;: [ # Required. A collection of text responses.
+                            &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                               &quot;A String&quot;,
                             ],
                           },
@@ -1264,7 +1286,7 @@ Returns:
                 },
                 &quot;text&quot;: { # The text response message. # Returns a text response.
                   &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                  &quot;text&quot;: [ # Required. A collection of text responses.
+                  &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                     &quot;A String&quot;,
                   ],
                 },
@@ -1283,9 +1305,10 @@ Returns:
         },
       ],
     },
-    &quot;dataStoreConnectionSignals&quot;: { # Data store connection feature output signals. Might be only partially field if processing stop before the final answer. Reasons for this can be, but are not limited to: empty UCS search results, positive RAI check outcome, grounding failure, ... # Optional. Data store connection feature output signals. Filled only when data stores are involved in serving the query and DetectIntentRequest.populate data_store_connection_quality_signals is set to true in the request.
+    &quot;dataStoreConnectionSignals&quot;: { # Data store connection feature output signals. Might be only partially field if processing stop before the final answer. Reasons for this can be, but are not limited to: empty UCS search results, positive RAI check outcome, grounding failure, ... # Optional. Data store connection feature output signals. Filled only when data stores are involved in serving the query and DetectIntentRequest.populate_data_store_connection_signals is set to true in the request.
       &quot;answer&quot;: &quot;A String&quot;, # Optional. The final compiled answer.
       &quot;answerGenerationModelCallSignals&quot;: { # Diagnostic info related to the answer generation model call. # Optional. Diagnostic info related to the answer generation model call.
+        &quot;model&quot;: &quot;A String&quot;, # Name of the generative model. For example, &quot;gemini-ultra&quot;, &quot;gemini-pro&quot;, &quot;gemini-1.5-flash&quot; etc. Defaults to &quot;Other&quot; if the model is unknown.
         &quot;modelOutput&quot;: &quot;A String&quot;, # Output of the generative model.
         &quot;renderedPrompt&quot;: &quot;A String&quot;, # Prompt as sent to the model.
       },
@@ -1312,6 +1335,7 @@ Returns:
         &quot;score&quot;: &quot;A String&quot;, # Grounding score bucket setting.
       },
       &quot;rewriterModelCallSignals&quot;: { # Diagnostic info related to the rewriter model call. # Optional. Diagnostic info related to the rewriter model call.
+        &quot;model&quot;: &quot;A String&quot;, # Name of the generative model. For example, &quot;gemini-ultra&quot;, &quot;gemini-pro&quot;, &quot;gemini-1.5-flash&quot; etc. Defaults to &quot;Other&quot; if the model is unknown.
         &quot;modelOutput&quot;: &quot;A String&quot;, # Output of the generative model.
         &quot;renderedPrompt&quot;: &quot;A String&quot;, # Prompt as sent to the model.
       },
@@ -1454,7 +1478,7 @@ Returns:
         },
         &quot;text&quot;: { # The text response message. # Returns a text response.
           &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-          &quot;text&quot;: [ # Required. A collection of text responses.
+          &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
             &quot;A String&quot;,
           ],
         },
@@ -1546,7 +1570,7 @@ Args:
         &quot;audio&quot;: &quot;A String&quot;, # The natural language speech audio to be processed. A single request can contain up to 2 minutes of speech audio data. The transcribed text cannot contain more than 256 bytes. For non-streaming audio detect intent, both `config` and `audio` must be provided. For streaming audio detect intent, `config` must be provided in the first request and `audio` must be provided in all following requests.
         &quot;config&quot;: { # Instructs the speech recognizer on how to process the audio content. # Required. Instructs the speech recognizer how to process the speech audio.
           &quot;audioEncoding&quot;: &quot;A String&quot;, # Required. Audio encoding of the audio content to process.
-          &quot;bargeInConfig&quot;: { # Configuration of the barge-in behavior. Barge-in instructs the API to return a detected utterance at a proper time while the client is playing back the response audio from a previous request. When the client sees the utterance, it should stop the playback and immediately get ready for receiving the responses for the current request. The barge-in handling requires the client to start streaming audio input as soon as it starts playing back the audio from the previous response. The playback is modeled into two phases: * No barge-in phase: which goes first and during which speech detection should not be carried out. * Barge-in phase: which follows the no barge-in phase and during which the API starts speech detection and may inform the client that an utterance has been detected. Note that no-speech event is not expected in this phase. The client provides this configuration in terms of the durations of those two phases. The durations are measured in terms of the audio length from the the start of the input audio. No-speech event is a response with END_OF_UTTERANCE without any transcript following up. # Configuration of barge-in behavior during the streaming of input audio.
+          &quot;bargeInConfig&quot;: { # Configuration of the barge-in behavior. Barge-in instructs the API to return a detected utterance at a proper time while the client is playing back the response audio from a previous request. When the client sees the utterance, it should stop the playback and immediately get ready for receiving the responses for the current request. The barge-in handling requires the client to start streaming audio input as soon as it starts playing back the audio from the previous response. The playback is modeled into two phases: * No barge-in phase: which goes first and during which speech detection should not be carried out. * Barge-in phase: which follows the no barge-in phase and during which the API starts speech detection and may inform the client that an utterance has been detected. Note that no-speech event is not expected in this phase. The client provides this configuration in terms of the durations of those two phases. The durations are measured in terms of the audio length from the start of the input audio. No-speech event is a response with END_OF_UTTERANCE without any transcript following up. # Configuration of barge-in behavior during the streaming of input audio.
             &quot;noBargeInDuration&quot;: &quot;A String&quot;, # Duration that is not eligible for barge-in at the beginning of the input audio.
             &quot;totalDuration&quot;: &quot;A String&quot;, # Total duration for the playback at the beginning of the input audio.
           },
@@ -1609,6 +1633,17 @@ Args:
                 &quot;conditionBoostSpecs&quot;: [ # Optional. Condition boost specifications. If a document matches multiple conditions in the specifictions, boost scores from these specifications are all applied and combined in a non-linear way. Maximum number of specifications is 20.
                   { # Boost applies to documents which match a condition.
                     &quot;boost&quot;: 3.14, # Optional. Strength of the condition boost, which should be in [-1, 1]. Negative boost means demotion. Default is 0.0. Setting to 1.0 gives the document a big promotion. However, it does not necessarily mean that the boosted document will be the top result at all times, nor that other documents will be excluded. Results could still be shown even when none of them matches the condition. And results that are significantly more relevant to the search query can still trump your heavily favored but irrelevant documents. Setting to -1.0 gives the document a big demotion. However, results that are deeply relevant might still be shown. The document will have an upstream battle to get a fairly high ranking, but it is not blocked out completely. Setting to 0.0 means no boost applied. The boosting condition is ignored.
+                    &quot;boostControlSpec&quot;: { # Specification for custom ranking based on customer specified attribute value. It provides more controls for customized ranking than the simple (condition, boost) combination above. # Optional. Complex specification for custom ranking based on customer defined attribute value.
+                      &quot;attributeType&quot;: &quot;A String&quot;, # Optional. The attribute type to be used to determine the boost amount. The attribute value can be derived from the field value of the specified field_name. In the case of numerical it is straightforward i.e. attribute_value = numerical_field_value. In the case of freshness however, attribute_value = (time.now() - datetime_field_value).
+                      &quot;controlPoints&quot;: [ # Optional. The control points used to define the curve. The monotonic function (defined through the interpolation_type above) passes through the control points listed here.
+                        { # The control points used to define the curve. The curve defined through these control points can only be monotonically increasing or decreasing(constant values are acceptable).
+                          &quot;attributeValue&quot;: &quot;A String&quot;, # Optional. Can be one of: 1. The numerical field value. 2. The duration spec for freshness: The value must be formatted as an XSD `dayTimeDuration` value (a restricted subset of an ISO 8601 duration value). The pattern for this is: `nDnM]`.
+                          &quot;boostAmount&quot;: 3.14, # Optional. The value between -1 to 1 by which to boost the score if the attribute_value evaluates to the value specified above.
+                        },
+                      ],
+                      &quot;fieldName&quot;: &quot;A String&quot;, # Optional. The name of the field whose value will be used to determine the boost amount.
+                      &quot;interpolationType&quot;: &quot;A String&quot;, # Optional. The interpolation type to be applied to connect the control points listed below.
+                    },
                     &quot;condition&quot;: &quot;A String&quot;, # Optional. An expression which specifies a boost condition. The syntax and supported fields are the same as a filter expression. Examples: * To boost documents with document ID &quot;doc_1&quot; or &quot;doc_2&quot;, and color &quot;Red&quot; or &quot;Blue&quot;: * (id: ANY(&quot;doc_1&quot;, &quot;doc_2&quot;)) AND (color: ANY(&quot;Red&quot;,&quot;Blue&quot;))
                   },
                 ],
@@ -1703,8 +1738,9 @@ Returns:
         &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
       },
       &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-        &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-        &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+        &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+        &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+        &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
       },
       &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
         &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -1729,8 +1765,9 @@ Returns:
           &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
         },
         &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-          &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-          &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+          &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+          &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+          &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
         },
         &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
           &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -1756,8 +1793,9 @@ Returns:
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-            &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-            &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+            &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+            &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+            &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
           },
           &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
             &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -1818,7 +1856,7 @@ Returns:
                       },
                       &quot;text&quot;: { # The text response message. # Returns a text response.
                         &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                        &quot;text&quot;: [ # Required. A collection of text responses.
+                        &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                           &quot;A String&quot;,
                         ],
                       },
@@ -1875,7 +1913,7 @@ Returns:
             },
             &quot;text&quot;: { # The text response message. # Returns a text response.
               &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-              &quot;text&quot;: [ # Required. A collection of text responses.
+              &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                 &quot;A String&quot;,
               ],
             },
@@ -1897,6 +1935,7 @@ Returns:
           &quot;name&quot;: &quot;A String&quot;, # Output only. The unique identifier of this event handler.
           &quot;targetFlow&quot;: &quot;A String&quot;, # The target flow to transition to. Format: `projects//locations//agents//flows/`.
           &quot;targetPage&quot;: &quot;A String&quot;, # The target page to transition to. Format: `projects//locations//agents//flows//pages/`.
+          &quot;targetPlaybook&quot;: &quot;A String&quot;, # The target playbook to transition to. Format: `projects//locations//agents//playbooks/`.
           &quot;triggerFulfillment&quot;: { # A fulfillment can do one or more of the following actions at the same time: * Generate rich message responses. * Set parameter values. * Call the webhook. Fulfillments can be called at various stages in the Page or Form lifecycle. For example, when a DetectIntentRequest drives a session to enter a new page, the page&#x27;s entry fulfillment can add a static response to the QueryResult in the returning DetectIntentResponse, call the webhook (for example, to load user data from a database), or both. # The fulfillment to call when the event occurs. Handling webhook errors with a fulfillment enabled with webhook could cause infinite loop. It is invalid to specify such fulfillment for a handler handling webhooks.
             &quot;advancedSettings&quot;: { # Hierarchical advanced settings for agent/flow/page/fulfillment/parameter. Settings exposed at lower level overrides the settings exposed at higher level. Overriding occurs at the sub-setting level. For example, the playback_interruption_settings at fulfillment level only overrides the playback_interruption_settings at the agent level, leaving other settings at the agent level unchanged. DTMF settings does not override each other. DTMF settings set at different levels define DTMF detections running in parallel. Hierarchy: Agent-&gt;Flow-&gt;Page-&gt;Fulfillment/Parameter. # Hierarchical advanced settings for this fulfillment. The settings exposed at the lower level overrides the settings exposed at the higher level.
               &quot;audioExportGcsDestination&quot;: { # Google Cloud Storage location for a Dialogflow operation that writes or exports objects (e.g. exported agent or transcripts) outside of Dialogflow. # If present, incoming audio is exported by Dialogflow to the configured Google Cloud Storage destination. Exposed at the following levels: - Agent level - Flow level
@@ -1910,8 +1949,9 @@ Returns:
                 &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
               },
               &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
               },
               &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                 &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -1972,7 +2012,7 @@ Returns:
                           },
                           &quot;text&quot;: { # The text response message. # Returns a text response.
                             &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                            &quot;text&quot;: [ # Required. A collection of text responses.
+                            &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                               &quot;A String&quot;,
                             ],
                           },
@@ -2029,7 +2069,7 @@ Returns:
                 },
                 &quot;text&quot;: { # The text response message. # Returns a text response.
                   &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                  &quot;text&quot;: [ # Required. A collection of text responses.
+                  &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                     &quot;A String&quot;,
                   ],
                 },
@@ -2062,8 +2102,9 @@ Returns:
                 &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
               },
               &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
               },
               &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                 &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -2091,8 +2132,9 @@ Returns:
                     &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
                   },
                   &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                    &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                    &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                    &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                    &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                    &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
                   },
                   &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                     &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -2153,7 +2195,7 @@ Returns:
                               },
                               &quot;text&quot;: { # The text response message. # Returns a text response.
                                 &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                                &quot;text&quot;: [ # Required. A collection of text responses.
+                                &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                                   &quot;A String&quot;,
                                 ],
                               },
@@ -2210,7 +2252,7 @@ Returns:
                     },
                     &quot;text&quot;: { # The text response message. # Returns a text response.
                       &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                      &quot;text&quot;: [ # Required. A collection of text responses.
+                      &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                         &quot;A String&quot;,
                       ],
                     },
@@ -2232,6 +2274,7 @@ Returns:
                   &quot;name&quot;: &quot;A String&quot;, # Output only. The unique identifier of this event handler.
                   &quot;targetFlow&quot;: &quot;A String&quot;, # The target flow to transition to. Format: `projects//locations//agents//flows/`.
                   &quot;targetPage&quot;: &quot;A String&quot;, # The target page to transition to. Format: `projects//locations//agents//flows//pages/`.
+                  &quot;targetPlaybook&quot;: &quot;A String&quot;, # The target playbook to transition to. Format: `projects//locations//agents//playbooks/`.
                   &quot;triggerFulfillment&quot;: { # A fulfillment can do one or more of the following actions at the same time: * Generate rich message responses. * Set parameter values. * Call the webhook. Fulfillments can be called at various stages in the Page or Form lifecycle. For example, when a DetectIntentRequest drives a session to enter a new page, the page&#x27;s entry fulfillment can add a static response to the QueryResult in the returning DetectIntentResponse, call the webhook (for example, to load user data from a database), or both. # The fulfillment to call when the event occurs. Handling webhook errors with a fulfillment enabled with webhook could cause infinite loop. It is invalid to specify such fulfillment for a handler handling webhooks.
                     &quot;advancedSettings&quot;: { # Hierarchical advanced settings for agent/flow/page/fulfillment/parameter. Settings exposed at lower level overrides the settings exposed at higher level. Overriding occurs at the sub-setting level. For example, the playback_interruption_settings at fulfillment level only overrides the playback_interruption_settings at the agent level, leaving other settings at the agent level unchanged. DTMF settings does not override each other. DTMF settings set at different levels define DTMF detections running in parallel. Hierarchy: Agent-&gt;Flow-&gt;Page-&gt;Fulfillment/Parameter. # Hierarchical advanced settings for this fulfillment. The settings exposed at the lower level overrides the settings exposed at the higher level.
                       &quot;audioExportGcsDestination&quot;: { # Google Cloud Storage location for a Dialogflow operation that writes or exports objects (e.g. exported agent or transcripts) outside of Dialogflow. # If present, incoming audio is exported by Dialogflow to the configured Google Cloud Storage destination. Exposed at the following levels: - Agent level - Flow level
@@ -2245,8 +2288,9 @@ Returns:
                         &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
                       },
                       &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                        &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                        &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                        &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                        &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                        &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
                       },
                       &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                         &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -2307,7 +2351,7 @@ Returns:
                                   },
                                   &quot;text&quot;: { # The text response message. # Returns a text response.
                                     &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                                    &quot;text&quot;: [ # Required. A collection of text responses.
+                                    &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                                       &quot;A String&quot;,
                                     ],
                                   },
@@ -2364,7 +2408,7 @@ Returns:
                         },
                         &quot;text&quot;: { # The text response message. # Returns a text response.
                           &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                          &quot;text&quot;: [ # Required. A collection of text responses.
+                          &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                             &quot;A String&quot;,
                           ],
                         },
@@ -2412,8 +2456,9 @@ Returns:
               &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
             },
             &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-              &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-              &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+              &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+              &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+              &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
             },
             &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
               &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -2474,7 +2519,7 @@ Returns:
                         },
                         &quot;text&quot;: { # The text response message. # Returns a text response.
                           &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                          &quot;text&quot;: [ # Required. A collection of text responses.
+                          &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                             &quot;A String&quot;,
                           ],
                         },
@@ -2531,7 +2576,7 @@ Returns:
               },
               &quot;text&quot;: { # The text response message. # Returns a text response.
                 &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                &quot;text&quot;: [ # Required. A collection of text responses.
+                &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                   &quot;A String&quot;,
                 ],
               },
@@ -2573,8 +2618,9 @@ Returns:
                 &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
               },
               &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
               },
               &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                 &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -2635,7 +2681,7 @@ Returns:
                           },
                           &quot;text&quot;: { # The text response message. # Returns a text response.
                             &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                            &quot;text&quot;: [ # Required. A collection of text responses.
+                            &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                               &quot;A String&quot;,
                             ],
                           },
@@ -2692,7 +2738,7 @@ Returns:
                 },
                 &quot;text&quot;: { # The text response message. # Returns a text response.
                   &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                  &quot;text&quot;: [ # Required. A collection of text responses.
+                  &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                     &quot;A String&quot;,
                   ],
                 },
@@ -2711,9 +2757,10 @@ Returns:
         },
       ],
     },
-    &quot;dataStoreConnectionSignals&quot;: { # Data store connection feature output signals. Might be only partially field if processing stop before the final answer. Reasons for this can be, but are not limited to: empty UCS search results, positive RAI check outcome, grounding failure, ... # Optional. Data store connection feature output signals. Filled only when data stores are involved in serving the query and DetectIntentRequest.populate data_store_connection_quality_signals is set to true in the request.
+    &quot;dataStoreConnectionSignals&quot;: { # Data store connection feature output signals. Might be only partially field if processing stop before the final answer. Reasons for this can be, but are not limited to: empty UCS search results, positive RAI check outcome, grounding failure, ... # Optional. Data store connection feature output signals. Filled only when data stores are involved in serving the query and DetectIntentRequest.populate_data_store_connection_signals is set to true in the request.
       &quot;answer&quot;: &quot;A String&quot;, # Optional. The final compiled answer.
       &quot;answerGenerationModelCallSignals&quot;: { # Diagnostic info related to the answer generation model call. # Optional. Diagnostic info related to the answer generation model call.
+        &quot;model&quot;: &quot;A String&quot;, # Name of the generative model. For example, &quot;gemini-ultra&quot;, &quot;gemini-pro&quot;, &quot;gemini-1.5-flash&quot; etc. Defaults to &quot;Other&quot; if the model is unknown.
         &quot;modelOutput&quot;: &quot;A String&quot;, # Output of the generative model.
         &quot;renderedPrompt&quot;: &quot;A String&quot;, # Prompt as sent to the model.
       },
@@ -2740,6 +2787,7 @@ Returns:
         &quot;score&quot;: &quot;A String&quot;, # Grounding score bucket setting.
       },
       &quot;rewriterModelCallSignals&quot;: { # Diagnostic info related to the rewriter model call. # Optional. Diagnostic info related to the rewriter model call.
+        &quot;model&quot;: &quot;A String&quot;, # Name of the generative model. For example, &quot;gemini-ultra&quot;, &quot;gemini-pro&quot;, &quot;gemini-1.5-flash&quot; etc. Defaults to &quot;Other&quot; if the model is unknown.
         &quot;modelOutput&quot;: &quot;A String&quot;, # Output of the generative model.
         &quot;renderedPrompt&quot;: &quot;A String&quot;, # Prompt as sent to the model.
       },
@@ -2882,7 +2930,7 @@ Returns:
         },
         &quot;text&quot;: { # The text response message. # Returns a text response.
           &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-          &quot;text&quot;: [ # Required. A collection of text responses.
+          &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
             &quot;A String&quot;,
           ],
         },
@@ -2933,7 +2981,7 @@ Args:
       &quot;audio&quot;: &quot;A String&quot;, # The natural language speech audio to be processed. A single request can contain up to 2 minutes of speech audio data. The transcribed text cannot contain more than 256 bytes. For non-streaming audio detect intent, both `config` and `audio` must be provided. For streaming audio detect intent, `config` must be provided in the first request and `audio` must be provided in all following requests.
       &quot;config&quot;: { # Instructs the speech recognizer on how to process the audio content. # Required. Instructs the speech recognizer how to process the speech audio.
         &quot;audioEncoding&quot;: &quot;A String&quot;, # Required. Audio encoding of the audio content to process.
-        &quot;bargeInConfig&quot;: { # Configuration of the barge-in behavior. Barge-in instructs the API to return a detected utterance at a proper time while the client is playing back the response audio from a previous request. When the client sees the utterance, it should stop the playback and immediately get ready for receiving the responses for the current request. The barge-in handling requires the client to start streaming audio input as soon as it starts playing back the audio from the previous response. The playback is modeled into two phases: * No barge-in phase: which goes first and during which speech detection should not be carried out. * Barge-in phase: which follows the no barge-in phase and during which the API starts speech detection and may inform the client that an utterance has been detected. Note that no-speech event is not expected in this phase. The client provides this configuration in terms of the durations of those two phases. The durations are measured in terms of the audio length from the the start of the input audio. No-speech event is a response with END_OF_UTTERANCE without any transcript following up. # Configuration of barge-in behavior during the streaming of input audio.
+        &quot;bargeInConfig&quot;: { # Configuration of the barge-in behavior. Barge-in instructs the API to return a detected utterance at a proper time while the client is playing back the response audio from a previous request. When the client sees the utterance, it should stop the playback and immediately get ready for receiving the responses for the current request. The barge-in handling requires the client to start streaming audio input as soon as it starts playing back the audio from the previous response. The playback is modeled into two phases: * No barge-in phase: which goes first and during which speech detection should not be carried out. * Barge-in phase: which follows the no barge-in phase and during which the API starts speech detection and may inform the client that an utterance has been detected. Note that no-speech event is not expected in this phase. The client provides this configuration in terms of the durations of those two phases. The durations are measured in terms of the audio length from the start of the input audio. No-speech event is a response with END_OF_UTTERANCE without any transcript following up. # Configuration of barge-in behavior during the streaming of input audio.
           &quot;noBargeInDuration&quot;: &quot;A String&quot;, # Duration that is not eligible for barge-in at the beginning of the input audio.
           &quot;totalDuration&quot;: &quot;A String&quot;, # Total duration for the playback at the beginning of the input audio.
         },
@@ -2996,6 +3044,17 @@ Args:
               &quot;conditionBoostSpecs&quot;: [ # Optional. Condition boost specifications. If a document matches multiple conditions in the specifictions, boost scores from these specifications are all applied and combined in a non-linear way. Maximum number of specifications is 20.
                 { # Boost applies to documents which match a condition.
                   &quot;boost&quot;: 3.14, # Optional. Strength of the condition boost, which should be in [-1, 1]. Negative boost means demotion. Default is 0.0. Setting to 1.0 gives the document a big promotion. However, it does not necessarily mean that the boosted document will be the top result at all times, nor that other documents will be excluded. Results could still be shown even when none of them matches the condition. And results that are significantly more relevant to the search query can still trump your heavily favored but irrelevant documents. Setting to -1.0 gives the document a big demotion. However, results that are deeply relevant might still be shown. The document will have an upstream battle to get a fairly high ranking, but it is not blocked out completely. Setting to 0.0 means no boost applied. The boosting condition is ignored.
+                  &quot;boostControlSpec&quot;: { # Specification for custom ranking based on customer specified attribute value. It provides more controls for customized ranking than the simple (condition, boost) combination above. # Optional. Complex specification for custom ranking based on customer defined attribute value.
+                    &quot;attributeType&quot;: &quot;A String&quot;, # Optional. The attribute type to be used to determine the boost amount. The attribute value can be derived from the field value of the specified field_name. In the case of numerical it is straightforward i.e. attribute_value = numerical_field_value. In the case of freshness however, attribute_value = (time.now() - datetime_field_value).
+                    &quot;controlPoints&quot;: [ # Optional. The control points used to define the curve. The monotonic function (defined through the interpolation_type above) passes through the control points listed here.
+                      { # The control points used to define the curve. The curve defined through these control points can only be monotonically increasing or decreasing(constant values are acceptable).
+                        &quot;attributeValue&quot;: &quot;A String&quot;, # Optional. Can be one of: 1. The numerical field value. 2. The duration spec for freshness: The value must be formatted as an XSD `dayTimeDuration` value (a restricted subset of an ISO 8601 duration value). The pattern for this is: `nDnM]`.
+                        &quot;boostAmount&quot;: 3.14, # Optional. The value between -1 to 1 by which to boost the score if the attribute_value evaluates to the value specified above.
+                      },
+                    ],
+                    &quot;fieldName&quot;: &quot;A String&quot;, # Optional. The name of the field whose value will be used to determine the boost amount.
+                    &quot;interpolationType&quot;: &quot;A String&quot;, # Optional. The interpolation type to be applied to connect the control points listed below.
+                  },
                   &quot;condition&quot;: &quot;A String&quot;, # Optional. An expression which specifies a boost condition. The syntax and supported fields are the same as a filter expression. Examples: * To boost documents with document ID &quot;doc_1&quot; or &quot;doc_2&quot;, and color &quot;Red&quot; or &quot;Blue&quot;: * (id: ANY(&quot;doc_1&quot;, &quot;doc_2&quot;)) AND (color: ANY(&quot;Red&quot;,&quot;Blue&quot;))
                 },
               ],
@@ -3056,8 +3115,9 @@ Returns:
         &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
       },
       &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-        &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-        &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+        &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+        &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+        &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
       },
       &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
         &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -3083,8 +3143,9 @@ Returns:
           &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
         },
         &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-          &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-          &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+          &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+          &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+          &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
         },
         &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
           &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -3145,7 +3206,7 @@ Returns:
                     },
                     &quot;text&quot;: { # The text response message. # Returns a text response.
                       &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                      &quot;text&quot;: [ # Required. A collection of text responses.
+                      &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                         &quot;A String&quot;,
                       ],
                     },
@@ -3202,7 +3263,7 @@ Returns:
           },
           &quot;text&quot;: { # The text response message. # Returns a text response.
             &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-            &quot;text&quot;: [ # Required. A collection of text responses.
+            &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
               &quot;A String&quot;,
             ],
           },
@@ -3224,6 +3285,7 @@ Returns:
         &quot;name&quot;: &quot;A String&quot;, # Output only. The unique identifier of this event handler.
         &quot;targetFlow&quot;: &quot;A String&quot;, # The target flow to transition to. Format: `projects//locations//agents//flows/`.
         &quot;targetPage&quot;: &quot;A String&quot;, # The target page to transition to. Format: `projects//locations//agents//flows//pages/`.
+        &quot;targetPlaybook&quot;: &quot;A String&quot;, # The target playbook to transition to. Format: `projects//locations//agents//playbooks/`.
         &quot;triggerFulfillment&quot;: { # A fulfillment can do one or more of the following actions at the same time: * Generate rich message responses. * Set parameter values. * Call the webhook. Fulfillments can be called at various stages in the Page or Form lifecycle. For example, when a DetectIntentRequest drives a session to enter a new page, the page&#x27;s entry fulfillment can add a static response to the QueryResult in the returning DetectIntentResponse, call the webhook (for example, to load user data from a database), or both. # The fulfillment to call when the event occurs. Handling webhook errors with a fulfillment enabled with webhook could cause infinite loop. It is invalid to specify such fulfillment for a handler handling webhooks.
           &quot;advancedSettings&quot;: { # Hierarchical advanced settings for agent/flow/page/fulfillment/parameter. Settings exposed at lower level overrides the settings exposed at higher level. Overriding occurs at the sub-setting level. For example, the playback_interruption_settings at fulfillment level only overrides the playback_interruption_settings at the agent level, leaving other settings at the agent level unchanged. DTMF settings does not override each other. DTMF settings set at different levels define DTMF detections running in parallel. Hierarchy: Agent-&gt;Flow-&gt;Page-&gt;Fulfillment/Parameter. # Hierarchical advanced settings for this fulfillment. The settings exposed at the lower level overrides the settings exposed at the higher level.
             &quot;audioExportGcsDestination&quot;: { # Google Cloud Storage location for a Dialogflow operation that writes or exports objects (e.g. exported agent or transcripts) outside of Dialogflow. # If present, incoming audio is exported by Dialogflow to the configured Google Cloud Storage destination. Exposed at the following levels: - Agent level - Flow level
@@ -3237,8 +3299,9 @@ Returns:
               &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
             },
             &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-              &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-              &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+              &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+              &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+              &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
             },
             &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
               &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -3299,7 +3362,7 @@ Returns:
                         },
                         &quot;text&quot;: { # The text response message. # Returns a text response.
                           &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                          &quot;text&quot;: [ # Required. A collection of text responses.
+                          &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                             &quot;A String&quot;,
                           ],
                         },
@@ -3356,7 +3419,7 @@ Returns:
               },
               &quot;text&quot;: { # The text response message. # Returns a text response.
                 &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                &quot;text&quot;: [ # Required. A collection of text responses.
+                &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                   &quot;A String&quot;,
                 ],
               },
@@ -3389,8 +3452,9 @@ Returns:
               &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
             },
             &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-              &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-              &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+              &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+              &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+              &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
             },
             &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
               &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -3418,8 +3482,9 @@ Returns:
                   &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
                 },
                 &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                  &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                  &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                  &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                  &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                  &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
                 },
                 &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                   &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -3480,7 +3545,7 @@ Returns:
                             },
                             &quot;text&quot;: { # The text response message. # Returns a text response.
                               &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                              &quot;text&quot;: [ # Required. A collection of text responses.
+                              &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                                 &quot;A String&quot;,
                               ],
                             },
@@ -3537,7 +3602,7 @@ Returns:
                   },
                   &quot;text&quot;: { # The text response message. # Returns a text response.
                     &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                    &quot;text&quot;: [ # Required. A collection of text responses.
+                    &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                       &quot;A String&quot;,
                     ],
                   },
@@ -3559,6 +3624,7 @@ Returns:
                 &quot;name&quot;: &quot;A String&quot;, # Output only. The unique identifier of this event handler.
                 &quot;targetFlow&quot;: &quot;A String&quot;, # The target flow to transition to. Format: `projects//locations//agents//flows/`.
                 &quot;targetPage&quot;: &quot;A String&quot;, # The target page to transition to. Format: `projects//locations//agents//flows//pages/`.
+                &quot;targetPlaybook&quot;: &quot;A String&quot;, # The target playbook to transition to. Format: `projects//locations//agents//playbooks/`.
                 &quot;triggerFulfillment&quot;: { # A fulfillment can do one or more of the following actions at the same time: * Generate rich message responses. * Set parameter values. * Call the webhook. Fulfillments can be called at various stages in the Page or Form lifecycle. For example, when a DetectIntentRequest drives a session to enter a new page, the page&#x27;s entry fulfillment can add a static response to the QueryResult in the returning DetectIntentResponse, call the webhook (for example, to load user data from a database), or both. # The fulfillment to call when the event occurs. Handling webhook errors with a fulfillment enabled with webhook could cause infinite loop. It is invalid to specify such fulfillment for a handler handling webhooks.
                   &quot;advancedSettings&quot;: { # Hierarchical advanced settings for agent/flow/page/fulfillment/parameter. Settings exposed at lower level overrides the settings exposed at higher level. Overriding occurs at the sub-setting level. For example, the playback_interruption_settings at fulfillment level only overrides the playback_interruption_settings at the agent level, leaving other settings at the agent level unchanged. DTMF settings does not override each other. DTMF settings set at different levels define DTMF detections running in parallel. Hierarchy: Agent-&gt;Flow-&gt;Page-&gt;Fulfillment/Parameter. # Hierarchical advanced settings for this fulfillment. The settings exposed at the lower level overrides the settings exposed at the higher level.
                     &quot;audioExportGcsDestination&quot;: { # Google Cloud Storage location for a Dialogflow operation that writes or exports objects (e.g. exported agent or transcripts) outside of Dialogflow. # If present, incoming audio is exported by Dialogflow to the configured Google Cloud Storage destination. Exposed at the following levels: - Agent level - Flow level
@@ -3572,8 +3638,9 @@ Returns:
                       &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
                     },
                     &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                      &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                      &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                      &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                      &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                      &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
                     },
                     &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                       &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -3634,7 +3701,7 @@ Returns:
                                 },
                                 &quot;text&quot;: { # The text response message. # Returns a text response.
                                   &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                                  &quot;text&quot;: [ # Required. A collection of text responses.
+                                  &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                                     &quot;A String&quot;,
                                   ],
                                 },
@@ -3691,7 +3758,7 @@ Returns:
                       },
                       &quot;text&quot;: { # The text response message. # Returns a text response.
                         &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                        &quot;text&quot;: [ # Required. A collection of text responses.
+                        &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                           &quot;A String&quot;,
                         ],
                       },
@@ -3739,8 +3806,9 @@ Returns:
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-            &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-            &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+            &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+            &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+            &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
           },
           &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
             &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -3801,7 +3869,7 @@ Returns:
                       },
                       &quot;text&quot;: { # The text response message. # Returns a text response.
                         &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                        &quot;text&quot;: [ # Required. A collection of text responses.
+                        &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                           &quot;A String&quot;,
                         ],
                       },
@@ -3858,7 +3926,7 @@ Returns:
             },
             &quot;text&quot;: { # The text response message. # Returns a text response.
               &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-              &quot;text&quot;: [ # Required. A collection of text responses.
+              &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                 &quot;A String&quot;,
               ],
             },
@@ -3900,8 +3968,9 @@ Returns:
               &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
             },
             &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-              &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-              &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+              &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+              &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+              &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
             },
             &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
               &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -3962,7 +4031,7 @@ Returns:
                         },
                         &quot;text&quot;: { # The text response message. # Returns a text response.
                           &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                          &quot;text&quot;: [ # Required. A collection of text responses.
+                          &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                             &quot;A String&quot;,
                           ],
                         },
@@ -4019,7 +4088,7 @@ Returns:
               },
               &quot;text&quot;: { # The text response message. # Returns a text response.
                 &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                &quot;text&quot;: [ # Required. A collection of text responses.
+                &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                   &quot;A String&quot;,
                 ],
               },
@@ -4117,7 +4186,7 @@ Args:
       &quot;audio&quot;: &quot;A String&quot;, # The natural language speech audio to be processed. A single request can contain up to 2 minutes of speech audio data. The transcribed text cannot contain more than 256 bytes. For non-streaming audio detect intent, both `config` and `audio` must be provided. For streaming audio detect intent, `config` must be provided in the first request and `audio` must be provided in all following requests.
       &quot;config&quot;: { # Instructs the speech recognizer on how to process the audio content. # Required. Instructs the speech recognizer how to process the speech audio.
         &quot;audioEncoding&quot;: &quot;A String&quot;, # Required. Audio encoding of the audio content to process.
-        &quot;bargeInConfig&quot;: { # Configuration of the barge-in behavior. Barge-in instructs the API to return a detected utterance at a proper time while the client is playing back the response audio from a previous request. When the client sees the utterance, it should stop the playback and immediately get ready for receiving the responses for the current request. The barge-in handling requires the client to start streaming audio input as soon as it starts playing back the audio from the previous response. The playback is modeled into two phases: * No barge-in phase: which goes first and during which speech detection should not be carried out. * Barge-in phase: which follows the no barge-in phase and during which the API starts speech detection and may inform the client that an utterance has been detected. Note that no-speech event is not expected in this phase. The client provides this configuration in terms of the durations of those two phases. The durations are measured in terms of the audio length from the the start of the input audio. No-speech event is a response with END_OF_UTTERANCE without any transcript following up. # Configuration of barge-in behavior during the streaming of input audio.
+        &quot;bargeInConfig&quot;: { # Configuration of the barge-in behavior. Barge-in instructs the API to return a detected utterance at a proper time while the client is playing back the response audio from a previous request. When the client sees the utterance, it should stop the playback and immediately get ready for receiving the responses for the current request. The barge-in handling requires the client to start streaming audio input as soon as it starts playing back the audio from the previous response. The playback is modeled into two phases: * No barge-in phase: which goes first and during which speech detection should not be carried out. * Barge-in phase: which follows the no barge-in phase and during which the API starts speech detection and may inform the client that an utterance has been detected. Note that no-speech event is not expected in this phase. The client provides this configuration in terms of the durations of those two phases. The durations are measured in terms of the audio length from the start of the input audio. No-speech event is a response with END_OF_UTTERANCE without any transcript following up. # Configuration of barge-in behavior during the streaming of input audio.
           &quot;noBargeInDuration&quot;: &quot;A String&quot;, # Duration that is not eligible for barge-in at the beginning of the input audio.
           &quot;totalDuration&quot;: &quot;A String&quot;, # Total duration for the playback at the beginning of the input audio.
         },
@@ -4180,6 +4249,17 @@ Args:
               &quot;conditionBoostSpecs&quot;: [ # Optional. Condition boost specifications. If a document matches multiple conditions in the specifictions, boost scores from these specifications are all applied and combined in a non-linear way. Maximum number of specifications is 20.
                 { # Boost applies to documents which match a condition.
                   &quot;boost&quot;: 3.14, # Optional. Strength of the condition boost, which should be in [-1, 1]. Negative boost means demotion. Default is 0.0. Setting to 1.0 gives the document a big promotion. However, it does not necessarily mean that the boosted document will be the top result at all times, nor that other documents will be excluded. Results could still be shown even when none of them matches the condition. And results that are significantly more relevant to the search query can still trump your heavily favored but irrelevant documents. Setting to -1.0 gives the document a big demotion. However, results that are deeply relevant might still be shown. The document will have an upstream battle to get a fairly high ranking, but it is not blocked out completely. Setting to 0.0 means no boost applied. The boosting condition is ignored.
+                  &quot;boostControlSpec&quot;: { # Specification for custom ranking based on customer specified attribute value. It provides more controls for customized ranking than the simple (condition, boost) combination above. # Optional. Complex specification for custom ranking based on customer defined attribute value.
+                    &quot;attributeType&quot;: &quot;A String&quot;, # Optional. The attribute type to be used to determine the boost amount. The attribute value can be derived from the field value of the specified field_name. In the case of numerical it is straightforward i.e. attribute_value = numerical_field_value. In the case of freshness however, attribute_value = (time.now() - datetime_field_value).
+                    &quot;controlPoints&quot;: [ # Optional. The control points used to define the curve. The monotonic function (defined through the interpolation_type above) passes through the control points listed here.
+                      { # The control points used to define the curve. The curve defined through these control points can only be monotonically increasing or decreasing(constant values are acceptable).
+                        &quot;attributeValue&quot;: &quot;A String&quot;, # Optional. Can be one of: 1. The numerical field value. 2. The duration spec for freshness: The value must be formatted as an XSD `dayTimeDuration` value (a restricted subset of an ISO 8601 duration value). The pattern for this is: `nDnM]`.
+                        &quot;boostAmount&quot;: 3.14, # Optional. The value between -1 to 1 by which to boost the score if the attribute_value evaluates to the value specified above.
+                      },
+                    ],
+                    &quot;fieldName&quot;: &quot;A String&quot;, # Optional. The name of the field whose value will be used to determine the boost amount.
+                    &quot;interpolationType&quot;: &quot;A String&quot;, # Optional. The interpolation type to be applied to connect the control points listed below.
+                  },
                   &quot;condition&quot;: &quot;A String&quot;, # Optional. An expression which specifies a boost condition. The syntax and supported fields are the same as a filter expression. Examples: * To boost documents with document ID &quot;doc_1&quot; or &quot;doc_2&quot;, and color &quot;Red&quot; or &quot;Blue&quot;: * (id: ANY(&quot;doc_1&quot;, &quot;doc_2&quot;)) AND (color: ANY(&quot;Red&quot;,&quot;Blue&quot;))
                 },
               ],
@@ -4258,8 +4338,9 @@ Returns:
         &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
       },
       &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-        &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-        &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+        &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+        &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+        &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
       },
       &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
         &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -4284,8 +4365,9 @@ Returns:
           &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
         },
         &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-          &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-          &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+          &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+          &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+          &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
         },
         &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
           &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -4311,8 +4393,9 @@ Returns:
             &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
           },
           &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-            &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-            &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+            &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+            &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+            &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
           },
           &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
             &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -4373,7 +4456,7 @@ Returns:
                       },
                       &quot;text&quot;: { # The text response message. # Returns a text response.
                         &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                        &quot;text&quot;: [ # Required. A collection of text responses.
+                        &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                           &quot;A String&quot;,
                         ],
                       },
@@ -4430,7 +4513,7 @@ Returns:
             },
             &quot;text&quot;: { # The text response message. # Returns a text response.
               &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-              &quot;text&quot;: [ # Required. A collection of text responses.
+              &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                 &quot;A String&quot;,
               ],
             },
@@ -4452,6 +4535,7 @@ Returns:
           &quot;name&quot;: &quot;A String&quot;, # Output only. The unique identifier of this event handler.
           &quot;targetFlow&quot;: &quot;A String&quot;, # The target flow to transition to. Format: `projects//locations//agents//flows/`.
           &quot;targetPage&quot;: &quot;A String&quot;, # The target page to transition to. Format: `projects//locations//agents//flows//pages/`.
+          &quot;targetPlaybook&quot;: &quot;A String&quot;, # The target playbook to transition to. Format: `projects//locations//agents//playbooks/`.
           &quot;triggerFulfillment&quot;: { # A fulfillment can do one or more of the following actions at the same time: * Generate rich message responses. * Set parameter values. * Call the webhook. Fulfillments can be called at various stages in the Page or Form lifecycle. For example, when a DetectIntentRequest drives a session to enter a new page, the page&#x27;s entry fulfillment can add a static response to the QueryResult in the returning DetectIntentResponse, call the webhook (for example, to load user data from a database), or both. # The fulfillment to call when the event occurs. Handling webhook errors with a fulfillment enabled with webhook could cause infinite loop. It is invalid to specify such fulfillment for a handler handling webhooks.
             &quot;advancedSettings&quot;: { # Hierarchical advanced settings for agent/flow/page/fulfillment/parameter. Settings exposed at lower level overrides the settings exposed at higher level. Overriding occurs at the sub-setting level. For example, the playback_interruption_settings at fulfillment level only overrides the playback_interruption_settings at the agent level, leaving other settings at the agent level unchanged. DTMF settings does not override each other. DTMF settings set at different levels define DTMF detections running in parallel. Hierarchy: Agent-&gt;Flow-&gt;Page-&gt;Fulfillment/Parameter. # Hierarchical advanced settings for this fulfillment. The settings exposed at the lower level overrides the settings exposed at the higher level.
               &quot;audioExportGcsDestination&quot;: { # Google Cloud Storage location for a Dialogflow operation that writes or exports objects (e.g. exported agent or transcripts) outside of Dialogflow. # If present, incoming audio is exported by Dialogflow to the configured Google Cloud Storage destination. Exposed at the following levels: - Agent level - Flow level
@@ -4465,8 +4549,9 @@ Returns:
                 &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
               },
               &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
               },
               &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                 &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -4527,7 +4612,7 @@ Returns:
                           },
                           &quot;text&quot;: { # The text response message. # Returns a text response.
                             &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                            &quot;text&quot;: [ # Required. A collection of text responses.
+                            &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                               &quot;A String&quot;,
                             ],
                           },
@@ -4584,7 +4669,7 @@ Returns:
                 },
                 &quot;text&quot;: { # The text response message. # Returns a text response.
                   &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                  &quot;text&quot;: [ # Required. A collection of text responses.
+                  &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                     &quot;A String&quot;,
                   ],
                 },
@@ -4617,8 +4702,9 @@ Returns:
                 &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
               },
               &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
               },
               &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                 &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -4646,8 +4732,9 @@ Returns:
                     &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
                   },
                   &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                    &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                    &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                    &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                    &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                    &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
                   },
                   &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                     &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -4708,7 +4795,7 @@ Returns:
                               },
                               &quot;text&quot;: { # The text response message. # Returns a text response.
                                 &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                                &quot;text&quot;: [ # Required. A collection of text responses.
+                                &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                                   &quot;A String&quot;,
                                 ],
                               },
@@ -4765,7 +4852,7 @@ Returns:
                     },
                     &quot;text&quot;: { # The text response message. # Returns a text response.
                       &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                      &quot;text&quot;: [ # Required. A collection of text responses.
+                      &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                         &quot;A String&quot;,
                       ],
                     },
@@ -4787,6 +4874,7 @@ Returns:
                   &quot;name&quot;: &quot;A String&quot;, # Output only. The unique identifier of this event handler.
                   &quot;targetFlow&quot;: &quot;A String&quot;, # The target flow to transition to. Format: `projects//locations//agents//flows/`.
                   &quot;targetPage&quot;: &quot;A String&quot;, # The target page to transition to. Format: `projects//locations//agents//flows//pages/`.
+                  &quot;targetPlaybook&quot;: &quot;A String&quot;, # The target playbook to transition to. Format: `projects//locations//agents//playbooks/`.
                   &quot;triggerFulfillment&quot;: { # A fulfillment can do one or more of the following actions at the same time: * Generate rich message responses. * Set parameter values. * Call the webhook. Fulfillments can be called at various stages in the Page or Form lifecycle. For example, when a DetectIntentRequest drives a session to enter a new page, the page&#x27;s entry fulfillment can add a static response to the QueryResult in the returning DetectIntentResponse, call the webhook (for example, to load user data from a database), or both. # The fulfillment to call when the event occurs. Handling webhook errors with a fulfillment enabled with webhook could cause infinite loop. It is invalid to specify such fulfillment for a handler handling webhooks.
                     &quot;advancedSettings&quot;: { # Hierarchical advanced settings for agent/flow/page/fulfillment/parameter. Settings exposed at lower level overrides the settings exposed at higher level. Overriding occurs at the sub-setting level. For example, the playback_interruption_settings at fulfillment level only overrides the playback_interruption_settings at the agent level, leaving other settings at the agent level unchanged. DTMF settings does not override each other. DTMF settings set at different levels define DTMF detections running in parallel. Hierarchy: Agent-&gt;Flow-&gt;Page-&gt;Fulfillment/Parameter. # Hierarchical advanced settings for this fulfillment. The settings exposed at the lower level overrides the settings exposed at the higher level.
                       &quot;audioExportGcsDestination&quot;: { # Google Cloud Storage location for a Dialogflow operation that writes or exports objects (e.g. exported agent or transcripts) outside of Dialogflow. # If present, incoming audio is exported by Dialogflow to the configured Google Cloud Storage destination. Exposed at the following levels: - Agent level - Flow level
@@ -4800,8 +4888,9 @@ Returns:
                         &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
                       },
                       &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                        &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                        &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                        &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                        &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                        &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
                       },
                       &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                         &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -4862,7 +4951,7 @@ Returns:
                                   },
                                   &quot;text&quot;: { # The text response message. # Returns a text response.
                                     &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                                    &quot;text&quot;: [ # Required. A collection of text responses.
+                                    &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                                       &quot;A String&quot;,
                                     ],
                                   },
@@ -4919,7 +5008,7 @@ Returns:
                         },
                         &quot;text&quot;: { # The text response message. # Returns a text response.
                           &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                          &quot;text&quot;: [ # Required. A collection of text responses.
+                          &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                             &quot;A String&quot;,
                           ],
                         },
@@ -4967,8 +5056,9 @@ Returns:
               &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
             },
             &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-              &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-              &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+              &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+              &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+              &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
             },
             &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
               &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -5029,7 +5119,7 @@ Returns:
                         },
                         &quot;text&quot;: { # The text response message. # Returns a text response.
                           &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                          &quot;text&quot;: [ # Required. A collection of text responses.
+                          &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                             &quot;A String&quot;,
                           ],
                         },
@@ -5086,7 +5176,7 @@ Returns:
               },
               &quot;text&quot;: { # The text response message. # Returns a text response.
                 &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                &quot;text&quot;: [ # Required. A collection of text responses.
+                &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                   &quot;A String&quot;,
                 ],
               },
@@ -5128,8 +5218,9 @@ Returns:
                 &quot;maxDigits&quot;: 42, # Max length of DTMF digits.
               },
               &quot;loggingSettings&quot;: { # Define behaviors on logging. # Settings for logging. Settings for Dialogflow History, Contact Center messages, StackDriver logs, and speech logging. Exposed at the following levels: - Agent level.
-                &quot;enableInteractionLogging&quot;: True or False, # If true, DF Interaction logging is currently enabled.
-                &quot;enableStackdriverLogging&quot;: True or False, # If true, StackDriver logging is currently enabled.
+                &quot;enableConsentBasedRedaction&quot;: True or False, # Enables consent-based end-user input redaction, if true, a pre-defined session parameter `$session.params.conversation-redaction` will be used to determine if the utterance should be redacted.
+                &quot;enableInteractionLogging&quot;: True or False, # Enables DF Interaction logging.
+                &quot;enableStackdriverLogging&quot;: True or False, # Enables Google Cloud Logging.
               },
               &quot;speechSettings&quot;: { # Define behaviors of speech to text detection. # Settings for speech to text detection. Exposed at the following levels: - Agent level - Flow level - Page level - Parameter level
                 &quot;endpointerSensitivity&quot;: 42, # Sensitivity of the speech model that detects the end of speech. Scale from 0 to 100.
@@ -5190,7 +5281,7 @@ Returns:
                           },
                           &quot;text&quot;: { # The text response message. # Returns a text response.
                             &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                            &quot;text&quot;: [ # Required. A collection of text responses.
+                            &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                               &quot;A String&quot;,
                             ],
                           },
@@ -5247,7 +5338,7 @@ Returns:
                 },
                 &quot;text&quot;: { # The text response message. # Returns a text response.
                   &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-                  &quot;text&quot;: [ # Required. A collection of text responses.
+                  &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                     &quot;A String&quot;,
                   ],
                 },
@@ -5266,9 +5357,10 @@ Returns:
         },
       ],
     },
-    &quot;dataStoreConnectionSignals&quot;: { # Data store connection feature output signals. Might be only partially field if processing stop before the final answer. Reasons for this can be, but are not limited to: empty UCS search results, positive RAI check outcome, grounding failure, ... # Optional. Data store connection feature output signals. Filled only when data stores are involved in serving the query and DetectIntentRequest.populate data_store_connection_quality_signals is set to true in the request.
+    &quot;dataStoreConnectionSignals&quot;: { # Data store connection feature output signals. Might be only partially field if processing stop before the final answer. Reasons for this can be, but are not limited to: empty UCS search results, positive RAI check outcome, grounding failure, ... # Optional. Data store connection feature output signals. Filled only when data stores are involved in serving the query and DetectIntentRequest.populate_data_store_connection_signals is set to true in the request.
       &quot;answer&quot;: &quot;A String&quot;, # Optional. The final compiled answer.
       &quot;answerGenerationModelCallSignals&quot;: { # Diagnostic info related to the answer generation model call. # Optional. Diagnostic info related to the answer generation model call.
+        &quot;model&quot;: &quot;A String&quot;, # Name of the generative model. For example, &quot;gemini-ultra&quot;, &quot;gemini-pro&quot;, &quot;gemini-1.5-flash&quot; etc. Defaults to &quot;Other&quot; if the model is unknown.
         &quot;modelOutput&quot;: &quot;A String&quot;, # Output of the generative model.
         &quot;renderedPrompt&quot;: &quot;A String&quot;, # Prompt as sent to the model.
       },
@@ -5295,6 +5387,7 @@ Returns:
         &quot;score&quot;: &quot;A String&quot;, # Grounding score bucket setting.
       },
       &quot;rewriterModelCallSignals&quot;: { # Diagnostic info related to the rewriter model call. # Optional. Diagnostic info related to the rewriter model call.
+        &quot;model&quot;: &quot;A String&quot;, # Name of the generative model. For example, &quot;gemini-ultra&quot;, &quot;gemini-pro&quot;, &quot;gemini-1.5-flash&quot; etc. Defaults to &quot;Other&quot; if the model is unknown.
         &quot;modelOutput&quot;: &quot;A String&quot;, # Output of the generative model.
         &quot;renderedPrompt&quot;: &quot;A String&quot;, # Prompt as sent to the model.
       },
@@ -5437,7 +5530,7 @@ Returns:
         },
         &quot;text&quot;: { # The text response message. # Returns a text response.
           &quot;allowPlaybackInterruption&quot;: True or False, # Output only. Whether the playback of this message can be interrupted by the end user&#x27;s speech and the client can then starts the next Dialogflow request.
-          &quot;text&quot;: [ # Required. A collection of text responses.
+          &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
             &quot;A String&quot;,
           ],
         },
