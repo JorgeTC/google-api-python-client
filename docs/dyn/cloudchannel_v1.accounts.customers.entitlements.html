@@ -231,7 +231,7 @@ Args:
       },
     },
   ],
-  &quot;priceReferenceId&quot;: &quot;A String&quot;, # Optional. Price reference ID for the offer. Optional field only for offers that require additional price information. Used to guarantee that the pricing is consistent between quoting the offer and placing the order. Not yet implemented: if populated in a request, this field isn&#x27;t evaluated in the API.
+  &quot;priceReferenceId&quot;: &quot;A String&quot;, # Optional. Price reference ID for the offer. Only for offers that require additional price information. Used to guarantee that the pricing is consistent between quoting the offer and placing the order.
   &quot;purchaseOrderId&quot;: &quot;A String&quot;, # Optional. Purchase order id provided by the reseller.
   &quot;requestId&quot;: &quot;A String&quot;, # Optional. You can specify an optional unique request ID, and if you need to retry your request, the server will know to ignore the request if it&#x27;s complete. For example, you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if it received the original operation with the same request ID. If it did, it will ignore the second request. The request ID must be a valid [UUID](https://tools.ietf.org/html/rfc4122) with the exception that zero UUID is not supported (`00000000-0000-0000-0000-000000000000`).
 }
@@ -425,7 +425,7 @@ Args:
         },
       },
     ],
-    &quot;priceReferenceId&quot;: &quot;A String&quot;, # Optional. Price reference ID for the offer. Optional field only for offers that require additional price information. Used to guarantee that the pricing is consistent between quoting the offer and placing the order. Not yet implemented: if this field is populated in a request, it isn&#x27;t evaluated in the API.
+    &quot;priceReferenceId&quot;: &quot;A String&quot;, # Optional. Price reference ID for the offer. Only for offers that require additional price information. Used to guarantee that the pricing is consistent between quoting the offer and placing the order.
     &quot;provisionedService&quot;: { # Service provisioned for an entitlement. # Output only. Service provisioning details for the entitlement.
       &quot;productId&quot;: &quot;A String&quot;, # Output only. The product pertaining to the provisioning resource as specified in the Offer.
       &quot;provisioningId&quot;: &quot;A String&quot;, # Output only. Provisioning ID of the entitlement. For Google Workspace, this is the underlying Subscription ID. For Google Cloud, this is the Billing Account ID of the billing subaccount.
@@ -524,7 +524,7 @@ Returns:
       },
     },
   ],
-  &quot;priceReferenceId&quot;: &quot;A String&quot;, # Optional. Price reference ID for the offer. Optional field only for offers that require additional price information. Used to guarantee that the pricing is consistent between quoting the offer and placing the order. Not yet implemented: if this field is populated in a request, it isn&#x27;t evaluated in the API.
+  &quot;priceReferenceId&quot;: &quot;A String&quot;, # Optional. Price reference ID for the offer. Only for offers that require additional price information. Used to guarantee that the pricing is consistent between quoting the offer and placing the order.
   &quot;provisionedService&quot;: { # Service provisioned for an entitlement. # Output only. Service provisioning details for the entitlement.
     &quot;productId&quot;: &quot;A String&quot;, # Output only. The product pertaining to the provisioning resource as specified in the Offer.
     &quot;provisioningId&quot;: &quot;A String&quot;, # Output only. Provisioning ID of the entitlement. For Google Workspace, this is the underlying Subscription ID. For Google Cloud, this is the Billing Account ID of the billing subaccount.
@@ -597,7 +597,7 @@ Returns:
           },
         },
       ],
-      &quot;priceReferenceId&quot;: &quot;A String&quot;, # Optional. Price reference ID for the offer. Optional field only for offers that require additional price information. Used to guarantee that the pricing is consistent between quoting the offer and placing the order. Not yet implemented: if this field is populated in a request, it isn&#x27;t evaluated in the API.
+      &quot;priceReferenceId&quot;: &quot;A String&quot;, # Optional. Price reference ID for the offer. Only for offers that require additional price information. Used to guarantee that the pricing is consistent between quoting the offer and placing the order.
       &quot;provisionedService&quot;: { # Service provisioned for an entitlement. # Output only. Service provisioning details for the entitlement.
         &quot;productId&quot;: &quot;A String&quot;, # Output only. The product pertaining to the provisioning resource as specified in the Offer.
         &quot;provisioningId&quot;: &quot;A String&quot;, # Output only. Provisioning ID of the entitlement. For Google Workspace, this is the underlying Subscription ID. For Google Cloud, this is the Billing Account ID of the billing subaccount.
@@ -801,12 +801,27 @@ Returns:
           &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
         },
         &quot;discount&quot;: 3.14, # Discount percentage, represented as decimal. For example, a 20% discount will be represent as 0.2.
+        &quot;discountComponents&quot;: [ # Breakdown of the discount into its components. This will be empty if there is no discount present.
+          { # Represents a single component of the total discount applicable on a Price.
+            &quot;discountAbsolute&quot;: { # Represents an amount of money with its currency type. # Fixed value discount.
+              &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
+              &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
+              &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+            },
+            &quot;discountPercentage&quot;: 3.14, # Discount percentage, represented as decimal. For example, a 20% discount will be represented as 0.2.
+            &quot;discountType&quot;: &quot;A String&quot;, # Type of the discount.
+          },
+        ],
         &quot;effectivePrice&quot;: { # Represents an amount of money with its currency type. # Effective Price after applying the discounts.
           &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
           &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
           &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
         },
         &quot;externalPriceUri&quot;: &quot;A String&quot;, # Link to external price list, such as link to Google Voice rate card.
+        &quot;pricePeriod&quot;: { # Represents period in days/months/years. # The time period with respect to which base and effective prices are defined. Example: 1 month, 6 months, 1 year, etc.
+          &quot;duration&quot;: 42, # Total duration of Period Type defined.
+          &quot;periodType&quot;: &quot;A String&quot;, # Period Type.
+        },
       },
       &quot;pricePhases&quot;: [ # Specifies the price by time range.
         { # Specifies the price by the duration of months. For example, a 20% discount for the first six months, then a 10% discount starting on the seventh month.
@@ -820,12 +835,27 @@ Returns:
               &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
             },
             &quot;discount&quot;: 3.14, # Discount percentage, represented as decimal. For example, a 20% discount will be represent as 0.2.
+            &quot;discountComponents&quot;: [ # Breakdown of the discount into its components. This will be empty if there is no discount present.
+              { # Represents a single component of the total discount applicable on a Price.
+                &quot;discountAbsolute&quot;: { # Represents an amount of money with its currency type. # Fixed value discount.
+                  &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
+                  &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
+                  &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+                },
+                &quot;discountPercentage&quot;: 3.14, # Discount percentage, represented as decimal. For example, a 20% discount will be represented as 0.2.
+                &quot;discountType&quot;: &quot;A String&quot;, # Type of the discount.
+              },
+            ],
             &quot;effectivePrice&quot;: { # Represents an amount of money with its currency type. # Effective Price after applying the discounts.
               &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
               &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
               &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
             },
             &quot;externalPriceUri&quot;: &quot;A String&quot;, # Link to external price list, such as link to Google Voice rate card.
+            &quot;pricePeriod&quot;: { # Represents period in days/months/years. # The time period with respect to which base and effective prices are defined. Example: 1 month, 6 months, 1 year, etc.
+              &quot;duration&quot;: 42, # Total duration of Period Type defined.
+              &quot;periodType&quot;: &quot;A String&quot;, # Period Type.
+            },
           },
           &quot;priceTiers&quot;: [ # Price by the resource tiers.
             { # Defines price at resource tier level. For example, an offer with following definition : * Tier 1: Provide 25% discount for all seats between 1 and 25. * Tier 2: Provide 10% discount for all seats between 26 and 100. * Tier 3: Provide flat 15% discount for all seats above 100. Each of these tiers is represented as a PriceTier.
@@ -838,12 +868,27 @@ Returns:
                   &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
                 },
                 &quot;discount&quot;: 3.14, # Discount percentage, represented as decimal. For example, a 20% discount will be represent as 0.2.
+                &quot;discountComponents&quot;: [ # Breakdown of the discount into its components. This will be empty if there is no discount present.
+                  { # Represents a single component of the total discount applicable on a Price.
+                    &quot;discountAbsolute&quot;: { # Represents an amount of money with its currency type. # Fixed value discount.
+                      &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
+                      &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
+                      &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
+                    },
+                    &quot;discountPercentage&quot;: 3.14, # Discount percentage, represented as decimal. For example, a 20% discount will be represented as 0.2.
+                    &quot;discountType&quot;: &quot;A String&quot;, # Type of the discount.
+                  },
+                ],
                 &quot;effectivePrice&quot;: { # Represents an amount of money with its currency type. # Effective Price after applying the discounts.
                   &quot;currencyCode&quot;: &quot;A String&quot;, # The three-letter currency code defined in ISO 4217.
                   &quot;nanos&quot;: 42, # Number of nano (10^-9) units of the amount. The value must be between -999,999,999 and +999,999,999 inclusive. If `units` is positive, `nanos` must be positive or zero. If `units` is zero, `nanos` can be positive, zero, or negative. If `units` is negative, `nanos` must be negative or zero. For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
                   &quot;units&quot;: &quot;A String&quot;, # The whole units of the amount. For example if `currencyCode` is `&quot;USD&quot;`, then 1 unit is one US dollar.
                 },
                 &quot;externalPriceUri&quot;: &quot;A String&quot;, # Link to external price list, such as link to Google Voice rate card.
+                &quot;pricePeriod&quot;: { # Represents period in days/months/years. # The time period with respect to which base and effective prices are defined. Example: 1 month, 6 months, 1 year, etc.
+                  &quot;duration&quot;: 42, # Total duration of Period Type defined.
+                  &quot;periodType&quot;: &quot;A String&quot;, # Period Type.
+                },
               },
             },
           ],

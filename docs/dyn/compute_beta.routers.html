@@ -217,10 +217,10 @@ Returns:
               &quot;enable&quot;: &quot;A String&quot;, # The status of the BGP peer connection. If set to FALSE, any active session with the peer is terminated and all associated routing information is removed. If set to TRUE, the peer connection can be established with routing information. The default is TRUE.
               &quot;enableIpv4&quot;: True or False, # Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.
               &quot;enableIpv6&quot;: True or False, # Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.
-              &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+              &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type.
                 &quot;A String&quot;,
               ],
-              &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+              &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type.
                 &quot;A String&quot;,
               ],
               &quot;interfaceName&quot;: &quot;A String&quot;, # Name of the interface the BGP peer is associated with.
@@ -243,7 +243,7 @@ Returns:
           &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
           &quot;interfaces&quot;: [ # Router interfaces. To create a BGP peer that uses a router interface, the interface must have one of the following fields specified: - linkedVpnTunnel - linkedInterconnectAttachment - subnetwork You can create a router interface without any of these fields specified. However, you cannot create a BGP peer that uses that interface.
             {
-              &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fc00:0:1:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
+              &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fdff:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
               &quot;ipVersion&quot;: &quot;A String&quot;, # IP version of this interface.
               &quot;linkedInterconnectAttachment&quot;: &quot;A String&quot;, # URI of the linked Interconnect attachment. It must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
               &quot;linkedVpnTunnel&quot;: &quot;A String&quot;, # URI of the linked VPN tunnel, which must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
@@ -331,7 +331,13 @@ Returns:
               &quot;udpIdleTimeoutSec&quot;: 42, # Timeout (in seconds) for UDP connections. Defaults to 30s if not set.
             },
           ],
+          &quot;nccGateway&quot;: &quot;A String&quot;, # URI of the ncc_gateway to which this router associated.
           &quot;network&quot;: &quot;A String&quot;, # URI of the network to which this router belongs.
+          &quot;params&quot;: { # Additional router parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+            &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid. * Inconsistent format is not supported. For instance: {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;123/env&quot; : &quot;prod&quot;} is invalid.
+              &quot;a_key&quot;: &quot;A String&quot;,
+            },
+          },
           &quot;region&quot;: &quot;A String&quot;, # [Output Only] URI of the region where the router resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
           &quot;selfLink&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for the resource.
         },
@@ -697,10 +703,10 @@ Returns:
       &quot;enable&quot;: &quot;A String&quot;, # The status of the BGP peer connection. If set to FALSE, any active session with the peer is terminated and all associated routing information is removed. If set to TRUE, the peer connection can be established with routing information. The default is TRUE.
       &quot;enableIpv4&quot;: True or False, # Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.
       &quot;enableIpv6&quot;: True or False, # Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.
-      &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+      &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type.
         &quot;A String&quot;,
       ],
-      &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+      &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type.
         &quot;A String&quot;,
       ],
       &quot;interfaceName&quot;: &quot;A String&quot;, # Name of the interface the BGP peer is associated with.
@@ -723,7 +729,7 @@ Returns:
   &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
   &quot;interfaces&quot;: [ # Router interfaces. To create a BGP peer that uses a router interface, the interface must have one of the following fields specified: - linkedVpnTunnel - linkedInterconnectAttachment - subnetwork You can create a router interface without any of these fields specified. However, you cannot create a BGP peer that uses that interface.
     {
-      &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fc00:0:1:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
+      &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fdff:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
       &quot;ipVersion&quot;: &quot;A String&quot;, # IP version of this interface.
       &quot;linkedInterconnectAttachment&quot;: &quot;A String&quot;, # URI of the linked Interconnect attachment. It must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
       &quot;linkedVpnTunnel&quot;: &quot;A String&quot;, # URI of the linked VPN tunnel, which must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
@@ -811,7 +817,13 @@ Returns:
       &quot;udpIdleTimeoutSec&quot;: 42, # Timeout (in seconds) for UDP connections. Defaults to 30s if not set.
     },
   ],
+  &quot;nccGateway&quot;: &quot;A String&quot;, # URI of the ncc_gateway to which this router associated.
   &quot;network&quot;: &quot;A String&quot;, # URI of the network to which this router belongs.
+  &quot;params&quot;: { # Additional router parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+    &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid. * Inconsistent format is not supported. For instance: {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;123/env&quot; : &quot;prod&quot;} is invalid.
+      &quot;a_key&quot;: &quot;A String&quot;,
+    },
+  },
   &quot;region&quot;: &quot;A String&quot;, # [Output Only] URI of the region where the router resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
   &quot;selfLink&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for the resource.
 }</pre>
@@ -1023,13 +1035,18 @@ Returns:
         &quot;nextHopIlb&quot;: &quot;A String&quot;, # The URL to a forwarding rule of type loadBalancingScheme=INTERNAL that should handle matching packets or the IP address of the forwarding Rule. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - regions/region/forwardingRules/forwardingRule If an IP address is provided, must specify an IPv4 address in dot-decimal notation or an IPv6 address in RFC 4291 format. For example, the following are all valid IP addresses: - 10.128.0.56 - 2001:db8::2d9:51:0:0 - 2001:db8:0:0:2d9:51:0:0 IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.
         &quot;nextHopInstance&quot;: &quot;A String&quot;, # The URL to an instance that should handle matching packets. You can specify this as a full or partial URL. For example: https://www.googleapis.com/compute/v1/projects/project/zones/zone/instances/
         &quot;nextHopInterRegionCost&quot;: 42, # [Output only] Internal fixed region-to-region cost that Google Cloud calculates based on factors such as network performance, distance, and available bandwidth between regions.
-        &quot;nextHopInterconnectAttachment&quot;: &quot;A String&quot;, # [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for the dynamic routes generated by Cloud Router with a linked interconnectAttachment.
+        &quot;nextHopInterconnectAttachment&quot;: &quot;A String&quot;, # [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for dynamic routes generated by Cloud Router with a linked interconnectAttachment or the static route generated by each L2 Interconnect Attachment.
         &quot;nextHopIp&quot;: &quot;A String&quot;, # The network IP address of an instance that should handle matching packets. Both IPv6 address and IPv4 addresses are supported. Must specify an IPv4 address in dot-decimal notation (e.g. 192.0.2.99) or an IPv6 address in RFC 4291 format (e.g. 2001:db8::2d9:51:0:0 or 2001:db8:0:0:2d9:51:0:0). IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.
         &quot;nextHopMed&quot;: 42, # [Output Only] Multi-Exit Discriminator, a BGP route metric that indicates the desirability of a particular route in a network.
         &quot;nextHopNetwork&quot;: &quot;A String&quot;, # The URL of the local network if it should handle matching packets.
         &quot;nextHopOrigin&quot;: &quot;A String&quot;, # [Output Only] Indicates the origin of the route. Can be IGP (Interior Gateway Protocol), EGP (Exterior Gateway Protocol), or INCOMPLETE.
         &quot;nextHopPeering&quot;: &quot;A String&quot;, # [Output Only] The network peering name that should handle matching packets, which should conform to RFC1035.
         &quot;nextHopVpnTunnel&quot;: &quot;A String&quot;, # The URL to a VpnTunnel that should handle matching packets.
+        &quot;params&quot;: { # Additional route parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+          &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. Tag keys and values have the same definition as resource manager tags. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid.
+            &quot;a_key&quot;: &quot;A String&quot;,
+          },
+        },
         &quot;priority&quot;: 42, # The priority of this route. Priority is used to break ties in cases where there is more than one matching route of equal prefix length. In cases where multiple routes have equal prefix length, the one with the lowest-numbered priority value wins. The default value is `1000`. The priority value must be from `0` to `65535`, inclusive.
         &quot;routeStatus&quot;: &quot;A String&quot;, # [Output only] The status of the route.
         &quot;routeType&quot;: &quot;A String&quot;, # [Output Only] The type of this route, which can be one of the following values: - &#x27;TRANSIT&#x27; for a transit route that this router learned from another Cloud Router and will readvertise to one of its BGP peers - &#x27;SUBNET&#x27; for a route from a subnet of the VPC - &#x27;BGP&#x27; for a route learned from a BGP peer of this router - &#x27;STATIC&#x27; for a static route
@@ -1073,13 +1090,18 @@ Returns:
         &quot;nextHopIlb&quot;: &quot;A String&quot;, # The URL to a forwarding rule of type loadBalancingScheme=INTERNAL that should handle matching packets or the IP address of the forwarding Rule. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - regions/region/forwardingRules/forwardingRule If an IP address is provided, must specify an IPv4 address in dot-decimal notation or an IPv6 address in RFC 4291 format. For example, the following are all valid IP addresses: - 10.128.0.56 - 2001:db8::2d9:51:0:0 - 2001:db8:0:0:2d9:51:0:0 IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.
         &quot;nextHopInstance&quot;: &quot;A String&quot;, # The URL to an instance that should handle matching packets. You can specify this as a full or partial URL. For example: https://www.googleapis.com/compute/v1/projects/project/zones/zone/instances/
         &quot;nextHopInterRegionCost&quot;: 42, # [Output only] Internal fixed region-to-region cost that Google Cloud calculates based on factors such as network performance, distance, and available bandwidth between regions.
-        &quot;nextHopInterconnectAttachment&quot;: &quot;A String&quot;, # [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for the dynamic routes generated by Cloud Router with a linked interconnectAttachment.
+        &quot;nextHopInterconnectAttachment&quot;: &quot;A String&quot;, # [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for dynamic routes generated by Cloud Router with a linked interconnectAttachment or the static route generated by each L2 Interconnect Attachment.
         &quot;nextHopIp&quot;: &quot;A String&quot;, # The network IP address of an instance that should handle matching packets. Both IPv6 address and IPv4 addresses are supported. Must specify an IPv4 address in dot-decimal notation (e.g. 192.0.2.99) or an IPv6 address in RFC 4291 format (e.g. 2001:db8::2d9:51:0:0 or 2001:db8:0:0:2d9:51:0:0). IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.
         &quot;nextHopMed&quot;: 42, # [Output Only] Multi-Exit Discriminator, a BGP route metric that indicates the desirability of a particular route in a network.
         &quot;nextHopNetwork&quot;: &quot;A String&quot;, # The URL of the local network if it should handle matching packets.
         &quot;nextHopOrigin&quot;: &quot;A String&quot;, # [Output Only] Indicates the origin of the route. Can be IGP (Interior Gateway Protocol), EGP (Exterior Gateway Protocol), or INCOMPLETE.
         &quot;nextHopPeering&quot;: &quot;A String&quot;, # [Output Only] The network peering name that should handle matching packets, which should conform to RFC1035.
         &quot;nextHopVpnTunnel&quot;: &quot;A String&quot;, # The URL to a VpnTunnel that should handle matching packets.
+        &quot;params&quot;: { # Additional route parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+          &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. Tag keys and values have the same definition as resource manager tags. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid.
+            &quot;a_key&quot;: &quot;A String&quot;,
+          },
+        },
         &quot;priority&quot;: 42, # The priority of this route. Priority is used to break ties in cases where there is more than one matching route of equal prefix length. In cases where multiple routes have equal prefix length, the one with the lowest-numbered priority value wins. The default value is `1000`. The priority value must be from `0` to `65535`, inclusive.
         &quot;routeStatus&quot;: &quot;A String&quot;, # [Output only] The status of the route.
         &quot;routeType&quot;: &quot;A String&quot;, # [Output Only] The type of this route, which can be one of the following values: - &#x27;TRANSIT&#x27; for a transit route that this router learned from another Cloud Router and will readvertise to one of its BGP peers - &#x27;SUBNET&#x27; for a route from a subnet of the VPC - &#x27;BGP&#x27; for a route learned from a BGP peer of this router - &#x27;STATIC&#x27; for a static route
@@ -1125,13 +1147,18 @@ Returns:
             &quot;nextHopIlb&quot;: &quot;A String&quot;, # The URL to a forwarding rule of type loadBalancingScheme=INTERNAL that should handle matching packets or the IP address of the forwarding Rule. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - regions/region/forwardingRules/forwardingRule If an IP address is provided, must specify an IPv4 address in dot-decimal notation or an IPv6 address in RFC 4291 format. For example, the following are all valid IP addresses: - 10.128.0.56 - 2001:db8::2d9:51:0:0 - 2001:db8:0:0:2d9:51:0:0 IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.
             &quot;nextHopInstance&quot;: &quot;A String&quot;, # The URL to an instance that should handle matching packets. You can specify this as a full or partial URL. For example: https://www.googleapis.com/compute/v1/projects/project/zones/zone/instances/
             &quot;nextHopInterRegionCost&quot;: 42, # [Output only] Internal fixed region-to-region cost that Google Cloud calculates based on factors such as network performance, distance, and available bandwidth between regions.
-            &quot;nextHopInterconnectAttachment&quot;: &quot;A String&quot;, # [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for the dynamic routes generated by Cloud Router with a linked interconnectAttachment.
+            &quot;nextHopInterconnectAttachment&quot;: &quot;A String&quot;, # [Output Only] The URL to an InterconnectAttachment which is the next hop for the route. This field will only be populated for dynamic routes generated by Cloud Router with a linked interconnectAttachment or the static route generated by each L2 Interconnect Attachment.
             &quot;nextHopIp&quot;: &quot;A String&quot;, # The network IP address of an instance that should handle matching packets. Both IPv6 address and IPv4 addresses are supported. Must specify an IPv4 address in dot-decimal notation (e.g. 192.0.2.99) or an IPv6 address in RFC 4291 format (e.g. 2001:db8::2d9:51:0:0 or 2001:db8:0:0:2d9:51:0:0). IPv6 addresses will be displayed using RFC 5952 compressed format (e.g. 2001:db8::2d9:51:0:0). Should never be an IPv4-mapped IPv6 address.
             &quot;nextHopMed&quot;: 42, # [Output Only] Multi-Exit Discriminator, a BGP route metric that indicates the desirability of a particular route in a network.
             &quot;nextHopNetwork&quot;: &quot;A String&quot;, # The URL of the local network if it should handle matching packets.
             &quot;nextHopOrigin&quot;: &quot;A String&quot;, # [Output Only] Indicates the origin of the route. Can be IGP (Interior Gateway Protocol), EGP (Exterior Gateway Protocol), or INCOMPLETE.
             &quot;nextHopPeering&quot;: &quot;A String&quot;, # [Output Only] The network peering name that should handle matching packets, which should conform to RFC1035.
             &quot;nextHopVpnTunnel&quot;: &quot;A String&quot;, # The URL to a VpnTunnel that should handle matching packets.
+            &quot;params&quot;: { # Additional route parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+              &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. Tag keys and values have the same definition as resource manager tags. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid.
+                &quot;a_key&quot;: &quot;A String&quot;,
+              },
+            },
             &quot;priority&quot;: 42, # The priority of this route. Priority is used to break ties in cases where there is more than one matching route of equal prefix length. In cases where multiple routes have equal prefix length, the one with the lowest-numbered priority value wins. The default value is `1000`. The priority value must be from `0` to `65535`, inclusive.
             &quot;routeStatus&quot;: &quot;A String&quot;, # [Output only] The status of the route.
             &quot;routeType&quot;: &quot;A String&quot;, # [Output Only] The type of this route, which can be one of the following values: - &#x27;TRANSIT&#x27; for a transit route that this router learned from another Cloud Router and will readvertise to one of its BGP peers - &#x27;SUBNET&#x27; for a route from a subnet of the VPC - &#x27;BGP&#x27; for a route learned from a BGP peer of this router - &#x27;STATIC&#x27; for a static route
@@ -1268,6 +1295,7 @@ Returns:
         ],
       },
     ],
+    &quot;nccGateway&quot;: &quot;A String&quot;, # URI of the ncc_gateway to which this router associated.
     &quot;network&quot;: &quot;A String&quot;, # URI of the network to which this router belongs.
   },
 }</pre>
@@ -1327,10 +1355,10 @@ Args:
       &quot;enable&quot;: &quot;A String&quot;, # The status of the BGP peer connection. If set to FALSE, any active session with the peer is terminated and all associated routing information is removed. If set to TRUE, the peer connection can be established with routing information. The default is TRUE.
       &quot;enableIpv4&quot;: True or False, # Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.
       &quot;enableIpv6&quot;: True or False, # Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.
-      &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+      &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type.
         &quot;A String&quot;,
       ],
-      &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+      &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type.
         &quot;A String&quot;,
       ],
       &quot;interfaceName&quot;: &quot;A String&quot;, # Name of the interface the BGP peer is associated with.
@@ -1353,7 +1381,7 @@ Args:
   &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
   &quot;interfaces&quot;: [ # Router interfaces. To create a BGP peer that uses a router interface, the interface must have one of the following fields specified: - linkedVpnTunnel - linkedInterconnectAttachment - subnetwork You can create a router interface without any of these fields specified. However, you cannot create a BGP peer that uses that interface.
     {
-      &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fc00:0:1:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
+      &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fdff:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
       &quot;ipVersion&quot;: &quot;A String&quot;, # IP version of this interface.
       &quot;linkedInterconnectAttachment&quot;: &quot;A String&quot;, # URI of the linked Interconnect attachment. It must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
       &quot;linkedVpnTunnel&quot;: &quot;A String&quot;, # URI of the linked VPN tunnel, which must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
@@ -1441,7 +1469,13 @@ Args:
       &quot;udpIdleTimeoutSec&quot;: 42, # Timeout (in seconds) for UDP connections. Defaults to 30s if not set.
     },
   ],
+  &quot;nccGateway&quot;: &quot;A String&quot;, # URI of the ncc_gateway to which this router associated.
   &quot;network&quot;: &quot;A String&quot;, # URI of the network to which this router belongs.
+  &quot;params&quot;: { # Additional router parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+    &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid. * Inconsistent format is not supported. For instance: {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;123/env&quot; : &quot;prod&quot;} is invalid.
+      &quot;a_key&quot;: &quot;A String&quot;,
+    },
+  },
   &quot;region&quot;: &quot;A String&quot;, # [Output Only] URI of the region where the router resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
   &quot;selfLink&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for the resource.
 }
@@ -1630,10 +1664,10 @@ Returns:
           &quot;enable&quot;: &quot;A String&quot;, # The status of the BGP peer connection. If set to FALSE, any active session with the peer is terminated and all associated routing information is removed. If set to TRUE, the peer connection can be established with routing information. The default is TRUE.
           &quot;enableIpv4&quot;: True or False, # Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.
           &quot;enableIpv6&quot;: True or False, # Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.
-          &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+          &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type.
             &quot;A String&quot;,
           ],
-          &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+          &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type.
             &quot;A String&quot;,
           ],
           &quot;interfaceName&quot;: &quot;A String&quot;, # Name of the interface the BGP peer is associated with.
@@ -1656,7 +1690,7 @@ Returns:
       &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
       &quot;interfaces&quot;: [ # Router interfaces. To create a BGP peer that uses a router interface, the interface must have one of the following fields specified: - linkedVpnTunnel - linkedInterconnectAttachment - subnetwork You can create a router interface without any of these fields specified. However, you cannot create a BGP peer that uses that interface.
         {
-          &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fc00:0:1:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
+          &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fdff:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
           &quot;ipVersion&quot;: &quot;A String&quot;, # IP version of this interface.
           &quot;linkedInterconnectAttachment&quot;: &quot;A String&quot;, # URI of the linked Interconnect attachment. It must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
           &quot;linkedVpnTunnel&quot;: &quot;A String&quot;, # URI of the linked VPN tunnel, which must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
@@ -1744,7 +1778,13 @@ Returns:
           &quot;udpIdleTimeoutSec&quot;: 42, # Timeout (in seconds) for UDP connections. Defaults to 30s if not set.
         },
       ],
+      &quot;nccGateway&quot;: &quot;A String&quot;, # URI of the ncc_gateway to which this router associated.
       &quot;network&quot;: &quot;A String&quot;, # URI of the network to which this router belongs.
+      &quot;params&quot;: { # Additional router parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+        &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid. * Inconsistent format is not supported. For instance: {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;123/env&quot; : &quot;prod&quot;} is invalid.
+          &quot;a_key&quot;: &quot;A String&quot;,
+        },
+      },
       &quot;region&quot;: &quot;A String&quot;, # [Output Only] URI of the region where the router resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
       &quot;selfLink&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for the resource.
     },
@@ -1809,6 +1849,9 @@ Returns:
       &quot;asPaths&quot;: [ # [Output only] AS-PATH for the route
         {
           &quot;asns&quot;: [ # [Output only] ASNs in the path segment. When type is SEQUENCE, these are ordered.
+            42,
+          ],
+          &quot;asns32&quot;: [ # [Output only] ASNs in the path segment. This field is for better support of 32 bit ASNs as the other asns field suffers from overflow when the ASN is larger. When type is SEQUENCE, these are ordered.
             42,
           ],
           &quot;type&quot;: &quot;A String&quot;, # [Output only] Type of AS-PATH segment (SEQUENCE or SET)
@@ -2009,10 +2052,10 @@ Args:
       &quot;enable&quot;: &quot;A String&quot;, # The status of the BGP peer connection. If set to FALSE, any active session with the peer is terminated and all associated routing information is removed. If set to TRUE, the peer connection can be established with routing information. The default is TRUE.
       &quot;enableIpv4&quot;: True or False, # Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.
       &quot;enableIpv6&quot;: True or False, # Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.
-      &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+      &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type.
         &quot;A String&quot;,
       ],
-      &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+      &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type.
         &quot;A String&quot;,
       ],
       &quot;interfaceName&quot;: &quot;A String&quot;, # Name of the interface the BGP peer is associated with.
@@ -2035,7 +2078,7 @@ Args:
   &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
   &quot;interfaces&quot;: [ # Router interfaces. To create a BGP peer that uses a router interface, the interface must have one of the following fields specified: - linkedVpnTunnel - linkedInterconnectAttachment - subnetwork You can create a router interface without any of these fields specified. However, you cannot create a BGP peer that uses that interface.
     {
-      &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fc00:0:1:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
+      &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fdff:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
       &quot;ipVersion&quot;: &quot;A String&quot;, # IP version of this interface.
       &quot;linkedInterconnectAttachment&quot;: &quot;A String&quot;, # URI of the linked Interconnect attachment. It must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
       &quot;linkedVpnTunnel&quot;: &quot;A String&quot;, # URI of the linked VPN tunnel, which must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
@@ -2123,7 +2166,13 @@ Args:
       &quot;udpIdleTimeoutSec&quot;: 42, # Timeout (in seconds) for UDP connections. Defaults to 30s if not set.
     },
   ],
+  &quot;nccGateway&quot;: &quot;A String&quot;, # URI of the ncc_gateway to which this router associated.
   &quot;network&quot;: &quot;A String&quot;, # URI of the network to which this router belongs.
+  &quot;params&quot;: { # Additional router parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+    &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid. * Inconsistent format is not supported. For instance: {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;123/env&quot; : &quot;prod&quot;} is invalid.
+      &quot;a_key&quot;: &quot;A String&quot;,
+    },
+  },
   &quot;region&quot;: &quot;A String&quot;, # [Output Only] URI of the region where the router resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
   &quot;selfLink&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for the resource.
 }
@@ -2454,10 +2503,10 @@ Args:
       &quot;enable&quot;: &quot;A String&quot;, # The status of the BGP peer connection. If set to FALSE, any active session with the peer is terminated and all associated routing information is removed. If set to TRUE, the peer connection can be established with routing information. The default is TRUE.
       &quot;enableIpv4&quot;: True or False, # Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.
       &quot;enableIpv6&quot;: True or False, # Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.
-      &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+      &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type.
         &quot;A String&quot;,
       ],
-      &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+      &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type.
         &quot;A String&quot;,
       ],
       &quot;interfaceName&quot;: &quot;A String&quot;, # Name of the interface the BGP peer is associated with.
@@ -2480,7 +2529,7 @@ Args:
   &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
   &quot;interfaces&quot;: [ # Router interfaces. To create a BGP peer that uses a router interface, the interface must have one of the following fields specified: - linkedVpnTunnel - linkedInterconnectAttachment - subnetwork You can create a router interface without any of these fields specified. However, you cannot create a BGP peer that uses that interface.
     {
-      &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fc00:0:1:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
+      &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fdff:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
       &quot;ipVersion&quot;: &quot;A String&quot;, # IP version of this interface.
       &quot;linkedInterconnectAttachment&quot;: &quot;A String&quot;, # URI of the linked Interconnect attachment. It must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
       &quot;linkedVpnTunnel&quot;: &quot;A String&quot;, # URI of the linked VPN tunnel, which must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
@@ -2568,7 +2617,13 @@ Args:
       &quot;udpIdleTimeoutSec&quot;: 42, # Timeout (in seconds) for UDP connections. Defaults to 30s if not set.
     },
   ],
+  &quot;nccGateway&quot;: &quot;A String&quot;, # URI of the ncc_gateway to which this router associated.
   &quot;network&quot;: &quot;A String&quot;, # URI of the network to which this router belongs.
+  &quot;params&quot;: { # Additional router parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+    &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid. * Inconsistent format is not supported. For instance: {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;123/env&quot; : &quot;prod&quot;} is invalid.
+      &quot;a_key&quot;: &quot;A String&quot;,
+    },
+  },
   &quot;region&quot;: &quot;A String&quot;, # [Output Only] URI of the region where the router resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
   &quot;selfLink&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for the resource.
 }
@@ -2626,10 +2681,10 @@ Returns:
         &quot;enable&quot;: &quot;A String&quot;, # The status of the BGP peer connection. If set to FALSE, any active session with the peer is terminated and all associated routing information is removed. If set to TRUE, the peer connection can be established with routing information. The default is TRUE.
         &quot;enableIpv4&quot;: True or False, # Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.
         &quot;enableIpv6&quot;: True or False, # Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.
-        &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+        &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type.
           &quot;A String&quot;,
         ],
-        &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+        &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type.
           &quot;A String&quot;,
         ],
         &quot;interfaceName&quot;: &quot;A String&quot;, # Name of the interface the BGP peer is associated with.
@@ -2652,7 +2707,7 @@ Returns:
     &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
     &quot;interfaces&quot;: [ # Router interfaces. To create a BGP peer that uses a router interface, the interface must have one of the following fields specified: - linkedVpnTunnel - linkedInterconnectAttachment - subnetwork You can create a router interface without any of these fields specified. However, you cannot create a BGP peer that uses that interface.
       {
-        &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fc00:0:1:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
+        &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fdff:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
         &quot;ipVersion&quot;: &quot;A String&quot;, # IP version of this interface.
         &quot;linkedInterconnectAttachment&quot;: &quot;A String&quot;, # URI of the linked Interconnect attachment. It must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
         &quot;linkedVpnTunnel&quot;: &quot;A String&quot;, # URI of the linked VPN tunnel, which must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
@@ -2740,7 +2795,13 @@ Returns:
         &quot;udpIdleTimeoutSec&quot;: 42, # Timeout (in seconds) for UDP connections. Defaults to 30s if not set.
       },
     ],
+    &quot;nccGateway&quot;: &quot;A String&quot;, # URI of the ncc_gateway to which this router associated.
     &quot;network&quot;: &quot;A String&quot;, # URI of the network to which this router belongs.
+    &quot;params&quot;: { # Additional router parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+      &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid. * Inconsistent format is not supported. For instance: {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;123/env&quot; : &quot;prod&quot;} is invalid.
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
+    },
     &quot;region&quot;: &quot;A String&quot;, # [Output Only] URI of the region where the router resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
     &quot;selfLink&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for the resource.
   },
@@ -2834,10 +2895,10 @@ Args:
       &quot;enable&quot;: &quot;A String&quot;, # The status of the BGP peer connection. If set to FALSE, any active session with the peer is terminated and all associated routing information is removed. If set to TRUE, the peer connection can be established with routing information. The default is TRUE.
       &quot;enableIpv4&quot;: True or False, # Enable IPv4 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 4.
       &quot;enableIpv6&quot;: True or False, # Enable IPv6 traffic over BGP Peer. It is enabled by default if the peerIpAddress is version 6.
-      &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+      &quot;exportPolicies&quot;: [ # List of export policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_EXPORT type.
         &quot;A String&quot;,
       ],
-      &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type. Note that Route Policies are currently available in preview. Please use Beta API to use Route Policies.
+      &quot;importPolicies&quot;: [ # List of import policies applied to this peer, in the order they must be evaluated. The name must correspond to an existing policy that has ROUTE_POLICY_TYPE_IMPORT type.
         &quot;A String&quot;,
       ],
       &quot;interfaceName&quot;: &quot;A String&quot;, # Name of the interface the BGP peer is associated with.
@@ -2860,7 +2921,7 @@ Args:
   &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
   &quot;interfaces&quot;: [ # Router interfaces. To create a BGP peer that uses a router interface, the interface must have one of the following fields specified: - linkedVpnTunnel - linkedInterconnectAttachment - subnetwork You can create a router interface without any of these fields specified. However, you cannot create a BGP peer that uses that interface.
     {
-      &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fc00:0:1:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
+      &quot;ipRange&quot;: &quot;A String&quot;, # IP address and range of the interface. - For Internet Protocol version 4 (IPv4), the IP range must be in the RFC3927 link-local IP address space. The value must be a CIDR-formatted string, for example, 169.254.0.1/30. Note: Do not truncate the IP address, as it represents the IP address of the interface. - For Internet Protocol version 6 (IPv6), the value must be a unique local address (ULA) range from fdff:1::/64 with a mask length of 126 or less. This value should be a CIDR-formatted string, for example, fdff:1::1/112. Within the router&#x27;s VPC, this IPv6 prefix will be reserved exclusively for this connection and cannot be used for any other purpose.
       &quot;ipVersion&quot;: &quot;A String&quot;, # IP version of this interface.
       &quot;linkedInterconnectAttachment&quot;: &quot;A String&quot;, # URI of the linked Interconnect attachment. It must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
       &quot;linkedVpnTunnel&quot;: &quot;A String&quot;, # URI of the linked VPN tunnel, which must be in the same region as the router. Each interface can have one linked resource, which can be a VPN tunnel, an Interconnect attachment, or a subnetwork.
@@ -2948,7 +3009,13 @@ Args:
       &quot;udpIdleTimeoutSec&quot;: 42, # Timeout (in seconds) for UDP connections. Defaults to 30s if not set.
     },
   ],
+  &quot;nccGateway&quot;: &quot;A String&quot;, # URI of the ncc_gateway to which this router associated.
   &quot;network&quot;: &quot;A String&quot;, # URI of the network to which this router belongs.
+  &quot;params&quot;: { # Additional router parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+    &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid. * Inconsistent format is not supported. For instance: {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;123/env&quot; : &quot;prod&quot;} is invalid.
+      &quot;a_key&quot;: &quot;A String&quot;,
+    },
+  },
   &quot;region&quot;: &quot;A String&quot;, # [Output Only] URI of the region where the router resides. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
   &quot;selfLink&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for the resource.
 }

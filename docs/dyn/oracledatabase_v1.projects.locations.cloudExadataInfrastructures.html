@@ -92,7 +92,7 @@ h1, h2, h3 {
   <code><a href="#get">get(name, x__xgafv=None)</a></code></p>
 <p class="firstline">Gets details of a single Exadata Infrastructure.</p>
 <p class="toc_element">
-  <code><a href="#list">list(parent, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
+  <code><a href="#list">list(parent, filter=None, orderBy=None, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Lists Exadata Infrastructures in a given project and location.</p>
 <p class="toc_element">
   <code><a href="#list_next">list_next()</a></code></p>
@@ -116,7 +116,7 @@ Args:
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The date and time that the Exadata Infrastructure was created.
   &quot;displayName&quot;: &quot;A String&quot;, # Optional. User friendly name for this resource.
   &quot;entitlementId&quot;: &quot;A String&quot;, # Output only. Entitlement ID of the private offer against which this infrastructure resource is provisioned.
-  &quot;gcpOracleZone&quot;: &quot;A String&quot;, # Optional. Google Cloud Platform location where Oracle Exadata is hosted.
+  &quot;gcpOracleZone&quot;: &quot;A String&quot;, # Optional. The GCP Oracle zone where Oracle Exadata Infrastructure is hosted. Example: us-east4-b-r2. If not specified, the system will pick a zone based on availability.
   &quot;labels&quot;: { # Optional. Labels or tags associated with the resource.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
@@ -126,6 +126,7 @@ Args:
     &quot;additionalStorageCount&quot;: 42, # Output only. The requested number of additional storage servers for the Exadata Infrastructure.
     &quot;availableStorageSizeGb&quot;: 42, # Output only. The available storage can be allocated to the Exadata Infrastructure resource, in gigabytes (GB).
     &quot;computeCount&quot;: 42, # Optional. The number of compute servers for the Exadata Infrastructure.
+    &quot;computeModel&quot;: &quot;A String&quot;, # Output only. The compute model of the Exadata Infrastructure.
     &quot;cpuCount&quot;: 42, # Output only. The number of enabled CPU cores.
     &quot;customerContacts&quot;: [ # Optional. The list of customer contacts.
       { # The CustomerContact reference as defined by Oracle. https://docs.oracle.com/en-us/iaas/api/#/en/database/20160918/datatypes/CustomerContact
@@ -133,6 +134,7 @@ Args:
       },
     ],
     &quot;dataStorageSizeTb&quot;: 3.14, # Output only. Size, in terabytes, of the DATA disk group.
+    &quot;databaseServerType&quot;: &quot;A String&quot;, # Output only. The database server type of the Exadata Infrastructure.
     &quot;dbNodeStorageSizeGb&quot;: 42, # Output only. The local node storage allocated in GBs.
     &quot;dbServerVersion&quot;: &quot;A String&quot;, # Output only. The software version of the database servers (dom0) in the Exadata Infrastructure.
     &quot;maintenanceWindow&quot;: { # Maintenance window as defined by Oracle. https://docs.oracle.com/en-us/iaas/api/#/en/database/20160918/datatypes/MaintenanceWindow # Optional. Maintenance window for repair.
@@ -169,6 +171,7 @@ Args:
     &quot;shape&quot;: &quot;A String&quot;, # Required. The shape of the Exadata Infrastructure. The shape determines the amount of CPU, storage, and memory resources allocated to the instance.
     &quot;state&quot;: &quot;A String&quot;, # Output only. The current lifecycle state of the Exadata Infrastructure.
     &quot;storageCount&quot;: 42, # Optional. The number of Cloud Exadata storage servers for the Exadata Infrastructure.
+    &quot;storageServerType&quot;: &quot;A String&quot;, # Output only. The storage server type of the Exadata Infrastructure.
     &quot;storageServerVersion&quot;: &quot;A String&quot;, # Output only. The software version of the storage servers (cells) in the Exadata Infrastructure.
     &quot;totalStorageSizeGb&quot;: 42, # Optional. The total storage allocated to the Exadata Infrastructure resource, in gigabytes (GB).
   },
@@ -260,7 +263,7 @@ Returns:
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The date and time that the Exadata Infrastructure was created.
   &quot;displayName&quot;: &quot;A String&quot;, # Optional. User friendly name for this resource.
   &quot;entitlementId&quot;: &quot;A String&quot;, # Output only. Entitlement ID of the private offer against which this infrastructure resource is provisioned.
-  &quot;gcpOracleZone&quot;: &quot;A String&quot;, # Optional. Google Cloud Platform location where Oracle Exadata is hosted.
+  &quot;gcpOracleZone&quot;: &quot;A String&quot;, # Optional. The GCP Oracle zone where Oracle Exadata Infrastructure is hosted. Example: us-east4-b-r2. If not specified, the system will pick a zone based on availability.
   &quot;labels&quot;: { # Optional. Labels or tags associated with the resource.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
@@ -270,6 +273,7 @@ Returns:
     &quot;additionalStorageCount&quot;: 42, # Output only. The requested number of additional storage servers for the Exadata Infrastructure.
     &quot;availableStorageSizeGb&quot;: 42, # Output only. The available storage can be allocated to the Exadata Infrastructure resource, in gigabytes (GB).
     &quot;computeCount&quot;: 42, # Optional. The number of compute servers for the Exadata Infrastructure.
+    &quot;computeModel&quot;: &quot;A String&quot;, # Output only. The compute model of the Exadata Infrastructure.
     &quot;cpuCount&quot;: 42, # Output only. The number of enabled CPU cores.
     &quot;customerContacts&quot;: [ # Optional. The list of customer contacts.
       { # The CustomerContact reference as defined by Oracle. https://docs.oracle.com/en-us/iaas/api/#/en/database/20160918/datatypes/CustomerContact
@@ -277,6 +281,7 @@ Returns:
       },
     ],
     &quot;dataStorageSizeTb&quot;: 3.14, # Output only. Size, in terabytes, of the DATA disk group.
+    &quot;databaseServerType&quot;: &quot;A String&quot;, # Output only. The database server type of the Exadata Infrastructure.
     &quot;dbNodeStorageSizeGb&quot;: 42, # Output only. The local node storage allocated in GBs.
     &quot;dbServerVersion&quot;: &quot;A String&quot;, # Output only. The software version of the database servers (dom0) in the Exadata Infrastructure.
     &quot;maintenanceWindow&quot;: { # Maintenance window as defined by Oracle. https://docs.oracle.com/en-us/iaas/api/#/en/database/20160918/datatypes/MaintenanceWindow # Optional. Maintenance window for repair.
@@ -313,6 +318,7 @@ Returns:
     &quot;shape&quot;: &quot;A String&quot;, # Required. The shape of the Exadata Infrastructure. The shape determines the amount of CPU, storage, and memory resources allocated to the instance.
     &quot;state&quot;: &quot;A String&quot;, # Output only. The current lifecycle state of the Exadata Infrastructure.
     &quot;storageCount&quot;: 42, # Optional. The number of Cloud Exadata storage servers for the Exadata Infrastructure.
+    &quot;storageServerType&quot;: &quot;A String&quot;, # Output only. The storage server type of the Exadata Infrastructure.
     &quot;storageServerVersion&quot;: &quot;A String&quot;, # Output only. The software version of the storage servers (cells) in the Exadata Infrastructure.
     &quot;totalStorageSizeGb&quot;: 42, # Optional. The total storage allocated to the Exadata Infrastructure resource, in gigabytes (GB).
   },
@@ -320,11 +326,13 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="list">list(parent, pageSize=None, pageToken=None, x__xgafv=None)</code>
+    <code class="details" id="list">list(parent, filter=None, orderBy=None, pageSize=None, pageToken=None, x__xgafv=None)</code>
   <pre>Lists Exadata Infrastructures in a given project and location.
 
 Args:
   parent: string, Required. The parent value for CloudExadataInfrastructure in the following format: projects/{project}/locations/{location}. (required)
+  filter: string, Optional. An expression for filtering the results of the request.
+  orderBy: string, Optional. An expression for ordering the results of the request.
   pageSize: integer, Optional. The maximum number of items to return. If unspecified, at most 50 Exadata infrastructures will be returned. The maximum value is 1000; values above 1000 will be coerced to 1000.
   pageToken: string, Optional. A token identifying a page of results the server should return.
   x__xgafv: string, V1 error format.
@@ -341,7 +349,7 @@ Returns:
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The date and time that the Exadata Infrastructure was created.
       &quot;displayName&quot;: &quot;A String&quot;, # Optional. User friendly name for this resource.
       &quot;entitlementId&quot;: &quot;A String&quot;, # Output only. Entitlement ID of the private offer against which this infrastructure resource is provisioned.
-      &quot;gcpOracleZone&quot;: &quot;A String&quot;, # Optional. Google Cloud Platform location where Oracle Exadata is hosted.
+      &quot;gcpOracleZone&quot;: &quot;A String&quot;, # Optional. The GCP Oracle zone where Oracle Exadata Infrastructure is hosted. Example: us-east4-b-r2. If not specified, the system will pick a zone based on availability.
       &quot;labels&quot;: { # Optional. Labels or tags associated with the resource.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
@@ -351,6 +359,7 @@ Returns:
         &quot;additionalStorageCount&quot;: 42, # Output only. The requested number of additional storage servers for the Exadata Infrastructure.
         &quot;availableStorageSizeGb&quot;: 42, # Output only. The available storage can be allocated to the Exadata Infrastructure resource, in gigabytes (GB).
         &quot;computeCount&quot;: 42, # Optional. The number of compute servers for the Exadata Infrastructure.
+        &quot;computeModel&quot;: &quot;A String&quot;, # Output only. The compute model of the Exadata Infrastructure.
         &quot;cpuCount&quot;: 42, # Output only. The number of enabled CPU cores.
         &quot;customerContacts&quot;: [ # Optional. The list of customer contacts.
           { # The CustomerContact reference as defined by Oracle. https://docs.oracle.com/en-us/iaas/api/#/en/database/20160918/datatypes/CustomerContact
@@ -358,6 +367,7 @@ Returns:
           },
         ],
         &quot;dataStorageSizeTb&quot;: 3.14, # Output only. Size, in terabytes, of the DATA disk group.
+        &quot;databaseServerType&quot;: &quot;A String&quot;, # Output only. The database server type of the Exadata Infrastructure.
         &quot;dbNodeStorageSizeGb&quot;: 42, # Output only. The local node storage allocated in GBs.
         &quot;dbServerVersion&quot;: &quot;A String&quot;, # Output only. The software version of the database servers (dom0) in the Exadata Infrastructure.
         &quot;maintenanceWindow&quot;: { # Maintenance window as defined by Oracle. https://docs.oracle.com/en-us/iaas/api/#/en/database/20160918/datatypes/MaintenanceWindow # Optional. Maintenance window for repair.
@@ -394,6 +404,7 @@ Returns:
         &quot;shape&quot;: &quot;A String&quot;, # Required. The shape of the Exadata Infrastructure. The shape determines the amount of CPU, storage, and memory resources allocated to the instance.
         &quot;state&quot;: &quot;A String&quot;, # Output only. The current lifecycle state of the Exadata Infrastructure.
         &quot;storageCount&quot;: 42, # Optional. The number of Cloud Exadata storage servers for the Exadata Infrastructure.
+        &quot;storageServerType&quot;: &quot;A String&quot;, # Output only. The storage server type of the Exadata Infrastructure.
         &quot;storageServerVersion&quot;: &quot;A String&quot;, # Output only. The software version of the storage servers (cells) in the Exadata Infrastructure.
         &quot;totalStorageSizeGb&quot;: 42, # Optional. The total storage allocated to the Exadata Infrastructure resource, in gigabytes (GB).
       },

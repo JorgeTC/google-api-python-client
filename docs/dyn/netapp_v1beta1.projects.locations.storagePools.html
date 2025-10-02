@@ -119,11 +119,17 @@ Args:
 { # StoragePool is a container for volumes with a service level and capacity. Volumes can be created in a pool of sufficient available capacity. StoragePool capacity is what you are billed for.
   &quot;activeDirectory&quot;: &quot;A String&quot;, # Optional. Specifies the Active Directory to be used for creating a SMB volume.
   &quot;allowAutoTiering&quot;: True or False, # Optional. True if the storage pool supports Auto Tiering enabled volumes. Default is false. Auto-tiering can be enabled after storage pool creation but it can&#x27;t be disabled once enabled.
+  &quot;availableThroughputMibps&quot;: 3.14, # Output only. Available throughput of the storage pool (in MiB/s).
   &quot;capacityGib&quot;: &quot;A String&quot;, # Required. Capacity in GIB of the pool
+  &quot;coldTierSizeUsedGib&quot;: &quot;A String&quot;, # Output only. Total cold tier data rounded down to the nearest GiB used by the storage pool.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Create time of the storage pool
+  &quot;customPerformanceEnabled&quot;: True or False, # Optional. True if using Independent Scaling of capacity and performance (Hyperdisk) By default set to false
   &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the storage pool
+  &quot;enableHotTierAutoResize&quot;: True or False, # Optional. Flag indicating that the hot-tier threshold will be auto-increased by 10% of the hot-tier when it hits 100%. Default is true. The increment will kick in only if the new size after increment is still less than or equal to storage pool size.
   &quot;encryptionType&quot;: &quot;A String&quot;, # Output only. Specifies the current pool encryption key source.
   &quot;globalAccessAllowed&quot;: True or False, # Deprecated. Used to allow SO pool to access AD or DNS server from other regions.
+  &quot;hotTierSizeGib&quot;: &quot;A String&quot;, # Optional. Total hot tier capacity for the Storage Pool. It is applicable only to Flex service level. It should be less than the minimum storage pool size and cannot be more than the current storage pool size. It cannot be decreased once set.
+  &quot;hotTierSizeUsedGib&quot;: &quot;A String&quot;, # Output only. Total hot tier data rounded down to the nearest GiB used by the storage pool.
   &quot;kmsConfig&quot;: &quot;A String&quot;, # Optional. Specifies the KMS config to be used for volume encryption.
   &quot;labels&quot;: { # Optional. Labels as key value pairs
     &quot;a_key&quot;: &quot;A String&quot;,
@@ -132,12 +138,15 @@ Args:
   &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the storage pool
   &quot;network&quot;: &quot;A String&quot;, # Required. VPC Network name. Format: projects/{project}/global/networks/{network}
   &quot;psaRange&quot;: &quot;A String&quot;, # Optional. This field is not implemented. The values provided in this field are ignored.
+  &quot;qosType&quot;: &quot;A String&quot;, # Optional. QoS (Quality of Service) Type of the storage pool
   &quot;replicaZone&quot;: &quot;A String&quot;, # Optional. Specifies the replica zone for regional storagePool.
   &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use
   &quot;serviceLevel&quot;: &quot;A String&quot;, # Required. Service level of the storage pool
   &quot;state&quot;: &quot;A String&quot;, # Output only. State of the storage pool
   &quot;stateDetails&quot;: &quot;A String&quot;, # Output only. State details of the storage pool
+  &quot;totalIops&quot;: &quot;A String&quot;, # Optional. Custom Performance Total IOPS of the pool if not provided, it will be calculated based on the total_throughput_mibps
+  &quot;totalThroughputMibps&quot;: &quot;A String&quot;, # Optional. Custom Performance Total Throughput of the pool (in MiBps)
   &quot;volumeCapacityGib&quot;: &quot;A String&quot;, # Output only. Allocated size of all volumes in GIB in the storage pool
   &quot;volumeCount&quot;: 42, # Output only. Volume count of the storage pool
   &quot;zone&quot;: &quot;A String&quot;, # Optional. Specifies the active zone for regional storagePool.
@@ -225,11 +234,17 @@ Returns:
     { # StoragePool is a container for volumes with a service level and capacity. Volumes can be created in a pool of sufficient available capacity. StoragePool capacity is what you are billed for.
   &quot;activeDirectory&quot;: &quot;A String&quot;, # Optional. Specifies the Active Directory to be used for creating a SMB volume.
   &quot;allowAutoTiering&quot;: True or False, # Optional. True if the storage pool supports Auto Tiering enabled volumes. Default is false. Auto-tiering can be enabled after storage pool creation but it can&#x27;t be disabled once enabled.
+  &quot;availableThroughputMibps&quot;: 3.14, # Output only. Available throughput of the storage pool (in MiB/s).
   &quot;capacityGib&quot;: &quot;A String&quot;, # Required. Capacity in GIB of the pool
+  &quot;coldTierSizeUsedGib&quot;: &quot;A String&quot;, # Output only. Total cold tier data rounded down to the nearest GiB used by the storage pool.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Create time of the storage pool
+  &quot;customPerformanceEnabled&quot;: True or False, # Optional. True if using Independent Scaling of capacity and performance (Hyperdisk) By default set to false
   &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the storage pool
+  &quot;enableHotTierAutoResize&quot;: True or False, # Optional. Flag indicating that the hot-tier threshold will be auto-increased by 10% of the hot-tier when it hits 100%. Default is true. The increment will kick in only if the new size after increment is still less than or equal to storage pool size.
   &quot;encryptionType&quot;: &quot;A String&quot;, # Output only. Specifies the current pool encryption key source.
   &quot;globalAccessAllowed&quot;: True or False, # Deprecated. Used to allow SO pool to access AD or DNS server from other regions.
+  &quot;hotTierSizeGib&quot;: &quot;A String&quot;, # Optional. Total hot tier capacity for the Storage Pool. It is applicable only to Flex service level. It should be less than the minimum storage pool size and cannot be more than the current storage pool size. It cannot be decreased once set.
+  &quot;hotTierSizeUsedGib&quot;: &quot;A String&quot;, # Output only. Total hot tier data rounded down to the nearest GiB used by the storage pool.
   &quot;kmsConfig&quot;: &quot;A String&quot;, # Optional. Specifies the KMS config to be used for volume encryption.
   &quot;labels&quot;: { # Optional. Labels as key value pairs
     &quot;a_key&quot;: &quot;A String&quot;,
@@ -238,12 +253,15 @@ Returns:
   &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the storage pool
   &quot;network&quot;: &quot;A String&quot;, # Required. VPC Network name. Format: projects/{project}/global/networks/{network}
   &quot;psaRange&quot;: &quot;A String&quot;, # Optional. This field is not implemented. The values provided in this field are ignored.
+  &quot;qosType&quot;: &quot;A String&quot;, # Optional. QoS (Quality of Service) Type of the storage pool
   &quot;replicaZone&quot;: &quot;A String&quot;, # Optional. Specifies the replica zone for regional storagePool.
   &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use
   &quot;serviceLevel&quot;: &quot;A String&quot;, # Required. Service level of the storage pool
   &quot;state&quot;: &quot;A String&quot;, # Output only. State of the storage pool
   &quot;stateDetails&quot;: &quot;A String&quot;, # Output only. State details of the storage pool
+  &quot;totalIops&quot;: &quot;A String&quot;, # Optional. Custom Performance Total IOPS of the pool if not provided, it will be calculated based on the total_throughput_mibps
+  &quot;totalThroughputMibps&quot;: &quot;A String&quot;, # Optional. Custom Performance Total Throughput of the pool (in MiBps)
   &quot;volumeCapacityGib&quot;: &quot;A String&quot;, # Output only. Allocated size of all volumes in GIB in the storage pool
   &quot;volumeCount&quot;: 42, # Output only. Volume count of the storage pool
   &quot;zone&quot;: &quot;A String&quot;, # Optional. Specifies the active zone for regional storagePool.
@@ -274,11 +292,17 @@ Returns:
     { # StoragePool is a container for volumes with a service level and capacity. Volumes can be created in a pool of sufficient available capacity. StoragePool capacity is what you are billed for.
       &quot;activeDirectory&quot;: &quot;A String&quot;, # Optional. Specifies the Active Directory to be used for creating a SMB volume.
       &quot;allowAutoTiering&quot;: True or False, # Optional. True if the storage pool supports Auto Tiering enabled volumes. Default is false. Auto-tiering can be enabled after storage pool creation but it can&#x27;t be disabled once enabled.
+      &quot;availableThroughputMibps&quot;: 3.14, # Output only. Available throughput of the storage pool (in MiB/s).
       &quot;capacityGib&quot;: &quot;A String&quot;, # Required. Capacity in GIB of the pool
+      &quot;coldTierSizeUsedGib&quot;: &quot;A String&quot;, # Output only. Total cold tier data rounded down to the nearest GiB used by the storage pool.
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. Create time of the storage pool
+      &quot;customPerformanceEnabled&quot;: True or False, # Optional. True if using Independent Scaling of capacity and performance (Hyperdisk) By default set to false
       &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the storage pool
+      &quot;enableHotTierAutoResize&quot;: True or False, # Optional. Flag indicating that the hot-tier threshold will be auto-increased by 10% of the hot-tier when it hits 100%. Default is true. The increment will kick in only if the new size after increment is still less than or equal to storage pool size.
       &quot;encryptionType&quot;: &quot;A String&quot;, # Output only. Specifies the current pool encryption key source.
       &quot;globalAccessAllowed&quot;: True or False, # Deprecated. Used to allow SO pool to access AD or DNS server from other regions.
+      &quot;hotTierSizeGib&quot;: &quot;A String&quot;, # Optional. Total hot tier capacity for the Storage Pool. It is applicable only to Flex service level. It should be less than the minimum storage pool size and cannot be more than the current storage pool size. It cannot be decreased once set.
+      &quot;hotTierSizeUsedGib&quot;: &quot;A String&quot;, # Output only. Total hot tier data rounded down to the nearest GiB used by the storage pool.
       &quot;kmsConfig&quot;: &quot;A String&quot;, # Optional. Specifies the KMS config to be used for volume encryption.
       &quot;labels&quot;: { # Optional. Labels as key value pairs
         &quot;a_key&quot;: &quot;A String&quot;,
@@ -287,12 +311,15 @@ Returns:
       &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the storage pool
       &quot;network&quot;: &quot;A String&quot;, # Required. VPC Network name. Format: projects/{project}/global/networks/{network}
       &quot;psaRange&quot;: &quot;A String&quot;, # Optional. This field is not implemented. The values provided in this field are ignored.
+      &quot;qosType&quot;: &quot;A String&quot;, # Optional. QoS (Quality of Service) Type of the storage pool
       &quot;replicaZone&quot;: &quot;A String&quot;, # Optional. Specifies the replica zone for regional storagePool.
       &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use
       &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use
       &quot;serviceLevel&quot;: &quot;A String&quot;, # Required. Service level of the storage pool
       &quot;state&quot;: &quot;A String&quot;, # Output only. State of the storage pool
       &quot;stateDetails&quot;: &quot;A String&quot;, # Output only. State details of the storage pool
+      &quot;totalIops&quot;: &quot;A String&quot;, # Optional. Custom Performance Total IOPS of the pool if not provided, it will be calculated based on the total_throughput_mibps
+      &quot;totalThroughputMibps&quot;: &quot;A String&quot;, # Optional. Custom Performance Total Throughput of the pool (in MiBps)
       &quot;volumeCapacityGib&quot;: &quot;A String&quot;, # Output only. Allocated size of all volumes in GIB in the storage pool
       &quot;volumeCount&quot;: 42, # Output only. Volume count of the storage pool
       &quot;zone&quot;: &quot;A String&quot;, # Optional. Specifies the active zone for regional storagePool.
@@ -330,11 +357,17 @@ Args:
 { # StoragePool is a container for volumes with a service level and capacity. Volumes can be created in a pool of sufficient available capacity. StoragePool capacity is what you are billed for.
   &quot;activeDirectory&quot;: &quot;A String&quot;, # Optional. Specifies the Active Directory to be used for creating a SMB volume.
   &quot;allowAutoTiering&quot;: True or False, # Optional. True if the storage pool supports Auto Tiering enabled volumes. Default is false. Auto-tiering can be enabled after storage pool creation but it can&#x27;t be disabled once enabled.
+  &quot;availableThroughputMibps&quot;: 3.14, # Output only. Available throughput of the storage pool (in MiB/s).
   &quot;capacityGib&quot;: &quot;A String&quot;, # Required. Capacity in GIB of the pool
+  &quot;coldTierSizeUsedGib&quot;: &quot;A String&quot;, # Output only. Total cold tier data rounded down to the nearest GiB used by the storage pool.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Create time of the storage pool
+  &quot;customPerformanceEnabled&quot;: True or False, # Optional. True if using Independent Scaling of capacity and performance (Hyperdisk) By default set to false
   &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the storage pool
+  &quot;enableHotTierAutoResize&quot;: True or False, # Optional. Flag indicating that the hot-tier threshold will be auto-increased by 10% of the hot-tier when it hits 100%. Default is true. The increment will kick in only if the new size after increment is still less than or equal to storage pool size.
   &quot;encryptionType&quot;: &quot;A String&quot;, # Output only. Specifies the current pool encryption key source.
   &quot;globalAccessAllowed&quot;: True or False, # Deprecated. Used to allow SO pool to access AD or DNS server from other regions.
+  &quot;hotTierSizeGib&quot;: &quot;A String&quot;, # Optional. Total hot tier capacity for the Storage Pool. It is applicable only to Flex service level. It should be less than the minimum storage pool size and cannot be more than the current storage pool size. It cannot be decreased once set.
+  &quot;hotTierSizeUsedGib&quot;: &quot;A String&quot;, # Output only. Total hot tier data rounded down to the nearest GiB used by the storage pool.
   &quot;kmsConfig&quot;: &quot;A String&quot;, # Optional. Specifies the KMS config to be used for volume encryption.
   &quot;labels&quot;: { # Optional. Labels as key value pairs
     &quot;a_key&quot;: &quot;A String&quot;,
@@ -343,12 +376,15 @@ Args:
   &quot;name&quot;: &quot;A String&quot;, # Identifier. Name of the storage pool
   &quot;network&quot;: &quot;A String&quot;, # Required. VPC Network name. Format: projects/{project}/global/networks/{network}
   &quot;psaRange&quot;: &quot;A String&quot;, # Optional. This field is not implemented. The values provided in this field are ignored.
+  &quot;qosType&quot;: &quot;A String&quot;, # Optional. QoS (Quality of Service) Type of the storage pool
   &quot;replicaZone&quot;: &quot;A String&quot;, # Optional. Specifies the replica zone for regional storagePool.
   &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use
   &quot;serviceLevel&quot;: &quot;A String&quot;, # Required. Service level of the storage pool
   &quot;state&quot;: &quot;A String&quot;, # Output only. State of the storage pool
   &quot;stateDetails&quot;: &quot;A String&quot;, # Output only. State details of the storage pool
+  &quot;totalIops&quot;: &quot;A String&quot;, # Optional. Custom Performance Total IOPS of the pool if not provided, it will be calculated based on the total_throughput_mibps
+  &quot;totalThroughputMibps&quot;: &quot;A String&quot;, # Optional. Custom Performance Total Throughput of the pool (in MiBps)
   &quot;volumeCapacityGib&quot;: &quot;A String&quot;, # Output only. Allocated size of all volumes in GIB in the storage pool
   &quot;volumeCount&quot;: 42, # Output only. Volume count of the storage pool
   &quot;zone&quot;: &quot;A String&quot;, # Optional. Specifies the active zone for regional storagePool.

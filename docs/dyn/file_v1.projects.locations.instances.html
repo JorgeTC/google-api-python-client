@@ -125,8 +125,9 @@ Args:
     The object takes the form of:
 
 { # A Filestore instance.
-  &quot;configurablePerformanceEnabled&quot;: True or False, # Output only. Indicates whether this instance&#x27;s performance is configurable. If enabled, adjust it using the &#x27;performance_config&#x27; field.
+  &quot;capacityStepSizeGb&quot;: &quot;A String&quot;, # Output only. The increase/decrease capacity step size in GB.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the instance was created.
+  &quot;customPerformanceSupported&quot;: True or False, # Output only. Indicates whether this instance supports configuring its performance. If true, the user can configure the instance&#x27;s performance by using the &#x27;performance_config&#x27; field.
   &quot;deletionProtectionEnabled&quot;: True or False, # Optional. Indicates whether the instance is protected against deletion.
   &quot;deletionProtectionReason&quot;: &quot;A String&quot;, # Optional. The reason for enabling deletion protection.
   &quot;description&quot;: &quot;A String&quot;, # The description of the instance (2048 characters or less).
@@ -143,6 +144,7 @@ Args:
           &quot;ipRanges&quot;: [ # List of either an IPv4 addresses in the format `{octet1}.{octet2}.{octet3}.{octet4}` or CIDR ranges in the format `{octet1}.{octet2}.{octet3}.{octet4}/{mask size}` which may mount the file share. Overlapping IP ranges are not allowed, both within and across NfsExportOptions. An error will be returned. The limit is 64 IP ranges/addresses for each FileShareConfig among all NfsExportOptions.
             &quot;A String&quot;,
           ],
+          &quot;network&quot;: &quot;A String&quot;, # Optional. The source VPC network for ip_ranges. Required for instances using Private Service Connect, optional otherwise. If provided, must be the same network specified in the `NetworkConfig.network` field.
           &quot;squashMode&quot;: &quot;A String&quot;, # Either NO_ROOT_SQUASH, for allowing root access on the exported directory, or ROOT_SQUASH, for not allowing root access. The default is NO_ROOT_SQUASH.
         },
       ],
@@ -153,6 +155,8 @@ Args:
   &quot;labels&quot;: { # Resource labels to represent user provided metadata.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
+  &quot;maxCapacityGb&quot;: &quot;A String&quot;, # Output only. The max capacity of the instance in GB.
+  &quot;minCapacityGb&quot;: &quot;A String&quot;, # Output only. The min capacity of the instance in GB.
   &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the instance, in the format `projects/{project}/locations/{location}/instances/{instance}`.
   &quot;networks&quot;: [ # VPC networks to which the instance is connected. For this version, only a single network is supported.
     { # Network configuration for the instance.
@@ -164,6 +168,9 @@ Args:
         &quot;A String&quot;,
       ],
       &quot;network&quot;: &quot;A String&quot;, # The name of the Google Compute Engine [VPC network](https://cloud.google.com/vpc/docs/vpc) to which the instance is connected.
+      &quot;pscConfig&quot;: { # Private Service Connect configuration. # Optional. Private Service Connect configuration. Should only be set when connect_mode is PRIVATE_SERVICE_CONNECT.
+        &quot;endpointProject&quot;: &quot;A String&quot;, # Optional. Consumer service project in which the Private Service Connect endpoint would be set up. This is optional, and only relevant in case the network is a shared VPC. If this is not specified, the endpoint would be setup in the VPC host project.
+      },
       &quot;reservedIpRange&quot;: &quot;A String&quot;, # Optional, reserved_ip_range can have one of the following two types of values. * CIDR range value when using DIRECT_PEERING connect mode. * [Allocated IP address range](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-internal-ip-address) when using PRIVATE_SERVICE_ACCESS connect mode. When the name of an allocated IP address range is specified, it must be one of the ranges associated with the private service access connection. When specified as a direct CIDR value, it must be a /29 CIDR block for Basic tier, a /24 CIDR block for High Scale tier, or a /26 CIDR block for Enterprise tier in one of the [internal IP address ranges](https://www.arin.net/reference/research/statistics/address_filters/) that identifies the range of IP addresses reserved for this instance. For example, 10.0.0.0/29, 192.168.0.0/24 or 192.168.0.0/26, respectively. The range you specify can&#x27;t overlap with either existing subnets or assigned IP address ranges for other Filestore instances in the selected VPC network.
     },
   ],
@@ -171,11 +178,12 @@ Args:
     &quot;fixedIops&quot;: { # Fixed IOPS (input/output operations per second) parameters. # Choose a fixed provisioned IOPS value for the instance, which will remain constant regardless of instance capacity. Value must be a multiple of 1000. If the chosen value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIops&quot;: &quot;A String&quot;, # Required. Maximum IOPS.
     },
-    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned read IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned read IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
+    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIopsPerTb&quot;: &quot;A String&quot;, # Required. Maximum IOPS per TiB.
     },
   },
   &quot;performanceLimits&quot;: { # The enforced performance limits, calculated from the instance&#x27;s performance configuration. # Output only. Used for getting performance limits.
+    &quot;maxIops&quot;: &quot;A String&quot;, # Output only. The max IOPS.
     &quot;maxReadIops&quot;: &quot;A String&quot;, # Output only. The max read IOPS.
     &quot;maxReadThroughputBps&quot;: &quot;A String&quot;, # Output only. The max read throughput in bytes per second.
     &quot;maxWriteIops&quot;: &quot;A String&quot;, # Output only. The max write IOPS.
@@ -191,6 +199,7 @@ Args:
         &quot;stateReasons&quot;: [ # Output only. Additional information about the replication state, if available.
           &quot;A String&quot;,
         ],
+        &quot;stateUpdateTime&quot;: &quot;A String&quot;, # Output only. The time when the replica state was updated.
       },
     ],
     &quot;role&quot;: &quot;A String&quot;, # Optional. The replication role.
@@ -289,8 +298,9 @@ Returns:
   An object of the form:
 
     { # A Filestore instance.
-  &quot;configurablePerformanceEnabled&quot;: True or False, # Output only. Indicates whether this instance&#x27;s performance is configurable. If enabled, adjust it using the &#x27;performance_config&#x27; field.
+  &quot;capacityStepSizeGb&quot;: &quot;A String&quot;, # Output only. The increase/decrease capacity step size in GB.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the instance was created.
+  &quot;customPerformanceSupported&quot;: True or False, # Output only. Indicates whether this instance supports configuring its performance. If true, the user can configure the instance&#x27;s performance by using the &#x27;performance_config&#x27; field.
   &quot;deletionProtectionEnabled&quot;: True or False, # Optional. Indicates whether the instance is protected against deletion.
   &quot;deletionProtectionReason&quot;: &quot;A String&quot;, # Optional. The reason for enabling deletion protection.
   &quot;description&quot;: &quot;A String&quot;, # The description of the instance (2048 characters or less).
@@ -307,6 +317,7 @@ Returns:
           &quot;ipRanges&quot;: [ # List of either an IPv4 addresses in the format `{octet1}.{octet2}.{octet3}.{octet4}` or CIDR ranges in the format `{octet1}.{octet2}.{octet3}.{octet4}/{mask size}` which may mount the file share. Overlapping IP ranges are not allowed, both within and across NfsExportOptions. An error will be returned. The limit is 64 IP ranges/addresses for each FileShareConfig among all NfsExportOptions.
             &quot;A String&quot;,
           ],
+          &quot;network&quot;: &quot;A String&quot;, # Optional. The source VPC network for ip_ranges. Required for instances using Private Service Connect, optional otherwise. If provided, must be the same network specified in the `NetworkConfig.network` field.
           &quot;squashMode&quot;: &quot;A String&quot;, # Either NO_ROOT_SQUASH, for allowing root access on the exported directory, or ROOT_SQUASH, for not allowing root access. The default is NO_ROOT_SQUASH.
         },
       ],
@@ -317,6 +328,8 @@ Returns:
   &quot;labels&quot;: { # Resource labels to represent user provided metadata.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
+  &quot;maxCapacityGb&quot;: &quot;A String&quot;, # Output only. The max capacity of the instance in GB.
+  &quot;minCapacityGb&quot;: &quot;A String&quot;, # Output only. The min capacity of the instance in GB.
   &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the instance, in the format `projects/{project}/locations/{location}/instances/{instance}`.
   &quot;networks&quot;: [ # VPC networks to which the instance is connected. For this version, only a single network is supported.
     { # Network configuration for the instance.
@@ -328,6 +341,9 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;network&quot;: &quot;A String&quot;, # The name of the Google Compute Engine [VPC network](https://cloud.google.com/vpc/docs/vpc) to which the instance is connected.
+      &quot;pscConfig&quot;: { # Private Service Connect configuration. # Optional. Private Service Connect configuration. Should only be set when connect_mode is PRIVATE_SERVICE_CONNECT.
+        &quot;endpointProject&quot;: &quot;A String&quot;, # Optional. Consumer service project in which the Private Service Connect endpoint would be set up. This is optional, and only relevant in case the network is a shared VPC. If this is not specified, the endpoint would be setup in the VPC host project.
+      },
       &quot;reservedIpRange&quot;: &quot;A String&quot;, # Optional, reserved_ip_range can have one of the following two types of values. * CIDR range value when using DIRECT_PEERING connect mode. * [Allocated IP address range](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-internal-ip-address) when using PRIVATE_SERVICE_ACCESS connect mode. When the name of an allocated IP address range is specified, it must be one of the ranges associated with the private service access connection. When specified as a direct CIDR value, it must be a /29 CIDR block for Basic tier, a /24 CIDR block for High Scale tier, or a /26 CIDR block for Enterprise tier in one of the [internal IP address ranges](https://www.arin.net/reference/research/statistics/address_filters/) that identifies the range of IP addresses reserved for this instance. For example, 10.0.0.0/29, 192.168.0.0/24 or 192.168.0.0/26, respectively. The range you specify can&#x27;t overlap with either existing subnets or assigned IP address ranges for other Filestore instances in the selected VPC network.
     },
   ],
@@ -335,11 +351,12 @@ Returns:
     &quot;fixedIops&quot;: { # Fixed IOPS (input/output operations per second) parameters. # Choose a fixed provisioned IOPS value for the instance, which will remain constant regardless of instance capacity. Value must be a multiple of 1000. If the chosen value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIops&quot;: &quot;A String&quot;, # Required. Maximum IOPS.
     },
-    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned read IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned read IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
+    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIopsPerTb&quot;: &quot;A String&quot;, # Required. Maximum IOPS per TiB.
     },
   },
   &quot;performanceLimits&quot;: { # The enforced performance limits, calculated from the instance&#x27;s performance configuration. # Output only. Used for getting performance limits.
+    &quot;maxIops&quot;: &quot;A String&quot;, # Output only. The max IOPS.
     &quot;maxReadIops&quot;: &quot;A String&quot;, # Output only. The max read IOPS.
     &quot;maxReadThroughputBps&quot;: &quot;A String&quot;, # Output only. The max read throughput in bytes per second.
     &quot;maxWriteIops&quot;: &quot;A String&quot;, # Output only. The max write IOPS.
@@ -355,6 +372,7 @@ Returns:
         &quot;stateReasons&quot;: [ # Output only. Additional information about the replication state, if available.
           &quot;A String&quot;,
         ],
+        &quot;stateUpdateTime&quot;: &quot;A String&quot;, # Output only. The time when the replica state was updated.
       },
     ],
     &quot;role&quot;: &quot;A String&quot;, # Optional. The replication role.
@@ -394,8 +412,9 @@ Returns:
     { # ListInstancesResponse is the result of ListInstancesRequest.
   &quot;instances&quot;: [ # A list of instances in the project for the specified location. If the `{location}` value in the request is &quot;-&quot;, the response contains a list of instances from all locations. If any location is unreachable, the response will only return instances in reachable locations and the &quot;unreachable&quot; field will be populated with a list of unreachable locations.
     { # A Filestore instance.
-      &quot;configurablePerformanceEnabled&quot;: True or False, # Output only. Indicates whether this instance&#x27;s performance is configurable. If enabled, adjust it using the &#x27;performance_config&#x27; field.
+      &quot;capacityStepSizeGb&quot;: &quot;A String&quot;, # Output only. The increase/decrease capacity step size in GB.
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the instance was created.
+      &quot;customPerformanceSupported&quot;: True or False, # Output only. Indicates whether this instance supports configuring its performance. If true, the user can configure the instance&#x27;s performance by using the &#x27;performance_config&#x27; field.
       &quot;deletionProtectionEnabled&quot;: True or False, # Optional. Indicates whether the instance is protected against deletion.
       &quot;deletionProtectionReason&quot;: &quot;A String&quot;, # Optional. The reason for enabling deletion protection.
       &quot;description&quot;: &quot;A String&quot;, # The description of the instance (2048 characters or less).
@@ -412,6 +431,7 @@ Returns:
               &quot;ipRanges&quot;: [ # List of either an IPv4 addresses in the format `{octet1}.{octet2}.{octet3}.{octet4}` or CIDR ranges in the format `{octet1}.{octet2}.{octet3}.{octet4}/{mask size}` which may mount the file share. Overlapping IP ranges are not allowed, both within and across NfsExportOptions. An error will be returned. The limit is 64 IP ranges/addresses for each FileShareConfig among all NfsExportOptions.
                 &quot;A String&quot;,
               ],
+              &quot;network&quot;: &quot;A String&quot;, # Optional. The source VPC network for ip_ranges. Required for instances using Private Service Connect, optional otherwise. If provided, must be the same network specified in the `NetworkConfig.network` field.
               &quot;squashMode&quot;: &quot;A String&quot;, # Either NO_ROOT_SQUASH, for allowing root access on the exported directory, or ROOT_SQUASH, for not allowing root access. The default is NO_ROOT_SQUASH.
             },
           ],
@@ -422,6 +442,8 @@ Returns:
       &quot;labels&quot;: { # Resource labels to represent user provided metadata.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
+      &quot;maxCapacityGb&quot;: &quot;A String&quot;, # Output only. The max capacity of the instance in GB.
+      &quot;minCapacityGb&quot;: &quot;A String&quot;, # Output only. The min capacity of the instance in GB.
       &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the instance, in the format `projects/{project}/locations/{location}/instances/{instance}`.
       &quot;networks&quot;: [ # VPC networks to which the instance is connected. For this version, only a single network is supported.
         { # Network configuration for the instance.
@@ -433,6 +455,9 @@ Returns:
             &quot;A String&quot;,
           ],
           &quot;network&quot;: &quot;A String&quot;, # The name of the Google Compute Engine [VPC network](https://cloud.google.com/vpc/docs/vpc) to which the instance is connected.
+          &quot;pscConfig&quot;: { # Private Service Connect configuration. # Optional. Private Service Connect configuration. Should only be set when connect_mode is PRIVATE_SERVICE_CONNECT.
+            &quot;endpointProject&quot;: &quot;A String&quot;, # Optional. Consumer service project in which the Private Service Connect endpoint would be set up. This is optional, and only relevant in case the network is a shared VPC. If this is not specified, the endpoint would be setup in the VPC host project.
+          },
           &quot;reservedIpRange&quot;: &quot;A String&quot;, # Optional, reserved_ip_range can have one of the following two types of values. * CIDR range value when using DIRECT_PEERING connect mode. * [Allocated IP address range](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-internal-ip-address) when using PRIVATE_SERVICE_ACCESS connect mode. When the name of an allocated IP address range is specified, it must be one of the ranges associated with the private service access connection. When specified as a direct CIDR value, it must be a /29 CIDR block for Basic tier, a /24 CIDR block for High Scale tier, or a /26 CIDR block for Enterprise tier in one of the [internal IP address ranges](https://www.arin.net/reference/research/statistics/address_filters/) that identifies the range of IP addresses reserved for this instance. For example, 10.0.0.0/29, 192.168.0.0/24 or 192.168.0.0/26, respectively. The range you specify can&#x27;t overlap with either existing subnets or assigned IP address ranges for other Filestore instances in the selected VPC network.
         },
       ],
@@ -440,11 +465,12 @@ Returns:
         &quot;fixedIops&quot;: { # Fixed IOPS (input/output operations per second) parameters. # Choose a fixed provisioned IOPS value for the instance, which will remain constant regardless of instance capacity. Value must be a multiple of 1000. If the chosen value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
           &quot;maxIops&quot;: &quot;A String&quot;, # Required. Maximum IOPS.
         },
-        &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned read IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned read IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
+        &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
           &quot;maxIopsPerTb&quot;: &quot;A String&quot;, # Required. Maximum IOPS per TiB.
         },
       },
       &quot;performanceLimits&quot;: { # The enforced performance limits, calculated from the instance&#x27;s performance configuration. # Output only. Used for getting performance limits.
+        &quot;maxIops&quot;: &quot;A String&quot;, # Output only. The max IOPS.
         &quot;maxReadIops&quot;: &quot;A String&quot;, # Output only. The max read IOPS.
         &quot;maxReadThroughputBps&quot;: &quot;A String&quot;, # Output only. The max read throughput in bytes per second.
         &quot;maxWriteIops&quot;: &quot;A String&quot;, # Output only. The max write IOPS.
@@ -460,6 +486,7 @@ Returns:
             &quot;stateReasons&quot;: [ # Output only. Additional information about the replication state, if available.
               &quot;A String&quot;,
             ],
+            &quot;stateUpdateTime&quot;: &quot;A String&quot;, # Output only. The time when the replica state was updated.
           },
         ],
         &quot;role&quot;: &quot;A String&quot;, # Optional. The replication role.
@@ -508,8 +535,9 @@ Args:
     The object takes the form of:
 
 { # A Filestore instance.
-  &quot;configurablePerformanceEnabled&quot;: True or False, # Output only. Indicates whether this instance&#x27;s performance is configurable. If enabled, adjust it using the &#x27;performance_config&#x27; field.
+  &quot;capacityStepSizeGb&quot;: &quot;A String&quot;, # Output only. The increase/decrease capacity step size in GB.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the instance was created.
+  &quot;customPerformanceSupported&quot;: True or False, # Output only. Indicates whether this instance supports configuring its performance. If true, the user can configure the instance&#x27;s performance by using the &#x27;performance_config&#x27; field.
   &quot;deletionProtectionEnabled&quot;: True or False, # Optional. Indicates whether the instance is protected against deletion.
   &quot;deletionProtectionReason&quot;: &quot;A String&quot;, # Optional. The reason for enabling deletion protection.
   &quot;description&quot;: &quot;A String&quot;, # The description of the instance (2048 characters or less).
@@ -526,6 +554,7 @@ Args:
           &quot;ipRanges&quot;: [ # List of either an IPv4 addresses in the format `{octet1}.{octet2}.{octet3}.{octet4}` or CIDR ranges in the format `{octet1}.{octet2}.{octet3}.{octet4}/{mask size}` which may mount the file share. Overlapping IP ranges are not allowed, both within and across NfsExportOptions. An error will be returned. The limit is 64 IP ranges/addresses for each FileShareConfig among all NfsExportOptions.
             &quot;A String&quot;,
           ],
+          &quot;network&quot;: &quot;A String&quot;, # Optional. The source VPC network for ip_ranges. Required for instances using Private Service Connect, optional otherwise. If provided, must be the same network specified in the `NetworkConfig.network` field.
           &quot;squashMode&quot;: &quot;A String&quot;, # Either NO_ROOT_SQUASH, for allowing root access on the exported directory, or ROOT_SQUASH, for not allowing root access. The default is NO_ROOT_SQUASH.
         },
       ],
@@ -536,6 +565,8 @@ Args:
   &quot;labels&quot;: { # Resource labels to represent user provided metadata.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
+  &quot;maxCapacityGb&quot;: &quot;A String&quot;, # Output only. The max capacity of the instance in GB.
+  &quot;minCapacityGb&quot;: &quot;A String&quot;, # Output only. The min capacity of the instance in GB.
   &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the instance, in the format `projects/{project}/locations/{location}/instances/{instance}`.
   &quot;networks&quot;: [ # VPC networks to which the instance is connected. For this version, only a single network is supported.
     { # Network configuration for the instance.
@@ -547,6 +578,9 @@ Args:
         &quot;A String&quot;,
       ],
       &quot;network&quot;: &quot;A String&quot;, # The name of the Google Compute Engine [VPC network](https://cloud.google.com/vpc/docs/vpc) to which the instance is connected.
+      &quot;pscConfig&quot;: { # Private Service Connect configuration. # Optional. Private Service Connect configuration. Should only be set when connect_mode is PRIVATE_SERVICE_CONNECT.
+        &quot;endpointProject&quot;: &quot;A String&quot;, # Optional. Consumer service project in which the Private Service Connect endpoint would be set up. This is optional, and only relevant in case the network is a shared VPC. If this is not specified, the endpoint would be setup in the VPC host project.
+      },
       &quot;reservedIpRange&quot;: &quot;A String&quot;, # Optional, reserved_ip_range can have one of the following two types of values. * CIDR range value when using DIRECT_PEERING connect mode. * [Allocated IP address range](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-internal-ip-address) when using PRIVATE_SERVICE_ACCESS connect mode. When the name of an allocated IP address range is specified, it must be one of the ranges associated with the private service access connection. When specified as a direct CIDR value, it must be a /29 CIDR block for Basic tier, a /24 CIDR block for High Scale tier, or a /26 CIDR block for Enterprise tier in one of the [internal IP address ranges](https://www.arin.net/reference/research/statistics/address_filters/) that identifies the range of IP addresses reserved for this instance. For example, 10.0.0.0/29, 192.168.0.0/24 or 192.168.0.0/26, respectively. The range you specify can&#x27;t overlap with either existing subnets or assigned IP address ranges for other Filestore instances in the selected VPC network.
     },
   ],
@@ -554,11 +588,12 @@ Args:
     &quot;fixedIops&quot;: { # Fixed IOPS (input/output operations per second) parameters. # Choose a fixed provisioned IOPS value for the instance, which will remain constant regardless of instance capacity. Value must be a multiple of 1000. If the chosen value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIops&quot;: &quot;A String&quot;, # Required. Maximum IOPS.
     },
-    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned read IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned read IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
+    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIopsPerTb&quot;: &quot;A String&quot;, # Required. Maximum IOPS per TiB.
     },
   },
   &quot;performanceLimits&quot;: { # The enforced performance limits, calculated from the instance&#x27;s performance configuration. # Output only. Used for getting performance limits.
+    &quot;maxIops&quot;: &quot;A String&quot;, # Output only. The max IOPS.
     &quot;maxReadIops&quot;: &quot;A String&quot;, # Output only. The max read IOPS.
     &quot;maxReadThroughputBps&quot;: &quot;A String&quot;, # Output only. The max read throughput in bytes per second.
     &quot;maxWriteIops&quot;: &quot;A String&quot;, # Output only. The max write IOPS.
@@ -574,6 +609,7 @@ Args:
         &quot;stateReasons&quot;: [ # Output only. Additional information about the replication state, if available.
           &quot;A String&quot;,
         ],
+        &quot;stateUpdateTime&quot;: &quot;A String&quot;, # Output only. The time when the replica state was updated.
       },
     ],
     &quot;role&quot;: &quot;A String&quot;, # Optional. The replication role.
@@ -631,6 +667,7 @@ Args:
     The object takes the form of:
 
 { # PromoteReplicaRequest promotes a Filestore standby instance (replica).
+  &quot;peerInstance&quot;: &quot;A String&quot;, # Optional. The resource name of the peer instance to promote, in the format `projects/{project_id}/locations/{location_id}/instances/{instance_id}`. The peer instance is required if the operation is called on an active instance.
 }
 
   x__xgafv: string, V1 error format.

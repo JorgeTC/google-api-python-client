@@ -207,12 +207,12 @@ Returns:
       &quot;exportJobState&quot;: &quot;A String&quot;, # Output only. Has the image export job finished (regardless of successful or failure).
       &quot;exportedImageDigest&quot;: &quot;A String&quot;, # The exported image ID as it will appear in Artifact Registry.
       &quot;status&quot;: { # Wire-format for a Status object # The status of the export task if done.
-        &quot;canonicalCode&quot;: 42, # The canonical error code (see codes.proto) that most closely corresponds to this status. This may be missing, and in the common case of the generic space, it definitely will be.
-        &quot;code&quot;: 42, # Numeric code drawn from the space specified below. Often, this is the canonical error space, and code is drawn from google3/util/task/codes.proto
+        &quot;canonicalCode&quot;: 42, # copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional int32 canonical_code = 6;
+        &quot;code&quot;: 42, # Numeric code drawn from the space specified below. Often, this is the canonical error space, and code is drawn from google3/util/task/codes.proto copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional int32 code = 1;
         &quot;message&quot;: &quot;A String&quot;, # Detail message copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional string message = 3;
-        &quot;messageSet&quot;: { # This is proto2&#x27;s version of MessageSet. # message_set associates an arbitrary proto message with the status. copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional proto2.bridge.MessageSet message_set = 5;
+        &quot;messageSet&quot;: { # This is proto2&#x27;s version of MessageSet. DEPRECATED: DO NOT USE FOR NEW FIELDS. If you are using editions or proto2, please make your own extendable messages for your use case. If you are using proto3, please use `Any` instead. MessageSet was the implementation of extensions for proto1. When proto2 was introduced, extensions were implemented as a first-class feature. This schema for MessageSet was meant to be a &quot;bridge&quot; solution to migrate MessageSet-bearing messages from proto1 to proto2. This schema has been open-sourced only to facilitate the migration of Google products with MessageSet-bearing messages to open-source environments. # message_set associates an arbitrary proto message with the status. copybara:strip_begin(b/383363683) copybara:strip_end_and_replace optional proto2.bridge.MessageSet message_set = 5;
         },
-        &quot;space&quot;: &quot;A String&quot;, # The following are usually only present when code != 0 Space to which this status belongs
+        &quot;space&quot;: &quot;A String&quot;, # copybara:strip_begin(b/383363683) Space to which this status belongs copybara:strip_end_and_replace optional string space = 2; // Space to which this status belongs
       },
       &quot;tag&quot;: &quot;A String&quot;, # The image tag as it will appear in Artifact Registry.
     },
@@ -255,6 +255,7 @@ Returns:
     },
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Represents time when the execution was acknowledged by the execution controller. It is not guaranteed to be set in happens-before order across separate operations.
+  &quot;creator&quot;: &quot;A String&quot;, # Output only. Email address of the authenticated creator.
   &quot;deleteTime&quot;: &quot;A String&quot;, # Output only. For a deleted resource, the deletion time. It is only populated as a response to a Delete request.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.
   &quot;expireTime&quot;: &quot;A String&quot;, # Output only. For a deleted resource, the time after which it will be permamently deleted. It is only populated as a response to a Delete request.
@@ -282,6 +283,11 @@ Returns:
         &quot;args&quot;: [ # Arguments to the entrypoint. The docker image&#x27;s CMD is used if this is not provided.
           &quot;A String&quot;,
         ],
+        &quot;baseImageUri&quot;: &quot;A String&quot;, # Base image for this container. Only supported for services. If set, it indicates that the service is enrolled into automatic base image update.
+        &quot;buildInfo&quot;: { # Build information of the image. # Output only. The build info of the container image.
+          &quot;functionTarget&quot;: &quot;A String&quot;, # Output only. Entry point of the function when the image is a Cloud Run function.
+          &quot;sourceLocation&quot;: &quot;A String&quot;, # Output only. Source code location of the image.
+        },
         &quot;command&quot;: [ # Entrypoint array. Not executed within a shell. The docker image&#x27;s ENTRYPOINT is used if this is not provided.
           &quot;A String&quot;,
         ],
@@ -365,6 +371,7 @@ Returns:
           { # VolumeMount describes a mounting of a Volume within a container.
             &quot;mountPath&quot;: &quot;A String&quot;, # Required. Path within the container at which the volume should be mounted. Must not contain &#x27;:&#x27;. For Cloud SQL volumes, it can be left empty, or must otherwise be `/cloudsql`. All instances defined in the Volume will be available as `/cloudsql/[instance]`. For more information on Cloud SQL volumes, visit https://cloud.google.com/sql/docs/mysql/connect-run
             &quot;name&quot;: &quot;A String&quot;, # Required. This must match the Name of a Volume.
+            &quot;subPath&quot;: &quot;A String&quot;, # Optional. Path within the volume from which the container&#x27;s volume should be mounted. Defaults to &quot;&quot; (volume&#x27;s root).
           },
         ],
         &quot;workingDir&quot;: &quot;A String&quot;, # Container&#x27;s working directory. If not specified, the container runtime&#x27;s default will be used, which might be configured in the container image.
@@ -372,7 +379,11 @@ Returns:
     ],
     &quot;encryptionKey&quot;: &quot;A String&quot;, # A reference to a customer managed encryption key (CMEK) to use to encrypt this container image. For more information, go to https://cloud.google.com/run/docs/securing/using-cmek
     &quot;executionEnvironment&quot;: &quot;A String&quot;, # Optional. The execution environment being used to host this Task.
+    &quot;gpuZonalRedundancyDisabled&quot;: True or False, # Optional. True if GPU zonal redundancy is disabled on this task template.
     &quot;maxRetries&quot;: 42, # Number of retries allowed per Task, before marking this Task failed. Defaults to 3.
+    &quot;nodeSelector&quot;: { # Hardware constraints configuration. # Optional. The node selector for the task template.
+      &quot;accelerator&quot;: &quot;A String&quot;, # Required. GPU accelerator type to attach to an instance.
+    },
     &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. Email address of the IAM service account associated with the Task of a Job. The service account represents the identity of the running task, and determines what permissions the task has. If not provided, the task will use the project&#x27;s default service account.
     &quot;timeout&quot;: &quot;A String&quot;, # Optional. Max allowed time duration the Task may be active before the system will actively try to mark it failed and kill associated containers. This applies per attempt of a task, meaning each retry can run for the full timeout. Defaults to 600 seconds.
     &quot;volumes&quot;: [ # Optional. A list of Volumes to make available to containers.
@@ -401,7 +412,7 @@ Returns:
         },
         &quot;secret&quot;: { # The secret&#x27;s value will be presented as the content of a file whose name is defined in the item path. If no items are defined, the name of the file is the secret. # Secret represents a secret that should populate this volume.
           &quot;defaultMode&quot;: 42, # Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.
-          &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
+          &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path + VolumeMount.sub_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
             { # VersionToPath maps a specific version of a secret to a relative file to mount to, relative to VolumeMount&#x27;s mount_path.
               &quot;mode&quot;: 42, # Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume&#x27;s default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
               &quot;path&quot;: &quot;A String&quot;, # Required. The relative path of the secret in the container.
@@ -469,6 +480,7 @@ Returns:
         },
       ],
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. Represents time when the execution was acknowledged by the execution controller. It is not guaranteed to be set in happens-before order across separate operations.
+      &quot;creator&quot;: &quot;A String&quot;, # Output only. Email address of the authenticated creator.
       &quot;deleteTime&quot;: &quot;A String&quot;, # Output only. For a deleted resource, the deletion time. It is only populated as a response to a Delete request.
       &quot;etag&quot;: &quot;A String&quot;, # Output only. A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.
       &quot;expireTime&quot;: &quot;A String&quot;, # Output only. For a deleted resource, the time after which it will be permamently deleted. It is only populated as a response to a Delete request.
@@ -496,6 +508,11 @@ Returns:
             &quot;args&quot;: [ # Arguments to the entrypoint. The docker image&#x27;s CMD is used if this is not provided.
               &quot;A String&quot;,
             ],
+            &quot;baseImageUri&quot;: &quot;A String&quot;, # Base image for this container. Only supported for services. If set, it indicates that the service is enrolled into automatic base image update.
+            &quot;buildInfo&quot;: { # Build information of the image. # Output only. The build info of the container image.
+              &quot;functionTarget&quot;: &quot;A String&quot;, # Output only. Entry point of the function when the image is a Cloud Run function.
+              &quot;sourceLocation&quot;: &quot;A String&quot;, # Output only. Source code location of the image.
+            },
             &quot;command&quot;: [ # Entrypoint array. Not executed within a shell. The docker image&#x27;s ENTRYPOINT is used if this is not provided.
               &quot;A String&quot;,
             ],
@@ -579,6 +596,7 @@ Returns:
               { # VolumeMount describes a mounting of a Volume within a container.
                 &quot;mountPath&quot;: &quot;A String&quot;, # Required. Path within the container at which the volume should be mounted. Must not contain &#x27;:&#x27;. For Cloud SQL volumes, it can be left empty, or must otherwise be `/cloudsql`. All instances defined in the Volume will be available as `/cloudsql/[instance]`. For more information on Cloud SQL volumes, visit https://cloud.google.com/sql/docs/mysql/connect-run
                 &quot;name&quot;: &quot;A String&quot;, # Required. This must match the Name of a Volume.
+                &quot;subPath&quot;: &quot;A String&quot;, # Optional. Path within the volume from which the container&#x27;s volume should be mounted. Defaults to &quot;&quot; (volume&#x27;s root).
               },
             ],
             &quot;workingDir&quot;: &quot;A String&quot;, # Container&#x27;s working directory. If not specified, the container runtime&#x27;s default will be used, which might be configured in the container image.
@@ -586,7 +604,11 @@ Returns:
         ],
         &quot;encryptionKey&quot;: &quot;A String&quot;, # A reference to a customer managed encryption key (CMEK) to use to encrypt this container image. For more information, go to https://cloud.google.com/run/docs/securing/using-cmek
         &quot;executionEnvironment&quot;: &quot;A String&quot;, # Optional. The execution environment being used to host this Task.
+        &quot;gpuZonalRedundancyDisabled&quot;: True or False, # Optional. True if GPU zonal redundancy is disabled on this task template.
         &quot;maxRetries&quot;: 42, # Number of retries allowed per Task, before marking this Task failed. Defaults to 3.
+        &quot;nodeSelector&quot;: { # Hardware constraints configuration. # Optional. The node selector for the task template.
+          &quot;accelerator&quot;: &quot;A String&quot;, # Required. GPU accelerator type to attach to an instance.
+        },
         &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. Email address of the IAM service account associated with the Task of a Job. The service account represents the identity of the running task, and determines what permissions the task has. If not provided, the task will use the project&#x27;s default service account.
         &quot;timeout&quot;: &quot;A String&quot;, # Optional. Max allowed time duration the Task may be active before the system will actively try to mark it failed and kill associated containers. This applies per attempt of a task, meaning each retry can run for the full timeout. Defaults to 600 seconds.
         &quot;volumes&quot;: [ # Optional. A list of Volumes to make available to containers.
@@ -615,7 +637,7 @@ Returns:
             },
             &quot;secret&quot;: { # The secret&#x27;s value will be presented as the content of a file whose name is defined in the item path. If no items are defined, the name of the file is the secret. # Secret represents a secret that should populate this volume.
               &quot;defaultMode&quot;: 42, # Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.
-              &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
+              &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path + VolumeMount.sub_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
                 { # VersionToPath maps a specific version of a secret to a relative file to mount to, relative to VolumeMount&#x27;s mount_path.
                   &quot;mode&quot;: 42, # Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume&#x27;s default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
                   &quot;path&quot;: &quot;A String&quot;, # Required. The relative path of the secret in the container.

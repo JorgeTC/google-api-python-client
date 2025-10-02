@@ -124,7 +124,7 @@ Args:
   &quot;state&quot;: &quot;A String&quot;, # The state of the session.
   &quot;turns&quot;: [ # Turns.
     { # Represents a turn, including a query from the user and a answer from service.
-      &quot;answer&quot;: &quot;A String&quot;, # The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
+      &quot;answer&quot;: &quot;A String&quot;, # Optional. The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
       &quot;detailedAnswer&quot;: { # Defines an answer. # Output only. In ConversationalSearchService.GetSession API, if GetSessionRequest.include_answer_details is set to true, this field will be populated when getting answer query session.
         &quot;answerSkippedReasons&quot;: [ # Additional answer-skipped reasons. This provides the reason for ignored cases. If nothing is skipped, this field is not set.
           &quot;A String&quot;,
@@ -132,13 +132,13 @@ Args:
         &quot;answerText&quot;: &quot;A String&quot;, # The textual answer.
         &quot;citations&quot;: [ # Citations.
           { # Citation info for a segment.
-            &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive.
+            &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive. Measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
             &quot;sources&quot;: [ # Citation sources for the attributed segment.
               { # Citation source.
                 &quot;referenceId&quot;: &quot;A String&quot;, # ID of the citation source.
               },
             ],
-            &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode).
+            &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
           },
         ],
         &quot;completeTime&quot;: &quot;A String&quot;, # Output only. Answer completed timestamp.
@@ -187,6 +187,8 @@ Args:
               &quot;structData&quot;: { # Structured search data.
                 &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
               },
+              &quot;title&quot;: &quot;A String&quot;, # Output only. The title of the document.
+              &quot;uri&quot;: &quot;A String&quot;, # Output only. The URI of the document.
             },
             &quot;unstructuredDocumentInfo&quot;: { # Unstructured document information. # Unstructured document information.
               &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
@@ -259,9 +261,12 @@ Args:
           },
         ],
       },
-      &quot;query&quot;: { # Defines a user inputed query. # The user query.
-        &quot;queryId&quot;: &quot;A String&quot;, # Unique Id for the query.
+      &quot;query&quot;: { # Defines a user inputed query. # Optional. The user query. May not be set if this turn is merely regenerating an answer to a different turn
+        &quot;queryId&quot;: &quot;A String&quot;, # Output only. Unique Id for the query.
         &quot;text&quot;: &quot;A String&quot;, # Plain text.
+      },
+      &quot;queryConfig&quot;: { # Optional. Represents metadata related to the query config, for example LLM model and version used, model parameters (temperature, grounding parameters, etc.). The prefix &quot;google.&quot; is reserved for Google-developed functionality.
+        &quot;a_key&quot;: &quot;A String&quot;,
       },
     },
   ],
@@ -285,7 +290,7 @@ Returns:
   &quot;state&quot;: &quot;A String&quot;, # The state of the session.
   &quot;turns&quot;: [ # Turns.
     { # Represents a turn, including a query from the user and a answer from service.
-      &quot;answer&quot;: &quot;A String&quot;, # The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
+      &quot;answer&quot;: &quot;A String&quot;, # Optional. The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
       &quot;detailedAnswer&quot;: { # Defines an answer. # Output only. In ConversationalSearchService.GetSession API, if GetSessionRequest.include_answer_details is set to true, this field will be populated when getting answer query session.
         &quot;answerSkippedReasons&quot;: [ # Additional answer-skipped reasons. This provides the reason for ignored cases. If nothing is skipped, this field is not set.
           &quot;A String&quot;,
@@ -293,13 +298,13 @@ Returns:
         &quot;answerText&quot;: &quot;A String&quot;, # The textual answer.
         &quot;citations&quot;: [ # Citations.
           { # Citation info for a segment.
-            &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive.
+            &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive. Measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
             &quot;sources&quot;: [ # Citation sources for the attributed segment.
               { # Citation source.
                 &quot;referenceId&quot;: &quot;A String&quot;, # ID of the citation source.
               },
             ],
-            &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode).
+            &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
           },
         ],
         &quot;completeTime&quot;: &quot;A String&quot;, # Output only. Answer completed timestamp.
@@ -348,6 +353,8 @@ Returns:
               &quot;structData&quot;: { # Structured search data.
                 &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
               },
+              &quot;title&quot;: &quot;A String&quot;, # Output only. The title of the document.
+              &quot;uri&quot;: &quot;A String&quot;, # Output only. The URI of the document.
             },
             &quot;unstructuredDocumentInfo&quot;: { # Unstructured document information. # Unstructured document information.
               &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
@@ -420,9 +427,12 @@ Returns:
           },
         ],
       },
-      &quot;query&quot;: { # Defines a user inputed query. # The user query.
-        &quot;queryId&quot;: &quot;A String&quot;, # Unique Id for the query.
+      &quot;query&quot;: { # Defines a user inputed query. # Optional. The user query. May not be set if this turn is merely regenerating an answer to a different turn
+        &quot;queryId&quot;: &quot;A String&quot;, # Output only. Unique Id for the query.
         &quot;text&quot;: &quot;A String&quot;, # Plain text.
+      },
+      &quot;queryConfig&quot;: { # Optional. Represents metadata related to the query config, for example LLM model and version used, model parameters (temperature, grounding parameters, etc.). The prefix &quot;google.&quot; is reserved for Google-developed functionality.
+        &quot;a_key&quot;: &quot;A String&quot;,
       },
     },
   ],
@@ -472,7 +482,7 @@ Returns:
   &quot;state&quot;: &quot;A String&quot;, # The state of the session.
   &quot;turns&quot;: [ # Turns.
     { # Represents a turn, including a query from the user and a answer from service.
-      &quot;answer&quot;: &quot;A String&quot;, # The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
+      &quot;answer&quot;: &quot;A String&quot;, # Optional. The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
       &quot;detailedAnswer&quot;: { # Defines an answer. # Output only. In ConversationalSearchService.GetSession API, if GetSessionRequest.include_answer_details is set to true, this field will be populated when getting answer query session.
         &quot;answerSkippedReasons&quot;: [ # Additional answer-skipped reasons. This provides the reason for ignored cases. If nothing is skipped, this field is not set.
           &quot;A String&quot;,
@@ -480,13 +490,13 @@ Returns:
         &quot;answerText&quot;: &quot;A String&quot;, # The textual answer.
         &quot;citations&quot;: [ # Citations.
           { # Citation info for a segment.
-            &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive.
+            &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive. Measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
             &quot;sources&quot;: [ # Citation sources for the attributed segment.
               { # Citation source.
                 &quot;referenceId&quot;: &quot;A String&quot;, # ID of the citation source.
               },
             ],
-            &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode).
+            &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
           },
         ],
         &quot;completeTime&quot;: &quot;A String&quot;, # Output only. Answer completed timestamp.
@@ -535,6 +545,8 @@ Returns:
               &quot;structData&quot;: { # Structured search data.
                 &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
               },
+              &quot;title&quot;: &quot;A String&quot;, # Output only. The title of the document.
+              &quot;uri&quot;: &quot;A String&quot;, # Output only. The URI of the document.
             },
             &quot;unstructuredDocumentInfo&quot;: { # Unstructured document information. # Unstructured document information.
               &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
@@ -607,9 +619,12 @@ Returns:
           },
         ],
       },
-      &quot;query&quot;: { # Defines a user inputed query. # The user query.
-        &quot;queryId&quot;: &quot;A String&quot;, # Unique Id for the query.
+      &quot;query&quot;: { # Defines a user inputed query. # Optional. The user query. May not be set if this turn is merely regenerating an answer to a different turn
+        &quot;queryId&quot;: &quot;A String&quot;, # Output only. Unique Id for the query.
         &quot;text&quot;: &quot;A String&quot;, # Plain text.
+      },
+      &quot;queryConfig&quot;: { # Optional. Represents metadata related to the query config, for example LLM model and version used, model parameters (temperature, grounding parameters, etc.). The prefix &quot;google.&quot; is reserved for Google-developed functionality.
+        &quot;a_key&quot;: &quot;A String&quot;,
       },
     },
   ],
@@ -623,8 +638,8 @@ Returns:
 
 Args:
   parent: string, Required. The data store resource name. Format: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{data_store_id}` (required)
-  filter: string, A filter to apply on the list results. The supported features are: user_pseudo_id, state. Example: &quot;user_pseudo_id = some_id&quot;
-  orderBy: string, A comma-separated list of fields to order by, sorted in ascending order. Use &quot;desc&quot; after a field name for descending. Supported fields: * `update_time` * `create_time` * `session_name` * `is_pinned` Example: * &quot;update_time desc&quot; * &quot;create_time&quot; * &quot;is_pinned desc,update_time desc&quot;: list sessions by is_pinned first, then by update_time.
+  filter: string, A comma-separated list of fields to filter by, in EBNF grammar. The supported fields are: * `user_pseudo_id` * `state` * `display_name` * `starred` * `is_pinned` * `labels` * `create_time` * `update_time` Examples: * `user_pseudo_id = some_id` * `display_name = &quot;some_name&quot;` * `starred = true` * `is_pinned=true AND (NOT labels:hidden)` * `create_time &gt; &quot;1970-01-01T12:00:00Z&quot;`
+  orderBy: string, A comma-separated list of fields to order by, sorted in ascending order. Use &quot;desc&quot; after a field name for descending. Supported fields: * `update_time` * `create_time` * `session_name` * `is_pinned` Example: * `update_time desc` * `create_time` * `is_pinned desc,update_time desc`: list sessions by is_pinned first, then by update_time.
   pageSize: integer, Maximum number of results to return. If unspecified, defaults to 50. Max allowed value is 1000.
   pageToken: string, A page token, received from a previous `ListSessions` call. Provide this to retrieve the subsequent page.
   x__xgafv: string, V1 error format.
@@ -647,7 +662,7 @@ Returns:
       &quot;state&quot;: &quot;A String&quot;, # The state of the session.
       &quot;turns&quot;: [ # Turns.
         { # Represents a turn, including a query from the user and a answer from service.
-          &quot;answer&quot;: &quot;A String&quot;, # The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
+          &quot;answer&quot;: &quot;A String&quot;, # Optional. The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
           &quot;detailedAnswer&quot;: { # Defines an answer. # Output only. In ConversationalSearchService.GetSession API, if GetSessionRequest.include_answer_details is set to true, this field will be populated when getting answer query session.
             &quot;answerSkippedReasons&quot;: [ # Additional answer-skipped reasons. This provides the reason for ignored cases. If nothing is skipped, this field is not set.
               &quot;A String&quot;,
@@ -655,13 +670,13 @@ Returns:
             &quot;answerText&quot;: &quot;A String&quot;, # The textual answer.
             &quot;citations&quot;: [ # Citations.
               { # Citation info for a segment.
-                &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive.
+                &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive. Measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
                 &quot;sources&quot;: [ # Citation sources for the attributed segment.
                   { # Citation source.
                     &quot;referenceId&quot;: &quot;A String&quot;, # ID of the citation source.
                   },
                 ],
-                &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode).
+                &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
               },
             ],
             &quot;completeTime&quot;: &quot;A String&quot;, # Output only. Answer completed timestamp.
@@ -710,6 +725,8 @@ Returns:
                   &quot;structData&quot;: { # Structured search data.
                     &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
                   },
+                  &quot;title&quot;: &quot;A String&quot;, # Output only. The title of the document.
+                  &quot;uri&quot;: &quot;A String&quot;, # Output only. The URI of the document.
                 },
                 &quot;unstructuredDocumentInfo&quot;: { # Unstructured document information. # Unstructured document information.
                   &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
@@ -782,9 +799,12 @@ Returns:
               },
             ],
           },
-          &quot;query&quot;: { # Defines a user inputed query. # The user query.
-            &quot;queryId&quot;: &quot;A String&quot;, # Unique Id for the query.
+          &quot;query&quot;: { # Defines a user inputed query. # Optional. The user query. May not be set if this turn is merely regenerating an answer to a different turn
+            &quot;queryId&quot;: &quot;A String&quot;, # Output only. Unique Id for the query.
             &quot;text&quot;: &quot;A String&quot;, # Plain text.
+          },
+          &quot;queryConfig&quot;: { # Optional. Represents metadata related to the query config, for example LLM model and version used, model parameters (temperature, grounding parameters, etc.). The prefix &quot;google.&quot; is reserved for Google-developed functionality.
+            &quot;a_key&quot;: &quot;A String&quot;,
           },
         },
       ],
@@ -826,7 +846,7 @@ Args:
   &quot;state&quot;: &quot;A String&quot;, # The state of the session.
   &quot;turns&quot;: [ # Turns.
     { # Represents a turn, including a query from the user and a answer from service.
-      &quot;answer&quot;: &quot;A String&quot;, # The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
+      &quot;answer&quot;: &quot;A String&quot;, # Optional. The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
       &quot;detailedAnswer&quot;: { # Defines an answer. # Output only. In ConversationalSearchService.GetSession API, if GetSessionRequest.include_answer_details is set to true, this field will be populated when getting answer query session.
         &quot;answerSkippedReasons&quot;: [ # Additional answer-skipped reasons. This provides the reason for ignored cases. If nothing is skipped, this field is not set.
           &quot;A String&quot;,
@@ -834,13 +854,13 @@ Args:
         &quot;answerText&quot;: &quot;A String&quot;, # The textual answer.
         &quot;citations&quot;: [ # Citations.
           { # Citation info for a segment.
-            &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive.
+            &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive. Measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
             &quot;sources&quot;: [ # Citation sources for the attributed segment.
               { # Citation source.
                 &quot;referenceId&quot;: &quot;A String&quot;, # ID of the citation source.
               },
             ],
-            &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode).
+            &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
           },
         ],
         &quot;completeTime&quot;: &quot;A String&quot;, # Output only. Answer completed timestamp.
@@ -889,6 +909,8 @@ Args:
               &quot;structData&quot;: { # Structured search data.
                 &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
               },
+              &quot;title&quot;: &quot;A String&quot;, # Output only. The title of the document.
+              &quot;uri&quot;: &quot;A String&quot;, # Output only. The URI of the document.
             },
             &quot;unstructuredDocumentInfo&quot;: { # Unstructured document information. # Unstructured document information.
               &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
@@ -961,9 +983,12 @@ Args:
           },
         ],
       },
-      &quot;query&quot;: { # Defines a user inputed query. # The user query.
-        &quot;queryId&quot;: &quot;A String&quot;, # Unique Id for the query.
+      &quot;query&quot;: { # Defines a user inputed query. # Optional. The user query. May not be set if this turn is merely regenerating an answer to a different turn
+        &quot;queryId&quot;: &quot;A String&quot;, # Output only. Unique Id for the query.
         &quot;text&quot;: &quot;A String&quot;, # Plain text.
+      },
+      &quot;queryConfig&quot;: { # Optional. Represents metadata related to the query config, for example LLM model and version used, model parameters (temperature, grounding parameters, etc.). The prefix &quot;google.&quot; is reserved for Google-developed functionality.
+        &quot;a_key&quot;: &quot;A String&quot;,
       },
     },
   ],
@@ -988,7 +1013,7 @@ Returns:
   &quot;state&quot;: &quot;A String&quot;, # The state of the session.
   &quot;turns&quot;: [ # Turns.
     { # Represents a turn, including a query from the user and a answer from service.
-      &quot;answer&quot;: &quot;A String&quot;, # The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
+      &quot;answer&quot;: &quot;A String&quot;, # Optional. The resource name of the answer to the user query. Only set if the answer generation (/answer API call) happened in this turn.
       &quot;detailedAnswer&quot;: { # Defines an answer. # Output only. In ConversationalSearchService.GetSession API, if GetSessionRequest.include_answer_details is set to true, this field will be populated when getting answer query session.
         &quot;answerSkippedReasons&quot;: [ # Additional answer-skipped reasons. This provides the reason for ignored cases. If nothing is skipped, this field is not set.
           &quot;A String&quot;,
@@ -996,13 +1021,13 @@ Returns:
         &quot;answerText&quot;: &quot;A String&quot;, # The textual answer.
         &quot;citations&quot;: [ # Citations.
           { # Citation info for a segment.
-            &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive.
+            &quot;endIndex&quot;: &quot;A String&quot;, # End of the attributed segment, exclusive. Measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
             &quot;sources&quot;: [ # Citation sources for the attributed segment.
               { # Citation source.
                 &quot;referenceId&quot;: &quot;A String&quot;, # ID of the citation source.
               },
             ],
-            &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode).
+            &quot;startIndex&quot;: &quot;A String&quot;, # Index indicates the start of the segment, measured in bytes (UTF-8 unicode). If there are multi-byte characters,such as non-ASCII characters, the index measurement is longer than the string length.
           },
         ],
         &quot;completeTime&quot;: &quot;A String&quot;, # Output only. Answer completed timestamp.
@@ -1051,6 +1076,8 @@ Returns:
               &quot;structData&quot;: { # Structured search data.
                 &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
               },
+              &quot;title&quot;: &quot;A String&quot;, # Output only. The title of the document.
+              &quot;uri&quot;: &quot;A String&quot;, # Output only. The URI of the document.
             },
             &quot;unstructuredDocumentInfo&quot;: { # Unstructured document information. # Unstructured document information.
               &quot;chunkContents&quot;: [ # List of cited chunk contents derived from document content.
@@ -1123,9 +1150,12 @@ Returns:
           },
         ],
       },
-      &quot;query&quot;: { # Defines a user inputed query. # The user query.
-        &quot;queryId&quot;: &quot;A String&quot;, # Unique Id for the query.
+      &quot;query&quot;: { # Defines a user inputed query. # Optional. The user query. May not be set if this turn is merely regenerating an answer to a different turn
+        &quot;queryId&quot;: &quot;A String&quot;, # Output only. Unique Id for the query.
         &quot;text&quot;: &quot;A String&quot;, # Plain text.
+      },
+      &quot;queryConfig&quot;: { # Optional. Represents metadata related to the query config, for example LLM model and version used, model parameters (temperature, grounding parameters, etc.). The prefix &quot;google.&quot; is reserved for Google-developed functionality.
+        &quot;a_key&quot;: &quot;A String&quot;,
       },
     },
   ],

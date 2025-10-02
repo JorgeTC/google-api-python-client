@@ -98,7 +98,7 @@ h1, h2, h3 {
 
 Args:
   parent: string, Required. The project to list all answer records for in reverse chronological order. Format: `projects//locations/`. (required)
-  filter: string, Optional. Filters to restrict results to specific answer records. Marked deprecated as it hasn&#x27;t been, and isn&#x27;t currently, supported. For more information about filtering, see [API Filtering](https://aip.dev/160).
+  filter: string, Optional. Filters to restrict results to specific answer records. The expression has the following syntax: [AND ] ... The following fields and operators are supported: * conversation_id with equals(=) operator Examples: * `conversation_id=bar` matches answer records in the `projects/foo/locations/global/conversations/bar` conversation (assuming the parent is `projects/foo/locations/global`). For more information about filtering, see [API Filtering](https://aip.dev/160).
   pageSize: integer, Optional. The maximum number of records to return in a single page. The server may return fewer records than this. If unspecified, we use 10. The maximum is 100.
   pageToken: string, Optional. The ListAnswerRecordsResponse.next_page_token value returned from a previous list request used to continue listing on the next page.
   x__xgafv: string, V1 error format.
@@ -599,11 +599,46 @@ Returns:
           &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
           &quot;source&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this answer was extracted from. Format: `projects//locations//agent/knowledgeBases//documents/`.
         },
+        &quot;generatorSuggestion&quot;: { # Suggestion generated using a Generator. # Output only. The generator suggestion.
+          &quot;freeFormSuggestion&quot;: { # Suggestion generated using free form generator. # Optional. Free form suggestion.
+            &quot;response&quot;: &quot;A String&quot;, # Required. Free form suggestion.
+          },
+          &quot;summarySuggestion&quot;: { # Suggested summary of the conversation. # Optional. Suggested summary.
+            &quot;summarySections&quot;: [ # Required. All the parts of generated summary.
+              { # A component of the generated summary.
+                &quot;section&quot;: &quot;A String&quot;, # Required. Name of the section.
+                &quot;summary&quot;: &quot;A String&quot;, # Required. Summary text for the section.
+              },
+            ],
+          },
+          &quot;toolCallInfo&quot;: [ # Optional. List of request and response for tool calls executed.
+            { # Request and response for a tool call.
+              &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Required. Request for a tool call.
+                &quot;action&quot;: &quot;A String&quot;, # Optional. The name of the tool&#x27;s action associated with this call.
+                &quot;createTime&quot;: &quot;A String&quot;, # Output only. Create time of the tool call.
+                &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                  &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                },
+                &quot;tool&quot;: &quot;A String&quot;, # Optional. The tool associated with this call. Format: `projects//locations//tools/`.
+              },
+              &quot;toolCallResult&quot;: { # The result of calling a tool&#x27;s action. # Required. Response for a tool call.
+                &quot;action&quot;: &quot;A String&quot;, # Optional. The name of the tool&#x27;s action associated with this call.
+                &quot;content&quot;: &quot;A String&quot;, # Only populated if the response content is utf-8 encoded.
+                &quot;createTime&quot;: &quot;A String&quot;, # Output only. Create time of the tool call result.
+                &quot;error&quot;: { # An error produced by the tool call. # The tool call&#x27;s error.
+                  &quot;message&quot;: &quot;A String&quot;, # Optional. The error message of the function.
+                },
+                &quot;rawContent&quot;: &quot;A String&quot;, # Only populated if the response content is not utf-8 encoded. (by definition byte fields are base64 encoded).
+                &quot;tool&quot;: &quot;A String&quot;, # Optional. The tool associated with this call. Format: `projects//locations//tools/`.
+              },
+            },
+          ],
+        },
       },
       &quot;answerFeedback&quot;: { # Represents feedback the customer has about the quality &amp; correctness of a certain answer in a conversation. # Required. The AnswerFeedback for this record. You can set this with AnswerRecords.UpdateAnswerRecord in order to give us feedback about this answer.
         &quot;agentAssistantDetailFeedback&quot;: { # Detail feedback of Agent Assist result. # Detail feedback of agent assist suggestions.
           &quot;answerRelevance&quot;: &quot;A String&quot;, # Optional. Whether or not the suggested answer is relevant. For example: * Query: &quot;Can I change my mailing address?&quot; * Suggested document says: &quot;Items must be returned/exchanged within 60 days of the purchase date.&quot; * answer_relevance: AnswerRelevance.IRRELEVANT
-          &quot;documentCorrectness&quot;: &quot;A String&quot;, # Optional. Whether or not the information in the document is correct. For example: * Query: &quot;Can I return the package in 2 days once received?&quot; * Suggested document says: &quot;Items must be returned/exchanged within 60 days of the purchase date.&quot; * Ground truth: &quot;No return or exchange is allowed.&quot; * [document_correctness]: INCORRECT
+          &quot;documentCorrectness&quot;: &quot;A String&quot;, # Optional. Whether or not the information in the document is correct. For example: * Query: &quot;Can I return the package in 2 days once received?&quot; * Suggested document says: &quot;Items must be returned/exchanged within 60 days of the purchase date.&quot; * Ground truth: &quot;No return or exchange is allowed.&quot; * document_correctness: INCORRECT
           &quot;documentEfficiency&quot;: &quot;A String&quot;, # Optional. Whether or not the suggested document is efficient. For example, if the document is poorly written, hard to understand, hard to use or too long to find useful information, document_efficiency is DocumentEfficiency.INEFFICIENT.
           &quot;knowledgeAssistFeedback&quot;: { # Feedback for knowledge assist. # Optional. Feedback for knowledge assist.
             &quot;answerCopied&quot;: True or False, # Whether the suggested answer was copied by the human agent. If the value is set to be true, AnswerFeedback.clicked will be updated to be true.
@@ -1150,11 +1185,46 @@ Args:
       &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
       &quot;source&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this answer was extracted from. Format: `projects//locations//agent/knowledgeBases//documents/`.
     },
+    &quot;generatorSuggestion&quot;: { # Suggestion generated using a Generator. # Output only. The generator suggestion.
+      &quot;freeFormSuggestion&quot;: { # Suggestion generated using free form generator. # Optional. Free form suggestion.
+        &quot;response&quot;: &quot;A String&quot;, # Required. Free form suggestion.
+      },
+      &quot;summarySuggestion&quot;: { # Suggested summary of the conversation. # Optional. Suggested summary.
+        &quot;summarySections&quot;: [ # Required. All the parts of generated summary.
+          { # A component of the generated summary.
+            &quot;section&quot;: &quot;A String&quot;, # Required. Name of the section.
+            &quot;summary&quot;: &quot;A String&quot;, # Required. Summary text for the section.
+          },
+        ],
+      },
+      &quot;toolCallInfo&quot;: [ # Optional. List of request and response for tool calls executed.
+        { # Request and response for a tool call.
+          &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Required. Request for a tool call.
+            &quot;action&quot;: &quot;A String&quot;, # Optional. The name of the tool&#x27;s action associated with this call.
+            &quot;createTime&quot;: &quot;A String&quot;, # Output only. Create time of the tool call.
+            &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+              &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+            },
+            &quot;tool&quot;: &quot;A String&quot;, # Optional. The tool associated with this call. Format: `projects//locations//tools/`.
+          },
+          &quot;toolCallResult&quot;: { # The result of calling a tool&#x27;s action. # Required. Response for a tool call.
+            &quot;action&quot;: &quot;A String&quot;, # Optional. The name of the tool&#x27;s action associated with this call.
+            &quot;content&quot;: &quot;A String&quot;, # Only populated if the response content is utf-8 encoded.
+            &quot;createTime&quot;: &quot;A String&quot;, # Output only. Create time of the tool call result.
+            &quot;error&quot;: { # An error produced by the tool call. # The tool call&#x27;s error.
+              &quot;message&quot;: &quot;A String&quot;, # Optional. The error message of the function.
+            },
+            &quot;rawContent&quot;: &quot;A String&quot;, # Only populated if the response content is not utf-8 encoded. (by definition byte fields are base64 encoded).
+            &quot;tool&quot;: &quot;A String&quot;, # Optional. The tool associated with this call. Format: `projects//locations//tools/`.
+          },
+        },
+      ],
+    },
   },
   &quot;answerFeedback&quot;: { # Represents feedback the customer has about the quality &amp; correctness of a certain answer in a conversation. # Required. The AnswerFeedback for this record. You can set this with AnswerRecords.UpdateAnswerRecord in order to give us feedback about this answer.
     &quot;agentAssistantDetailFeedback&quot;: { # Detail feedback of Agent Assist result. # Detail feedback of agent assist suggestions.
       &quot;answerRelevance&quot;: &quot;A String&quot;, # Optional. Whether or not the suggested answer is relevant. For example: * Query: &quot;Can I change my mailing address?&quot; * Suggested document says: &quot;Items must be returned/exchanged within 60 days of the purchase date.&quot; * answer_relevance: AnswerRelevance.IRRELEVANT
-      &quot;documentCorrectness&quot;: &quot;A String&quot;, # Optional. Whether or not the information in the document is correct. For example: * Query: &quot;Can I return the package in 2 days once received?&quot; * Suggested document says: &quot;Items must be returned/exchanged within 60 days of the purchase date.&quot; * Ground truth: &quot;No return or exchange is allowed.&quot; * [document_correctness]: INCORRECT
+      &quot;documentCorrectness&quot;: &quot;A String&quot;, # Optional. Whether or not the information in the document is correct. For example: * Query: &quot;Can I return the package in 2 days once received?&quot; * Suggested document says: &quot;Items must be returned/exchanged within 60 days of the purchase date.&quot; * Ground truth: &quot;No return or exchange is allowed.&quot; * document_correctness: INCORRECT
       &quot;documentEfficiency&quot;: &quot;A String&quot;, # Optional. Whether or not the suggested document is efficient. For example, if the document is poorly written, hard to understand, hard to use or too long to find useful information, document_efficiency is DocumentEfficiency.INEFFICIENT.
       &quot;knowledgeAssistFeedback&quot;: { # Feedback for knowledge assist. # Optional. Feedback for knowledge assist.
         &quot;answerCopied&quot;: True or False, # Whether the suggested answer was copied by the human agent. If the value is set to be true, AnswerFeedback.clicked will be updated to be true.
@@ -1683,11 +1753,46 @@ Returns:
       &quot;question&quot;: &quot;A String&quot;, # The corresponding FAQ question.
       &quot;source&quot;: &quot;A String&quot;, # Indicates which Knowledge Document this answer was extracted from. Format: `projects//locations//agent/knowledgeBases//documents/`.
     },
+    &quot;generatorSuggestion&quot;: { # Suggestion generated using a Generator. # Output only. The generator suggestion.
+      &quot;freeFormSuggestion&quot;: { # Suggestion generated using free form generator. # Optional. Free form suggestion.
+        &quot;response&quot;: &quot;A String&quot;, # Required. Free form suggestion.
+      },
+      &quot;summarySuggestion&quot;: { # Suggested summary of the conversation. # Optional. Suggested summary.
+        &quot;summarySections&quot;: [ # Required. All the parts of generated summary.
+          { # A component of the generated summary.
+            &quot;section&quot;: &quot;A String&quot;, # Required. Name of the section.
+            &quot;summary&quot;: &quot;A String&quot;, # Required. Summary text for the section.
+          },
+        ],
+      },
+      &quot;toolCallInfo&quot;: [ # Optional. List of request and response for tool calls executed.
+        { # Request and response for a tool call.
+          &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Required. Request for a tool call.
+            &quot;action&quot;: &quot;A String&quot;, # Optional. The name of the tool&#x27;s action associated with this call.
+            &quot;createTime&quot;: &quot;A String&quot;, # Output only. Create time of the tool call.
+            &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+              &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+            },
+            &quot;tool&quot;: &quot;A String&quot;, # Optional. The tool associated with this call. Format: `projects//locations//tools/`.
+          },
+          &quot;toolCallResult&quot;: { # The result of calling a tool&#x27;s action. # Required. Response for a tool call.
+            &quot;action&quot;: &quot;A String&quot;, # Optional. The name of the tool&#x27;s action associated with this call.
+            &quot;content&quot;: &quot;A String&quot;, # Only populated if the response content is utf-8 encoded.
+            &quot;createTime&quot;: &quot;A String&quot;, # Output only. Create time of the tool call result.
+            &quot;error&quot;: { # An error produced by the tool call. # The tool call&#x27;s error.
+              &quot;message&quot;: &quot;A String&quot;, # Optional. The error message of the function.
+            },
+            &quot;rawContent&quot;: &quot;A String&quot;, # Only populated if the response content is not utf-8 encoded. (by definition byte fields are base64 encoded).
+            &quot;tool&quot;: &quot;A String&quot;, # Optional. The tool associated with this call. Format: `projects//locations//tools/`.
+          },
+        },
+      ],
+    },
   },
   &quot;answerFeedback&quot;: { # Represents feedback the customer has about the quality &amp; correctness of a certain answer in a conversation. # Required. The AnswerFeedback for this record. You can set this with AnswerRecords.UpdateAnswerRecord in order to give us feedback about this answer.
     &quot;agentAssistantDetailFeedback&quot;: { # Detail feedback of Agent Assist result. # Detail feedback of agent assist suggestions.
       &quot;answerRelevance&quot;: &quot;A String&quot;, # Optional. Whether or not the suggested answer is relevant. For example: * Query: &quot;Can I change my mailing address?&quot; * Suggested document says: &quot;Items must be returned/exchanged within 60 days of the purchase date.&quot; * answer_relevance: AnswerRelevance.IRRELEVANT
-      &quot;documentCorrectness&quot;: &quot;A String&quot;, # Optional. Whether or not the information in the document is correct. For example: * Query: &quot;Can I return the package in 2 days once received?&quot; * Suggested document says: &quot;Items must be returned/exchanged within 60 days of the purchase date.&quot; * Ground truth: &quot;No return or exchange is allowed.&quot; * [document_correctness]: INCORRECT
+      &quot;documentCorrectness&quot;: &quot;A String&quot;, # Optional. Whether or not the information in the document is correct. For example: * Query: &quot;Can I return the package in 2 days once received?&quot; * Suggested document says: &quot;Items must be returned/exchanged within 60 days of the purchase date.&quot; * Ground truth: &quot;No return or exchange is allowed.&quot; * document_correctness: INCORRECT
       &quot;documentEfficiency&quot;: &quot;A String&quot;, # Optional. Whether or not the suggested document is efficient. For example, if the document is poorly written, hard to understand, hard to use or too long to find useful information, document_efficiency is DocumentEfficiency.INEFFICIENT.
       &quot;knowledgeAssistFeedback&quot;: { # Feedback for knowledge assist. # Optional. Feedback for knowledge assist.
         &quot;answerCopied&quot;: True or False, # Whether the suggested answer was copied by the human agent. If the value is set to be true, AnswerFeedback.clicked will be updated to be true.

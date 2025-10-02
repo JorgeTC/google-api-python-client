@@ -148,7 +148,7 @@ Args:
   body: object, The request body.
     The object takes the form of:
 
-{ # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and clonning the VM using the replicated snapshot.
+{ # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and cloning the VM using the replicated snapshot.
   &quot;computeEngineDisksTargetDetails&quot;: { # ComputeEngineDisksTargetDetails is a collection of created Persistent Disks details. # Output only. Details of the target Persistent Disks in Compute Engine.
     &quot;disks&quot;: [ # The details of each created Persistent Disk.
       { # Details of a created Persistent Disk.
@@ -163,6 +163,12 @@ Args:
     },
   },
   &quot;computeEngineTargetDetails&quot;: { # ComputeEngineTargetDetails is a collection of details for creating a VM in a target Compute Engine project. # Output only. Details of the target VM in Compute Engine.
+    &quot;adaptationModifiers&quot;: [ # Optional. Modifiers to be used as configuration of the OS adaptation process.
+      { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+        &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+        &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+      },
+    ],
     &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
       &quot;A String&quot;,
     ],
@@ -187,6 +193,9 @@ Args:
       &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
       &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
     },
+    &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+      &quot;A String&quot;,
+    ],
     &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
     &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
     &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
@@ -207,7 +216,7 @@ Args:
       { # NetworkInterface represents a NIC of a VM.
         &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
         &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-        &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+        &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
         &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
         &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
       },
@@ -260,7 +269,7 @@ Args:
       { # NetworkInterface represents a NIC of a VM.
         &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
         &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-        &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+        &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
         &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
         &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
       },
@@ -453,7 +462,7 @@ Args:
       { # NetworkInterface represents a NIC of a VM.
         &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
         &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-        &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+        &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
         &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
         &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
       },
@@ -515,7 +524,7 @@ Args:
 Returns:
   An object of the form:
 
-    { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and clonning the VM using the replicated snapshot.
+    { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and cloning the VM using the replicated snapshot.
   &quot;computeEngineDisksTargetDetails&quot;: { # ComputeEngineDisksTargetDetails is a collection of created Persistent Disks details. # Output only. Details of the target Persistent Disks in Compute Engine.
     &quot;disks&quot;: [ # The details of each created Persistent Disk.
       { # Details of a created Persistent Disk.
@@ -530,6 +539,12 @@ Returns:
     },
   },
   &quot;computeEngineTargetDetails&quot;: { # ComputeEngineTargetDetails is a collection of details for creating a VM in a target Compute Engine project. # Output only. Details of the target VM in Compute Engine.
+    &quot;adaptationModifiers&quot;: [ # Optional. Modifiers to be used as configuration of the OS adaptation process.
+      { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+        &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+        &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+      },
+    ],
     &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
       &quot;A String&quot;,
     ],
@@ -554,6 +569,9 @@ Returns:
       &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
       &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
     },
+    &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+      &quot;A String&quot;,
+    ],
     &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
     &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
     &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
@@ -574,7 +592,7 @@ Returns:
       { # NetworkInterface represents a NIC of a VM.
         &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
         &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-        &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+        &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
         &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
         &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
       },
@@ -627,7 +645,7 @@ Returns:
       { # NetworkInterface represents a NIC of a VM.
         &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
         &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-        &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+        &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
         &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
         &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
       },
@@ -820,7 +838,7 @@ Returns:
       { # NetworkInterface represents a NIC of a VM.
         &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
         &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-        &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+        &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
         &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
         &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
       },
@@ -858,7 +876,7 @@ Returns:
 
     { # Response message for &#x27;ListCutoverJobs&#x27; request.
   &quot;cutoverJobs&quot;: [ # Output only. The list of cutover jobs response.
-    { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and clonning the VM using the replicated snapshot.
+    { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and cloning the VM using the replicated snapshot.
       &quot;computeEngineDisksTargetDetails&quot;: { # ComputeEngineDisksTargetDetails is a collection of created Persistent Disks details. # Output only. Details of the target Persistent Disks in Compute Engine.
         &quot;disks&quot;: [ # The details of each created Persistent Disk.
           { # Details of a created Persistent Disk.
@@ -873,6 +891,12 @@ Returns:
         },
       },
       &quot;computeEngineTargetDetails&quot;: { # ComputeEngineTargetDetails is a collection of details for creating a VM in a target Compute Engine project. # Output only. Details of the target VM in Compute Engine.
+        &quot;adaptationModifiers&quot;: [ # Optional. Modifiers to be used as configuration of the OS adaptation process.
+          { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+            &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+            &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+          },
+        ],
         &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
           &quot;A String&quot;,
         ],
@@ -897,6 +921,9 @@ Returns:
           &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
           &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
         },
+        &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+          &quot;A String&quot;,
+        ],
         &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
         &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
         &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
@@ -917,7 +944,7 @@ Returns:
           { # NetworkInterface represents a NIC of a VM.
             &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
             &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-            &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+            &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
             &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
             &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
           },
@@ -970,7 +997,7 @@ Returns:
           { # NetworkInterface represents a NIC of a VM.
             &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
             &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-            &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+            &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
             &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
             &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
           },
@@ -1163,7 +1190,7 @@ Returns:
           { # NetworkInterface represents a NIC of a VM.
             &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
             &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-            &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+            &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
             &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
             &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
           },

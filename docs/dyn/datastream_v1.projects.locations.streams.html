@@ -120,6 +120,23 @@ Args:
 
 { # A resource representing streaming data from a source to a destination.
   &quot;backfillAll&quot;: { # Backfill strategy to automatically backfill the Stream&#x27;s objects. Specific objects can be excluded. # Automatically backfill objects included in the stream source configuration. Specific objects can be excluded.
+    &quot;mongodbExcludedObjects&quot;: { # MongoDB Cluster structure. # MongoDB data source objects to avoid backfilling
+      &quot;databases&quot;: [ # MongoDB databases in the cluster.
+        { # MongoDB Database.
+          &quot;collections&quot;: [ # Collections in the database.
+            { # MongoDB Collection.
+              &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+              &quot;fields&quot;: [ # Fields in the collection.
+                { # MongoDB Field.
+                  &quot;field&quot;: &quot;A String&quot;, # Field name.
+                },
+              ],
+            },
+          ],
+          &quot;database&quot;: &quot;A String&quot;, # Database name.
+        },
+      ],
+    },
     &quot;mysqlExcludedObjects&quot;: { # MySQL database structure # MySQL data source objects to avoid backfilling.
       &quot;mysqlDatabases&quot;: [ # Mysql databases on the server
         { # MySQL database.
@@ -194,6 +211,20 @@ Args:
         },
       ],
     },
+    &quot;salesforceExcludedObjects&quot;: { # Salesforce organization structure. # Salesforce data source objects to avoid backfilling
+      &quot;objects&quot;: [ # Salesforce objects in the database server.
+        { # Salesforce object.
+          &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+            { # Salesforce field.
+              &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+              &quot;name&quot;: &quot;A String&quot;, # Field name.
+              &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+            },
+          ],
+          &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+        },
+      ],
+    },
     &quot;sqlServerExcludedObjects&quot;: { # SQLServer database structure. # SQLServer data source objects to avoid backfilling
       &quot;schemas&quot;: [ # SQLServer schemas in the database server.
         { # SQLServer schema.
@@ -227,6 +258,13 @@ Args:
     &quot;bigqueryDestinationConfig&quot;: { # BigQuery destination configuration # BigQuery destination configuration.
       &quot;appendOnly&quot;: { # AppendOnly mode defines that all changes to a table will be written to the destination table. # Append only mode
       },
+      &quot;blmtConfig&quot;: { # The configuration for BLMT. # Optional. Big Lake Managed Tables (BLMT) configuration.
+        &quot;bucket&quot;: &quot;A String&quot;, # Required. The Cloud Storage bucket name.
+        &quot;connectionName&quot;: &quot;A String&quot;, # Required. The bigquery connection. Format: `{project}.{location}.{name}`
+        &quot;fileFormat&quot;: &quot;A String&quot;, # Required. The file format.
+        &quot;rootPath&quot;: &quot;A String&quot;, # The root path inside the Cloud Storage bucket.
+        &quot;tableFormat&quot;: &quot;A String&quot;, # Required. The table format.
+      },
       &quot;dataFreshness&quot;: &quot;A String&quot;, # The guaranteed data freshness (in seconds) when querying tables created by the stream. Editing this field will only affect new tables created in the future, but existing tables will not be impacted. Lower values mean that queries will return fresher data, but may result in higher cost.
       &quot;merge&quot;: { # Merge mode defines that all changes to a table will be merged at the destination table. # The standard mode
       },
@@ -239,6 +277,7 @@ Args:
           &quot;kmsKeyName&quot;: &quot;A String&quot;, # Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key. i.e. projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{cryptoKey}. See https://cloud.google.com/bigquery/docs/customer-managed-encryption for more information.
           &quot;location&quot;: &quot;A String&quot;, # Required. The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
         },
+        &quot;projectId&quot;: &quot;A String&quot;, # Optional. The project id of the BigQuery dataset. If not specified, the project will be inferred from the stream resource.
       },
     },
     &quot;destinationConnectionProfile&quot;: &quot;A String&quot;, # Required. Destination connection profile resource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
@@ -271,7 +310,46 @@ Args:
   },
   &quot;lastRecoveryTime&quot;: &quot;A String&quot;, # Output only. If the stream was recovered, the time of the last recovery. Note: This field is currently experimental.
   &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. The stream&#x27;s name.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;sourceConfig&quot;: { # The configuration of the stream source. # Required. Source connection profile configuration.
+    &quot;mongodbSourceConfig&quot;: { # MongoDB source configuration. # MongoDB data source configuration.
+      &quot;excludeObjects&quot;: { # MongoDB Cluster structure. # MongoDB collections to exclude from the stream.
+        &quot;databases&quot;: [ # MongoDB databases in the cluster.
+          { # MongoDB Database.
+            &quot;collections&quot;: [ # Collections in the database.
+              { # MongoDB Collection.
+                &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+                &quot;fields&quot;: [ # Fields in the collection.
+                  { # MongoDB Field.
+                    &quot;field&quot;: &quot;A String&quot;, # Field name.
+                  },
+                ],
+              },
+            ],
+            &quot;database&quot;: &quot;A String&quot;, # Database name.
+          },
+        ],
+      },
+      &quot;includeObjects&quot;: { # MongoDB Cluster structure. # MongoDB collections to include in the stream.
+        &quot;databases&quot;: [ # MongoDB databases in the cluster.
+          { # MongoDB Database.
+            &quot;collections&quot;: [ # Collections in the database.
+              { # MongoDB Collection.
+                &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+                &quot;fields&quot;: [ # Fields in the collection.
+                  { # MongoDB Field.
+                    &quot;field&quot;: &quot;A String&quot;, # Field name.
+                  },
+                ],
+              },
+            ],
+            &quot;database&quot;: &quot;A String&quot;, # Database name.
+          },
+        ],
+      },
+      &quot;maxConcurrentBackfillTasks&quot;: 42, # Optional. Maximum number of concurrent backfill tasks. The number should be non-negative and less than or equal to 50. If not set (or set to 0), the system&#x27;s default value is used
+    },
     &quot;mysqlSourceConfig&quot;: { # MySQL source configuration # MySQL data source configuration.
       &quot;binaryLogPosition&quot;: { # Use Binary log position based replication. # Use Binary log position based replication.
       },
@@ -451,7 +529,38 @@ Args:
       &quot;publication&quot;: &quot;A String&quot;, # Required. The name of the publication that includes the set of all tables that are defined in the stream&#x27;s include_objects.
       &quot;replicationSlot&quot;: &quot;A String&quot;, # Required. Immutable. The name of the logical replication slot that&#x27;s configured with the pgoutput plugin.
     },
-    &quot;sourceConnectionProfile&quot;: &quot;A String&quot;, # Required. Source connection profile resoource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
+    &quot;salesforceSourceConfig&quot;: { # Salesforce source configuration # Salesforce data source configuration.
+      &quot;excludeObjects&quot;: { # Salesforce organization structure. # Salesforce objects to exclude from the stream.
+        &quot;objects&quot;: [ # Salesforce objects in the database server.
+          { # Salesforce object.
+            &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+              { # Salesforce field.
+                &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+                &quot;name&quot;: &quot;A String&quot;, # Field name.
+                &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+              },
+            ],
+            &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+          },
+        ],
+      },
+      &quot;includeObjects&quot;: { # Salesforce organization structure. # Salesforce objects to retrieve from the source.
+        &quot;objects&quot;: [ # Salesforce objects in the database server.
+          { # Salesforce object.
+            &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+              { # Salesforce field.
+                &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+                &quot;name&quot;: &quot;A String&quot;, # Field name.
+                &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+              },
+            ],
+            &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+          },
+        ],
+      },
+      &quot;pollingInterval&quot;: &quot;A String&quot;, # Required. Salesforce objects polling interval. The interval at which new changes will be polled for each object. The duration must be between 5 minutes and 24 hours.
+    },
+    &quot;sourceConnectionProfile&quot;: &quot;A String&quot;, # Required. Source connection profile resource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
     &quot;sqlServerSourceConfig&quot;: { # SQLServer data source configuration # SQLServer data source configuration.
       &quot;changeTables&quot;: { # Configuration to use Change Tables CDC read method. # CDC reader reads from change tables.
       },
@@ -598,6 +707,23 @@ Returns:
 
     { # A resource representing streaming data from a source to a destination.
   &quot;backfillAll&quot;: { # Backfill strategy to automatically backfill the Stream&#x27;s objects. Specific objects can be excluded. # Automatically backfill objects included in the stream source configuration. Specific objects can be excluded.
+    &quot;mongodbExcludedObjects&quot;: { # MongoDB Cluster structure. # MongoDB data source objects to avoid backfilling
+      &quot;databases&quot;: [ # MongoDB databases in the cluster.
+        { # MongoDB Database.
+          &quot;collections&quot;: [ # Collections in the database.
+            { # MongoDB Collection.
+              &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+              &quot;fields&quot;: [ # Fields in the collection.
+                { # MongoDB Field.
+                  &quot;field&quot;: &quot;A String&quot;, # Field name.
+                },
+              ],
+            },
+          ],
+          &quot;database&quot;: &quot;A String&quot;, # Database name.
+        },
+      ],
+    },
     &quot;mysqlExcludedObjects&quot;: { # MySQL database structure # MySQL data source objects to avoid backfilling.
       &quot;mysqlDatabases&quot;: [ # Mysql databases on the server
         { # MySQL database.
@@ -672,6 +798,20 @@ Returns:
         },
       ],
     },
+    &quot;salesforceExcludedObjects&quot;: { # Salesforce organization structure. # Salesforce data source objects to avoid backfilling
+      &quot;objects&quot;: [ # Salesforce objects in the database server.
+        { # Salesforce object.
+          &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+            { # Salesforce field.
+              &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+              &quot;name&quot;: &quot;A String&quot;, # Field name.
+              &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+            },
+          ],
+          &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+        },
+      ],
+    },
     &quot;sqlServerExcludedObjects&quot;: { # SQLServer database structure. # SQLServer data source objects to avoid backfilling
       &quot;schemas&quot;: [ # SQLServer schemas in the database server.
         { # SQLServer schema.
@@ -705,6 +845,13 @@ Returns:
     &quot;bigqueryDestinationConfig&quot;: { # BigQuery destination configuration # BigQuery destination configuration.
       &quot;appendOnly&quot;: { # AppendOnly mode defines that all changes to a table will be written to the destination table. # Append only mode
       },
+      &quot;blmtConfig&quot;: { # The configuration for BLMT. # Optional. Big Lake Managed Tables (BLMT) configuration.
+        &quot;bucket&quot;: &quot;A String&quot;, # Required. The Cloud Storage bucket name.
+        &quot;connectionName&quot;: &quot;A String&quot;, # Required. The bigquery connection. Format: `{project}.{location}.{name}`
+        &quot;fileFormat&quot;: &quot;A String&quot;, # Required. The file format.
+        &quot;rootPath&quot;: &quot;A String&quot;, # The root path inside the Cloud Storage bucket.
+        &quot;tableFormat&quot;: &quot;A String&quot;, # Required. The table format.
+      },
       &quot;dataFreshness&quot;: &quot;A String&quot;, # The guaranteed data freshness (in seconds) when querying tables created by the stream. Editing this field will only affect new tables created in the future, but existing tables will not be impacted. Lower values mean that queries will return fresher data, but may result in higher cost.
       &quot;merge&quot;: { # Merge mode defines that all changes to a table will be merged at the destination table. # The standard mode
       },
@@ -717,6 +864,7 @@ Returns:
           &quot;kmsKeyName&quot;: &quot;A String&quot;, # Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key. i.e. projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{cryptoKey}. See https://cloud.google.com/bigquery/docs/customer-managed-encryption for more information.
           &quot;location&quot;: &quot;A String&quot;, # Required. The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
         },
+        &quot;projectId&quot;: &quot;A String&quot;, # Optional. The project id of the BigQuery dataset. If not specified, the project will be inferred from the stream resource.
       },
     },
     &quot;destinationConnectionProfile&quot;: &quot;A String&quot;, # Required. Destination connection profile resource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
@@ -749,7 +897,46 @@ Returns:
   },
   &quot;lastRecoveryTime&quot;: &quot;A String&quot;, # Output only. If the stream was recovered, the time of the last recovery. Note: This field is currently experimental.
   &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. The stream&#x27;s name.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;sourceConfig&quot;: { # The configuration of the stream source. # Required. Source connection profile configuration.
+    &quot;mongodbSourceConfig&quot;: { # MongoDB source configuration. # MongoDB data source configuration.
+      &quot;excludeObjects&quot;: { # MongoDB Cluster structure. # MongoDB collections to exclude from the stream.
+        &quot;databases&quot;: [ # MongoDB databases in the cluster.
+          { # MongoDB Database.
+            &quot;collections&quot;: [ # Collections in the database.
+              { # MongoDB Collection.
+                &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+                &quot;fields&quot;: [ # Fields in the collection.
+                  { # MongoDB Field.
+                    &quot;field&quot;: &quot;A String&quot;, # Field name.
+                  },
+                ],
+              },
+            ],
+            &quot;database&quot;: &quot;A String&quot;, # Database name.
+          },
+        ],
+      },
+      &quot;includeObjects&quot;: { # MongoDB Cluster structure. # MongoDB collections to include in the stream.
+        &quot;databases&quot;: [ # MongoDB databases in the cluster.
+          { # MongoDB Database.
+            &quot;collections&quot;: [ # Collections in the database.
+              { # MongoDB Collection.
+                &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+                &quot;fields&quot;: [ # Fields in the collection.
+                  { # MongoDB Field.
+                    &quot;field&quot;: &quot;A String&quot;, # Field name.
+                  },
+                ],
+              },
+            ],
+            &quot;database&quot;: &quot;A String&quot;, # Database name.
+          },
+        ],
+      },
+      &quot;maxConcurrentBackfillTasks&quot;: 42, # Optional. Maximum number of concurrent backfill tasks. The number should be non-negative and less than or equal to 50. If not set (or set to 0), the system&#x27;s default value is used
+    },
     &quot;mysqlSourceConfig&quot;: { # MySQL source configuration # MySQL data source configuration.
       &quot;binaryLogPosition&quot;: { # Use Binary log position based replication. # Use Binary log position based replication.
       },
@@ -929,7 +1116,38 @@ Returns:
       &quot;publication&quot;: &quot;A String&quot;, # Required. The name of the publication that includes the set of all tables that are defined in the stream&#x27;s include_objects.
       &quot;replicationSlot&quot;: &quot;A String&quot;, # Required. Immutable. The name of the logical replication slot that&#x27;s configured with the pgoutput plugin.
     },
-    &quot;sourceConnectionProfile&quot;: &quot;A String&quot;, # Required. Source connection profile resoource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
+    &quot;salesforceSourceConfig&quot;: { # Salesforce source configuration # Salesforce data source configuration.
+      &quot;excludeObjects&quot;: { # Salesforce organization structure. # Salesforce objects to exclude from the stream.
+        &quot;objects&quot;: [ # Salesforce objects in the database server.
+          { # Salesforce object.
+            &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+              { # Salesforce field.
+                &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+                &quot;name&quot;: &quot;A String&quot;, # Field name.
+                &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+              },
+            ],
+            &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+          },
+        ],
+      },
+      &quot;includeObjects&quot;: { # Salesforce organization structure. # Salesforce objects to retrieve from the source.
+        &quot;objects&quot;: [ # Salesforce objects in the database server.
+          { # Salesforce object.
+            &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+              { # Salesforce field.
+                &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+                &quot;name&quot;: &quot;A String&quot;, # Field name.
+                &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+              },
+            ],
+            &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+          },
+        ],
+      },
+      &quot;pollingInterval&quot;: &quot;A String&quot;, # Required. Salesforce objects polling interval. The interval at which new changes will be polled for each object. The duration must be between 5 minutes and 24 hours.
+    },
+    &quot;sourceConnectionProfile&quot;: &quot;A String&quot;, # Required. Source connection profile resource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
     &quot;sqlServerSourceConfig&quot;: { # SQLServer data source configuration # SQLServer data source configuration.
       &quot;changeTables&quot;: { # Configuration to use Change Tables CDC read method. # CDC reader reads from change tables.
       },
@@ -1015,6 +1233,23 @@ Returns:
   &quot;streams&quot;: [ # List of streams
     { # A resource representing streaming data from a source to a destination.
       &quot;backfillAll&quot;: { # Backfill strategy to automatically backfill the Stream&#x27;s objects. Specific objects can be excluded. # Automatically backfill objects included in the stream source configuration. Specific objects can be excluded.
+        &quot;mongodbExcludedObjects&quot;: { # MongoDB Cluster structure. # MongoDB data source objects to avoid backfilling
+          &quot;databases&quot;: [ # MongoDB databases in the cluster.
+            { # MongoDB Database.
+              &quot;collections&quot;: [ # Collections in the database.
+                { # MongoDB Collection.
+                  &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+                  &quot;fields&quot;: [ # Fields in the collection.
+                    { # MongoDB Field.
+                      &quot;field&quot;: &quot;A String&quot;, # Field name.
+                    },
+                  ],
+                },
+              ],
+              &quot;database&quot;: &quot;A String&quot;, # Database name.
+            },
+          ],
+        },
         &quot;mysqlExcludedObjects&quot;: { # MySQL database structure # MySQL data source objects to avoid backfilling.
           &quot;mysqlDatabases&quot;: [ # Mysql databases on the server
             { # MySQL database.
@@ -1089,6 +1324,20 @@ Returns:
             },
           ],
         },
+        &quot;salesforceExcludedObjects&quot;: { # Salesforce organization structure. # Salesforce data source objects to avoid backfilling
+          &quot;objects&quot;: [ # Salesforce objects in the database server.
+            { # Salesforce object.
+              &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+                { # Salesforce field.
+                  &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+                  &quot;name&quot;: &quot;A String&quot;, # Field name.
+                  &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+                },
+              ],
+              &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+            },
+          ],
+        },
         &quot;sqlServerExcludedObjects&quot;: { # SQLServer database structure. # SQLServer data source objects to avoid backfilling
           &quot;schemas&quot;: [ # SQLServer schemas in the database server.
             { # SQLServer schema.
@@ -1122,6 +1371,13 @@ Returns:
         &quot;bigqueryDestinationConfig&quot;: { # BigQuery destination configuration # BigQuery destination configuration.
           &quot;appendOnly&quot;: { # AppendOnly mode defines that all changes to a table will be written to the destination table. # Append only mode
           },
+          &quot;blmtConfig&quot;: { # The configuration for BLMT. # Optional. Big Lake Managed Tables (BLMT) configuration.
+            &quot;bucket&quot;: &quot;A String&quot;, # Required. The Cloud Storage bucket name.
+            &quot;connectionName&quot;: &quot;A String&quot;, # Required. The bigquery connection. Format: `{project}.{location}.{name}`
+            &quot;fileFormat&quot;: &quot;A String&quot;, # Required. The file format.
+            &quot;rootPath&quot;: &quot;A String&quot;, # The root path inside the Cloud Storage bucket.
+            &quot;tableFormat&quot;: &quot;A String&quot;, # Required. The table format.
+          },
           &quot;dataFreshness&quot;: &quot;A String&quot;, # The guaranteed data freshness (in seconds) when querying tables created by the stream. Editing this field will only affect new tables created in the future, but existing tables will not be impacted. Lower values mean that queries will return fresher data, but may result in higher cost.
           &quot;merge&quot;: { # Merge mode defines that all changes to a table will be merged at the destination table. # The standard mode
           },
@@ -1134,6 +1390,7 @@ Returns:
               &quot;kmsKeyName&quot;: &quot;A String&quot;, # Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key. i.e. projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{cryptoKey}. See https://cloud.google.com/bigquery/docs/customer-managed-encryption for more information.
               &quot;location&quot;: &quot;A String&quot;, # Required. The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
             },
+            &quot;projectId&quot;: &quot;A String&quot;, # Optional. The project id of the BigQuery dataset. If not specified, the project will be inferred from the stream resource.
           },
         },
         &quot;destinationConnectionProfile&quot;: &quot;A String&quot;, # Required. Destination connection profile resource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
@@ -1166,7 +1423,46 @@ Returns:
       },
       &quot;lastRecoveryTime&quot;: &quot;A String&quot;, # Output only. If the stream was recovered, the time of the last recovery. Note: This field is currently experimental.
       &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. The stream&#x27;s name.
+      &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+      &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
       &quot;sourceConfig&quot;: { # The configuration of the stream source. # Required. Source connection profile configuration.
+        &quot;mongodbSourceConfig&quot;: { # MongoDB source configuration. # MongoDB data source configuration.
+          &quot;excludeObjects&quot;: { # MongoDB Cluster structure. # MongoDB collections to exclude from the stream.
+            &quot;databases&quot;: [ # MongoDB databases in the cluster.
+              { # MongoDB Database.
+                &quot;collections&quot;: [ # Collections in the database.
+                  { # MongoDB Collection.
+                    &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+                    &quot;fields&quot;: [ # Fields in the collection.
+                      { # MongoDB Field.
+                        &quot;field&quot;: &quot;A String&quot;, # Field name.
+                      },
+                    ],
+                  },
+                ],
+                &quot;database&quot;: &quot;A String&quot;, # Database name.
+              },
+            ],
+          },
+          &quot;includeObjects&quot;: { # MongoDB Cluster structure. # MongoDB collections to include in the stream.
+            &quot;databases&quot;: [ # MongoDB databases in the cluster.
+              { # MongoDB Database.
+                &quot;collections&quot;: [ # Collections in the database.
+                  { # MongoDB Collection.
+                    &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+                    &quot;fields&quot;: [ # Fields in the collection.
+                      { # MongoDB Field.
+                        &quot;field&quot;: &quot;A String&quot;, # Field name.
+                      },
+                    ],
+                  },
+                ],
+                &quot;database&quot;: &quot;A String&quot;, # Database name.
+              },
+            ],
+          },
+          &quot;maxConcurrentBackfillTasks&quot;: 42, # Optional. Maximum number of concurrent backfill tasks. The number should be non-negative and less than or equal to 50. If not set (or set to 0), the system&#x27;s default value is used
+        },
         &quot;mysqlSourceConfig&quot;: { # MySQL source configuration # MySQL data source configuration.
           &quot;binaryLogPosition&quot;: { # Use Binary log position based replication. # Use Binary log position based replication.
           },
@@ -1346,7 +1642,38 @@ Returns:
           &quot;publication&quot;: &quot;A String&quot;, # Required. The name of the publication that includes the set of all tables that are defined in the stream&#x27;s include_objects.
           &quot;replicationSlot&quot;: &quot;A String&quot;, # Required. Immutable. The name of the logical replication slot that&#x27;s configured with the pgoutput plugin.
         },
-        &quot;sourceConnectionProfile&quot;: &quot;A String&quot;, # Required. Source connection profile resoource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
+        &quot;salesforceSourceConfig&quot;: { # Salesforce source configuration # Salesforce data source configuration.
+          &quot;excludeObjects&quot;: { # Salesforce organization structure. # Salesforce objects to exclude from the stream.
+            &quot;objects&quot;: [ # Salesforce objects in the database server.
+              { # Salesforce object.
+                &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+                  { # Salesforce field.
+                    &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+                    &quot;name&quot;: &quot;A String&quot;, # Field name.
+                    &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+                  },
+                ],
+                &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+              },
+            ],
+          },
+          &quot;includeObjects&quot;: { # Salesforce organization structure. # Salesforce objects to retrieve from the source.
+            &quot;objects&quot;: [ # Salesforce objects in the database server.
+              { # Salesforce object.
+                &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+                  { # Salesforce field.
+                    &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+                    &quot;name&quot;: &quot;A String&quot;, # Field name.
+                    &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+                  },
+                ],
+                &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+              },
+            ],
+          },
+          &quot;pollingInterval&quot;: &quot;A String&quot;, # Required. Salesforce objects polling interval. The interval at which new changes will be polled for each object. The duration must be between 5 minutes and 24 hours.
+        },
+        &quot;sourceConnectionProfile&quot;: &quot;A String&quot;, # Required. Source connection profile resource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
         &quot;sqlServerSourceConfig&quot;: { # SQLServer data source configuration # SQLServer data source configuration.
           &quot;changeTables&quot;: { # Configuration to use Change Tables CDC read method. # CDC reader reads from change tables.
           },
@@ -1439,6 +1766,23 @@ Args:
 
 { # A resource representing streaming data from a source to a destination.
   &quot;backfillAll&quot;: { # Backfill strategy to automatically backfill the Stream&#x27;s objects. Specific objects can be excluded. # Automatically backfill objects included in the stream source configuration. Specific objects can be excluded.
+    &quot;mongodbExcludedObjects&quot;: { # MongoDB Cluster structure. # MongoDB data source objects to avoid backfilling
+      &quot;databases&quot;: [ # MongoDB databases in the cluster.
+        { # MongoDB Database.
+          &quot;collections&quot;: [ # Collections in the database.
+            { # MongoDB Collection.
+              &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+              &quot;fields&quot;: [ # Fields in the collection.
+                { # MongoDB Field.
+                  &quot;field&quot;: &quot;A String&quot;, # Field name.
+                },
+              ],
+            },
+          ],
+          &quot;database&quot;: &quot;A String&quot;, # Database name.
+        },
+      ],
+    },
     &quot;mysqlExcludedObjects&quot;: { # MySQL database structure # MySQL data source objects to avoid backfilling.
       &quot;mysqlDatabases&quot;: [ # Mysql databases on the server
         { # MySQL database.
@@ -1513,6 +1857,20 @@ Args:
         },
       ],
     },
+    &quot;salesforceExcludedObjects&quot;: { # Salesforce organization structure. # Salesforce data source objects to avoid backfilling
+      &quot;objects&quot;: [ # Salesforce objects in the database server.
+        { # Salesforce object.
+          &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+            { # Salesforce field.
+              &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+              &quot;name&quot;: &quot;A String&quot;, # Field name.
+              &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+            },
+          ],
+          &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+        },
+      ],
+    },
     &quot;sqlServerExcludedObjects&quot;: { # SQLServer database structure. # SQLServer data source objects to avoid backfilling
       &quot;schemas&quot;: [ # SQLServer schemas in the database server.
         { # SQLServer schema.
@@ -1546,6 +1904,13 @@ Args:
     &quot;bigqueryDestinationConfig&quot;: { # BigQuery destination configuration # BigQuery destination configuration.
       &quot;appendOnly&quot;: { # AppendOnly mode defines that all changes to a table will be written to the destination table. # Append only mode
       },
+      &quot;blmtConfig&quot;: { # The configuration for BLMT. # Optional. Big Lake Managed Tables (BLMT) configuration.
+        &quot;bucket&quot;: &quot;A String&quot;, # Required. The Cloud Storage bucket name.
+        &quot;connectionName&quot;: &quot;A String&quot;, # Required. The bigquery connection. Format: `{project}.{location}.{name}`
+        &quot;fileFormat&quot;: &quot;A String&quot;, # Required. The file format.
+        &quot;rootPath&quot;: &quot;A String&quot;, # The root path inside the Cloud Storage bucket.
+        &quot;tableFormat&quot;: &quot;A String&quot;, # Required. The table format.
+      },
       &quot;dataFreshness&quot;: &quot;A String&quot;, # The guaranteed data freshness (in seconds) when querying tables created by the stream. Editing this field will only affect new tables created in the future, but existing tables will not be impacted. Lower values mean that queries will return fresher data, but may result in higher cost.
       &quot;merge&quot;: { # Merge mode defines that all changes to a table will be merged at the destination table. # The standard mode
       },
@@ -1558,6 +1923,7 @@ Args:
           &quot;kmsKeyName&quot;: &quot;A String&quot;, # Describes the Cloud KMS encryption key that will be used to protect destination BigQuery table. The BigQuery Service Account associated with your project requires access to this encryption key. i.e. projects/{project}/locations/{location}/keyRings/{key_ring}/cryptoKeys/{cryptoKey}. See https://cloud.google.com/bigquery/docs/customer-managed-encryption for more information.
           &quot;location&quot;: &quot;A String&quot;, # Required. The geographic location where the dataset should reside. See https://cloud.google.com/bigquery/docs/locations for supported locations.
         },
+        &quot;projectId&quot;: &quot;A String&quot;, # Optional. The project id of the BigQuery dataset. If not specified, the project will be inferred from the stream resource.
       },
     },
     &quot;destinationConnectionProfile&quot;: &quot;A String&quot;, # Required. Destination connection profile resource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
@@ -1590,7 +1956,46 @@ Args:
   },
   &quot;lastRecoveryTime&quot;: &quot;A String&quot;, # Output only. If the stream was recovered, the time of the last recovery. Note: This field is currently experimental.
   &quot;name&quot;: &quot;A String&quot;, # Output only. Identifier. The stream&#x27;s name.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;sourceConfig&quot;: { # The configuration of the stream source. # Required. Source connection profile configuration.
+    &quot;mongodbSourceConfig&quot;: { # MongoDB source configuration. # MongoDB data source configuration.
+      &quot;excludeObjects&quot;: { # MongoDB Cluster structure. # MongoDB collections to exclude from the stream.
+        &quot;databases&quot;: [ # MongoDB databases in the cluster.
+          { # MongoDB Database.
+            &quot;collections&quot;: [ # Collections in the database.
+              { # MongoDB Collection.
+                &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+                &quot;fields&quot;: [ # Fields in the collection.
+                  { # MongoDB Field.
+                    &quot;field&quot;: &quot;A String&quot;, # Field name.
+                  },
+                ],
+              },
+            ],
+            &quot;database&quot;: &quot;A String&quot;, # Database name.
+          },
+        ],
+      },
+      &quot;includeObjects&quot;: { # MongoDB Cluster structure. # MongoDB collections to include in the stream.
+        &quot;databases&quot;: [ # MongoDB databases in the cluster.
+          { # MongoDB Database.
+            &quot;collections&quot;: [ # Collections in the database.
+              { # MongoDB Collection.
+                &quot;collection&quot;: &quot;A String&quot;, # Collection name.
+                &quot;fields&quot;: [ # Fields in the collection.
+                  { # MongoDB Field.
+                    &quot;field&quot;: &quot;A String&quot;, # Field name.
+                  },
+                ],
+              },
+            ],
+            &quot;database&quot;: &quot;A String&quot;, # Database name.
+          },
+        ],
+      },
+      &quot;maxConcurrentBackfillTasks&quot;: 42, # Optional. Maximum number of concurrent backfill tasks. The number should be non-negative and less than or equal to 50. If not set (or set to 0), the system&#x27;s default value is used
+    },
     &quot;mysqlSourceConfig&quot;: { # MySQL source configuration # MySQL data source configuration.
       &quot;binaryLogPosition&quot;: { # Use Binary log position based replication. # Use Binary log position based replication.
       },
@@ -1770,7 +2175,38 @@ Args:
       &quot;publication&quot;: &quot;A String&quot;, # Required. The name of the publication that includes the set of all tables that are defined in the stream&#x27;s include_objects.
       &quot;replicationSlot&quot;: &quot;A String&quot;, # Required. Immutable. The name of the logical replication slot that&#x27;s configured with the pgoutput plugin.
     },
-    &quot;sourceConnectionProfile&quot;: &quot;A String&quot;, # Required. Source connection profile resoource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
+    &quot;salesforceSourceConfig&quot;: { # Salesforce source configuration # Salesforce data source configuration.
+      &quot;excludeObjects&quot;: { # Salesforce organization structure. # Salesforce objects to exclude from the stream.
+        &quot;objects&quot;: [ # Salesforce objects in the database server.
+          { # Salesforce object.
+            &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+              { # Salesforce field.
+                &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+                &quot;name&quot;: &quot;A String&quot;, # Field name.
+                &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+              },
+            ],
+            &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+          },
+        ],
+      },
+      &quot;includeObjects&quot;: { # Salesforce organization structure. # Salesforce objects to retrieve from the source.
+        &quot;objects&quot;: [ # Salesforce objects in the database server.
+          { # Salesforce object.
+            &quot;fields&quot;: [ # Salesforce fields. When unspecified as part of include objects, includes everything, when unspecified as part of exclude objects, excludes nothing.
+              { # Salesforce field.
+                &quot;dataType&quot;: &quot;A String&quot;, # The data type.
+                &quot;name&quot;: &quot;A String&quot;, # Field name.
+                &quot;nillable&quot;: True or False, # Indicates whether the field can accept nil values.
+              },
+            ],
+            &quot;objectName&quot;: &quot;A String&quot;, # Object name.
+          },
+        ],
+      },
+      &quot;pollingInterval&quot;: &quot;A String&quot;, # Required. Salesforce objects polling interval. The interval at which new changes will be polled for each object. The duration must be between 5 minutes and 24 hours.
+    },
+    &quot;sourceConnectionProfile&quot;: &quot;A String&quot;, # Required. Source connection profile resource. Format: `projects/{project}/locations/{location}/connectionProfiles/{name}`
     &quot;sqlServerSourceConfig&quot;: { # SQLServer data source configuration # SQLServer data source configuration.
       &quot;changeTables&quot;: { # Configuration to use Change Tables CDC read method. # CDC reader reads from change tables.
       },
@@ -1881,6 +2317,12 @@ Args:
     &quot;nextAvailableStartPosition&quot;: { # CDC strategy to resume replication from the next available position in the source. # Optional. Resume replication from the next available position in the source.
     },
     &quot;specificStartPosition&quot;: { # CDC strategy to start replicating from a specific position in the source. # Optional. Start replicating from a specific position in the source.
+      &quot;mongodbChangeStreamPosition&quot;: { # MongoDB change stream position # MongoDB change stream position to start replicating from.
+        &quot;startTime&quot;: &quot;A String&quot;, # Required. The timestamp (in epoch seconds) to start change stream from.
+      },
+      &quot;mysqlGtidPosition&quot;: { # MySQL GTID position # MySQL GTID set to start replicating from.
+        &quot;gtidSet&quot;: &quot;A String&quot;, # Required. The gtid set to start replication from.
+      },
       &quot;mysqlLogPosition&quot;: { # MySQL log position # MySQL specific log position to start replicating from.
         &quot;logFile&quot;: &quot;A String&quot;, # Required. The binary log file name.
         &quot;logPosition&quot;: 42, # Optional. The position within the binary log file. Default is head of file.

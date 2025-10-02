@@ -106,11 +106,17 @@ h1, h2, h3 {
   <code><a href="#patch">patch(name, body=None, updateMask=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Updates the settings of a specific instance.</p>
 <p class="toc_element">
+  <code><a href="#pauseReplica">pauseReplica(name, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Pause the standby instance (replica). WARNING: This operation makes the standby instance's NFS filesystem writable. Any data written to the standby instance while paused will be lost when the replica is resumed or promoted.</p>
+<p class="toc_element">
   <code><a href="#promoteReplica">promoteReplica(name, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Promote the standby instance (replica).</p>
 <p class="toc_element">
   <code><a href="#restore">restore(name, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Restores an existing instance's file share from a backup. The capacity of the instance needs to be equal to or larger than the capacity of the backup (and also equal to or larger than the minimum capacity of the tier).</p>
+<p class="toc_element">
+  <code><a href="#resumeReplica">resumeReplica(name, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Resume the standby instance (replica). WARNING: Any data written to the standby instance while paused will be lost when the replica is resumed.</p>
 <p class="toc_element">
   <code><a href="#revert">revert(name, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Revert an existing instance's file system to a specified snapshot.</p>
@@ -130,14 +136,23 @@ Args:
     The object takes the form of:
 
 { # A Filestore instance.
+  &quot;backendType&quot;: &quot;A String&quot;, # Optional. Immutable. Designates the backend type of this instance. Intended to be used by internal tests and allowed customers.
   &quot;capacityGb&quot;: &quot;A String&quot;, # The storage capacity of the instance in gigabytes (GB = 1024^3 bytes). This capacity can be increased up to `max_capacity_gb` GB in multipliers of `capacity_step_size_gb` GB.
   &quot;capacityStepSizeGb&quot;: &quot;A String&quot;, # Output only. The increase/decrease capacity step size.
-  &quot;configurablePerformanceEnabled&quot;: True or False, # Output only. Indicates whether this instance&#x27;s performance is configurable. If enabled, adjust it using the &#x27;performance_config&#x27; field.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the instance was created.
+  &quot;customPerformanceSupported&quot;: True or False, # Output only. Indicates whether this instance supports configuring its performance. If true, the user can configure the instance&#x27;s performance by using the &#x27;performance_config&#x27; field.
   &quot;deletionProtectionEnabled&quot;: True or False, # Optional. Indicates whether the instance is protected against deletion.
   &quot;deletionProtectionReason&quot;: &quot;A String&quot;, # Optional. The reason for enabling deletion protection.
   &quot;description&quot;: &quot;A String&quot;, # The description of the instance (2048 characters or less).
-  &quot;directoryServices&quot;: { # Directory Services configuration for Kerberos-based authentication. # Optional. Directory Services configuration for Kerberos-based authentication. Should only be set if protocol is &quot;NFS_V4_1&quot;.
+  &quot;directoryServices&quot;: { # Directory Services configuration. # Optional. Directory Services configuration. Should only be set if protocol is &quot;NFS_V4_1&quot;.
+    &quot;ldap&quot;: { # LdapConfig contains all the parameters for connecting to LDAP servers. # Configuration for LDAP servers.
+      &quot;domain&quot;: &quot;A String&quot;, # Required. The LDAP domain name in the format of `my-domain.com`.
+      &quot;groupsOu&quot;: &quot;A String&quot;, # Optional. The groups Organizational Unit (OU) is optional. This parameter is a hint to allow faster lookup in the LDAP namespace. In case that this parameter is not provided, Filestore instance will query the whole LDAP namespace.
+      &quot;servers&quot;: [ # Required. The servers names are used for specifying the LDAP servers names. The LDAP servers names can come with two formats: 1. DNS name, for example: `ldap.example1.com`, `ldap.example2.com`. 2. IP address, for example: `10.0.0.1`, `10.0.0.2`, `10.0.0.3`. All servers names must be in the same format: either all DNS names or all IP addresses.
+        &quot;A String&quot;,
+      ],
+      &quot;usersOu&quot;: &quot;A String&quot;, # Optional. The users Organizational Unit (OU) is optional. This parameter is a hint to allow faster lookup in the LDAP namespace. In case that this parameter is not provided, Filestore instance will query the whole LDAP namespace.
+    },
     &quot;managedActiveDirectory&quot;: { # ManagedActiveDirectoryConfig contains all the parameters for connecting to Managed Service for Microsoft Active Directory (Managed Microsoft AD). # Configuration for Managed Service for Microsoft Active Directory.
       &quot;computer&quot;: &quot;A String&quot;, # Required. The computer name is used as a prefix in the command to mount the remote target. For example: if the computer is `my-computer`, the mount command will look like: `$mount -o vers=4.1,sec=krb5 my-computer.filestore.: `.
       &quot;domain&quot;: &quot;A String&quot;, # Required. The domain resource name, in the format `projects/{project_id}/locations/global/domains/{domain}`.
@@ -156,6 +171,7 @@ Args:
           &quot;ipRanges&quot;: [ # List of either an IPv4 addresses in the format `{octet1}.{octet2}.{octet3}.{octet4}` or CIDR ranges in the format `{octet1}.{octet2}.{octet3}.{octet4}/{mask size}` which may mount the file share. Overlapping IP ranges are not allowed, both within and across NfsExportOptions. An error will be returned. The limit is 64 IP ranges/addresses for each FileShareConfig among all NfsExportOptions.
             &quot;A String&quot;,
           ],
+          &quot;network&quot;: &quot;A String&quot;, # Optional. The source VPC network for ip_ranges. Required for instances using Private Service Connect, optional otherwise. If provided, must be the same network specified in the `NetworkConfig.network` field.
           &quot;securityFlavors&quot;: [ # The security flavors allowed for mount operations. The default is AUTH_SYS.
             &quot;A String&quot;,
           ],
@@ -171,6 +187,7 @@ Args:
   },
   &quot;maxCapacityGb&quot;: &quot;A String&quot;, # Output only. The max capacity of the instance.
   &quot;maxShareCount&quot;: &quot;A String&quot;, # The max number of shares allowed.
+  &quot;minCapacityGb&quot;: &quot;A String&quot;, # Output only. The min capacity of the instance.
   &quot;multiShareEnabled&quot;: True or False, # Indicates whether this instance uses a multi-share configuration with which it can have more than one file-share or none at all. File-shares are added, updated and removed through the separate file-share APIs.
   &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the instance, in the format `projects/{project_id}/locations/{location_id}/instances/{instance_id}`.
   &quot;networks&quot;: [ # VPC networks to which the instance is connected. For this version, only a single network is supported.
@@ -183,6 +200,9 @@ Args:
         &quot;A String&quot;,
       ],
       &quot;network&quot;: &quot;A String&quot;, # The name of the Google Compute Engine [VPC network](https://cloud.google.com/vpc/docs/vpc) to which the instance is connected.
+      &quot;pscConfig&quot;: { # Private Service Connect configuration. # Optional. Private Service Connect configuration. Should only be set when connect_mode is PRIVATE_SERVICE_CONNECT.
+        &quot;endpointProject&quot;: &quot;A String&quot;, # Consumer service project in which the Private Service Connect endpoint would be set up. This is optional, and only relevant in case the network is a shared VPC. If this is not specified, the endpoint would be setup in the VPC host project.
+      },
       &quot;reservedIpRange&quot;: &quot;A String&quot;, # Optional, reserved_ip_range can have one of the following two types of values. * CIDR range value when using DIRECT_PEERING connect mode. * [Allocated IP address range](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-internal-ip-address) when using PRIVATE_SERVICE_ACCESS connect mode. When the name of an allocated IP address range is specified, it must be one of the ranges associated with the private service access connection. When specified as a direct CIDR value, it must be a /29 CIDR block for Basic tier, a /24 CIDR block for High Scale tier, or a /26 CIDR block for Enterprise tier in one of the [internal IP address ranges](https://www.arin.net/reference/research/statistics/address_filters/) that identifies the range of IP addresses reserved for this instance. For example, 10.0.0.0/29, 192.168.0.0/24, or 192.168.0.0/26, respectively. The range you specify can&#x27;t overlap with either existing subnets or assigned IP address ranges for other Filestore instances in the selected VPC network.
     },
   ],
@@ -190,11 +210,12 @@ Args:
     &quot;fixedIops&quot;: { # Fixed IOPS (input/output operations per second) parameters. # Choose a fixed provisioned IOPS value for the instance, which will remain constant regardless of instance capacity. Value must be a multiple of 1000. If the chosen value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIops&quot;: &quot;A String&quot;, # Required. Maximum IOPS.
     },
-    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned read IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned read IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
+    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIopsPerTb&quot;: &quot;A String&quot;, # Required. Maximum IOPS per TiB.
     },
   },
   &quot;performanceLimits&quot;: { # The enforced performance limits, calculated from the instance&#x27;s performance configuration. # Output only. Used for getting performance limits.
+    &quot;maxIops&quot;: &quot;A String&quot;, # Output only. The max IOPS.
     &quot;maxReadIops&quot;: &quot;A String&quot;, # Output only. The max read IOPS.
     &quot;maxReadThroughputBps&quot;: &quot;A String&quot;, # Output only. The max read throughput in bytes per second.
     &quot;maxWriteIops&quot;: &quot;A String&quot;, # Output only. The max write IOPS.
@@ -210,6 +231,7 @@ Args:
         &quot;stateReasons&quot;: [ # Output only. Additional information about the replication state, if available.
           &quot;A String&quot;,
         ],
+        &quot;stateUpdateTime&quot;: &quot;A String&quot;, # Output only. The time when the replica state was updated.
       },
     ],
     &quot;role&quot;: &quot;A String&quot;, # Output only. The replication role.
@@ -308,14 +330,23 @@ Returns:
   An object of the form:
 
     { # A Filestore instance.
+  &quot;backendType&quot;: &quot;A String&quot;, # Optional. Immutable. Designates the backend type of this instance. Intended to be used by internal tests and allowed customers.
   &quot;capacityGb&quot;: &quot;A String&quot;, # The storage capacity of the instance in gigabytes (GB = 1024^3 bytes). This capacity can be increased up to `max_capacity_gb` GB in multipliers of `capacity_step_size_gb` GB.
   &quot;capacityStepSizeGb&quot;: &quot;A String&quot;, # Output only. The increase/decrease capacity step size.
-  &quot;configurablePerformanceEnabled&quot;: True or False, # Output only. Indicates whether this instance&#x27;s performance is configurable. If enabled, adjust it using the &#x27;performance_config&#x27; field.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the instance was created.
+  &quot;customPerformanceSupported&quot;: True or False, # Output only. Indicates whether this instance supports configuring its performance. If true, the user can configure the instance&#x27;s performance by using the &#x27;performance_config&#x27; field.
   &quot;deletionProtectionEnabled&quot;: True or False, # Optional. Indicates whether the instance is protected against deletion.
   &quot;deletionProtectionReason&quot;: &quot;A String&quot;, # Optional. The reason for enabling deletion protection.
   &quot;description&quot;: &quot;A String&quot;, # The description of the instance (2048 characters or less).
-  &quot;directoryServices&quot;: { # Directory Services configuration for Kerberos-based authentication. # Optional. Directory Services configuration for Kerberos-based authentication. Should only be set if protocol is &quot;NFS_V4_1&quot;.
+  &quot;directoryServices&quot;: { # Directory Services configuration. # Optional. Directory Services configuration. Should only be set if protocol is &quot;NFS_V4_1&quot;.
+    &quot;ldap&quot;: { # LdapConfig contains all the parameters for connecting to LDAP servers. # Configuration for LDAP servers.
+      &quot;domain&quot;: &quot;A String&quot;, # Required. The LDAP domain name in the format of `my-domain.com`.
+      &quot;groupsOu&quot;: &quot;A String&quot;, # Optional. The groups Organizational Unit (OU) is optional. This parameter is a hint to allow faster lookup in the LDAP namespace. In case that this parameter is not provided, Filestore instance will query the whole LDAP namespace.
+      &quot;servers&quot;: [ # Required. The servers names are used for specifying the LDAP servers names. The LDAP servers names can come with two formats: 1. DNS name, for example: `ldap.example1.com`, `ldap.example2.com`. 2. IP address, for example: `10.0.0.1`, `10.0.0.2`, `10.0.0.3`. All servers names must be in the same format: either all DNS names or all IP addresses.
+        &quot;A String&quot;,
+      ],
+      &quot;usersOu&quot;: &quot;A String&quot;, # Optional. The users Organizational Unit (OU) is optional. This parameter is a hint to allow faster lookup in the LDAP namespace. In case that this parameter is not provided, Filestore instance will query the whole LDAP namespace.
+    },
     &quot;managedActiveDirectory&quot;: { # ManagedActiveDirectoryConfig contains all the parameters for connecting to Managed Service for Microsoft Active Directory (Managed Microsoft AD). # Configuration for Managed Service for Microsoft Active Directory.
       &quot;computer&quot;: &quot;A String&quot;, # Required. The computer name is used as a prefix in the command to mount the remote target. For example: if the computer is `my-computer`, the mount command will look like: `$mount -o vers=4.1,sec=krb5 my-computer.filestore.: `.
       &quot;domain&quot;: &quot;A String&quot;, # Required. The domain resource name, in the format `projects/{project_id}/locations/global/domains/{domain}`.
@@ -334,6 +365,7 @@ Returns:
           &quot;ipRanges&quot;: [ # List of either an IPv4 addresses in the format `{octet1}.{octet2}.{octet3}.{octet4}` or CIDR ranges in the format `{octet1}.{octet2}.{octet3}.{octet4}/{mask size}` which may mount the file share. Overlapping IP ranges are not allowed, both within and across NfsExportOptions. An error will be returned. The limit is 64 IP ranges/addresses for each FileShareConfig among all NfsExportOptions.
             &quot;A String&quot;,
           ],
+          &quot;network&quot;: &quot;A String&quot;, # Optional. The source VPC network for ip_ranges. Required for instances using Private Service Connect, optional otherwise. If provided, must be the same network specified in the `NetworkConfig.network` field.
           &quot;securityFlavors&quot;: [ # The security flavors allowed for mount operations. The default is AUTH_SYS.
             &quot;A String&quot;,
           ],
@@ -349,6 +381,7 @@ Returns:
   },
   &quot;maxCapacityGb&quot;: &quot;A String&quot;, # Output only. The max capacity of the instance.
   &quot;maxShareCount&quot;: &quot;A String&quot;, # The max number of shares allowed.
+  &quot;minCapacityGb&quot;: &quot;A String&quot;, # Output only. The min capacity of the instance.
   &quot;multiShareEnabled&quot;: True or False, # Indicates whether this instance uses a multi-share configuration with which it can have more than one file-share or none at all. File-shares are added, updated and removed through the separate file-share APIs.
   &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the instance, in the format `projects/{project_id}/locations/{location_id}/instances/{instance_id}`.
   &quot;networks&quot;: [ # VPC networks to which the instance is connected. For this version, only a single network is supported.
@@ -361,6 +394,9 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;network&quot;: &quot;A String&quot;, # The name of the Google Compute Engine [VPC network](https://cloud.google.com/vpc/docs/vpc) to which the instance is connected.
+      &quot;pscConfig&quot;: { # Private Service Connect configuration. # Optional. Private Service Connect configuration. Should only be set when connect_mode is PRIVATE_SERVICE_CONNECT.
+        &quot;endpointProject&quot;: &quot;A String&quot;, # Consumer service project in which the Private Service Connect endpoint would be set up. This is optional, and only relevant in case the network is a shared VPC. If this is not specified, the endpoint would be setup in the VPC host project.
+      },
       &quot;reservedIpRange&quot;: &quot;A String&quot;, # Optional, reserved_ip_range can have one of the following two types of values. * CIDR range value when using DIRECT_PEERING connect mode. * [Allocated IP address range](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-internal-ip-address) when using PRIVATE_SERVICE_ACCESS connect mode. When the name of an allocated IP address range is specified, it must be one of the ranges associated with the private service access connection. When specified as a direct CIDR value, it must be a /29 CIDR block for Basic tier, a /24 CIDR block for High Scale tier, or a /26 CIDR block for Enterprise tier in one of the [internal IP address ranges](https://www.arin.net/reference/research/statistics/address_filters/) that identifies the range of IP addresses reserved for this instance. For example, 10.0.0.0/29, 192.168.0.0/24, or 192.168.0.0/26, respectively. The range you specify can&#x27;t overlap with either existing subnets or assigned IP address ranges for other Filestore instances in the selected VPC network.
     },
   ],
@@ -368,11 +404,12 @@ Returns:
     &quot;fixedIops&quot;: { # Fixed IOPS (input/output operations per second) parameters. # Choose a fixed provisioned IOPS value for the instance, which will remain constant regardless of instance capacity. Value must be a multiple of 1000. If the chosen value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIops&quot;: &quot;A String&quot;, # Required. Maximum IOPS.
     },
-    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned read IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned read IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
+    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIopsPerTb&quot;: &quot;A String&quot;, # Required. Maximum IOPS per TiB.
     },
   },
   &quot;performanceLimits&quot;: { # The enforced performance limits, calculated from the instance&#x27;s performance configuration. # Output only. Used for getting performance limits.
+    &quot;maxIops&quot;: &quot;A String&quot;, # Output only. The max IOPS.
     &quot;maxReadIops&quot;: &quot;A String&quot;, # Output only. The max read IOPS.
     &quot;maxReadThroughputBps&quot;: &quot;A String&quot;, # Output only. The max read throughput in bytes per second.
     &quot;maxWriteIops&quot;: &quot;A String&quot;, # Output only. The max write IOPS.
@@ -388,6 +425,7 @@ Returns:
         &quot;stateReasons&quot;: [ # Output only. Additional information about the replication state, if available.
           &quot;A String&quot;,
         ],
+        &quot;stateUpdateTime&quot;: &quot;A String&quot;, # Output only. The time when the replica state was updated.
       },
     ],
     &quot;role&quot;: &quot;A String&quot;, # Output only. The replication role.
@@ -427,14 +465,23 @@ Returns:
     { # ListInstancesResponse is the result of ListInstancesRequest.
   &quot;instances&quot;: [ # A list of instances in the project for the specified location. If the `{location}` value in the request is &quot;-&quot;, the response contains a list of instances from all locations. If any location is unreachable, the response will only return instances in reachable locations and the &quot;unreachable&quot; field will be populated with a list of unreachable locations.
     { # A Filestore instance.
+      &quot;backendType&quot;: &quot;A String&quot;, # Optional. Immutable. Designates the backend type of this instance. Intended to be used by internal tests and allowed customers.
       &quot;capacityGb&quot;: &quot;A String&quot;, # The storage capacity of the instance in gigabytes (GB = 1024^3 bytes). This capacity can be increased up to `max_capacity_gb` GB in multipliers of `capacity_step_size_gb` GB.
       &quot;capacityStepSizeGb&quot;: &quot;A String&quot;, # Output only. The increase/decrease capacity step size.
-      &quot;configurablePerformanceEnabled&quot;: True or False, # Output only. Indicates whether this instance&#x27;s performance is configurable. If enabled, adjust it using the &#x27;performance_config&#x27; field.
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the instance was created.
+      &quot;customPerformanceSupported&quot;: True or False, # Output only. Indicates whether this instance supports configuring its performance. If true, the user can configure the instance&#x27;s performance by using the &#x27;performance_config&#x27; field.
       &quot;deletionProtectionEnabled&quot;: True or False, # Optional. Indicates whether the instance is protected against deletion.
       &quot;deletionProtectionReason&quot;: &quot;A String&quot;, # Optional. The reason for enabling deletion protection.
       &quot;description&quot;: &quot;A String&quot;, # The description of the instance (2048 characters or less).
-      &quot;directoryServices&quot;: { # Directory Services configuration for Kerberos-based authentication. # Optional. Directory Services configuration for Kerberos-based authentication. Should only be set if protocol is &quot;NFS_V4_1&quot;.
+      &quot;directoryServices&quot;: { # Directory Services configuration. # Optional. Directory Services configuration. Should only be set if protocol is &quot;NFS_V4_1&quot;.
+        &quot;ldap&quot;: { # LdapConfig contains all the parameters for connecting to LDAP servers. # Configuration for LDAP servers.
+          &quot;domain&quot;: &quot;A String&quot;, # Required. The LDAP domain name in the format of `my-domain.com`.
+          &quot;groupsOu&quot;: &quot;A String&quot;, # Optional. The groups Organizational Unit (OU) is optional. This parameter is a hint to allow faster lookup in the LDAP namespace. In case that this parameter is not provided, Filestore instance will query the whole LDAP namespace.
+          &quot;servers&quot;: [ # Required. The servers names are used for specifying the LDAP servers names. The LDAP servers names can come with two formats: 1. DNS name, for example: `ldap.example1.com`, `ldap.example2.com`. 2. IP address, for example: `10.0.0.1`, `10.0.0.2`, `10.0.0.3`. All servers names must be in the same format: either all DNS names or all IP addresses.
+            &quot;A String&quot;,
+          ],
+          &quot;usersOu&quot;: &quot;A String&quot;, # Optional. The users Organizational Unit (OU) is optional. This parameter is a hint to allow faster lookup in the LDAP namespace. In case that this parameter is not provided, Filestore instance will query the whole LDAP namespace.
+        },
         &quot;managedActiveDirectory&quot;: { # ManagedActiveDirectoryConfig contains all the parameters for connecting to Managed Service for Microsoft Active Directory (Managed Microsoft AD). # Configuration for Managed Service for Microsoft Active Directory.
           &quot;computer&quot;: &quot;A String&quot;, # Required. The computer name is used as a prefix in the command to mount the remote target. For example: if the computer is `my-computer`, the mount command will look like: `$mount -o vers=4.1,sec=krb5 my-computer.filestore.: `.
           &quot;domain&quot;: &quot;A String&quot;, # Required. The domain resource name, in the format `projects/{project_id}/locations/global/domains/{domain}`.
@@ -453,6 +500,7 @@ Returns:
               &quot;ipRanges&quot;: [ # List of either an IPv4 addresses in the format `{octet1}.{octet2}.{octet3}.{octet4}` or CIDR ranges in the format `{octet1}.{octet2}.{octet3}.{octet4}/{mask size}` which may mount the file share. Overlapping IP ranges are not allowed, both within and across NfsExportOptions. An error will be returned. The limit is 64 IP ranges/addresses for each FileShareConfig among all NfsExportOptions.
                 &quot;A String&quot;,
               ],
+              &quot;network&quot;: &quot;A String&quot;, # Optional. The source VPC network for ip_ranges. Required for instances using Private Service Connect, optional otherwise. If provided, must be the same network specified in the `NetworkConfig.network` field.
               &quot;securityFlavors&quot;: [ # The security flavors allowed for mount operations. The default is AUTH_SYS.
                 &quot;A String&quot;,
               ],
@@ -468,6 +516,7 @@ Returns:
       },
       &quot;maxCapacityGb&quot;: &quot;A String&quot;, # Output only. The max capacity of the instance.
       &quot;maxShareCount&quot;: &quot;A String&quot;, # The max number of shares allowed.
+      &quot;minCapacityGb&quot;: &quot;A String&quot;, # Output only. The min capacity of the instance.
       &quot;multiShareEnabled&quot;: True or False, # Indicates whether this instance uses a multi-share configuration with which it can have more than one file-share or none at all. File-shares are added, updated and removed through the separate file-share APIs.
       &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the instance, in the format `projects/{project_id}/locations/{location_id}/instances/{instance_id}`.
       &quot;networks&quot;: [ # VPC networks to which the instance is connected. For this version, only a single network is supported.
@@ -480,6 +529,9 @@ Returns:
             &quot;A String&quot;,
           ],
           &quot;network&quot;: &quot;A String&quot;, # The name of the Google Compute Engine [VPC network](https://cloud.google.com/vpc/docs/vpc) to which the instance is connected.
+          &quot;pscConfig&quot;: { # Private Service Connect configuration. # Optional. Private Service Connect configuration. Should only be set when connect_mode is PRIVATE_SERVICE_CONNECT.
+            &quot;endpointProject&quot;: &quot;A String&quot;, # Consumer service project in which the Private Service Connect endpoint would be set up. This is optional, and only relevant in case the network is a shared VPC. If this is not specified, the endpoint would be setup in the VPC host project.
+          },
           &quot;reservedIpRange&quot;: &quot;A String&quot;, # Optional, reserved_ip_range can have one of the following two types of values. * CIDR range value when using DIRECT_PEERING connect mode. * [Allocated IP address range](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-internal-ip-address) when using PRIVATE_SERVICE_ACCESS connect mode. When the name of an allocated IP address range is specified, it must be one of the ranges associated with the private service access connection. When specified as a direct CIDR value, it must be a /29 CIDR block for Basic tier, a /24 CIDR block for High Scale tier, or a /26 CIDR block for Enterprise tier in one of the [internal IP address ranges](https://www.arin.net/reference/research/statistics/address_filters/) that identifies the range of IP addresses reserved for this instance. For example, 10.0.0.0/29, 192.168.0.0/24, or 192.168.0.0/26, respectively. The range you specify can&#x27;t overlap with either existing subnets or assigned IP address ranges for other Filestore instances in the selected VPC network.
         },
       ],
@@ -487,11 +539,12 @@ Returns:
         &quot;fixedIops&quot;: { # Fixed IOPS (input/output operations per second) parameters. # Choose a fixed provisioned IOPS value for the instance, which will remain constant regardless of instance capacity. Value must be a multiple of 1000. If the chosen value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
           &quot;maxIops&quot;: &quot;A String&quot;, # Required. Maximum IOPS.
         },
-        &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned read IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned read IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
+        &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
           &quot;maxIopsPerTb&quot;: &quot;A String&quot;, # Required. Maximum IOPS per TiB.
         },
       },
       &quot;performanceLimits&quot;: { # The enforced performance limits, calculated from the instance&#x27;s performance configuration. # Output only. Used for getting performance limits.
+        &quot;maxIops&quot;: &quot;A String&quot;, # Output only. The max IOPS.
         &quot;maxReadIops&quot;: &quot;A String&quot;, # Output only. The max read IOPS.
         &quot;maxReadThroughputBps&quot;: &quot;A String&quot;, # Output only. The max read throughput in bytes per second.
         &quot;maxWriteIops&quot;: &quot;A String&quot;, # Output only. The max write IOPS.
@@ -507,6 +560,7 @@ Returns:
             &quot;stateReasons&quot;: [ # Output only. Additional information about the replication state, if available.
               &quot;A String&quot;,
             ],
+            &quot;stateUpdateTime&quot;: &quot;A String&quot;, # Output only. The time when the replica state was updated.
           },
         ],
         &quot;role&quot;: &quot;A String&quot;, # Output only. The replication role.
@@ -555,14 +609,23 @@ Args:
     The object takes the form of:
 
 { # A Filestore instance.
+  &quot;backendType&quot;: &quot;A String&quot;, # Optional. Immutable. Designates the backend type of this instance. Intended to be used by internal tests and allowed customers.
   &quot;capacityGb&quot;: &quot;A String&quot;, # The storage capacity of the instance in gigabytes (GB = 1024^3 bytes). This capacity can be increased up to `max_capacity_gb` GB in multipliers of `capacity_step_size_gb` GB.
   &quot;capacityStepSizeGb&quot;: &quot;A String&quot;, # Output only. The increase/decrease capacity step size.
-  &quot;configurablePerformanceEnabled&quot;: True or False, # Output only. Indicates whether this instance&#x27;s performance is configurable. If enabled, adjust it using the &#x27;performance_config&#x27; field.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the instance was created.
+  &quot;customPerformanceSupported&quot;: True or False, # Output only. Indicates whether this instance supports configuring its performance. If true, the user can configure the instance&#x27;s performance by using the &#x27;performance_config&#x27; field.
   &quot;deletionProtectionEnabled&quot;: True or False, # Optional. Indicates whether the instance is protected against deletion.
   &quot;deletionProtectionReason&quot;: &quot;A String&quot;, # Optional. The reason for enabling deletion protection.
   &quot;description&quot;: &quot;A String&quot;, # The description of the instance (2048 characters or less).
-  &quot;directoryServices&quot;: { # Directory Services configuration for Kerberos-based authentication. # Optional. Directory Services configuration for Kerberos-based authentication. Should only be set if protocol is &quot;NFS_V4_1&quot;.
+  &quot;directoryServices&quot;: { # Directory Services configuration. # Optional. Directory Services configuration. Should only be set if protocol is &quot;NFS_V4_1&quot;.
+    &quot;ldap&quot;: { # LdapConfig contains all the parameters for connecting to LDAP servers. # Configuration for LDAP servers.
+      &quot;domain&quot;: &quot;A String&quot;, # Required. The LDAP domain name in the format of `my-domain.com`.
+      &quot;groupsOu&quot;: &quot;A String&quot;, # Optional. The groups Organizational Unit (OU) is optional. This parameter is a hint to allow faster lookup in the LDAP namespace. In case that this parameter is not provided, Filestore instance will query the whole LDAP namespace.
+      &quot;servers&quot;: [ # Required. The servers names are used for specifying the LDAP servers names. The LDAP servers names can come with two formats: 1. DNS name, for example: `ldap.example1.com`, `ldap.example2.com`. 2. IP address, for example: `10.0.0.1`, `10.0.0.2`, `10.0.0.3`. All servers names must be in the same format: either all DNS names or all IP addresses.
+        &quot;A String&quot;,
+      ],
+      &quot;usersOu&quot;: &quot;A String&quot;, # Optional. The users Organizational Unit (OU) is optional. This parameter is a hint to allow faster lookup in the LDAP namespace. In case that this parameter is not provided, Filestore instance will query the whole LDAP namespace.
+    },
     &quot;managedActiveDirectory&quot;: { # ManagedActiveDirectoryConfig contains all the parameters for connecting to Managed Service for Microsoft Active Directory (Managed Microsoft AD). # Configuration for Managed Service for Microsoft Active Directory.
       &quot;computer&quot;: &quot;A String&quot;, # Required. The computer name is used as a prefix in the command to mount the remote target. For example: if the computer is `my-computer`, the mount command will look like: `$mount -o vers=4.1,sec=krb5 my-computer.filestore.: `.
       &quot;domain&quot;: &quot;A String&quot;, # Required. The domain resource name, in the format `projects/{project_id}/locations/global/domains/{domain}`.
@@ -581,6 +644,7 @@ Args:
           &quot;ipRanges&quot;: [ # List of either an IPv4 addresses in the format `{octet1}.{octet2}.{octet3}.{octet4}` or CIDR ranges in the format `{octet1}.{octet2}.{octet3}.{octet4}/{mask size}` which may mount the file share. Overlapping IP ranges are not allowed, both within and across NfsExportOptions. An error will be returned. The limit is 64 IP ranges/addresses for each FileShareConfig among all NfsExportOptions.
             &quot;A String&quot;,
           ],
+          &quot;network&quot;: &quot;A String&quot;, # Optional. The source VPC network for ip_ranges. Required for instances using Private Service Connect, optional otherwise. If provided, must be the same network specified in the `NetworkConfig.network` field.
           &quot;securityFlavors&quot;: [ # The security flavors allowed for mount operations. The default is AUTH_SYS.
             &quot;A String&quot;,
           ],
@@ -596,6 +660,7 @@ Args:
   },
   &quot;maxCapacityGb&quot;: &quot;A String&quot;, # Output only. The max capacity of the instance.
   &quot;maxShareCount&quot;: &quot;A String&quot;, # The max number of shares allowed.
+  &quot;minCapacityGb&quot;: &quot;A String&quot;, # Output only. The min capacity of the instance.
   &quot;multiShareEnabled&quot;: True or False, # Indicates whether this instance uses a multi-share configuration with which it can have more than one file-share or none at all. File-shares are added, updated and removed through the separate file-share APIs.
   &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of the instance, in the format `projects/{project_id}/locations/{location_id}/instances/{instance_id}`.
   &quot;networks&quot;: [ # VPC networks to which the instance is connected. For this version, only a single network is supported.
@@ -608,6 +673,9 @@ Args:
         &quot;A String&quot;,
       ],
       &quot;network&quot;: &quot;A String&quot;, # The name of the Google Compute Engine [VPC network](https://cloud.google.com/vpc/docs/vpc) to which the instance is connected.
+      &quot;pscConfig&quot;: { # Private Service Connect configuration. # Optional. Private Service Connect configuration. Should only be set when connect_mode is PRIVATE_SERVICE_CONNECT.
+        &quot;endpointProject&quot;: &quot;A String&quot;, # Consumer service project in which the Private Service Connect endpoint would be set up. This is optional, and only relevant in case the network is a shared VPC. If this is not specified, the endpoint would be setup in the VPC host project.
+      },
       &quot;reservedIpRange&quot;: &quot;A String&quot;, # Optional, reserved_ip_range can have one of the following two types of values. * CIDR range value when using DIRECT_PEERING connect mode. * [Allocated IP address range](https://cloud.google.com/compute/docs/ip-addresses/reserve-static-internal-ip-address) when using PRIVATE_SERVICE_ACCESS connect mode. When the name of an allocated IP address range is specified, it must be one of the ranges associated with the private service access connection. When specified as a direct CIDR value, it must be a /29 CIDR block for Basic tier, a /24 CIDR block for High Scale tier, or a /26 CIDR block for Enterprise tier in one of the [internal IP address ranges](https://www.arin.net/reference/research/statistics/address_filters/) that identifies the range of IP addresses reserved for this instance. For example, 10.0.0.0/29, 192.168.0.0/24, or 192.168.0.0/26, respectively. The range you specify can&#x27;t overlap with either existing subnets or assigned IP address ranges for other Filestore instances in the selected VPC network.
     },
   ],
@@ -615,11 +683,12 @@ Args:
     &quot;fixedIops&quot;: { # Fixed IOPS (input/output operations per second) parameters. # Choose a fixed provisioned IOPS value for the instance, which will remain constant regardless of instance capacity. Value must be a multiple of 1000. If the chosen value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIops&quot;: &quot;A String&quot;, # Required. Maximum IOPS.
     },
-    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned read IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned read IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
+    &quot;iopsPerTb&quot;: { # IOPS per TB. Filestore defines TB as 1024^4 bytes (TiB). # Provision IOPS dynamically based on the capacity of the instance. Provisioned IOPS will be calculated by multiplying the capacity of the instance in TiB by the `iops_per_tb` value. For example, for a 2 TiB instance with an `iops_per_tb` value of 17000 the provisioned IOPS will be 34000. If the calculated value is outside the supported range for the instance&#x27;s capacity during instance creation, instance creation will fail with an `InvalidArgument` error. Similarly, if an instance capacity update would result in a value outside the supported range, the update will fail with an `InvalidArgument` error.
       &quot;maxIopsPerTb&quot;: &quot;A String&quot;, # Required. Maximum IOPS per TiB.
     },
   },
   &quot;performanceLimits&quot;: { # The enforced performance limits, calculated from the instance&#x27;s performance configuration. # Output only. Used for getting performance limits.
+    &quot;maxIops&quot;: &quot;A String&quot;, # Output only. The max IOPS.
     &quot;maxReadIops&quot;: &quot;A String&quot;, # Output only. The max read IOPS.
     &quot;maxReadThroughputBps&quot;: &quot;A String&quot;, # Output only. The max read throughput in bytes per second.
     &quot;maxWriteIops&quot;: &quot;A String&quot;, # Output only. The max write IOPS.
@@ -635,6 +704,7 @@ Args:
         &quot;stateReasons&quot;: [ # Output only. Additional information about the replication state, if available.
           &quot;A String&quot;,
         ],
+        &quot;stateUpdateTime&quot;: &quot;A String&quot;, # Output only. The time when the replica state was updated.
       },
     ],
     &quot;role&quot;: &quot;A String&quot;, # Output only. The replication role.
@@ -683,6 +753,47 @@ Returns:
 </div>
 
 <div class="method">
+    <code class="details" id="pauseReplica">pauseReplica(name, body=None, x__xgafv=None)</code>
+  <pre>Pause the standby instance (replica). WARNING: This operation makes the standby instance&#x27;s NFS filesystem writable. Any data written to the standby instance while paused will be lost when the replica is resumed or promoted.
+
+Args:
+  name: string, Required. The resource name of the instance, in the format `projects/{project_id}/locations/{location_id}/instances/{instance_id}`. (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # PauseReplicaRequest pauses a Filestore standby instance (replica).
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # This resource represents a long-running operation that is the result of a network API call.
+  &quot;done&quot;: True or False, # If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.
+  &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The error result of the operation in case of failure or cancellation.
+    &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+    &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+      {
+        &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+      },
+    ],
+    &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;metadata&quot;: { # Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+  &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+}</pre>
+</div>
+
+<div class="method">
     <code class="details" id="promoteReplica">promoteReplica(name, body=None, x__xgafv=None)</code>
   <pre>Promote the standby instance (replica).
 
@@ -692,6 +803,7 @@ Args:
     The object takes the form of:
 
 { # PromoteReplicaRequest promotes a Filestore standby instance (replica).
+  &quot;peerInstance&quot;: &quot;A String&quot;, # Optional. The resource name of the peer instance to promote, in the format `projects/{project_id}/locations/{location_id}/instances/{instance_id}`. The peer instance is required if the operation is called on an active instance.
 }
 
   x__xgafv: string, V1 error format.
@@ -736,6 +848,47 @@ Args:
   &quot;fileShare&quot;: &quot;A String&quot;, # Required. Name of the file share in the Filestore instance that the backup is being restored to.
   &quot;sourceBackup&quot;: &quot;A String&quot;, # The resource name of the backup, in the format `projects/{project_id}/locations/{location_id}/backups/{backup_id}`.
   &quot;sourceSnapshot&quot;: &quot;A String&quot;, # The resource name of the snapshot, in the format `projects/{project_id}/locations/{location_id}/snapshots/{snapshot_id}`.
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # This resource represents a long-running operation that is the result of a network API call.
+  &quot;done&quot;: True or False, # If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.
+  &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The error result of the operation in case of failure or cancellation.
+    &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+    &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+      {
+        &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+      },
+    ],
+    &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;metadata&quot;: { # Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+  &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="resumeReplica">resumeReplica(name, body=None, x__xgafv=None)</code>
+  <pre>Resume the standby instance (replica). WARNING: Any data written to the standby instance while paused will be lost when the replica is resumed.
+
+Args:
+  name: string, Required. The resource name of the instance, in the format `projects/{project_id}/locations/{location_id}/instances/{instance_id}`. (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # ResumeReplicaRequest resumes a Filestore standby instance (replica).
 }
 
   x__xgafv: string, V1 error format.

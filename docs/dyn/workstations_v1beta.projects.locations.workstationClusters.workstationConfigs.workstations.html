@@ -93,7 +93,7 @@ h1, h2, h3 {
   <code><a href="#getIamPolicy">getIamPolicy(resource, options_requestedPolicyVersion=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Gets the access control policy for a resource. Returns an empty policy if the resource exists and does not have a policy set.</p>
 <p class="toc_element">
-  <code><a href="#list">list(parent, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
+  <code><a href="#list">list(parent, filter=None, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Returns all Workstations using the specified workstation configuration.</p>
 <p class="toc_element">
   <code><a href="#listUsable">listUsable(parent, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
@@ -141,9 +141,22 @@ Args:
   &quot;boostConfigs&quot;: [ # Output only. List of available boost configuration IDs that this workstation can be boosted up to.
     { # Boost configuration for this workstation. This object is populated from the parent workstation configuration.
       &quot;id&quot;: &quot;A String&quot;, # Output only. Boost configuration ID.
+      &quot;running&quot;: True or False, # Output only. Whether or not the current workstation is actively boosted with this id.
+    },
+  ],
+  &quot;conditions&quot;: [ # Output only. Status conditions describing the workstation&#x27;s current state.
+    { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).
+      &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+      &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+        {
+          &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+        },
+      ],
+      &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
     },
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when this workstation was created.
+  &quot;degraded&quot;: True or False, # Output only. Whether this workstation is in degraded mode, in which case it may require user action to restore full functionality. The conditions field contains detailed information about the status of the workstation.
   &quot;deleteTime&quot;: &quot;A String&quot;, # Output only. Time when this workstation was soft-deleted.
   &quot;displayName&quot;: &quot;A String&quot;, # Optional. Human-readable name for this workstation.
   &quot;env&quot;: { # Optional. Environment variables passed to the workstation container&#x27;s entrypoint.
@@ -291,9 +304,22 @@ Returns:
   &quot;boostConfigs&quot;: [ # Output only. List of available boost configuration IDs that this workstation can be boosted up to.
     { # Boost configuration for this workstation. This object is populated from the parent workstation configuration.
       &quot;id&quot;: &quot;A String&quot;, # Output only. Boost configuration ID.
+      &quot;running&quot;: True or False, # Output only. Whether or not the current workstation is actively boosted with this id.
+    },
+  ],
+  &quot;conditions&quot;: [ # Output only. Status conditions describing the workstation&#x27;s current state.
+    { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).
+      &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+      &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+        {
+          &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+        },
+      ],
+      &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
     },
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when this workstation was created.
+  &quot;degraded&quot;: True or False, # Output only. Whether this workstation is in degraded mode, in which case it may require user action to restore full functionality. The conditions field contains detailed information about the status of the workstation.
   &quot;deleteTime&quot;: &quot;A String&quot;, # Output only. Time when this workstation was soft-deleted.
   &quot;displayName&quot;: &quot;A String&quot;, # Optional. Human-readable name for this workstation.
   &quot;env&quot;: { # Optional. Environment variables passed to the workstation container&#x27;s entrypoint.
@@ -373,11 +399,12 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="list">list(parent, pageSize=None, pageToken=None, x__xgafv=None)</code>
+    <code class="details" id="list">list(parent, filter=None, pageSize=None, pageToken=None, x__xgafv=None)</code>
   <pre>Returns all Workstations using the specified workstation configuration.
 
 Args:
   parent: string, Required. Parent resource name. (required)
+  filter: string, Optional. Filter the Workstations to be listed. Possible filters are described in https://google.aip.dev/160.
   pageSize: integer, Optional. Maximum number of items to return.
   pageToken: string, Optional. next_page_token value returned from a previous List request, if any.
   x__xgafv: string, V1 error format.
@@ -401,9 +428,22 @@ Returns:
       &quot;boostConfigs&quot;: [ # Output only. List of available boost configuration IDs that this workstation can be boosted up to.
         { # Boost configuration for this workstation. This object is populated from the parent workstation configuration.
           &quot;id&quot;: &quot;A String&quot;, # Output only. Boost configuration ID.
+          &quot;running&quot;: True or False, # Output only. Whether or not the current workstation is actively boosted with this id.
+        },
+      ],
+      &quot;conditions&quot;: [ # Output only. Status conditions describing the workstation&#x27;s current state.
+        { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).
+          &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+          &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+            {
+              &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+            },
+          ],
+          &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
         },
       ],
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when this workstation was created.
+      &quot;degraded&quot;: True or False, # Output only. Whether this workstation is in degraded mode, in which case it may require user action to restore full functionality. The conditions field contains detailed information about the status of the workstation.
       &quot;deleteTime&quot;: &quot;A String&quot;, # Output only. Time when this workstation was soft-deleted.
       &quot;displayName&quot;: &quot;A String&quot;, # Optional. Human-readable name for this workstation.
       &quot;env&quot;: { # Optional. Environment variables passed to the workstation container&#x27;s entrypoint.
@@ -465,9 +505,22 @@ Returns:
       &quot;boostConfigs&quot;: [ # Output only. List of available boost configuration IDs that this workstation can be boosted up to.
         { # Boost configuration for this workstation. This object is populated from the parent workstation configuration.
           &quot;id&quot;: &quot;A String&quot;, # Output only. Boost configuration ID.
+          &quot;running&quot;: True or False, # Output only. Whether or not the current workstation is actively boosted with this id.
+        },
+      ],
+      &quot;conditions&quot;: [ # Output only. Status conditions describing the workstation&#x27;s current state.
+        { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).
+          &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+          &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+            {
+              &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+            },
+          ],
+          &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
         },
       ],
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when this workstation was created.
+      &quot;degraded&quot;: True or False, # Output only. Whether this workstation is in degraded mode, in which case it may require user action to restore full functionality. The conditions field contains detailed information about the status of the workstation.
       &quot;deleteTime&quot;: &quot;A String&quot;, # Output only. Time when this workstation was soft-deleted.
       &quot;displayName&quot;: &quot;A String&quot;, # Optional. Human-readable name for this workstation.
       &quot;env&quot;: { # Optional. Environment variables passed to the workstation container&#x27;s entrypoint.
@@ -544,9 +597,22 @@ Args:
   &quot;boostConfigs&quot;: [ # Output only. List of available boost configuration IDs that this workstation can be boosted up to.
     { # Boost configuration for this workstation. This object is populated from the parent workstation configuration.
       &quot;id&quot;: &quot;A String&quot;, # Output only. Boost configuration ID.
+      &quot;running&quot;: True or False, # Output only. Whether or not the current workstation is actively boosted with this id.
+    },
+  ],
+  &quot;conditions&quot;: [ # Output only. Status conditions describing the workstation&#x27;s current state.
+    { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).
+      &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+      &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+        {
+          &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+        },
+      ],
+      &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
     },
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Time when this workstation was created.
+  &quot;degraded&quot;: True or False, # Output only. Whether this workstation is in degraded mode, in which case it may require user action to restore full functionality. The conditions field contains detailed information about the status of the workstation.
   &quot;deleteTime&quot;: &quot;A String&quot;, # Output only. Time when this workstation was soft-deleted.
   &quot;displayName&quot;: &quot;A String&quot;, # Optional. Human-readable name for this workstation.
   &quot;env&quot;: { # Optional. Environment variables passed to the workstation container&#x27;s entrypoint.

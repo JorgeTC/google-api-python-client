@@ -76,7 +76,7 @@ h1, h2, h3 {
 <h2>Instance Methods</h2>
 <p class="toc_element">
   <code><a href="#addIpOverride">addIpOverride(name, body=None, x__xgafv=None)</a></code></p>
-<p class="firstline">Adds an IP override to a key. The following restrictions hold: * The maximum number of IP overrides per key is 100. * For any conflict (such as IP already exists or IP part of an existing IP range), an error is returned.</p>
+<p class="firstline">Adds an IP override to a key. The following restrictions hold: * The maximum number of IP overrides per key is 1000. * For any conflict (such as IP already exists or IP part of an existing IP range), an error is returned.</p>
 <p class="toc_element">
   <code><a href="#close">close()</a></code></p>
 <p class="firstline">Close httplib2 connections.</p>
@@ -119,7 +119,7 @@ h1, h2, h3 {
 <h3>Method Details</h3>
 <div class="method">
     <code class="details" id="addIpOverride">addIpOverride(name, body=None, x__xgafv=None)</code>
-  <pre>Adds an IP override to a key. The following restrictions hold: * The maximum number of IP overrides per key is 100. * For any conflict (such as IP already exists or IP part of an existing IP range), an error is returned.
+  <pre>Adds an IP override to a key. The following restrictions hold: * The maximum number of IP overrides per key is 1000. * For any conflict (such as IP already exists or IP part of an existing IP range), an error is returned.
 
 Args:
   name: string, Required. The name of the key to which the IP override is added, in the format `projects/{project}/keys/{key}`. (required)
@@ -200,7 +200,17 @@ Args:
     &quot;allowedDomains&quot;: [ # Optional. Domains or subdomains of websites allowed to use the key. All subdomains of an allowed domain are automatically allowed. A valid domain requires a host and must not include any path, port, query or fragment. Examples: &#x27;example.com&#x27; or &#x27;subdomain.example.com&#x27;
       &quot;A String&quot;,
     ],
-    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for IntegrationTypes CHECKBOX and INVISIBLE and SCORE_AND_CHALLENGE.
+    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for `IntegrationType` CHECKBOX, INVISIBLE or POLICY_BASED_CHALLENGE.
+    &quot;challengeSettings&quot;: { # Settings for POLICY_BASED_CHALLENGE keys to control when a challenge is triggered. # Optional. Challenge settings.
+      &quot;actionSettings&quot;: { # Optional. The action to score threshold map. The action name should be the same as the action name passed in the `data-action` attribute (see https://cloud.google.com/recaptcha/docs/actions-website). Action names are case-insensitive. There is a maximum of 100 action settings. An action name has a maximum length of 100.
+        &quot;a_key&quot;: { # Per-action challenge settings.
+          &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+        },
+      },
+      &quot;defaultSettings&quot;: { # Per-action challenge settings. # Required. Defines when a challenge is triggered (unless the default threshold is overridden for the given action, see `action_settings`).
+        &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+      },
+    },
     &quot;integrationType&quot;: &quot;A String&quot;, # Required. Describes how this key is integrated with the website.
   },
 }
@@ -254,7 +264,17 @@ Returns:
     &quot;allowedDomains&quot;: [ # Optional. Domains or subdomains of websites allowed to use the key. All subdomains of an allowed domain are automatically allowed. A valid domain requires a host and must not include any path, port, query or fragment. Examples: &#x27;example.com&#x27; or &#x27;subdomain.example.com&#x27;
       &quot;A String&quot;,
     ],
-    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for IntegrationTypes CHECKBOX and INVISIBLE and SCORE_AND_CHALLENGE.
+    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for `IntegrationType` CHECKBOX, INVISIBLE or POLICY_BASED_CHALLENGE.
+    &quot;challengeSettings&quot;: { # Settings for POLICY_BASED_CHALLENGE keys to control when a challenge is triggered. # Optional. Challenge settings.
+      &quot;actionSettings&quot;: { # Optional. The action to score threshold map. The action name should be the same as the action name passed in the `data-action` attribute (see https://cloud.google.com/recaptcha/docs/actions-website). Action names are case-insensitive. There is a maximum of 100 action settings. An action name has a maximum length of 100.
+        &quot;a_key&quot;: { # Per-action challenge settings.
+          &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+        },
+      },
+      &quot;defaultSettings&quot;: { # Per-action challenge settings. # Required. Defines when a challenge is triggered (unless the default threshold is overridden for the given action, see `action_settings`).
+        &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+      },
+    },
     &quot;integrationType&quot;: &quot;A String&quot;, # Required. Describes how this key is integrated with the website.
   },
 }</pre>
@@ -333,7 +353,17 @@ Returns:
     &quot;allowedDomains&quot;: [ # Optional. Domains or subdomains of websites allowed to use the key. All subdomains of an allowed domain are automatically allowed. A valid domain requires a host and must not include any path, port, query or fragment. Examples: &#x27;example.com&#x27; or &#x27;subdomain.example.com&#x27;
       &quot;A String&quot;,
     ],
-    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for IntegrationTypes CHECKBOX and INVISIBLE and SCORE_AND_CHALLENGE.
+    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for `IntegrationType` CHECKBOX, INVISIBLE or POLICY_BASED_CHALLENGE.
+    &quot;challengeSettings&quot;: { # Settings for POLICY_BASED_CHALLENGE keys to control when a challenge is triggered. # Optional. Challenge settings.
+      &quot;actionSettings&quot;: { # Optional. The action to score threshold map. The action name should be the same as the action name passed in the `data-action` attribute (see https://cloud.google.com/recaptcha/docs/actions-website). Action names are case-insensitive. There is a maximum of 100 action settings. An action name has a maximum length of 100.
+        &quot;a_key&quot;: { # Per-action challenge settings.
+          &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+        },
+      },
+      &quot;defaultSettings&quot;: { # Per-action challenge settings. # Required. Defines when a challenge is triggered (unless the default threshold is overridden for the given action, see `action_settings`).
+        &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+      },
+    },
     &quot;integrationType&quot;: &quot;A String&quot;, # Required. Describes how this key is integrated with the website.
   },
 }</pre>
@@ -379,7 +409,7 @@ Returns:
       },
     },
   ],
-  &quot;startTime&quot;: &quot;A String&quot;, # Inclusive start time aligned to a day (UTC).
+  &quot;startTime&quot;: &quot;A String&quot;, # Inclusive start time aligned to a day in the America/Los_Angeles (Pacific) timezone.
 }</pre>
 </div>
 
@@ -442,7 +472,17 @@ Returns:
         &quot;allowedDomains&quot;: [ # Optional. Domains or subdomains of websites allowed to use the key. All subdomains of an allowed domain are automatically allowed. A valid domain requires a host and must not include any path, port, query or fragment. Examples: &#x27;example.com&#x27; or &#x27;subdomain.example.com&#x27;
           &quot;A String&quot;,
         ],
-        &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for IntegrationTypes CHECKBOX and INVISIBLE and SCORE_AND_CHALLENGE.
+        &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for `IntegrationType` CHECKBOX, INVISIBLE or POLICY_BASED_CHALLENGE.
+        &quot;challengeSettings&quot;: { # Settings for POLICY_BASED_CHALLENGE keys to control when a challenge is triggered. # Optional. Challenge settings.
+          &quot;actionSettings&quot;: { # Optional. The action to score threshold map. The action name should be the same as the action name passed in the `data-action` attribute (see https://cloud.google.com/recaptcha/docs/actions-website). Action names are case-insensitive. There is a maximum of 100 action settings. An action name has a maximum length of 100.
+            &quot;a_key&quot;: { # Per-action challenge settings.
+              &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+            },
+          },
+          &quot;defaultSettings&quot;: { # Per-action challenge settings. # Required. Defines when a challenge is triggered (unless the default threshold is overridden for the given action, see `action_settings`).
+            &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+          },
+        },
         &quot;integrationType&quot;: &quot;A String&quot;, # Required. Describes how this key is integrated with the website.
       },
     },
@@ -568,7 +608,17 @@ Returns:
     &quot;allowedDomains&quot;: [ # Optional. Domains or subdomains of websites allowed to use the key. All subdomains of an allowed domain are automatically allowed. A valid domain requires a host and must not include any path, port, query or fragment. Examples: &#x27;example.com&#x27; or &#x27;subdomain.example.com&#x27;
       &quot;A String&quot;,
     ],
-    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for IntegrationTypes CHECKBOX and INVISIBLE and SCORE_AND_CHALLENGE.
+    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for `IntegrationType` CHECKBOX, INVISIBLE or POLICY_BASED_CHALLENGE.
+    &quot;challengeSettings&quot;: { # Settings for POLICY_BASED_CHALLENGE keys to control when a challenge is triggered. # Optional. Challenge settings.
+      &quot;actionSettings&quot;: { # Optional. The action to score threshold map. The action name should be the same as the action name passed in the `data-action` attribute (see https://cloud.google.com/recaptcha/docs/actions-website). Action names are case-insensitive. There is a maximum of 100 action settings. An action name has a maximum length of 100.
+        &quot;a_key&quot;: { # Per-action challenge settings.
+          &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+        },
+      },
+      &quot;defaultSettings&quot;: { # Per-action challenge settings. # Required. Defines when a challenge is triggered (unless the default threshold is overridden for the given action, see `action_settings`).
+        &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+      },
+    },
     &quot;integrationType&quot;: &quot;A String&quot;, # Required. Describes how this key is integrated with the website.
   },
 }</pre>
@@ -624,7 +674,17 @@ Args:
     &quot;allowedDomains&quot;: [ # Optional. Domains or subdomains of websites allowed to use the key. All subdomains of an allowed domain are automatically allowed. A valid domain requires a host and must not include any path, port, query or fragment. Examples: &#x27;example.com&#x27; or &#x27;subdomain.example.com&#x27;
       &quot;A String&quot;,
     ],
-    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for IntegrationTypes CHECKBOX and INVISIBLE and SCORE_AND_CHALLENGE.
+    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for `IntegrationType` CHECKBOX, INVISIBLE or POLICY_BASED_CHALLENGE.
+    &quot;challengeSettings&quot;: { # Settings for POLICY_BASED_CHALLENGE keys to control when a challenge is triggered. # Optional. Challenge settings.
+      &quot;actionSettings&quot;: { # Optional. The action to score threshold map. The action name should be the same as the action name passed in the `data-action` attribute (see https://cloud.google.com/recaptcha/docs/actions-website). Action names are case-insensitive. There is a maximum of 100 action settings. An action name has a maximum length of 100.
+        &quot;a_key&quot;: { # Per-action challenge settings.
+          &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+        },
+      },
+      &quot;defaultSettings&quot;: { # Per-action challenge settings. # Required. Defines when a challenge is triggered (unless the default threshold is overridden for the given action, see `action_settings`).
+        &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+      },
+    },
     &quot;integrationType&quot;: &quot;A String&quot;, # Required. Describes how this key is integrated with the website.
   },
 }
@@ -679,7 +739,17 @@ Returns:
     &quot;allowedDomains&quot;: [ # Optional. Domains or subdomains of websites allowed to use the key. All subdomains of an allowed domain are automatically allowed. A valid domain requires a host and must not include any path, port, query or fragment. Examples: &#x27;example.com&#x27; or &#x27;subdomain.example.com&#x27;
       &quot;A String&quot;,
     ],
-    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for IntegrationTypes CHECKBOX and INVISIBLE and SCORE_AND_CHALLENGE.
+    &quot;challengeSecurityPreference&quot;: &quot;A String&quot;, # Optional. Settings for the frequency and difficulty at which this key triggers captcha challenges. This should only be specified for `IntegrationType` CHECKBOX, INVISIBLE or POLICY_BASED_CHALLENGE.
+    &quot;challengeSettings&quot;: { # Settings for POLICY_BASED_CHALLENGE keys to control when a challenge is triggered. # Optional. Challenge settings.
+      &quot;actionSettings&quot;: { # Optional. The action to score threshold map. The action name should be the same as the action name passed in the `data-action` attribute (see https://cloud.google.com/recaptcha/docs/actions-website). Action names are case-insensitive. There is a maximum of 100 action settings. An action name has a maximum length of 100.
+        &quot;a_key&quot;: { # Per-action challenge settings.
+          &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+        },
+      },
+      &quot;defaultSettings&quot;: { # Per-action challenge settings. # Required. Defines when a challenge is triggered (unless the default threshold is overridden for the given action, see `action_settings`).
+        &quot;scoreThreshold&quot;: 3.14, # Required. A challenge is triggered if the end-user score is below that threshold. Value must be between 0 and 1 (inclusive).
+      },
+    },
     &quot;integrationType&quot;: &quot;A String&quot;, # Required. Describes how this key is integrated with the website.
   },
 }</pre>

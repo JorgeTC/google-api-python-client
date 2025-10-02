@@ -125,15 +125,15 @@ Args:
   body: object, The request body.
     The object takes the form of:
 
-{ # The results of running an automated test on a release.
-  &quot;aiInstructions&quot;: { # Instructions for AI driven test # Optional. Instructions for AI driven test.
-    &quot;appDescription&quot;: &quot;A String&quot;, # Optional. Describes the app to give the AI some context
+{ # Instance of an automated test for a release.
+  &quot;aiInstructions&quot;: { # Optional. Instructions for AI driven test.
     &quot;steps&quot;: [ # Required. Steps to be accomplished by the AI
       { # A step to be accomplished by the AI
         &quot;assertion&quot;: &quot;A String&quot;, # An assertion to be checked by the AI
         &quot;goal&quot;: &quot;A String&quot;, # A goal to be accomplished by the AI
         &quot;hint&quot;: &quot;A String&quot;, # Optional. Hint text containing suggestions to help the agent accomplish the goal
         &quot;successCriteria&quot;: &quot;A String&quot;, # Optional. A description of criteria the agent should use to determine if the goal has been successfully completed
+        &quot;testCase&quot;: &quot;A String&quot;, # Output only. The test case that contained this step. Note: The test case may have changed or been deleted since this step was created. Format: `projects/{project_number}/apps/{app}/testCases/{test_case}`
       },
     ],
   },
@@ -154,11 +154,41 @@ Args:
           &quot;goalDetails&quot;: { # Details for a goal step. # Output only. Details for a goal step.
             &quot;goalActions&quot;: [ # Output only. The actions taken by the AI while attempting to accomplish the goal.
               { # An action taken by the AI agent while attempting to accomplish a goal.
+                &quot;cachingType&quot;: &quot;A String&quot;, # Output only. The type of caching used to determine the action.
+                &quot;debugInfo&quot;: { # Information to help the customer understand why the agent took this action. # Output only. Debug information explaining why the agent to the specific action.
+                  &quot;annotatedScreenshotUri&quot;: &quot;A String&quot;, # Output only. URI of the screenshot with elements labeled which was used by the agent.
+                  &quot;jsonUri&quot;: &quot;A String&quot;, # Output only. Structured data explaining the agent&#x27;s choice.
+                },
                 &quot;deviceAction&quot;: { # A high level action taken by the AI on the device, potentially involving multiple taps, text entries, waits, etc. # Output only. A high level action taken by the AI on the device.
                   &quot;description&quot;: &quot;A String&quot;, # Output only. A short description of the high level action taken by the AI agent.
                   &quot;deviceInteractions&quot;: [ # Output only. The interactions made with the device as part of this higher level action taken by the agent, such as taps, text entries, waits, etc.
                     { # An interaction with the device, such as a tap, text entry, wait, etc.
+                      &quot;backAction&quot;: { # A back action. # Output only. A back action.
+                      },
+                      &quot;dragAndDrop&quot;: { # A drag and drop action. # Output only. A drag and drop action.
+                        &quot;end&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. The end point of the drag and drop.
+                          &quot;xCoordinate&quot;: 42,
+                          &quot;yCoordinate&quot;: 42,
+                        },
+                        &quot;start&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. The start point of the drag and drop.
+                          &quot;xCoordinate&quot;: 42,
+                          &quot;yCoordinate&quot;: 42,
+                        },
+                      },
+                      &quot;enterText&quot;: { # A text entry action, that enters text into a particular text field, clearing any existing text in the field. # Output only. A text entry action, that enters text into a particular text field, clearing any existing text in the field. Unlike `text_input` this action does not require any other actions such as a tap to be performed before it can enter the text.
+                        &quot;elementBounds&quot;: { # Rectangle for describing bounding boxes # Output only. The visible bounds of the element to enter text into.
+                          &quot;bottom&quot;: 42,
+                          &quot;left&quot;: 42,
+                          &quot;right&quot;: 42,
+                          &quot;top&quot;: 42,
+                        },
+                        &quot;text&quot;: &quot;A String&quot;, # Output only. The text to enter.
+                      },
                       &quot;keyCode&quot;: &quot;A String&quot;, # Output only. Key code for a key event action.
+                      &quot;longPress&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. A long press (tap and hold) action.
+                        &quot;xCoordinate&quot;: 42,
+                        &quot;yCoordinate&quot;: 42,
+                      },
                       &quot;screenshot&quot;: { # A device screenshot taken during a test. # Output only. The screenshot used in the context of this action. The screen may have changed before the action was actually taken.
                         &quot;height&quot;: 42, # Output only. The height of the screenshot, in pixels.
                         &quot;uri&quot;: &quot;A String&quot;, # Output only. The URI of the screenshot.
@@ -178,7 +208,7 @@ Args:
                         &quot;xCoordinate&quot;: 42,
                         &quot;yCoordinate&quot;: 42,
                       },
-                      &quot;textInput&quot;: &quot;A String&quot;, # Output only. Text entered for a text entry action.
+                      &quot;textInput&quot;: &quot;A String&quot;, # Output only. A text input action, that types some text into whatever field is currently focused, if any. Unlike `enter_text` this action requires that the field be brought into focus first, for example by emitting a tap action before this one.
                       &quot;wait&quot;: { # A wait action. # Output only. A wait action.
                         &quot;duration&quot;: &quot;A String&quot;, # Output only. The duration of the wait.
                       },
@@ -186,6 +216,7 @@ Args:
                   ],
                 },
                 &quot;explanation&quot;: &quot;A String&quot;, # Output only. An explanation justifying why the action was taken.
+                &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time at which the action started.
                 &quot;terminalAction&quot;: { # An action taken by the AI to end the goal. # Output only. An action taken by the AI to end the goal.
                   &quot;reason&quot;: &quot;A String&quot;, # Output only. The reason why this goal was ended.
                   &quot;screenshot&quot;: { # A device screenshot taken during a test. # Output only. The screenshot used in the context of this terminal action.
@@ -203,6 +234,7 @@ Args:
             &quot;goal&quot;: &quot;A String&quot;, # A goal to be accomplished by the AI
             &quot;hint&quot;: &quot;A String&quot;, # Optional. Hint text containing suggestions to help the agent accomplish the goal
             &quot;successCriteria&quot;: &quot;A String&quot;, # Optional. A description of criteria the agent should use to determine if the goal has been successfully completed
+            &quot;testCase&quot;: &quot;A String&quot;, # Output only. The test case that contained this step. Note: The test case may have changed or been deleted since this step was created. Format: `projects/{project_number}/apps/{app}/testCases/{test_case}`
           },
         },
       ],
@@ -230,6 +262,7 @@ Args:
         &quot;A String&quot;,
       ],
       &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the test.
+      &quot;videoStartTime&quot;: &quot;A String&quot;, # Output only. The time at which the video started recording.
       &quot;videoUri&quot;: &quot;A String&quot;, # Output only. A URI to a video of the test run.
     },
   ],
@@ -257,15 +290,15 @@ Args:
 Returns:
   An object of the form:
 
-    { # The results of running an automated test on a release.
-  &quot;aiInstructions&quot;: { # Instructions for AI driven test # Optional. Instructions for AI driven test.
-    &quot;appDescription&quot;: &quot;A String&quot;, # Optional. Describes the app to give the AI some context
+    { # Instance of an automated test for a release.
+  &quot;aiInstructions&quot;: { # Optional. Instructions for AI driven test.
     &quot;steps&quot;: [ # Required. Steps to be accomplished by the AI
       { # A step to be accomplished by the AI
         &quot;assertion&quot;: &quot;A String&quot;, # An assertion to be checked by the AI
         &quot;goal&quot;: &quot;A String&quot;, # A goal to be accomplished by the AI
         &quot;hint&quot;: &quot;A String&quot;, # Optional. Hint text containing suggestions to help the agent accomplish the goal
         &quot;successCriteria&quot;: &quot;A String&quot;, # Optional. A description of criteria the agent should use to determine if the goal has been successfully completed
+        &quot;testCase&quot;: &quot;A String&quot;, # Output only. The test case that contained this step. Note: The test case may have changed or been deleted since this step was created. Format: `projects/{project_number}/apps/{app}/testCases/{test_case}`
       },
     ],
   },
@@ -286,11 +319,41 @@ Returns:
           &quot;goalDetails&quot;: { # Details for a goal step. # Output only. Details for a goal step.
             &quot;goalActions&quot;: [ # Output only. The actions taken by the AI while attempting to accomplish the goal.
               { # An action taken by the AI agent while attempting to accomplish a goal.
+                &quot;cachingType&quot;: &quot;A String&quot;, # Output only. The type of caching used to determine the action.
+                &quot;debugInfo&quot;: { # Information to help the customer understand why the agent took this action. # Output only. Debug information explaining why the agent to the specific action.
+                  &quot;annotatedScreenshotUri&quot;: &quot;A String&quot;, # Output only. URI of the screenshot with elements labeled which was used by the agent.
+                  &quot;jsonUri&quot;: &quot;A String&quot;, # Output only. Structured data explaining the agent&#x27;s choice.
+                },
                 &quot;deviceAction&quot;: { # A high level action taken by the AI on the device, potentially involving multiple taps, text entries, waits, etc. # Output only. A high level action taken by the AI on the device.
                   &quot;description&quot;: &quot;A String&quot;, # Output only. A short description of the high level action taken by the AI agent.
                   &quot;deviceInteractions&quot;: [ # Output only. The interactions made with the device as part of this higher level action taken by the agent, such as taps, text entries, waits, etc.
                     { # An interaction with the device, such as a tap, text entry, wait, etc.
+                      &quot;backAction&quot;: { # A back action. # Output only. A back action.
+                      },
+                      &quot;dragAndDrop&quot;: { # A drag and drop action. # Output only. A drag and drop action.
+                        &quot;end&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. The end point of the drag and drop.
+                          &quot;xCoordinate&quot;: 42,
+                          &quot;yCoordinate&quot;: 42,
+                        },
+                        &quot;start&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. The start point of the drag and drop.
+                          &quot;xCoordinate&quot;: 42,
+                          &quot;yCoordinate&quot;: 42,
+                        },
+                      },
+                      &quot;enterText&quot;: { # A text entry action, that enters text into a particular text field, clearing any existing text in the field. # Output only. A text entry action, that enters text into a particular text field, clearing any existing text in the field. Unlike `text_input` this action does not require any other actions such as a tap to be performed before it can enter the text.
+                        &quot;elementBounds&quot;: { # Rectangle for describing bounding boxes # Output only. The visible bounds of the element to enter text into.
+                          &quot;bottom&quot;: 42,
+                          &quot;left&quot;: 42,
+                          &quot;right&quot;: 42,
+                          &quot;top&quot;: 42,
+                        },
+                        &quot;text&quot;: &quot;A String&quot;, # Output only. The text to enter.
+                      },
                       &quot;keyCode&quot;: &quot;A String&quot;, # Output only. Key code for a key event action.
+                      &quot;longPress&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. A long press (tap and hold) action.
+                        &quot;xCoordinate&quot;: 42,
+                        &quot;yCoordinate&quot;: 42,
+                      },
                       &quot;screenshot&quot;: { # A device screenshot taken during a test. # Output only. The screenshot used in the context of this action. The screen may have changed before the action was actually taken.
                         &quot;height&quot;: 42, # Output only. The height of the screenshot, in pixels.
                         &quot;uri&quot;: &quot;A String&quot;, # Output only. The URI of the screenshot.
@@ -310,7 +373,7 @@ Returns:
                         &quot;xCoordinate&quot;: 42,
                         &quot;yCoordinate&quot;: 42,
                       },
-                      &quot;textInput&quot;: &quot;A String&quot;, # Output only. Text entered for a text entry action.
+                      &quot;textInput&quot;: &quot;A String&quot;, # Output only. A text input action, that types some text into whatever field is currently focused, if any. Unlike `enter_text` this action requires that the field be brought into focus first, for example by emitting a tap action before this one.
                       &quot;wait&quot;: { # A wait action. # Output only. A wait action.
                         &quot;duration&quot;: &quot;A String&quot;, # Output only. The duration of the wait.
                       },
@@ -318,6 +381,7 @@ Returns:
                   ],
                 },
                 &quot;explanation&quot;: &quot;A String&quot;, # Output only. An explanation justifying why the action was taken.
+                &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time at which the action started.
                 &quot;terminalAction&quot;: { # An action taken by the AI to end the goal. # Output only. An action taken by the AI to end the goal.
                   &quot;reason&quot;: &quot;A String&quot;, # Output only. The reason why this goal was ended.
                   &quot;screenshot&quot;: { # A device screenshot taken during a test. # Output only. The screenshot used in the context of this terminal action.
@@ -335,6 +399,7 @@ Returns:
             &quot;goal&quot;: &quot;A String&quot;, # A goal to be accomplished by the AI
             &quot;hint&quot;: &quot;A String&quot;, # Optional. Hint text containing suggestions to help the agent accomplish the goal
             &quot;successCriteria&quot;: &quot;A String&quot;, # Optional. A description of criteria the agent should use to determine if the goal has been successfully completed
+            &quot;testCase&quot;: &quot;A String&quot;, # Output only. The test case that contained this step. Note: The test case may have changed or been deleted since this step was created. Format: `projects/{project_number}/apps/{app}/testCases/{test_case}`
           },
         },
       ],
@@ -362,6 +427,7 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the test.
+      &quot;videoStartTime&quot;: &quot;A String&quot;, # Output only. The time at which the video started recording.
       &quot;videoUri&quot;: &quot;A String&quot;, # Output only. A URI to a video of the test run.
     },
   ],
@@ -395,15 +461,15 @@ Args:
 Returns:
   An object of the form:
 
-    { # The results of running an automated test on a release.
-  &quot;aiInstructions&quot;: { # Instructions for AI driven test # Optional. Instructions for AI driven test.
-    &quot;appDescription&quot;: &quot;A String&quot;, # Optional. Describes the app to give the AI some context
+    { # Instance of an automated test for a release.
+  &quot;aiInstructions&quot;: { # Optional. Instructions for AI driven test.
     &quot;steps&quot;: [ # Required. Steps to be accomplished by the AI
       { # A step to be accomplished by the AI
         &quot;assertion&quot;: &quot;A String&quot;, # An assertion to be checked by the AI
         &quot;goal&quot;: &quot;A String&quot;, # A goal to be accomplished by the AI
         &quot;hint&quot;: &quot;A String&quot;, # Optional. Hint text containing suggestions to help the agent accomplish the goal
         &quot;successCriteria&quot;: &quot;A String&quot;, # Optional. A description of criteria the agent should use to determine if the goal has been successfully completed
+        &quot;testCase&quot;: &quot;A String&quot;, # Output only. The test case that contained this step. Note: The test case may have changed or been deleted since this step was created. Format: `projects/{project_number}/apps/{app}/testCases/{test_case}`
       },
     ],
   },
@@ -424,11 +490,41 @@ Returns:
           &quot;goalDetails&quot;: { # Details for a goal step. # Output only. Details for a goal step.
             &quot;goalActions&quot;: [ # Output only. The actions taken by the AI while attempting to accomplish the goal.
               { # An action taken by the AI agent while attempting to accomplish a goal.
+                &quot;cachingType&quot;: &quot;A String&quot;, # Output only. The type of caching used to determine the action.
+                &quot;debugInfo&quot;: { # Information to help the customer understand why the agent took this action. # Output only. Debug information explaining why the agent to the specific action.
+                  &quot;annotatedScreenshotUri&quot;: &quot;A String&quot;, # Output only. URI of the screenshot with elements labeled which was used by the agent.
+                  &quot;jsonUri&quot;: &quot;A String&quot;, # Output only. Structured data explaining the agent&#x27;s choice.
+                },
                 &quot;deviceAction&quot;: { # A high level action taken by the AI on the device, potentially involving multiple taps, text entries, waits, etc. # Output only. A high level action taken by the AI on the device.
                   &quot;description&quot;: &quot;A String&quot;, # Output only. A short description of the high level action taken by the AI agent.
                   &quot;deviceInteractions&quot;: [ # Output only. The interactions made with the device as part of this higher level action taken by the agent, such as taps, text entries, waits, etc.
                     { # An interaction with the device, such as a tap, text entry, wait, etc.
+                      &quot;backAction&quot;: { # A back action. # Output only. A back action.
+                      },
+                      &quot;dragAndDrop&quot;: { # A drag and drop action. # Output only. A drag and drop action.
+                        &quot;end&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. The end point of the drag and drop.
+                          &quot;xCoordinate&quot;: 42,
+                          &quot;yCoordinate&quot;: 42,
+                        },
+                        &quot;start&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. The start point of the drag and drop.
+                          &quot;xCoordinate&quot;: 42,
+                          &quot;yCoordinate&quot;: 42,
+                        },
+                      },
+                      &quot;enterText&quot;: { # A text entry action, that enters text into a particular text field, clearing any existing text in the field. # Output only. A text entry action, that enters text into a particular text field, clearing any existing text in the field. Unlike `text_input` this action does not require any other actions such as a tap to be performed before it can enter the text.
+                        &quot;elementBounds&quot;: { # Rectangle for describing bounding boxes # Output only. The visible bounds of the element to enter text into.
+                          &quot;bottom&quot;: 42,
+                          &quot;left&quot;: 42,
+                          &quot;right&quot;: 42,
+                          &quot;top&quot;: 42,
+                        },
+                        &quot;text&quot;: &quot;A String&quot;, # Output only. The text to enter.
+                      },
                       &quot;keyCode&quot;: &quot;A String&quot;, # Output only. Key code for a key event action.
+                      &quot;longPress&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. A long press (tap and hold) action.
+                        &quot;xCoordinate&quot;: 42,
+                        &quot;yCoordinate&quot;: 42,
+                      },
                       &quot;screenshot&quot;: { # A device screenshot taken during a test. # Output only. The screenshot used in the context of this action. The screen may have changed before the action was actually taken.
                         &quot;height&quot;: 42, # Output only. The height of the screenshot, in pixels.
                         &quot;uri&quot;: &quot;A String&quot;, # Output only. The URI of the screenshot.
@@ -448,7 +544,7 @@ Returns:
                         &quot;xCoordinate&quot;: 42,
                         &quot;yCoordinate&quot;: 42,
                       },
-                      &quot;textInput&quot;: &quot;A String&quot;, # Output only. Text entered for a text entry action.
+                      &quot;textInput&quot;: &quot;A String&quot;, # Output only. A text input action, that types some text into whatever field is currently focused, if any. Unlike `enter_text` this action requires that the field be brought into focus first, for example by emitting a tap action before this one.
                       &quot;wait&quot;: { # A wait action. # Output only. A wait action.
                         &quot;duration&quot;: &quot;A String&quot;, # Output only. The duration of the wait.
                       },
@@ -456,6 +552,7 @@ Returns:
                   ],
                 },
                 &quot;explanation&quot;: &quot;A String&quot;, # Output only. An explanation justifying why the action was taken.
+                &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time at which the action started.
                 &quot;terminalAction&quot;: { # An action taken by the AI to end the goal. # Output only. An action taken by the AI to end the goal.
                   &quot;reason&quot;: &quot;A String&quot;, # Output only. The reason why this goal was ended.
                   &quot;screenshot&quot;: { # A device screenshot taken during a test. # Output only. The screenshot used in the context of this terminal action.
@@ -473,6 +570,7 @@ Returns:
             &quot;goal&quot;: &quot;A String&quot;, # A goal to be accomplished by the AI
             &quot;hint&quot;: &quot;A String&quot;, # Optional. Hint text containing suggestions to help the agent accomplish the goal
             &quot;successCriteria&quot;: &quot;A String&quot;, # Optional. A description of criteria the agent should use to determine if the goal has been successfully completed
+            &quot;testCase&quot;: &quot;A String&quot;, # Output only. The test case that contained this step. Note: The test case may have changed or been deleted since this step was created. Format: `projects/{project_number}/apps/{app}/testCases/{test_case}`
           },
         },
       ],
@@ -500,6 +598,7 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the test.
+      &quot;videoStartTime&quot;: &quot;A String&quot;, # Output only. The time at which the video started recording.
       &quot;videoUri&quot;: &quot;A String&quot;, # Output only. A URI to a video of the test run.
     },
   ],
@@ -543,15 +642,15 @@ Returns:
     { # The response message for `ListReleaseTests`.
   &quot;nextPageToken&quot;: &quot;A String&quot;, # A short-lived token, which can be sent as `pageToken` to retrieve the next page. If this field is omitted, there are no subsequent pages.
   &quot;releaseTests&quot;: [ # The tests listed.
-    { # The results of running an automated test on a release.
-      &quot;aiInstructions&quot;: { # Instructions for AI driven test # Optional. Instructions for AI driven test.
-        &quot;appDescription&quot;: &quot;A String&quot;, # Optional. Describes the app to give the AI some context
+    { # Instance of an automated test for a release.
+      &quot;aiInstructions&quot;: { # Optional. Instructions for AI driven test.
         &quot;steps&quot;: [ # Required. Steps to be accomplished by the AI
           { # A step to be accomplished by the AI
             &quot;assertion&quot;: &quot;A String&quot;, # An assertion to be checked by the AI
             &quot;goal&quot;: &quot;A String&quot;, # A goal to be accomplished by the AI
             &quot;hint&quot;: &quot;A String&quot;, # Optional. Hint text containing suggestions to help the agent accomplish the goal
             &quot;successCriteria&quot;: &quot;A String&quot;, # Optional. A description of criteria the agent should use to determine if the goal has been successfully completed
+            &quot;testCase&quot;: &quot;A String&quot;, # Output only. The test case that contained this step. Note: The test case may have changed or been deleted since this step was created. Format: `projects/{project_number}/apps/{app}/testCases/{test_case}`
           },
         ],
       },
@@ -572,11 +671,41 @@ Returns:
               &quot;goalDetails&quot;: { # Details for a goal step. # Output only. Details for a goal step.
                 &quot;goalActions&quot;: [ # Output only. The actions taken by the AI while attempting to accomplish the goal.
                   { # An action taken by the AI agent while attempting to accomplish a goal.
+                    &quot;cachingType&quot;: &quot;A String&quot;, # Output only. The type of caching used to determine the action.
+                    &quot;debugInfo&quot;: { # Information to help the customer understand why the agent took this action. # Output only. Debug information explaining why the agent to the specific action.
+                      &quot;annotatedScreenshotUri&quot;: &quot;A String&quot;, # Output only. URI of the screenshot with elements labeled which was used by the agent.
+                      &quot;jsonUri&quot;: &quot;A String&quot;, # Output only. Structured data explaining the agent&#x27;s choice.
+                    },
                     &quot;deviceAction&quot;: { # A high level action taken by the AI on the device, potentially involving multiple taps, text entries, waits, etc. # Output only. A high level action taken by the AI on the device.
                       &quot;description&quot;: &quot;A String&quot;, # Output only. A short description of the high level action taken by the AI agent.
                       &quot;deviceInteractions&quot;: [ # Output only. The interactions made with the device as part of this higher level action taken by the agent, such as taps, text entries, waits, etc.
                         { # An interaction with the device, such as a tap, text entry, wait, etc.
+                          &quot;backAction&quot;: { # A back action. # Output only. A back action.
+                          },
+                          &quot;dragAndDrop&quot;: { # A drag and drop action. # Output only. A drag and drop action.
+                            &quot;end&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. The end point of the drag and drop.
+                              &quot;xCoordinate&quot;: 42,
+                              &quot;yCoordinate&quot;: 42,
+                            },
+                            &quot;start&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. The start point of the drag and drop.
+                              &quot;xCoordinate&quot;: 42,
+                              &quot;yCoordinate&quot;: 42,
+                            },
+                          },
+                          &quot;enterText&quot;: { # A text entry action, that enters text into a particular text field, clearing any existing text in the field. # Output only. A text entry action, that enters text into a particular text field, clearing any existing text in the field. Unlike `text_input` this action does not require any other actions such as a tap to be performed before it can enter the text.
+                            &quot;elementBounds&quot;: { # Rectangle for describing bounding boxes # Output only. The visible bounds of the element to enter text into.
+                              &quot;bottom&quot;: 42,
+                              &quot;left&quot;: 42,
+                              &quot;right&quot;: 42,
+                              &quot;top&quot;: 42,
+                            },
+                            &quot;text&quot;: &quot;A String&quot;, # Output only. The text to enter.
+                          },
                           &quot;keyCode&quot;: &quot;A String&quot;, # Output only. Key code for a key event action.
+                          &quot;longPress&quot;: { # Point for describing bounding boxes tap locations Top left is 0,0 # Output only. A long press (tap and hold) action.
+                            &quot;xCoordinate&quot;: 42,
+                            &quot;yCoordinate&quot;: 42,
+                          },
                           &quot;screenshot&quot;: { # A device screenshot taken during a test. # Output only. The screenshot used in the context of this action. The screen may have changed before the action was actually taken.
                             &quot;height&quot;: 42, # Output only. The height of the screenshot, in pixels.
                             &quot;uri&quot;: &quot;A String&quot;, # Output only. The URI of the screenshot.
@@ -596,7 +725,7 @@ Returns:
                             &quot;xCoordinate&quot;: 42,
                             &quot;yCoordinate&quot;: 42,
                           },
-                          &quot;textInput&quot;: &quot;A String&quot;, # Output only. Text entered for a text entry action.
+                          &quot;textInput&quot;: &quot;A String&quot;, # Output only. A text input action, that types some text into whatever field is currently focused, if any. Unlike `enter_text` this action requires that the field be brought into focus first, for example by emitting a tap action before this one.
                           &quot;wait&quot;: { # A wait action. # Output only. A wait action.
                             &quot;duration&quot;: &quot;A String&quot;, # Output only. The duration of the wait.
                           },
@@ -604,6 +733,7 @@ Returns:
                       ],
                     },
                     &quot;explanation&quot;: &quot;A String&quot;, # Output only. An explanation justifying why the action was taken.
+                    &quot;startTime&quot;: &quot;A String&quot;, # Output only. The time at which the action started.
                     &quot;terminalAction&quot;: { # An action taken by the AI to end the goal. # Output only. An action taken by the AI to end the goal.
                       &quot;reason&quot;: &quot;A String&quot;, # Output only. The reason why this goal was ended.
                       &quot;screenshot&quot;: { # A device screenshot taken during a test. # Output only. The screenshot used in the context of this terminal action.
@@ -621,6 +751,7 @@ Returns:
                 &quot;goal&quot;: &quot;A String&quot;, # A goal to be accomplished by the AI
                 &quot;hint&quot;: &quot;A String&quot;, # Optional. Hint text containing suggestions to help the agent accomplish the goal
                 &quot;successCriteria&quot;: &quot;A String&quot;, # Optional. A description of criteria the agent should use to determine if the goal has been successfully completed
+                &quot;testCase&quot;: &quot;A String&quot;, # Output only. The test case that contained this step. Note: The test case may have changed or been deleted since this step was created. Format: `projects/{project_number}/apps/{app}/testCases/{test_case}`
               },
             },
           ],
@@ -648,6 +779,7 @@ Returns:
             &quot;A String&quot;,
           ],
           &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the test.
+          &quot;videoStartTime&quot;: &quot;A String&quot;, # Output only. The time at which the video started recording.
           &quot;videoUri&quot;: &quot;A String&quot;, # Output only. A URI to a video of the test run.
         },
       ],

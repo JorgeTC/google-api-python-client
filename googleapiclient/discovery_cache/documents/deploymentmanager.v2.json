@@ -1028,7 +1028,7 @@
 }
 }
 },
-"revision": "20250102",
+"revision": "20250828",
 "rootUrl": "https://deploymentmanager.googleapis.com/",
 "schemas": {
 "AuditConfig": {
@@ -1385,6 +1385,7 @@
 "description": "REQUIRED: The complete policy to be applied to the 'resource'. The size of the policy is limited to a few 10s of KB. An empty policy is in general a valid policy but certain services (like Projects) might reject them."
 },
 "updateMask": {
+"description": "Update mask for the policy.",
 "format": "google-fieldmask",
 "type": "string"
 }
@@ -1437,6 +1438,10 @@
 "InstancesBulkInsertOperationMetadata": {
 "id": "InstancesBulkInsertOperationMetadata",
 "properties": {
+"machineType": {
+"description": "[Output Only] The machine type of the VMs that were created used internally only by KCP flex bulk insert.",
+"type": "string"
+},
 "perLocationStatus": {
 "additionalProperties": {
 "$ref": "BulkInsertOperationStatus"
@@ -1663,6 +1668,10 @@
 "selfLinkWithId": {
 "description": "[Output Only] Server-defined URL for this resource with the resource id.",
 "type": "string"
+},
+"setAutoscalerLinkOperationMetadata": {
+"$ref": "SetAutoscalerLinkOperationMetadata",
+"description": "This field is used internally by the Autoscaler team and should not be promoted to \"alpha/beta/v1\"."
 },
 "setCommonInstanceMetadataOperationMetadata": {
 "$ref": "SetCommonInstanceMetadataOperationMetadata",
@@ -2476,6 +2485,28 @@ false
 "$ref": "Resource"
 },
 "type": "array"
+}
+},
+"type": "object"
+},
+"SetAutoscalerLinkOperationMetadata": {
+"id": "SetAutoscalerLinkOperationMetadata",
+"properties": {
+"zonalIgmIds": {
+"description": "List of zonal IGM IDs part of the RMIG.",
+"items": {
+"format": "int64",
+"type": "string"
+},
+"type": "array"
+},
+"zoneToIgmIds": {
+"additionalProperties": {
+"format": "int64",
+"type": "string"
+},
+"description": "Map of zone to an ID of the zonal IGM belonging to the RMIG.",
+"type": "object"
 }
 },
 "type": "object"

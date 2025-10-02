@@ -304,12 +304,14 @@ Returns:
 
     { # `Service` is the root object of Google API service configuration (service config). It describes the basic information about a logical service, such as the service name and the user-facing title, and delegates other aspects to sub-sections. Each sub-section is either a proto message or a repeated proto message that configures a specific aspect, such as auth. For more information, see each proto message definition. Example: type: google.api.Service name: calendar.googleapis.com title: Google Calendar API apis: - name: google.calendar.v3.Calendar visibility: rules: - selector: &quot;google.calendar.v3.*&quot; restriction: PREVIEW backend: rules: - selector: &quot;google.calendar.v3.*&quot; address: calendar.example.com authentication: providers: - id: google_calendar_auth jwks_uri: https://www.googleapis.com/oauth2/v1/certs issuer: https://securetoken.google.com rules: - selector: &quot;*&quot; requirements: provider_id: google_calendar_auth
   &quot;apis&quot;: [ # A list of API interfaces exported by this service. Only the `name` field of the google.protobuf.Api needs to be provided by the configuration author, as the remaining fields will be derived from the IDL during the normalization process. It is an error to specify an API interface here which cannot be resolved against the associated IDL files.
-    { # Api is a light-weight descriptor for an API Interface. Interfaces are also described as &quot;protocol buffer services&quot; in some contexts, such as by the &quot;service&quot; keyword in a .proto file, but they are different from API Services, which represent a concrete implementation of an interface as opposed to simply a description of methods and bindings. They are also sometimes simply referred to as &quot;APIs&quot; in other contexts, such as the name of this message itself. See https://cloud.google.com/apis/design/glossary for detailed terminology.
+    { # Api is a light-weight descriptor for an API Interface. Interfaces are also described as &quot;protocol buffer services&quot; in some contexts, such as by the &quot;service&quot; keyword in a .proto file, but they are different from API Services, which represent a concrete implementation of an interface as opposed to simply a description of methods and bindings. They are also sometimes simply referred to as &quot;APIs&quot; in other contexts, such as the name of this message itself. See https://cloud.google.com/apis/design/glossary for detailed terminology. New usages of this message as an alternative to ServiceDescriptorProto are strongly discouraged. This message does not reliability preserve all information necessary to model the schema and preserve semantics. Instead make use of FileDescriptorSet which preserves the necessary information.
+      &quot;edition&quot;: &quot;A String&quot;, # The source edition string, only valid when syntax is SYNTAX_EDITIONS.
       &quot;methods&quot;: [ # The methods of this interface, in unspecified order.
-        { # Method represents a method of an API interface.
+        { # Method represents a method of an API interface. New usages of this message as an alternative to MethodDescriptorProto are strongly discouraged. This message does not reliability preserve all information necessary to model the schema and preserve semantics. Instead make use of FileDescriptorSet which preserves the necessary information.
+          &quot;edition&quot;: &quot;A String&quot;, # The source edition string, only valid when syntax is SYNTAX_EDITIONS. This field should be ignored, instead the edition should be inherited from Api. This is similar to Field and EnumValue.
           &quot;name&quot;: &quot;A String&quot;, # The simple name of this method.
           &quot;options&quot;: [ # Any metadata attached to the method.
-            { # A protocol buffer option, which can be attached to a message, field, enumeration, etc.
+            { # A protocol buffer option, which can be attached to a message, field, enumeration, etc. New usages of this message as an alternative to FileOptions, MessageOptions, FieldOptions, EnumOptions, EnumValueOptions, ServiceOptions, or MethodOptions are strongly discouraged.
               &quot;name&quot;: &quot;A String&quot;, # The option&#x27;s name. For protobuf built-in options (options defined in descriptor.proto), this is the short name. For example, `&quot;map_entry&quot;`. For custom options, it should be the fully-qualified name. For example, `&quot;google.api.http&quot;`.
               &quot;value&quot;: { # The option&#x27;s value packed in an Any message. If the value is a primitive, the corresponding wrapper type defined in google/protobuf/wrappers.proto should be used. If the value is an enum, it should be stored as an int32 value using the google.protobuf.Int32Value type.
                 &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
@@ -320,7 +322,7 @@ Returns:
           &quot;requestTypeUrl&quot;: &quot;A String&quot;, # A URL of the input message type.
           &quot;responseStreaming&quot;: True or False, # If true, the response is streamed.
           &quot;responseTypeUrl&quot;: &quot;A String&quot;, # The URL of the output message type.
-          &quot;syntax&quot;: &quot;A String&quot;, # The source syntax of this method.
+          &quot;syntax&quot;: &quot;A String&quot;, # The source syntax of this method. This field should be ignored, instead the syntax should be inherited from Api. This is similar to Field and EnumValue.
         },
       ],
       &quot;mixins&quot;: [ # Included interfaces. See Mixin.
@@ -331,7 +333,7 @@ Returns:
       ],
       &quot;name&quot;: &quot;A String&quot;, # The fully qualified name of this interface, including package name followed by the interface&#x27;s simple name.
       &quot;options&quot;: [ # Any metadata attached to the interface.
-        { # A protocol buffer option, which can be attached to a message, field, enumeration, etc.
+        { # A protocol buffer option, which can be attached to a message, field, enumeration, etc. New usages of this message as an alternative to FileOptions, MessageOptions, FieldOptions, EnumOptions, EnumValueOptions, ServiceOptions, or MethodOptions are strongly discouraged.
           &quot;name&quot;: &quot;A String&quot;, # The option&#x27;s name. For protobuf built-in options (options defined in descriptor.proto), this is the short name. For example, `&quot;map_entry&quot;`. For custom options, it should be the fully-qualified name. For example, `&quot;google.api.http&quot;`.
           &quot;value&quot;: { # The option&#x27;s value packed in an Any message. If the value is a primitive, the corresponding wrapper type defined in google/protobuf/wrappers.proto should be used. If the value is an enum, it should be stored as an int32 value using the google.protobuf.Int32Value type.
             &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
@@ -343,6 +345,14 @@ Returns:
       },
       &quot;syntax&quot;: &quot;A String&quot;, # The source syntax of the service.
       &quot;version&quot;: &quot;A String&quot;, # A version string for this interface. If specified, must have the form `major-version.minor-version`, as in `1.10`. If the minor version is omitted, it defaults to zero. If the entire version field is empty, the major version is derived from the package name, as outlined below. If the field is not empty, the version in the package name will be verified to be consistent with what is provided here. The versioning schema uses [semantic versioning](http://semver.org) where the major version number indicates a breaking change and the minor version an additive, non-breaking change. Both version numbers are signals to users what to expect from different versions, and should be carefully chosen based on the product plan. The major version is also reflected in the package name of the interface, which must end in `v`, as in `google.feature.v1`. For major versions 0 and 1, the suffix can be omitted. Zero major versions must only be used for experimental, non-GA interfaces.
+    },
+  ],
+  &quot;aspects&quot;: [ # Configuration aspects. This is a repeated field to allow multiple aspects to be configured. The kind field in each ConfigAspect specifies the type of aspect. The spec field contains the configuration for that aspect. The schema for the spec field is defined by the backend service owners.
+    { # Aspect represents Generic aspect. It is used to configure an aspect without making direct changes to service.proto
+      &quot;kind&quot;: &quot;A String&quot;, # The type of this aspect configuration.
+      &quot;spec&quot;: { # Content of the configuration. The underlying schema should be defined by Aspect owners as protobuf message under `google/api/configaspects/proto`.
+        &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+      },
     },
   ],
   &quot;authentication&quot;: { # `Authentication` defines the authentication configuration for API methods provided by an API service. Example: name: calendar.googleapis.com authentication: providers: - id: google_calendar_auth jwks_uri: https://www.googleapis.com/oauth2/v1/certs issuer: https://securetoken.google.com rules: - selector: &quot;*&quot; requirements: provider_id: google_calendar_auth - selector: google.calendar.Delegate oauth: canonical_scopes: https://www.googleapis.com/auth/calendar.read # Auth configuration.
@@ -386,12 +396,13 @@ Returns:
         &quot;deadline&quot;: 3.14, # The number of seconds to wait for a response from a request. The default varies based on the request protocol and deployment environment.
         &quot;disableAuth&quot;: True or False, # When disable_auth is true, a JWT ID token won&#x27;t be generated and the original &quot;Authorization&quot; HTTP header will be preserved. If the header is used to carry the original token and is expected by the backend, this field must be set to true to preserve the header.
         &quot;jwtAudience&quot;: &quot;A String&quot;, # The JWT audience is used when generating a JWT ID token for the backend. This ID token will be added in the HTTP &quot;authorization&quot; header, and sent to the backend.
+        &quot;loadBalancingPolicy&quot;: &quot;A String&quot;, # The load balancing policy used for connection to the application backend. Defined as an arbitrary string to accomondate custom load balancing policies supported by the underlying channel, but suggest most users use one of the standard policies, such as the default, &quot;RoundRobin&quot;.
         &quot;minDeadline&quot;: 3.14, # Deprecated, do not use.
         &quot;operationDeadline&quot;: 3.14, # The number of seconds to wait for the completion of a long running operation. The default is no deadline.
         &quot;overridesByRequestProtocol&quot;: { # The map between request protocol and the backend address.
           &quot;a_key&quot;: # Object with schema name: BackendRule
         },
-        &quot;pathTranslation&quot;: &quot;A String&quot;,
+        &quot;pathTranslation&quot;: &quot;A String&quot;, # no-lint
         &quot;protocol&quot;: &quot;A String&quot;, # The protocol used for sending a request to the backend. The supported values are &quot;http/1.1&quot; and &quot;h2&quot;. The default value is inferred from the scheme in the address field: SCHEME PROTOCOL http:// http/1.1 https:// http/1.1 grpc:// h2 grpcs:// h2 For secure HTTP backends (https://) that support HTTP/2, set this field to &quot;h2&quot; for improved performance. Configuring this field to non-default values is only supported for secure HTTP backends. This field will be ignored for all other backends. See https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids for more details on the supported values.
         &quot;selector&quot;: &quot;A String&quot;, # Selects the methods to which this rule applies. Refer to selector for syntax details.
       },
@@ -459,7 +470,7 @@ Returns:
     &quot;overview&quot;: &quot;A String&quot;, # Declares a single overview page. For example: documentation: summary: ... overview: (== include overview.md ==) This is a shortcut for the following declaration (using pages style): documentation: summary: ... pages: - name: Overview content: (== include overview.md ==) Note: you cannot specify both `overview` field and `pages` field.
     &quot;pages&quot;: [ # The top level pages for the documentation set.
       { # Represents a documentation page. A page can contain subpages to represent nested documentation set structure.
-        &quot;content&quot;: &quot;A String&quot;, # The Markdown content of the page. You can use (== include {path} ==) to include content from a Markdown file. The content can be used to produce the documentation page such as HTML format page.
+        &quot;content&quot;: &quot;A String&quot;, # The Markdown content of the page. You can use ```(== include {path} ==)``` to include content from a Markdown file. The content can be used to produce the documentation page such as HTML format page.
         &quot;name&quot;: &quot;A String&quot;, # The name of the page. It will be used as an identity of the page to generate URI of the page, text of the link to this page in navigation, etc. The full page name (start from the root page name to this page concatenated with `.`) can be used as reference to the page in your documentation. For example: pages: - name: Tutorial content: (== include tutorial.md ==) subpages: - name: Java content: (== include tutorial_java.md ==) You can reference `Java` page using Markdown reference link syntax: `Java`.
         &quot;subpages&quot;: [ # Subpages of this page. The order of subpages specified here will be honored in the generated docset.
           # Object with schema name: Page
@@ -470,13 +481,13 @@ Returns:
       { # A documentation rule provides information about individual API elements.
         &quot;deprecationDescription&quot;: &quot;A String&quot;, # Deprecation description of the selected element(s). It can be provided if an element is marked as `deprecated`.
         &quot;description&quot;: &quot;A String&quot;, # Description of the selected proto element (e.g. a message, a method, a &#x27;service&#x27; definition, or a field). Defaults to leading &amp; trailing comments taken from the proto source definition of the proto element.
-        &quot;disableReplacementWords&quot;: &quot;A String&quot;, # String of comma or space separated case-sensitive words for which method/field name replacement will be disabled by go/api-docgen.
+        &quot;disableReplacementWords&quot;: &quot;A String&quot;, # String of comma or space separated case-sensitive words for which method/field name replacement will be disabled.
         &quot;selector&quot;: &quot;A String&quot;, # The selector is a comma-separated list of patterns for any element such as a method, a field, an enum value. Each pattern is a qualified name of the element which may end in &quot;*&quot;, indicating a wildcard. Wildcards are only allowed at the end and for a whole component of the qualified name, i.e. &quot;foo.*&quot; is ok, but not &quot;foo.b*&quot; or &quot;foo.*.bar&quot;. A wildcard will match one or more components. To specify a default for all applicable elements, the whole pattern &quot;*&quot; is used.
       },
     ],
-    &quot;sectionOverrides&quot;: [ # Specifies section and content to override boilerplate content provided by go/api-docgen. Currently overrides following sections: 1. rest.service.client_libraries
+    &quot;sectionOverrides&quot;: [ # Specifies section and content to override the boilerplate content. Currently overrides following sections: 1. rest.service.client_libraries
       { # Represents a documentation page. A page can contain subpages to represent nested documentation set structure.
-        &quot;content&quot;: &quot;A String&quot;, # The Markdown content of the page. You can use (== include {path} ==) to include content from a Markdown file. The content can be used to produce the documentation page such as HTML format page.
+        &quot;content&quot;: &quot;A String&quot;, # The Markdown content of the page. You can use ```(== include {path} ==)``` to include content from a Markdown file. The content can be used to produce the documentation page such as HTML format page.
         &quot;name&quot;: &quot;A String&quot;, # The name of the page. It will be used as an identity of the page to generate URI of the page, text of the link to this page in navigation, etc. The full page name (start from the root page name to this page concatenated with `.`) can be used as reference to the page in your documentation. For example: pages: - name: Tutorial content: (== include tutorial.md ==) subpages: - name: Java content: (== include tutorial_java.md ==) You can reference `Java` page using Markdown reference link syntax: `Java`.
         &quot;subpages&quot;: [ # Subpages of this page. The order of subpages specified here will be honored in the generated docset.
           # Object with schema name: Page
@@ -497,14 +508,14 @@ Returns:
     },
   ],
   &quot;enums&quot;: [ # A list of all enum types included in this API service. Enums referenced directly or indirectly by the `apis` are automatically included. Enums which are not referenced but shall be included should be listed here by name by the configuration author. Example: enums: - name: google.someapi.v1.SomeEnum
-    { # Enum type definition.
+    { # Enum type definition. New usages of this message as an alternative to EnumDescriptorProto are strongly discouraged. This message does not reliability preserve all information necessary to model the schema and preserve semantics. Instead make use of FileDescriptorSet which preserves the necessary information.
       &quot;edition&quot;: &quot;A String&quot;, # The source edition string, only valid when syntax is SYNTAX_EDITIONS.
       &quot;enumvalue&quot;: [ # Enum value definitions.
-        { # Enum value definition.
+        { # Enum value definition. New usages of this message as an alternative to EnumValueDescriptorProto are strongly discouraged. This message does not reliability preserve all information necessary to model the schema and preserve semantics. Instead make use of FileDescriptorSet which preserves the necessary information.
           &quot;name&quot;: &quot;A String&quot;, # Enum value name.
           &quot;number&quot;: 42, # Enum value number.
           &quot;options&quot;: [ # Protocol buffer options.
-            { # A protocol buffer option, which can be attached to a message, field, enumeration, etc.
+            { # A protocol buffer option, which can be attached to a message, field, enumeration, etc. New usages of this message as an alternative to FileOptions, MessageOptions, FieldOptions, EnumOptions, EnumValueOptions, ServiceOptions, or MethodOptions are strongly discouraged.
               &quot;name&quot;: &quot;A String&quot;, # The option&#x27;s name. For protobuf built-in options (options defined in descriptor.proto), this is the short name. For example, `&quot;map_entry&quot;`. For custom options, it should be the fully-qualified name. For example, `&quot;google.api.http&quot;`.
               &quot;value&quot;: { # The option&#x27;s value packed in an Any message. If the value is a primitive, the corresponding wrapper type defined in google/protobuf/wrappers.proto should be used. If the value is an enum, it should be stored as an int32 value using the google.protobuf.Int32Value type.
                 &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
@@ -515,7 +526,7 @@ Returns:
       ],
       &quot;name&quot;: &quot;A String&quot;, # Enum type name.
       &quot;options&quot;: [ # Protocol buffer options.
-        { # A protocol buffer option, which can be attached to a message, field, enumeration, etc.
+        { # A protocol buffer option, which can be attached to a message, field, enumeration, etc. New usages of this message as an alternative to FileOptions, MessageOptions, FieldOptions, EnumOptions, EnumValueOptions, ServiceOptions, or MethodOptions are strongly discouraged.
           &quot;name&quot;: &quot;A String&quot;, # The option&#x27;s name. For protobuf built-in options (options defined in descriptor.proto), this is the short name. For example, `&quot;map_entry&quot;`. For custom options, it should be the fully-qualified name. For example, `&quot;google.api.http&quot;`.
           &quot;value&quot;: { # The option&#x27;s value packed in an Any message. If the value is a primitive, the corresponding wrapper type defined in google/protobuf/wrappers.proto should be used. If the value is an enum, it should be stored as an int32 value using the google.protobuf.Int32Value type.
             &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
@@ -666,6 +677,7 @@ Returns:
             ],
             &quot;referenceDocsUri&quot;: &quot;A String&quot;, # Link to automatically generated reference documentation. Example: https://cloud.google.com/nodejs/docs/reference/asset/latest
             &quot;selectiveGapicGeneration&quot;: { # This message is used to configure the generation of a subset of the RPCs in a service for client libraries. # Configuration for which RPCs should be generated in the GAPIC client.
+              &quot;generateOmittedAsInternal&quot;: True or False, # Setting this to true indicates to the client generators that methods that would be excluded from the generation should instead be generated in a way that indicates these methods should not be consumed by end users. How this is expressed is up to individual language implementations to decide. Some examples may be: added annotations, obfuscated identifiers, or other language idiomatic patterns.
               &quot;methods&quot;: [ # An allowlist of the fully qualified names of RPCs that should be included on public client surfaces.
                 &quot;A String&quot;,
               ],
@@ -679,6 +691,7 @@ Returns:
             ],
             &quot;referenceDocsUri&quot;: &quot;A String&quot;, # Link to automatically generated reference documentation. Example: https://cloud.google.com/nodejs/docs/reference/asset/latest
             &quot;selectiveGapicGeneration&quot;: { # This message is used to configure the generation of a subset of the RPCs in a service for client libraries. # Configuration for which RPCs should be generated in the GAPIC client.
+              &quot;generateOmittedAsInternal&quot;: True or False, # Setting this to true indicates to the client generators that methods that would be excluded from the generation should instead be generated in a way that indicates these methods should not be consumed by end users. How this is expressed is up to individual language implementations to decide. Some examples may be: added annotations, obfuscated identifiers, or other language idiomatic patterns.
               &quot;methods&quot;: [ # An allowlist of the fully qualified names of RPCs that should be included on public client surfaces.
                 &quot;A String&quot;,
               ],
@@ -707,12 +720,13 @@ Returns:
             ],
             &quot;referenceDocsUri&quot;: &quot;A String&quot;, # Link to automatically generated reference documentation. Example: https://cloud.google.com/nodejs/docs/reference/asset/latest
             &quot;selectiveGapicGeneration&quot;: { # This message is used to configure the generation of a subset of the RPCs in a service for client libraries. # Configuration for which RPCs should be generated in the GAPIC client.
+              &quot;generateOmittedAsInternal&quot;: True or False, # Setting this to true indicates to the client generators that methods that would be excluded from the generation should instead be generated in a way that indicates these methods should not be consumed by end users. How this is expressed is up to individual language implementations to decide. Some examples may be: added annotations, obfuscated identifiers, or other language idiomatic patterns.
               &quot;methods&quot;: [ # An allowlist of the fully qualified names of RPCs that should be included on public client surfaces.
                 &quot;A String&quot;,
               ],
             },
           },
-          &quot;renamedServices&quot;: { # Map of service names to renamed services. Keys are the package relative service names and values are the name to be used for the service client and call options. publishing: go_settings: renamed_services: Publisher: TopicAdmin
+          &quot;renamedServices&quot;: { # Map of service names to renamed services. Keys are the package relative service names and values are the name to be used for the service client and call options. Example: publishing: go_settings: renamed_services: Publisher: TopicAdmin
             &quot;a_key&quot;: &quot;A String&quot;,
           },
         },
@@ -723,12 +737,13 @@ Returns:
             ],
             &quot;referenceDocsUri&quot;: &quot;A String&quot;, # Link to automatically generated reference documentation. Example: https://cloud.google.com/nodejs/docs/reference/asset/latest
             &quot;selectiveGapicGeneration&quot;: { # This message is used to configure the generation of a subset of the RPCs in a service for client libraries. # Configuration for which RPCs should be generated in the GAPIC client.
+              &quot;generateOmittedAsInternal&quot;: True or False, # Setting this to true indicates to the client generators that methods that would be excluded from the generation should instead be generated in a way that indicates these methods should not be consumed by end users. How this is expressed is up to individual language implementations to decide. Some examples may be: added annotations, obfuscated identifiers, or other language idiomatic patterns.
               &quot;methods&quot;: [ # An allowlist of the fully qualified names of RPCs that should be included on public client surfaces.
                 &quot;A String&quot;,
               ],
             },
           },
-          &quot;libraryPackage&quot;: &quot;A String&quot;, # The package name to use in Java. Clobbers the java_package option set in the protobuf. This should be used **only** by APIs who have already set the language_settings.java.package_name&quot; field in gapic.yaml. API teams should use the protobuf java_package option where possible. Example of a YAML configuration:: publishing: java_settings: library_package: com.google.cloud.pubsub.v1
+          &quot;libraryPackage&quot;: &quot;A String&quot;, # The package name to use in Java. Clobbers the java_package option set in the protobuf. This should be used **only** by APIs who have already set the language_settings.java.package_name&quot; field in gapic.yaml. API teams should use the protobuf java_package option where possible. Example of a YAML configuration:: publishing: library_settings: java_settings: library_package: com.google.cloud.pubsub.v1
           &quot;serviceClassNames&quot;: { # Configure the Java class name to use instead of the service&#x27;s for its corresponding generated GAPIC client. Keys are fully-qualified service names as they appear in the protobuf (including the full the language_settings.java.interface_names&quot; field in gapic.yaml. API teams should otherwise use the service name as it appears in the protobuf. Example of a YAML configuration:: publishing: java_settings: service_class_names: - google.pubsub.v1.Publisher: TopicAdmin - google.pubsub.v1.Subscriber: SubscriptionAdmin
             &quot;a_key&quot;: &quot;A String&quot;,
           },
@@ -741,6 +756,7 @@ Returns:
             ],
             &quot;referenceDocsUri&quot;: &quot;A String&quot;, # Link to automatically generated reference documentation. Example: https://cloud.google.com/nodejs/docs/reference/asset/latest
             &quot;selectiveGapicGeneration&quot;: { # This message is used to configure the generation of a subset of the RPCs in a service for client libraries. # Configuration for which RPCs should be generated in the GAPIC client.
+              &quot;generateOmittedAsInternal&quot;: True or False, # Setting this to true indicates to the client generators that methods that would be excluded from the generation should instead be generated in a way that indicates these methods should not be consumed by end users. How this is expressed is up to individual language implementations to decide. Some examples may be: added annotations, obfuscated identifiers, or other language idiomatic patterns.
               &quot;methods&quot;: [ # An allowlist of the fully qualified names of RPCs that should be included on public client surfaces.
                 &quot;A String&quot;,
               ],
@@ -754,11 +770,13 @@ Returns:
             ],
             &quot;referenceDocsUri&quot;: &quot;A String&quot;, # Link to automatically generated reference documentation. Example: https://cloud.google.com/nodejs/docs/reference/asset/latest
             &quot;selectiveGapicGeneration&quot;: { # This message is used to configure the generation of a subset of the RPCs in a service for client libraries. # Configuration for which RPCs should be generated in the GAPIC client.
+              &quot;generateOmittedAsInternal&quot;: True or False, # Setting this to true indicates to the client generators that methods that would be excluded from the generation should instead be generated in a way that indicates these methods should not be consumed by end users. How this is expressed is up to individual language implementations to decide. Some examples may be: added annotations, obfuscated identifiers, or other language idiomatic patterns.
               &quot;methods&quot;: [ # An allowlist of the fully qualified names of RPCs that should be included on public client surfaces.
                 &quot;A String&quot;,
               ],
             },
           },
+          &quot;libraryPackage&quot;: &quot;A String&quot;, # The package name to use in Php. Clobbers the php_namespace option set in the protobuf. This should be used **only** by APIs who have already set the language_settings.php.package_name&quot; field in gapic.yaml. API teams should use the protobuf php_namespace option where possible. Example of a YAML configuration:: publishing: library_settings: php_settings: library_package: Google\Cloud\PubSub\V1
         },
         &quot;pythonSettings&quot;: { # Settings for Python client libraries. # Settings for Python client libraries.
           &quot;common&quot;: { # Required information for every language. # Some settings.
@@ -767,6 +785,7 @@ Returns:
             ],
             &quot;referenceDocsUri&quot;: &quot;A String&quot;, # Link to automatically generated reference documentation. Example: https://cloud.google.com/nodejs/docs/reference/asset/latest
             &quot;selectiveGapicGeneration&quot;: { # This message is used to configure the generation of a subset of the RPCs in a service for client libraries. # Configuration for which RPCs should be generated in the GAPIC client.
+              &quot;generateOmittedAsInternal&quot;: True or False, # Setting this to true indicates to the client generators that methods that would be excluded from the generation should instead be generated in a way that indicates these methods should not be consumed by end users. How this is expressed is up to individual language implementations to decide. Some examples may be: added annotations, obfuscated identifiers, or other language idiomatic patterns.
               &quot;methods&quot;: [ # An allowlist of the fully qualified names of RPCs that should be included on public client surfaces.
                 &quot;A String&quot;,
               ],
@@ -775,6 +794,7 @@ Returns:
           &quot;experimentalFeatures&quot;: { # Experimental features to be included during client library generation. These fields will be deprecated once the feature graduates and is enabled by default. # Experimental features to be included during client library generation.
             &quot;protobufPythonicTypesEnabled&quot;: True or False, # Enables generation of protobuf code using new types that are more Pythonic which are included in `protobuf&gt;=5.29.x`. This feature will be enabled by default 1 month after launching the feature in preview packages.
             &quot;restAsyncIoEnabled&quot;: True or False, # Enables generation of asynchronous REST clients if `rest` transport is enabled. By default, asynchronous REST clients will not be generated. This feature will be enabled by default 1 month after launching the feature in preview packages.
+            &quot;unversionedPackageDisabled&quot;: True or False, # Disables generation of an unversioned Python package for this client library. This means that the module names will need to be versioned in import statements. For example `import google.cloud.library_v2` instead of `import google.cloud.library`.
           },
         },
         &quot;restNumericEnums&quot;: True or False, # When using transport=rest, the client request will encode enums as numbers rather than strings.
@@ -785,6 +805,7 @@ Returns:
             ],
             &quot;referenceDocsUri&quot;: &quot;A String&quot;, # Link to automatically generated reference documentation. Example: https://cloud.google.com/nodejs/docs/reference/asset/latest
             &quot;selectiveGapicGeneration&quot;: { # This message is used to configure the generation of a subset of the RPCs in a service for client libraries. # Configuration for which RPCs should be generated in the GAPIC client.
+              &quot;generateOmittedAsInternal&quot;: True or False, # Setting this to true indicates to the client generators that methods that would be excluded from the generation should instead be generated in a way that indicates these methods should not be consumed by end users. How this is expressed is up to individual language implementations to decide. Some examples may be: added annotations, obfuscated identifiers, or other language idiomatic patterns.
               &quot;methods&quot;: [ # An allowlist of the fully qualified names of RPCs that should be included on public client surfaces.
                 &quot;A String&quot;,
               ],
@@ -799,6 +820,25 @@ Returns:
         &quot;autoPopulatedFields&quot;: [ # List of top-level fields of the request message, that should be automatically populated by the client libraries based on their (google.api.field_info).format. Currently supported format: UUID4. Example of a YAML configuration: publishing: method_settings: - selector: google.example.v1.ExampleService.CreateExample auto_populated_fields: - request_id
           &quot;A String&quot;,
         ],
+        &quot;batching&quot;: { # `BatchingConfigProto` defines the batching configuration for an API method. # Batching configuration for an API method in client libraries. Example of a YAML configuration: publishing: method_settings: - selector: google.example.v1.ExampleService.BatchCreateExample batching: element_count_threshold: 1000 request_byte_threshold: 100000000 delay_threshold_millis: 10
+          &quot;batchDescriptor&quot;: { # `BatchingDescriptorProto` specifies the fields of the request message to be used for batching, and, optionally, the fields of the response message to be used for demultiplexing. # The request and response fields used in batching.
+            &quot;batchedField&quot;: &quot;A String&quot;, # The repeated field in the request message to be aggregated by batching.
+            &quot;discriminatorFields&quot;: [ # A list of the fields in the request message. Two requests will be batched together only if the values of every field specified in `request_discriminator_fields` is equal between the two requests.
+              &quot;A String&quot;,
+            ],
+            &quot;subresponseField&quot;: &quot;A String&quot;, # Optional. When present, indicates the field in the response message to be used to demultiplex the response into multiple response messages, in correspondence with the multiple request messages originally batched together.
+          },
+          &quot;thresholds&quot;: { # `BatchingSettingsProto` specifies a set of batching thresholds, each of which acts as a trigger to send a batch of messages as a request. At least one threshold must be positive nonzero. # The thresholds which trigger a batched request to be sent.
+            &quot;delayThreshold&quot;: &quot;A String&quot;, # The duration after which a batch should be sent, starting from the addition of the first message to that batch.
+            &quot;elementCountLimit&quot;: 42, # The maximum number of elements collected in a batch that could be accepted by server.
+            &quot;elementCountThreshold&quot;: 42, # The number of elements of a field collected into a batch which, if exceeded, causes the batch to be sent.
+            &quot;flowControlByteLimit&quot;: 42, # The maximum size of data allowed by flow control.
+            &quot;flowControlElementLimit&quot;: 42, # The maximum number of elements allowed by flow control.
+            &quot;flowControlLimitExceededBehavior&quot;: &quot;A String&quot;, # The behavior to take when the flow control limit is exceeded.
+            &quot;requestByteLimit&quot;: 42, # The maximum size of the request that could be accepted by server.
+            &quot;requestByteThreshold&quot;: &quot;A String&quot;, # The aggregated size of the batched field which, if exceeded, causes the batch to be sent. This size is computed by aggregating the sizes of the request field to be batched, not of the entire request message.
+          },
+        },
         &quot;longRunning&quot;: { # Describes settings to use when generating API methods that use the long-running operation pattern. All default values below are from those used in the client library generators (e.g. [Java](https://github.com/googleapis/gapic-generator-java/blob/04c2faa191a9b5a10b92392fe8482279c4404803/src/main/java/com/google/api/generator/gapic/composer/common/RetrySettingsComposer.java)). # Describes settings to use for long-running operations when generating API methods for RPCs. Complements RPCs that use the annotations in google/longrunning/operations.proto. Example of a YAML configuration:: publishing: method_settings: - selector: google.cloud.speech.v2.Speech.BatchRecognize long_running: initial_poll_delay: 60s # 1 minute poll_delay_multiplier: 1.5 max_poll_delay: 360s # 6 minutes total_poll_timeout: 54000s # 90 minutes
           &quot;initialPollDelay&quot;: &quot;A String&quot;, # Initial delay after which the first poll request will be made. Default value: 5 seconds.
           &quot;maxPollDelay&quot;: &quot;A String&quot;, # Maximum time between two subsequent poll requests. Default value: 45 seconds.
@@ -861,10 +901,10 @@ Returns:
     ],
   },
   &quot;systemTypes&quot;: [ # A list of all proto message types included in this API service. It serves similar purpose as [google.api.Service.types], except that these types are not needed by user-defined APIs. Therefore, they will not show up in the generated discovery doc. This field should only be used to define system APIs in ESF.
-    { # A protocol buffer message type.
+    { # A protocol buffer message type. New usages of this message as an alternative to DescriptorProto are strongly discouraged. This message does not reliability preserve all information necessary to model the schema and preserve semantics. Instead make use of FileDescriptorSet which preserves the necessary information.
       &quot;edition&quot;: &quot;A String&quot;, # The source edition string, only valid when syntax is SYNTAX_EDITIONS.
       &quot;fields&quot;: [ # The list of fields.
-        { # A single field of a message type.
+        { # A single field of a message type. New usages of this message as an alternative to FieldDescriptorProto are strongly discouraged. This message does not reliability preserve all information necessary to model the schema and preserve semantics. Instead make use of FileDescriptorSet which preserves the necessary information.
           &quot;cardinality&quot;: &quot;A String&quot;, # The field cardinality.
           &quot;defaultValue&quot;: &quot;A String&quot;, # The string value of the default value of this field. Proto2 syntax only.
           &quot;jsonName&quot;: &quot;A String&quot;, # The field JSON name.
@@ -873,7 +913,7 @@ Returns:
           &quot;number&quot;: 42, # The field number.
           &quot;oneofIndex&quot;: 42, # The index of the field type in `Type.oneofs`, for message or enumeration types. The first type has index 1; zero means the type is not in the list.
           &quot;options&quot;: [ # The protocol buffer options.
-            { # A protocol buffer option, which can be attached to a message, field, enumeration, etc.
+            { # A protocol buffer option, which can be attached to a message, field, enumeration, etc. New usages of this message as an alternative to FileOptions, MessageOptions, FieldOptions, EnumOptions, EnumValueOptions, ServiceOptions, or MethodOptions are strongly discouraged.
               &quot;name&quot;: &quot;A String&quot;, # The option&#x27;s name. For protobuf built-in options (options defined in descriptor.proto), this is the short name. For example, `&quot;map_entry&quot;`. For custom options, it should be the fully-qualified name. For example, `&quot;google.api.http&quot;`.
               &quot;value&quot;: { # The option&#x27;s value packed in an Any message. If the value is a primitive, the corresponding wrapper type defined in google/protobuf/wrappers.proto should be used. If the value is an enum, it should be stored as an int32 value using the google.protobuf.Int32Value type.
                 &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
@@ -889,7 +929,7 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;options&quot;: [ # The protocol buffer options.
-        { # A protocol buffer option, which can be attached to a message, field, enumeration, etc.
+        { # A protocol buffer option, which can be attached to a message, field, enumeration, etc. New usages of this message as an alternative to FileOptions, MessageOptions, FieldOptions, EnumOptions, EnumValueOptions, ServiceOptions, or MethodOptions are strongly discouraged.
           &quot;name&quot;: &quot;A String&quot;, # The option&#x27;s name. For protobuf built-in options (options defined in descriptor.proto), this is the short name. For example, `&quot;map_entry&quot;`. For custom options, it should be the fully-qualified name. For example, `&quot;google.api.http&quot;`.
           &quot;value&quot;: { # The option&#x27;s value packed in an Any message. If the value is a primitive, the corresponding wrapper type defined in google/protobuf/wrappers.proto should be used. If the value is an enum, it should be stored as an int32 value using the google.protobuf.Int32Value type.
             &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
@@ -904,10 +944,10 @@ Returns:
   ],
   &quot;title&quot;: &quot;A String&quot;, # The product title for this service, it is the name displayed in Google Cloud Console.
   &quot;types&quot;: [ # A list of all proto message types included in this API service. Types referenced directly or indirectly by the `apis` are automatically included. Messages which are not referenced but shall be included, such as types used by the `google.protobuf.Any` type, should be listed here by name by the configuration author. Example: types: - name: google.protobuf.Int32
-    { # A protocol buffer message type.
+    { # A protocol buffer message type. New usages of this message as an alternative to DescriptorProto are strongly discouraged. This message does not reliability preserve all information necessary to model the schema and preserve semantics. Instead make use of FileDescriptorSet which preserves the necessary information.
       &quot;edition&quot;: &quot;A String&quot;, # The source edition string, only valid when syntax is SYNTAX_EDITIONS.
       &quot;fields&quot;: [ # The list of fields.
-        { # A single field of a message type.
+        { # A single field of a message type. New usages of this message as an alternative to FieldDescriptorProto are strongly discouraged. This message does not reliability preserve all information necessary to model the schema and preserve semantics. Instead make use of FileDescriptorSet which preserves the necessary information.
           &quot;cardinality&quot;: &quot;A String&quot;, # The field cardinality.
           &quot;defaultValue&quot;: &quot;A String&quot;, # The string value of the default value of this field. Proto2 syntax only.
           &quot;jsonName&quot;: &quot;A String&quot;, # The field JSON name.
@@ -916,7 +956,7 @@ Returns:
           &quot;number&quot;: 42, # The field number.
           &quot;oneofIndex&quot;: 42, # The index of the field type in `Type.oneofs`, for message or enumeration types. The first type has index 1; zero means the type is not in the list.
           &quot;options&quot;: [ # The protocol buffer options.
-            { # A protocol buffer option, which can be attached to a message, field, enumeration, etc.
+            { # A protocol buffer option, which can be attached to a message, field, enumeration, etc. New usages of this message as an alternative to FileOptions, MessageOptions, FieldOptions, EnumOptions, EnumValueOptions, ServiceOptions, or MethodOptions are strongly discouraged.
               &quot;name&quot;: &quot;A String&quot;, # The option&#x27;s name. For protobuf built-in options (options defined in descriptor.proto), this is the short name. For example, `&quot;map_entry&quot;`. For custom options, it should be the fully-qualified name. For example, `&quot;google.api.http&quot;`.
               &quot;value&quot;: { # The option&#x27;s value packed in an Any message. If the value is a primitive, the corresponding wrapper type defined in google/protobuf/wrappers.proto should be used. If the value is an enum, it should be stored as an int32 value using the google.protobuf.Int32Value type.
                 &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
@@ -932,7 +972,7 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;options&quot;: [ # The protocol buffer options.
-        { # A protocol buffer option, which can be attached to a message, field, enumeration, etc.
+        { # A protocol buffer option, which can be attached to a message, field, enumeration, etc. New usages of this message as an alternative to FileOptions, MessageOptions, FieldOptions, EnumOptions, EnumValueOptions, ServiceOptions, or MethodOptions are strongly discouraged.
           &quot;name&quot;: &quot;A String&quot;, # The option&#x27;s name. For protobuf built-in options (options defined in descriptor.proto), this is the short name. For example, `&quot;map_entry&quot;`. For custom options, it should be the fully-qualified name. For example, `&quot;google.api.http&quot;`.
           &quot;value&quot;: { # The option&#x27;s value packed in an Any message. If the value is a primitive, the corresponding wrapper type defined in google/protobuf/wrappers.proto should be used. If the value is an enum, it should be stored as an int32 value using the google.protobuf.Int32Value type.
             &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
@@ -951,8 +991,8 @@ Returns:
       &quot;A String&quot;,
     ],
     &quot;rules&quot;: [ # A list of usage rules that apply to individual API methods. **NOTE:** All service configuration rules follow &quot;last one wins&quot; order.
-      { # Usage configuration rules for the service. NOTE: Under development. Use this rule to configure unregistered calls for the service. Unregistered calls are calls that do not contain consumer project identity. (Example: calls that do not contain an API key). By default, API methods do not allow unregistered calls, and each method call must be identified by a consumer project identity. Use this rule to allow/disallow unregistered calls. Example of an API that wants to allow unregistered calls for entire service. usage: rules: - selector: &quot;*&quot; allow_unregistered_calls: true Example of a method that wants to allow unregistered calls. usage: rules: - selector: &quot;google.example.library.v1.LibraryService.CreateBook&quot; allow_unregistered_calls: true
-        &quot;allowUnregisteredCalls&quot;: True or False, # If true, the selected method allows unregistered calls, e.g. calls that don&#x27;t identify any user or application.
+      { # Usage configuration rules for the service.
+        &quot;allowUnregisteredCalls&quot;: True or False, #  Use this rule to configure unregistered calls for the service. Unregistered calls are calls that do not contain consumer project identity. (Example: calls that do not contain an API key). WARNING: By default, API methods do not allow unregistered calls, and each method call must be identified by a consumer project identity.
         &quot;selector&quot;: &quot;A String&quot;, # Selects the methods to which this rule applies. Use &#x27;*&#x27; to indicate all methods in all APIs. Refer to selector for syntax details.
         &quot;skipServiceControl&quot;: True or False, # If true, the selected method should skip service control and the control plane features, such as quota and billing, will not be available. This flag is used by Google Cloud Endpoints to bypass checks for internal methods, such as service health check methods.
       },

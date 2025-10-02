@@ -147,7 +147,7 @@ Args:
   body: object, The request body.
     The object takes the form of:
 
-{ # Request type for the [`ReportStateAndNotification`](#google.home.graph.v1.HomeGraphApiService.ReportStateAndNotification) call. It may include states, notifications, or both. States and notifications are defined per `device_id` (for example, &quot;123&quot; and &quot;456&quot; in the following example). Example: ```json { &quot;requestId&quot;: &quot;ff36a3cc-ec34-11e6-b1a0-64510650abcf&quot;, &quot;agentUserId&quot;: &quot;1234&quot;, &quot;payload&quot;: { &quot;devices&quot;: { &quot;states&quot;: { &quot;123&quot;: { &quot;on&quot;: true }, &quot;456&quot;: { &quot;on&quot;: true, &quot;brightness&quot;: 10 } }, } } } ```
+{ # Request type for the [`ReportStateAndNotification`](#google.home.graph.v1.HomeGraphApiService.ReportStateAndNotification) call. It may include states, notifications, or both. States and notifications are defined per `device_id` (for example, &quot;123&quot; and &quot;456&quot; in the following example). Example: ```json { &quot;requestId&quot;: &quot;ff36a3cc-ec34-11e6-b1a0-64510650abcf&quot;, &quot;agentUserId&quot;: &quot;1234&quot;, &quot;payload&quot;: { &quot;devices&quot;: { &quot;states&quot;: { &quot;123&quot;: { &quot;on&quot;: true }, &quot;456&quot;: { &quot;on&quot;: true, &quot;brightness&quot;: 10 }, }, } } } ```
   &quot;agentUserId&quot;: &quot;A String&quot;, # Required. Third-party user ID.
   &quot;eventId&quot;: &quot;A String&quot;, # Unique identifier per event (for example, a doorbell press).
   &quot;followUpToken&quot;: &quot;A String&quot;, # Deprecated.
@@ -245,7 +245,7 @@ Returns:
           &quot;defaultNames&quot;: [ # List of names provided by the manufacturer rather than the user, such as serial numbers, SKUs, etc.
             &quot;A String&quot;,
           ],
-          &quot;name&quot;: &quot;A String&quot;, # Primary name of the device, generally provided by the user.
+          &quot;name&quot;: &quot;A String&quot;, # Primary name of the device, generally provided by the user. Names will be truncated if over the 60 Unicode code point (character) limit and no errors will be thrown. Developers are responsible for handling long names.
           &quot;nicknames&quot;: [ # Additional names provided by the user for the device.
             &quot;A String&quot;,
           ],

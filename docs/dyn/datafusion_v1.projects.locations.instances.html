@@ -86,7 +86,7 @@ h1, h2, h3 {
   <code><a href="#create">create(parent, body=None, instanceId=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Creates a new Data Fusion instance in the specified project and location.</p>
 <p class="toc_element">
-  <code><a href="#delete">delete(name, x__xgafv=None)</a></code></p>
+  <code><a href="#delete">delete(name, force=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Deletes a single Date Fusion instance.</p>
 <p class="toc_element">
   <code><a href="#get">get(name, x__xgafv=None)</a></code></p>
@@ -157,7 +157,7 @@ Args:
   ],
   &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name for an instance.
   &quot;enableRbac&quot;: True or False, # Optional. Option to enable granular role-based access control.
-  &quot;enableStackdriverLogging&quot;: True or False, # Optional. Option to enable Stackdriver Logging.
+  &quot;enableStackdriverLogging&quot;: True or False, # Optional. Option to enable Dataproc Stackdriver Logging.
   &quot;enableStackdriverMonitoring&quot;: True or False, # Optional. Option to enable Stackdriver Monitoring.
   &quot;enableZoneSeparation&quot;: True or False, # Output only. Option to enable granular zone separation.
   &quot;eventPublishConfig&quot;: { # Confirguration of PubSubEventWriter. # Optional. Option to enable and pass metadata for event publishing.
@@ -168,6 +168,16 @@ Args:
   &quot;labels&quot;: { # The resource labels for instance to use to annotate any related underlying resources such as Compute Engine VMs. The character &#x27;=&#x27; is not allowed to be used within the labels.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
+  &quot;loggingConfig&quot;: { # Logging configuration for a Data Fusion instance. # Optional. The logging configuration for this instance. This field is supported only in CDF versions 6.11.0 and above.
+    &quot;instanceCloudLoggingDisabled&quot;: True or False, # Optional. Option to determine whether instance logs should be written to Cloud Logging. By default, instance logs are written to Cloud Logging.
+  },
+  &quot;maintenanceEvents&quot;: [ # Output only. The maintenance events for this instance.
+    { # Represents a maintenance event.
+      &quot;endTime&quot;: &quot;A String&quot;, # Output only. The end time of the maintenance event provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. Example: &quot;2024-01-02T12:04:06-06:00&quot; This field will be empty if the maintenance event is not yet complete.
+      &quot;startTime&quot;: &quot;A String&quot;, # Output only. The start time of the maintenance event provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. Example: &quot;2024-01-01T12:04:06-04:00&quot;
+      &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the maintenance event.
+    },
+  ],
   &quot;maintenancePolicy&quot;: { # Maintenance policy of the instance. # Optional. Configure the maintenance policy for this instance.
     &quot;maintenanceExclusionWindow&quot;: { # Represents an arbitrary window of time. # Optional. The maintenance exclusion window of the instance.
       &quot;endTime&quot;: &quot;A String&quot;, # Required. The end time of the time window provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. The end time should take place after the start time. Example: &quot;2024-01-02T12:04:06-06:00&quot;
@@ -194,17 +204,21 @@ Args:
       &quot;unreachableCidrBlock&quot;: &quot;A String&quot;, # Optional. Input only. The CIDR block to which the CDF instance can&#x27;t route traffic to in the consumer project VPC. The size of this block should be at least /25. This range should not overlap with the primary address range of any subnetwork used by the network attachment. This range can be used for other purposes in the consumer VPC as long as there is no requirement for CDF to reach destinations using these addresses. If this value is not provided, the server chooses a non RFC 1918 address range. The format of this field is governed by RFC 4632. Example: 192.168.0.0/25
     },
   },
-  &quot;options&quot;: { # Map of additional options used to configure the behavior of Data Fusion instance.
+  &quot;options&quot;: { # Optional. Map of additional options used to configure the behavior of Data Fusion instance.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;p4ServiceAccount&quot;: &quot;A String&quot;, # Output only. Service agent for the customer project.
   &quot;patchRevision&quot;: &quot;A String&quot;, # Optional. Current patch revision of the Data Fusion.
   &quot;privateInstance&quot;: True or False, # Optional. Specifies whether the Data Fusion instance should be private. If set to true, all Data Fusion nodes will have private IP addresses and will not be able to access the public internet.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;serviceAccount&quot;: &quot;A String&quot;, # Output only. Deprecated. Use tenant_project_id instead to extract the tenant project ID.
   &quot;serviceEndpoint&quot;: &quot;A String&quot;, # Output only. Endpoint on which the Data Fusion UI is accessible.
   &quot;state&quot;: &quot;A String&quot;, # Output only. The current state of this Data Fusion instance.
   &quot;stateMessage&quot;: &quot;A String&quot;, # Output only. Additional information about the current state of this Data Fusion instance if available.
+  &quot;tags&quot;: { # Optional. Input only. Immutable. Tag keys/values directly bound to this resource. For example: &quot;123/environment&quot;: &quot;production&quot;, &quot;123/costCenter&quot;: &quot;marketing&quot;
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
   &quot;tenantProjectId&quot;: &quot;A String&quot;, # Output only. The name of the tenant project.
   &quot;type&quot;: &quot;A String&quot;, # Required. Instance type.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time the instance was last updated.
@@ -244,11 +258,12 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="delete">delete(name, x__xgafv=None)</code>
+    <code class="details" id="delete">delete(name, force=None, x__xgafv=None)</code>
   <pre>Deletes a single Date Fusion instance.
 
 Args:
   name: string, Required. The instance resource name in the format projects/{project}/locations/{location}/instances/{instance} (required)
+  force: boolean, Optional. If set to true, any nested resources from this instance will also be deleted.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -322,7 +337,7 @@ Returns:
   ],
   &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name for an instance.
   &quot;enableRbac&quot;: True or False, # Optional. Option to enable granular role-based access control.
-  &quot;enableStackdriverLogging&quot;: True or False, # Optional. Option to enable Stackdriver Logging.
+  &quot;enableStackdriverLogging&quot;: True or False, # Optional. Option to enable Dataproc Stackdriver Logging.
   &quot;enableStackdriverMonitoring&quot;: True or False, # Optional. Option to enable Stackdriver Monitoring.
   &quot;enableZoneSeparation&quot;: True or False, # Output only. Option to enable granular zone separation.
   &quot;eventPublishConfig&quot;: { # Confirguration of PubSubEventWriter. # Optional. Option to enable and pass metadata for event publishing.
@@ -333,6 +348,16 @@ Returns:
   &quot;labels&quot;: { # The resource labels for instance to use to annotate any related underlying resources such as Compute Engine VMs. The character &#x27;=&#x27; is not allowed to be used within the labels.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
+  &quot;loggingConfig&quot;: { # Logging configuration for a Data Fusion instance. # Optional. The logging configuration for this instance. This field is supported only in CDF versions 6.11.0 and above.
+    &quot;instanceCloudLoggingDisabled&quot;: True or False, # Optional. Option to determine whether instance logs should be written to Cloud Logging. By default, instance logs are written to Cloud Logging.
+  },
+  &quot;maintenanceEvents&quot;: [ # Output only. The maintenance events for this instance.
+    { # Represents a maintenance event.
+      &quot;endTime&quot;: &quot;A String&quot;, # Output only. The end time of the maintenance event provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. Example: &quot;2024-01-02T12:04:06-06:00&quot; This field will be empty if the maintenance event is not yet complete.
+      &quot;startTime&quot;: &quot;A String&quot;, # Output only. The start time of the maintenance event provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. Example: &quot;2024-01-01T12:04:06-04:00&quot;
+      &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the maintenance event.
+    },
+  ],
   &quot;maintenancePolicy&quot;: { # Maintenance policy of the instance. # Optional. Configure the maintenance policy for this instance.
     &quot;maintenanceExclusionWindow&quot;: { # Represents an arbitrary window of time. # Optional. The maintenance exclusion window of the instance.
       &quot;endTime&quot;: &quot;A String&quot;, # Required. The end time of the time window provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. The end time should take place after the start time. Example: &quot;2024-01-02T12:04:06-06:00&quot;
@@ -359,17 +384,21 @@ Returns:
       &quot;unreachableCidrBlock&quot;: &quot;A String&quot;, # Optional. Input only. The CIDR block to which the CDF instance can&#x27;t route traffic to in the consumer project VPC. The size of this block should be at least /25. This range should not overlap with the primary address range of any subnetwork used by the network attachment. This range can be used for other purposes in the consumer VPC as long as there is no requirement for CDF to reach destinations using these addresses. If this value is not provided, the server chooses a non RFC 1918 address range. The format of this field is governed by RFC 4632. Example: 192.168.0.0/25
     },
   },
-  &quot;options&quot;: { # Map of additional options used to configure the behavior of Data Fusion instance.
+  &quot;options&quot;: { # Optional. Map of additional options used to configure the behavior of Data Fusion instance.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;p4ServiceAccount&quot;: &quot;A String&quot;, # Output only. Service agent for the customer project.
   &quot;patchRevision&quot;: &quot;A String&quot;, # Optional. Current patch revision of the Data Fusion.
   &quot;privateInstance&quot;: True or False, # Optional. Specifies whether the Data Fusion instance should be private. If set to true, all Data Fusion nodes will have private IP addresses and will not be able to access the public internet.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;serviceAccount&quot;: &quot;A String&quot;, # Output only. Deprecated. Use tenant_project_id instead to extract the tenant project ID.
   &quot;serviceEndpoint&quot;: &quot;A String&quot;, # Output only. Endpoint on which the Data Fusion UI is accessible.
   &quot;state&quot;: &quot;A String&quot;, # Output only. The current state of this Data Fusion instance.
   &quot;stateMessage&quot;: &quot;A String&quot;, # Output only. Additional information about the current state of this Data Fusion instance if available.
+  &quot;tags&quot;: { # Optional. Input only. Immutable. Tag keys/values directly bound to this resource. For example: &quot;123/environment&quot;: &quot;production&quot;, &quot;123/costCenter&quot;: &quot;marketing&quot;
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
   &quot;tenantProjectId&quot;: &quot;A String&quot;, # Output only. The name of the tenant project.
   &quot;type&quot;: &quot;A String&quot;, # Required. Instance type.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time the instance was last updated.
@@ -477,7 +506,7 @@ Returns:
       ],
       &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name for an instance.
       &quot;enableRbac&quot;: True or False, # Optional. Option to enable granular role-based access control.
-      &quot;enableStackdriverLogging&quot;: True or False, # Optional. Option to enable Stackdriver Logging.
+      &quot;enableStackdriverLogging&quot;: True or False, # Optional. Option to enable Dataproc Stackdriver Logging.
       &quot;enableStackdriverMonitoring&quot;: True or False, # Optional. Option to enable Stackdriver Monitoring.
       &quot;enableZoneSeparation&quot;: True or False, # Output only. Option to enable granular zone separation.
       &quot;eventPublishConfig&quot;: { # Confirguration of PubSubEventWriter. # Optional. Option to enable and pass metadata for event publishing.
@@ -488,6 +517,16 @@ Returns:
       &quot;labels&quot;: { # The resource labels for instance to use to annotate any related underlying resources such as Compute Engine VMs. The character &#x27;=&#x27; is not allowed to be used within the labels.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
+      &quot;loggingConfig&quot;: { # Logging configuration for a Data Fusion instance. # Optional. The logging configuration for this instance. This field is supported only in CDF versions 6.11.0 and above.
+        &quot;instanceCloudLoggingDisabled&quot;: True or False, # Optional. Option to determine whether instance logs should be written to Cloud Logging. By default, instance logs are written to Cloud Logging.
+      },
+      &quot;maintenanceEvents&quot;: [ # Output only. The maintenance events for this instance.
+        { # Represents a maintenance event.
+          &quot;endTime&quot;: &quot;A String&quot;, # Output only. The end time of the maintenance event provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. Example: &quot;2024-01-02T12:04:06-06:00&quot; This field will be empty if the maintenance event is not yet complete.
+          &quot;startTime&quot;: &quot;A String&quot;, # Output only. The start time of the maintenance event provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. Example: &quot;2024-01-01T12:04:06-04:00&quot;
+          &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the maintenance event.
+        },
+      ],
       &quot;maintenancePolicy&quot;: { # Maintenance policy of the instance. # Optional. Configure the maintenance policy for this instance.
         &quot;maintenanceExclusionWindow&quot;: { # Represents an arbitrary window of time. # Optional. The maintenance exclusion window of the instance.
           &quot;endTime&quot;: &quot;A String&quot;, # Required. The end time of the time window provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. The end time should take place after the start time. Example: &quot;2024-01-02T12:04:06-06:00&quot;
@@ -514,17 +553,21 @@ Returns:
           &quot;unreachableCidrBlock&quot;: &quot;A String&quot;, # Optional. Input only. The CIDR block to which the CDF instance can&#x27;t route traffic to in the consumer project VPC. The size of this block should be at least /25. This range should not overlap with the primary address range of any subnetwork used by the network attachment. This range can be used for other purposes in the consumer VPC as long as there is no requirement for CDF to reach destinations using these addresses. If this value is not provided, the server chooses a non RFC 1918 address range. The format of this field is governed by RFC 4632. Example: 192.168.0.0/25
         },
       },
-      &quot;options&quot;: { # Map of additional options used to configure the behavior of Data Fusion instance.
+      &quot;options&quot;: { # Optional. Map of additional options used to configure the behavior of Data Fusion instance.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;p4ServiceAccount&quot;: &quot;A String&quot;, # Output only. Service agent for the customer project.
       &quot;patchRevision&quot;: &quot;A String&quot;, # Optional. Current patch revision of the Data Fusion.
       &quot;privateInstance&quot;: True or False, # Optional. Specifies whether the Data Fusion instance should be private. If set to true, all Data Fusion nodes will have private IP addresses and will not be able to access the public internet.
+      &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
       &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
       &quot;serviceAccount&quot;: &quot;A String&quot;, # Output only. Deprecated. Use tenant_project_id instead to extract the tenant project ID.
       &quot;serviceEndpoint&quot;: &quot;A String&quot;, # Output only. Endpoint on which the Data Fusion UI is accessible.
       &quot;state&quot;: &quot;A String&quot;, # Output only. The current state of this Data Fusion instance.
       &quot;stateMessage&quot;: &quot;A String&quot;, # Output only. Additional information about the current state of this Data Fusion instance if available.
+      &quot;tags&quot;: { # Optional. Input only. Immutable. Tag keys/values directly bound to this resource. For example: &quot;123/environment&quot;: &quot;production&quot;, &quot;123/costCenter&quot;: &quot;marketing&quot;
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
       &quot;tenantProjectId&quot;: &quot;A String&quot;, # Output only. The name of the tenant project.
       &quot;type&quot;: &quot;A String&quot;, # Required. Instance type.
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time the instance was last updated.
@@ -593,7 +636,7 @@ Args:
   ],
   &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name for an instance.
   &quot;enableRbac&quot;: True or False, # Optional. Option to enable granular role-based access control.
-  &quot;enableStackdriverLogging&quot;: True or False, # Optional. Option to enable Stackdriver Logging.
+  &quot;enableStackdriverLogging&quot;: True or False, # Optional. Option to enable Dataproc Stackdriver Logging.
   &quot;enableStackdriverMonitoring&quot;: True or False, # Optional. Option to enable Stackdriver Monitoring.
   &quot;enableZoneSeparation&quot;: True or False, # Output only. Option to enable granular zone separation.
   &quot;eventPublishConfig&quot;: { # Confirguration of PubSubEventWriter. # Optional. Option to enable and pass metadata for event publishing.
@@ -604,6 +647,16 @@ Args:
   &quot;labels&quot;: { # The resource labels for instance to use to annotate any related underlying resources such as Compute Engine VMs. The character &#x27;=&#x27; is not allowed to be used within the labels.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
+  &quot;loggingConfig&quot;: { # Logging configuration for a Data Fusion instance. # Optional. The logging configuration for this instance. This field is supported only in CDF versions 6.11.0 and above.
+    &quot;instanceCloudLoggingDisabled&quot;: True or False, # Optional. Option to determine whether instance logs should be written to Cloud Logging. By default, instance logs are written to Cloud Logging.
+  },
+  &quot;maintenanceEvents&quot;: [ # Output only. The maintenance events for this instance.
+    { # Represents a maintenance event.
+      &quot;endTime&quot;: &quot;A String&quot;, # Output only. The end time of the maintenance event provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. Example: &quot;2024-01-02T12:04:06-06:00&quot; This field will be empty if the maintenance event is not yet complete.
+      &quot;startTime&quot;: &quot;A String&quot;, # Output only. The start time of the maintenance event provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. Example: &quot;2024-01-01T12:04:06-04:00&quot;
+      &quot;state&quot;: &quot;A String&quot;, # Output only. The state of the maintenance event.
+    },
+  ],
   &quot;maintenancePolicy&quot;: { # Maintenance policy of the instance. # Optional. Configure the maintenance policy for this instance.
     &quot;maintenanceExclusionWindow&quot;: { # Represents an arbitrary window of time. # Optional. The maintenance exclusion window of the instance.
       &quot;endTime&quot;: &quot;A String&quot;, # Required. The end time of the time window provided in [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. The end time should take place after the start time. Example: &quot;2024-01-02T12:04:06-06:00&quot;
@@ -630,17 +683,21 @@ Args:
       &quot;unreachableCidrBlock&quot;: &quot;A String&quot;, # Optional. Input only. The CIDR block to which the CDF instance can&#x27;t route traffic to in the consumer project VPC. The size of this block should be at least /25. This range should not overlap with the primary address range of any subnetwork used by the network attachment. This range can be used for other purposes in the consumer VPC as long as there is no requirement for CDF to reach destinations using these addresses. If this value is not provided, the server chooses a non RFC 1918 address range. The format of this field is governed by RFC 4632. Example: 192.168.0.0/25
     },
   },
-  &quot;options&quot;: { # Map of additional options used to configure the behavior of Data Fusion instance.
+  &quot;options&quot;: { # Optional. Map of additional options used to configure the behavior of Data Fusion instance.
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;p4ServiceAccount&quot;: &quot;A String&quot;, # Output only. Service agent for the customer project.
   &quot;patchRevision&quot;: &quot;A String&quot;, # Optional. Current patch revision of the Data Fusion.
   &quot;privateInstance&quot;: True or False, # Optional. Specifies whether the Data Fusion instance should be private. If set to true, all Data Fusion nodes will have private IP addresses and will not be able to access the public internet.
+  &quot;satisfiesPzi&quot;: True or False, # Output only. Reserved for future use.
   &quot;satisfiesPzs&quot;: True or False, # Output only. Reserved for future use.
   &quot;serviceAccount&quot;: &quot;A String&quot;, # Output only. Deprecated. Use tenant_project_id instead to extract the tenant project ID.
   &quot;serviceEndpoint&quot;: &quot;A String&quot;, # Output only. Endpoint on which the Data Fusion UI is accessible.
   &quot;state&quot;: &quot;A String&quot;, # Output only. The current state of this Data Fusion instance.
   &quot;stateMessage&quot;: &quot;A String&quot;, # Output only. Additional information about the current state of this Data Fusion instance if available.
+  &quot;tags&quot;: { # Optional. Input only. Immutable. Tag keys/values directly bound to this resource. For example: &quot;123/environment&quot;: &quot;production&quot;, &quot;123/costCenter&quot;: &quot;marketing&quot;
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
   &quot;tenantProjectId&quot;: &quot;A String&quot;, # Output only. The name of the tenant project.
   &quot;type&quot;: &quot;A String&quot;, # Required. Instance type.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time the instance was last updated.

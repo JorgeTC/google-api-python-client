@@ -455,7 +455,7 @@ Returns:
 
 Args:
   resource: string, Required. Name of the resource to perform the analysis against. Only Google Cloud projects are supported as of today. Hence, this can only be a project ID (such as &quot;projects/my-project-id&quot;) or a project number (such as &quot;projects/12345&quot;). (required)
-  destinationParent: string, Required. Name of the Google Cloud folder or organization to reparent the target resource. The analysis will be performed against hypothetically moving the resource to this specified desitination parent. This can only be a folder number (such as &quot;folders/123&quot;) or an organization number (such as &quot;organizations/123&quot;).
+  destinationParent: string, Required. Name of the Google Cloud folder or organization to reparent the target resource. The analysis will be performed against hypothetically moving the resource to this specified destination parent. This can only be a folder number (such as &quot;folders/123&quot;) or an organization number (such as &quot;organizations/123&quot;).
   view: string, Analysis view indicating what information should be included in the analysis response. If unspecified, the default view is FULL.
     Allowed values
       ANALYSIS_VIEW_UNSPECIFIED - The default/unset value. The API will default to the FULL view.
@@ -1081,6 +1081,12 @@ Returns:
         &quot;ancestors&quot;: [ # The ancestry path of an asset in Google Cloud [resource hierarchy](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy), represented as a list of relative resource names. An ancestry path starts with the closest ancestor in the hierarchy and ends at root. If the asset is a project, folder, or organization, the ancestry path starts from the asset itself. Example: `[&quot;projects/123456789&quot;, &quot;folders/5432&quot;, &quot;organizations/1234&quot;]`
           &quot;A String&quot;,
         ],
+        &quot;assetExceptions&quot;: [ # The exceptions of a resource.
+          { # An exception of an asset.
+            &quot;details&quot;: &quot;A String&quot;, # The details of the exception.
+            &quot;exceptionType&quot;: &quot;A String&quot;, # The type of exception.
+          },
+        ],
         &quot;assetType&quot;: &quot;A String&quot;, # The type of the asset. Example: `compute.googleapis.com/Disk` See [Supported asset types](https://cloud.google.com/asset-inventory/docs/supported-asset-types) for more information.
         &quot;iamPolicy&quot;: { # An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** ``` { &quot;bindings&quot;: [ { &quot;role&quot;: &quot;roles/resourcemanager.organizationAdmin&quot;, &quot;members&quot;: [ &quot;user:mike@example.com&quot;, &quot;group:admins@example.com&quot;, &quot;domain:google.com&quot;, &quot;serviceAccount:my-project-id@appspot.gserviceaccount.com&quot; ] }, { &quot;role&quot;: &quot;roles/resourcemanager.organizationViewer&quot;, &quot;members&quot;: [ &quot;user:eve@example.com&quot; ], &quot;condition&quot;: { &quot;title&quot;: &quot;expirable access&quot;, &quot;description&quot;: &quot;Does not grant access after Sep 2020&quot;, &quot;expression&quot;: &quot;request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;)&quot;, } } ], &quot;etag&quot;: &quot;BwWWja0YfJA=&quot;, &quot;version&quot;: 3 } ``` **YAML example:** ``` bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;) etag: BwWWja0YfJA= version: 3 ``` For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/). # A representation of the IAM policy set on a Google Cloud resource. There can be a maximum of one IAM policy set on any given resource. In addition, IAM policies inherit their granted access scope from any policies set on parent resources in the resource hierarchy. Therefore, the effectively policy is the union of both the policy set on this resource and each policy set on all of the resource&#x27;s ancestry resource levels in the hierarchy. See [this topic](https://cloud.google.com/iam/help/allow-policies/inheritance) for more information.
           &quot;auditConfigs&quot;: [ # Specifies cloud audit logging configuration for this policy.
@@ -1358,7 +1364,7 @@ Returns:
                   &quot;sources&quot;: [ # Sources that this EgressPolicy authorizes access from. If this field is not empty, then `source_restriction` must be set to `SOURCE_RESTRICTION_ENABLED`.
                     { # The source that EgressPolicy authorizes access from inside the ServicePerimeter to somewhere outside the ServicePerimeter boundaries.
                       &quot;accessLevel&quot;: &quot;A String&quot;, # An AccessLevel resource name that allows protected resources inside the ServicePerimeters to access outside the ServicePerimeter boundaries. AccessLevels listed must be in the same policy as this ServicePerimeter. Referencing a nonexistent AccessLevel will cause an error. If an AccessLevel name is not specified, only resources within the perimeter can be accessed through Google Cloud calls with request origins within the perimeter. Example: `accessPolicies/MY_POLICY/accessLevels/MY_LEVEL`. If a single `*` is specified for `access_level`, then all EgressSources will be allowed.
-                      &quot;resource&quot;: &quot;A String&quot;, # A Google Cloud resource that you want to allow to egress the perimeter. These resources can access data outside the perimeter. This field only supports projects. The project format is `projects/{project_number}`. The resource can be in any Google Cloud organization, not just the organization where the perimeter is defined. You can&#x27;t use `*` in this field to allow all Google Cloud resources.
+                      &quot;resource&quot;: &quot;A String&quot;, # A Google Cloud resource from the service perimeter that you want to allow to access data outside the perimeter. This field supports only projects. The project format is `projects/{project_number}`. You can&#x27;t use `*` in this field to allow all Google Cloud resources.
                     },
                   ],
                 },
@@ -1378,6 +1384,9 @@ Returns:
                     },
                   ],
                   &quot;resources&quot;: [ # A list of resources, currently only projects in the form `projects/`, that are allowed to be accessed by sources defined in the corresponding EgressFrom. A request matches if it contains a resource in this list. If `*` is specified for `resources`, then this EgressTo rule will authorize access to all resources outside the perimeter.
+                    &quot;A String&quot;,
+                  ],
+                  &quot;roles&quot;: [ # IAM roles that represent the set of operations that the sources specified in the corresponding EgressFrom. are allowed to perform in this ServicePerimeter.
                     &quot;A String&quot;,
                   ],
                 },
@@ -1411,6 +1420,9 @@ Returns:
                     },
                   ],
                   &quot;resources&quot;: [ # A list of resources, currently only projects in the form `projects/`, protected by this ServicePerimeter that are allowed to be accessed by sources defined in the corresponding IngressFrom. If a single `*` is specified, then access to all resources inside the perimeter are allowed.
+                    &quot;A String&quot;,
+                  ],
+                  &quot;roles&quot;: [ # IAM roles that represent the set of operations that the sources specified in the corresponding IngressFrom are allowed to perform in this ServicePerimeter.
                     &quot;A String&quot;,
                   ],
                 },
@@ -1445,7 +1457,7 @@ Returns:
                   &quot;sources&quot;: [ # Sources that this EgressPolicy authorizes access from. If this field is not empty, then `source_restriction` must be set to `SOURCE_RESTRICTION_ENABLED`.
                     { # The source that EgressPolicy authorizes access from inside the ServicePerimeter to somewhere outside the ServicePerimeter boundaries.
                       &quot;accessLevel&quot;: &quot;A String&quot;, # An AccessLevel resource name that allows protected resources inside the ServicePerimeters to access outside the ServicePerimeter boundaries. AccessLevels listed must be in the same policy as this ServicePerimeter. Referencing a nonexistent AccessLevel will cause an error. If an AccessLevel name is not specified, only resources within the perimeter can be accessed through Google Cloud calls with request origins within the perimeter. Example: `accessPolicies/MY_POLICY/accessLevels/MY_LEVEL`. If a single `*` is specified for `access_level`, then all EgressSources will be allowed.
-                      &quot;resource&quot;: &quot;A String&quot;, # A Google Cloud resource that you want to allow to egress the perimeter. These resources can access data outside the perimeter. This field only supports projects. The project format is `projects/{project_number}`. The resource can be in any Google Cloud organization, not just the organization where the perimeter is defined. You can&#x27;t use `*` in this field to allow all Google Cloud resources.
+                      &quot;resource&quot;: &quot;A String&quot;, # A Google Cloud resource from the service perimeter that you want to allow to access data outside the perimeter. This field supports only projects. The project format is `projects/{project_number}`. You can&#x27;t use `*` in this field to allow all Google Cloud resources.
                     },
                   ],
                 },
@@ -1465,6 +1477,9 @@ Returns:
                     },
                   ],
                   &quot;resources&quot;: [ # A list of resources, currently only projects in the form `projects/`, that are allowed to be accessed by sources defined in the corresponding EgressFrom. A request matches if it contains a resource in this list. If `*` is specified for `resources`, then this EgressTo rule will authorize access to all resources outside the perimeter.
+                    &quot;A String&quot;,
+                  ],
+                  &quot;roles&quot;: [ # IAM roles that represent the set of operations that the sources specified in the corresponding EgressFrom. are allowed to perform in this ServicePerimeter.
                     &quot;A String&quot;,
                   ],
                 },
@@ -1498,6 +1513,9 @@ Returns:
                     },
                   ],
                   &quot;resources&quot;: [ # A list of resources, currently only projects in the form `projects/`, protected by this ServicePerimeter that are allowed to be accessed by sources defined in the corresponding IngressFrom. If a single `*` is specified, then access to all resources inside the perimeter are allowed.
+                    &quot;A String&quot;,
+                  ],
+                  &quot;roles&quot;: [ # IAM roles that represent the set of operations that the sources specified in the corresponding IngressFrom are allowed to perform in this ServicePerimeter.
                     &quot;A String&quot;,
                   ],
                 },
@@ -1597,6 +1615,12 @@ Returns:
         &quot;ancestors&quot;: [ # The ancestry path of an asset in Google Cloud [resource hierarchy](https://cloud.google.com/resource-manager/docs/cloud-platform-resource-hierarchy), represented as a list of relative resource names. An ancestry path starts with the closest ancestor in the hierarchy and ends at root. If the asset is a project, folder, or organization, the ancestry path starts from the asset itself. Example: `[&quot;projects/123456789&quot;, &quot;folders/5432&quot;, &quot;organizations/1234&quot;]`
           &quot;A String&quot;,
         ],
+        &quot;assetExceptions&quot;: [ # The exceptions of a resource.
+          { # An exception of an asset.
+            &quot;details&quot;: &quot;A String&quot;, # The details of the exception.
+            &quot;exceptionType&quot;: &quot;A String&quot;, # The type of exception.
+          },
+        ],
         &quot;assetType&quot;: &quot;A String&quot;, # The type of the asset. Example: `compute.googleapis.com/Disk` See [Supported asset types](https://cloud.google.com/asset-inventory/docs/supported-asset-types) for more information.
         &quot;iamPolicy&quot;: { # An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and domains (such as G Suite). A `role` is a named list of permissions; each `role` can be an IAM predefined role or a user-created custom role. For some types of Google Cloud resources, a `binding` can also specify a `condition`, which is a logical expression that allows access to a resource only if the expression evaluates to `true`. A condition can add constraints based on attributes of the request, the resource, or both. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies). **JSON example:** ``` { &quot;bindings&quot;: [ { &quot;role&quot;: &quot;roles/resourcemanager.organizationAdmin&quot;, &quot;members&quot;: [ &quot;user:mike@example.com&quot;, &quot;group:admins@example.com&quot;, &quot;domain:google.com&quot;, &quot;serviceAccount:my-project-id@appspot.gserviceaccount.com&quot; ] }, { &quot;role&quot;: &quot;roles/resourcemanager.organizationViewer&quot;, &quot;members&quot;: [ &quot;user:eve@example.com&quot; ], &quot;condition&quot;: { &quot;title&quot;: &quot;expirable access&quot;, &quot;description&quot;: &quot;Does not grant access after Sep 2020&quot;, &quot;expression&quot;: &quot;request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;)&quot;, } } ], &quot;etag&quot;: &quot;BwWWja0YfJA=&quot;, &quot;version&quot;: 3 } ``` **YAML example:** ``` bindings: - members: - user:mike@example.com - group:admins@example.com - domain:google.com - serviceAccount:my-project-id@appspot.gserviceaccount.com role: roles/resourcemanager.organizationAdmin - members: - user:eve@example.com role: roles/resourcemanager.organizationViewer condition: title: expirable access description: Does not grant access after Sep 2020 expression: request.time &lt; timestamp(&#x27;2020-10-01T00:00:00.000Z&#x27;) etag: BwWWja0YfJA= version: 3 ``` For a description of IAM and its features, see the [IAM documentation](https://cloud.google.com/iam/docs/). # A representation of the IAM policy set on a Google Cloud resource. There can be a maximum of one IAM policy set on any given resource. In addition, IAM policies inherit their granted access scope from any policies set on parent resources in the resource hierarchy. Therefore, the effectively policy is the union of both the policy set on this resource and each policy set on all of the resource&#x27;s ancestry resource levels in the hierarchy. See [this topic](https://cloud.google.com/iam/help/allow-policies/inheritance) for more information.
           &quot;auditConfigs&quot;: [ # Specifies cloud audit logging configuration for this policy.
@@ -1874,7 +1898,7 @@ Returns:
                   &quot;sources&quot;: [ # Sources that this EgressPolicy authorizes access from. If this field is not empty, then `source_restriction` must be set to `SOURCE_RESTRICTION_ENABLED`.
                     { # The source that EgressPolicy authorizes access from inside the ServicePerimeter to somewhere outside the ServicePerimeter boundaries.
                       &quot;accessLevel&quot;: &quot;A String&quot;, # An AccessLevel resource name that allows protected resources inside the ServicePerimeters to access outside the ServicePerimeter boundaries. AccessLevels listed must be in the same policy as this ServicePerimeter. Referencing a nonexistent AccessLevel will cause an error. If an AccessLevel name is not specified, only resources within the perimeter can be accessed through Google Cloud calls with request origins within the perimeter. Example: `accessPolicies/MY_POLICY/accessLevels/MY_LEVEL`. If a single `*` is specified for `access_level`, then all EgressSources will be allowed.
-                      &quot;resource&quot;: &quot;A String&quot;, # A Google Cloud resource that you want to allow to egress the perimeter. These resources can access data outside the perimeter. This field only supports projects. The project format is `projects/{project_number}`. The resource can be in any Google Cloud organization, not just the organization where the perimeter is defined. You can&#x27;t use `*` in this field to allow all Google Cloud resources.
+                      &quot;resource&quot;: &quot;A String&quot;, # A Google Cloud resource from the service perimeter that you want to allow to access data outside the perimeter. This field supports only projects. The project format is `projects/{project_number}`. You can&#x27;t use `*` in this field to allow all Google Cloud resources.
                     },
                   ],
                 },
@@ -1894,6 +1918,9 @@ Returns:
                     },
                   ],
                   &quot;resources&quot;: [ # A list of resources, currently only projects in the form `projects/`, that are allowed to be accessed by sources defined in the corresponding EgressFrom. A request matches if it contains a resource in this list. If `*` is specified for `resources`, then this EgressTo rule will authorize access to all resources outside the perimeter.
+                    &quot;A String&quot;,
+                  ],
+                  &quot;roles&quot;: [ # IAM roles that represent the set of operations that the sources specified in the corresponding EgressFrom. are allowed to perform in this ServicePerimeter.
                     &quot;A String&quot;,
                   ],
                 },
@@ -1927,6 +1954,9 @@ Returns:
                     },
                   ],
                   &quot;resources&quot;: [ # A list of resources, currently only projects in the form `projects/`, protected by this ServicePerimeter that are allowed to be accessed by sources defined in the corresponding IngressFrom. If a single `*` is specified, then access to all resources inside the perimeter are allowed.
+                    &quot;A String&quot;,
+                  ],
+                  &quot;roles&quot;: [ # IAM roles that represent the set of operations that the sources specified in the corresponding IngressFrom are allowed to perform in this ServicePerimeter.
                     &quot;A String&quot;,
                   ],
                 },
@@ -1961,7 +1991,7 @@ Returns:
                   &quot;sources&quot;: [ # Sources that this EgressPolicy authorizes access from. If this field is not empty, then `source_restriction` must be set to `SOURCE_RESTRICTION_ENABLED`.
                     { # The source that EgressPolicy authorizes access from inside the ServicePerimeter to somewhere outside the ServicePerimeter boundaries.
                       &quot;accessLevel&quot;: &quot;A String&quot;, # An AccessLevel resource name that allows protected resources inside the ServicePerimeters to access outside the ServicePerimeter boundaries. AccessLevels listed must be in the same policy as this ServicePerimeter. Referencing a nonexistent AccessLevel will cause an error. If an AccessLevel name is not specified, only resources within the perimeter can be accessed through Google Cloud calls with request origins within the perimeter. Example: `accessPolicies/MY_POLICY/accessLevels/MY_LEVEL`. If a single `*` is specified for `access_level`, then all EgressSources will be allowed.
-                      &quot;resource&quot;: &quot;A String&quot;, # A Google Cloud resource that you want to allow to egress the perimeter. These resources can access data outside the perimeter. This field only supports projects. The project format is `projects/{project_number}`. The resource can be in any Google Cloud organization, not just the organization where the perimeter is defined. You can&#x27;t use `*` in this field to allow all Google Cloud resources.
+                      &quot;resource&quot;: &quot;A String&quot;, # A Google Cloud resource from the service perimeter that you want to allow to access data outside the perimeter. This field supports only projects. The project format is `projects/{project_number}`. You can&#x27;t use `*` in this field to allow all Google Cloud resources.
                     },
                   ],
                 },
@@ -1981,6 +2011,9 @@ Returns:
                     },
                   ],
                   &quot;resources&quot;: [ # A list of resources, currently only projects in the form `projects/`, that are allowed to be accessed by sources defined in the corresponding EgressFrom. A request matches if it contains a resource in this list. If `*` is specified for `resources`, then this EgressTo rule will authorize access to all resources outside the perimeter.
+                    &quot;A String&quot;,
+                  ],
+                  &quot;roles&quot;: [ # IAM roles that represent the set of operations that the sources specified in the corresponding EgressFrom. are allowed to perform in this ServicePerimeter.
                     &quot;A String&quot;,
                   ],
                 },
@@ -2014,6 +2047,9 @@ Returns:
                     },
                   ],
                   &quot;resources&quot;: [ # A list of resources, currently only projects in the form `projects/`, protected by this ServicePerimeter that are allowed to be accessed by sources defined in the corresponding IngressFrom. If a single `*` is specified, then access to all resources inside the perimeter are allowed.
+                    &quot;A String&quot;,
+                  ],
+                  &quot;roles&quot;: [ # IAM roles that represent the set of operations that the sources specified in the corresponding IngressFrom are allowed to perform in this ServicePerimeter.
                     &quot;A String&quot;,
                   ],
                 },
@@ -2070,7 +2106,7 @@ Args:
   &quot;outputConfig&quot;: { # Output configuration for export assets destination. # Required. Output configuration indicating where the results will be output to.
     &quot;bigqueryDestination&quot;: { # A BigQuery destination for exporting assets to. # Destination on BigQuery. The output table stores the fields in asset Protobuf as columns in BigQuery.
       &quot;dataset&quot;: &quot;A String&quot;, # Required. The BigQuery dataset in format &quot;projects/projectId/datasets/datasetId&quot;, to which the snapshot result should be exported. If this dataset does not exist, the export call returns an INVALID_ARGUMENT error. Setting the `contentType` for `exportAssets` determines the [schema](/asset-inventory/docs/exporting-to-bigquery#bigquery-schema) of the BigQuery table. Setting `separateTablesPerAssetType` to `TRUE` also influences the schema.
-      &quot;force&quot;: True or False, # If the destination table already exists and this flag is `TRUE`, the table will be overwritten by the contents of assets snapshot. If the flag is `FALSE` or unset and the destination table already exists, the export call returns an INVALID_ARGUMEMT error.
+      &quot;force&quot;: True or False, # If the destination table already exists and this flag is `TRUE`, the table will be overwritten by the contents of assets snapshot. If the flag is `FALSE` or unset and the destination table already exists, the export call returns an INVALID_ARGUMENT error.
       &quot;partitionSpec&quot;: { # Specifications of BigQuery partitioned table as export destination. # [partition_spec] determines whether to export to partitioned table(s) and how to partition the data. If [partition_spec] is unset or [partition_spec.partition_key] is unset or `PARTITION_KEY_UNSPECIFIED`, the snapshot results will be exported to non-partitioned table(s). [force] will decide whether to overwrite existing table(s). If [partition_spec] is specified. First, the snapshot results will be written to partitioned table(s) with two additional timestamp columns, readTime and requestTime, one of which will be the partition key. Secondly, in the case when any destination table already exists, it will first try to update existing table&#x27;s schema as necessary by appending additional columns. Then, if [force] is `TRUE`, the corresponding partition will be overwritten by the snapshot results (data in different partitions will remain intact); if [force] is unset or `FALSE`, it will append the data. An error will be returned if the schema update or data appension fails.
         &quot;partitionKey&quot;: &quot;A String&quot;, # The partition key for BigQuery partitioned table.
       },
@@ -2265,7 +2301,7 @@ Returns:
         &quot;etag&quot;: &quot;A String&quot;, # `etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An `etag` is returned in the response to `getIamPolicy`, and systems are expected to put that etag in the request to `setIamPolicy` to ensure that their change will be applied to the same version of the policy. **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost.
         &quot;version&quot;: 42, # Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. This requirement applies to the following operations: * Getting a policy that includes a conditional role binding * Adding a conditional role binding to a policy * Changing a conditional role binding in a policy * Removing any role binding, with or without a condition, from a policy that includes conditions **Important:** If you use IAM Conditions, you must include the `etag` field whenever you call `setIamPolicy`. If you omit this field, then IAM allows you to overwrite a version `3` policy with a version `1` policy, and all of the conditions in the version `3` policy are lost. If a policy does not include any conditions, operations on that policy may specify any valid version or leave the field unset. To learn which resources support conditions in their IAM policies, see the [IAM documentation](https://cloud.google.com/iam/help/conditions/resource-policies).
       },
-      &quot;project&quot;: &quot;A String&quot;, # The project that the associated Google Cloud resource belongs to, in the form of projects/{PROJECT_NUMBER}. If an IAM policy is set on a resource (like VM instance, Cloud Storage bucket), the project field will indicate the project that contains the resource. If an IAM policy is set on a folder or orgnization, this field will be empty. To search against the `project`: * specify the `scope` field as this project in your search request.
+      &quot;project&quot;: &quot;A String&quot;, # The project that the associated Google Cloud resource belongs to, in the form of projects/{PROJECT_NUMBER}. If an IAM policy is set on a resource (like VM instance, Cloud Storage bucket), the project field will indicate the project that contains the resource. If an IAM policy is set on a folder or organization, this field will be empty. To search against the `project`: * specify the `scope` field as this project in your search request.
       &quot;resource&quot;: &quot;A String&quot;, # The full resource name of the resource associated with this IAM policy. Example: `//compute.googleapis.com/projects/my_project_123/zones/zone1/instances/instance1`. See [Cloud Asset Inventory Resource Name Format](https://cloud.google.com/asset-inventory/docs/resource-name-format) for more information. To search against the `resource`: * use a field query. Example: `resource:organizations/123`
     },
   ],

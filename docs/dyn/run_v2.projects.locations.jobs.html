@@ -153,7 +153,7 @@ Args:
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The creation time.
   &quot;creator&quot;: &quot;A String&quot;, # Output only. Email address of the authenticated creator.
   &quot;deleteTime&quot;: &quot;A String&quot;, # Output only. The deletion time. It is only populated as a response to a Delete request.
-  &quot;etag&quot;: &quot;A String&quot;, # Output only. A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.
+  &quot;etag&quot;: &quot;A String&quot;, # Optional. A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.
   &quot;executionCount&quot;: 42, # Output only. Number of executions created for this job.
   &quot;expireTime&quot;: &quot;A String&quot;, # Output only. For a deleted resource, the time after which it will be permamently deleted.
   &quot;generation&quot;: &quot;A String&quot;, # Output only. A number that monotonically increases every time the user modifies the desired state.
@@ -182,7 +182,7 @@ Args:
     &quot;labels&quot;: { # Unstructured key value map that can be used to organize and categorize objects. User-provided labels are shared with Google&#x27;s billing system, so they can be used to filter, or break down billing charges by team, component, environment, state, etc. For more information, visit https://cloud.google.com/resource-manager/docs/creating-managing-labels or https://cloud.google.com/run/docs/configuring/labels. Cloud Run API v2 does not support labels with `run.googleapis.com`, `cloud.googleapis.com`, `serving.knative.dev`, or `autoscaling.knative.dev` namespaces, and they will be rejected. All system labels in v1 now have a corresponding field in v2 ExecutionTemplate.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
-    &quot;parallelism&quot;: 42, # Specifies the maximum desired number of tasks the execution should run at given time. Must be &lt;= task_count. When the job is run, if this field is 0 or unset, the maximum possible value will be used for that execution. The actual number of tasks running in steady state will be less than this number when there are fewer tasks waiting to be completed remaining, i.e. when the work left to do is less than max parallelism.
+    &quot;parallelism&quot;: 42, # Optional. Specifies the maximum desired number of tasks the execution should run at given time. When the job is run, if this field is 0 or unset, the maximum possible value will be used for that execution. The actual number of tasks running in steady state will be less than this number when there are fewer tasks waiting to be completed remaining, i.e. when the work left to do is less than max parallelism.
     &quot;taskCount&quot;: 42, # Specifies the desired number of tasks the execution should run. Setting to 1 means that parallelism is limited to 1 and the success of that task signals the success of the execution. Defaults to 1.
     &quot;template&quot;: { # TaskTemplate describes the data a task should have when created from a template. # Required. Describes the task(s) that will be created when executing an execution.
       &quot;containers&quot;: [ # Holds the single container that defines the unit of execution for this task.
@@ -190,6 +190,11 @@ Args:
           &quot;args&quot;: [ # Arguments to the entrypoint. The docker image&#x27;s CMD is used if this is not provided.
             &quot;A String&quot;,
           ],
+          &quot;baseImageUri&quot;: &quot;A String&quot;, # Base image for this container. Only supported for services. If set, it indicates that the service is enrolled into automatic base image update.
+          &quot;buildInfo&quot;: { # Build information of the image. # Output only. The build info of the container image.
+            &quot;functionTarget&quot;: &quot;A String&quot;, # Output only. Entry point of the function when the image is a Cloud Run function.
+            &quot;sourceLocation&quot;: &quot;A String&quot;, # Output only. Source code location of the image.
+          },
           &quot;command&quot;: [ # Entrypoint array. Not executed within a shell. The docker image&#x27;s ENTRYPOINT is used if this is not provided.
             &quot;A String&quot;,
           ],
@@ -273,6 +278,7 @@ Args:
             { # VolumeMount describes a mounting of a Volume within a container.
               &quot;mountPath&quot;: &quot;A String&quot;, # Required. Path within the container at which the volume should be mounted. Must not contain &#x27;:&#x27;. For Cloud SQL volumes, it can be left empty, or must otherwise be `/cloudsql`. All instances defined in the Volume will be available as `/cloudsql/[instance]`. For more information on Cloud SQL volumes, visit https://cloud.google.com/sql/docs/mysql/connect-run
               &quot;name&quot;: &quot;A String&quot;, # Required. This must match the Name of a Volume.
+              &quot;subPath&quot;: &quot;A String&quot;, # Optional. Path within the volume from which the container&#x27;s volume should be mounted. Defaults to &quot;&quot; (volume&#x27;s root).
             },
           ],
           &quot;workingDir&quot;: &quot;A String&quot;, # Container&#x27;s working directory. If not specified, the container runtime&#x27;s default will be used, which might be configured in the container image.
@@ -280,7 +286,11 @@ Args:
       ],
       &quot;encryptionKey&quot;: &quot;A String&quot;, # A reference to a customer managed encryption key (CMEK) to use to encrypt this container image. For more information, go to https://cloud.google.com/run/docs/securing/using-cmek
       &quot;executionEnvironment&quot;: &quot;A String&quot;, # Optional. The execution environment being used to host this Task.
+      &quot;gpuZonalRedundancyDisabled&quot;: True or False, # Optional. True if GPU zonal redundancy is disabled on this task template.
       &quot;maxRetries&quot;: 42, # Number of retries allowed per Task, before marking this Task failed. Defaults to 3.
+      &quot;nodeSelector&quot;: { # Hardware constraints configuration. # Optional. The node selector for the task template.
+        &quot;accelerator&quot;: &quot;A String&quot;, # Required. GPU accelerator type to attach to an instance.
+      },
       &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. Email address of the IAM service account associated with the Task of a Job. The service account represents the identity of the running task, and determines what permissions the task has. If not provided, the task will use the project&#x27;s default service account.
       &quot;timeout&quot;: &quot;A String&quot;, # Optional. Max allowed time duration the Task may be active before the system will actively try to mark it failed and kill associated containers. This applies per attempt of a task, meaning each retry can run for the full timeout. Defaults to 600 seconds.
       &quot;volumes&quot;: [ # Optional. A list of Volumes to make available to containers.
@@ -309,7 +319,7 @@ Args:
           },
           &quot;secret&quot;: { # The secret&#x27;s value will be presented as the content of a file whose name is defined in the item path. If no items are defined, the name of the file is the secret. # Secret represents a secret that should populate this volume.
             &quot;defaultMode&quot;: 42, # Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.
-            &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
+            &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path + VolumeMount.sub_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
               { # VersionToPath maps a specific version of a secret to a relative file to mount to, relative to VolumeMount&#x27;s mount_path.
                 &quot;mode&quot;: 42, # Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume&#x27;s default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
                 &quot;path&quot;: &quot;A String&quot;, # Required. The relative path of the secret in the container.
@@ -457,7 +467,7 @@ Returns:
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The creation time.
   &quot;creator&quot;: &quot;A String&quot;, # Output only. Email address of the authenticated creator.
   &quot;deleteTime&quot;: &quot;A String&quot;, # Output only. The deletion time. It is only populated as a response to a Delete request.
-  &quot;etag&quot;: &quot;A String&quot;, # Output only. A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.
+  &quot;etag&quot;: &quot;A String&quot;, # Optional. A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.
   &quot;executionCount&quot;: 42, # Output only. Number of executions created for this job.
   &quot;expireTime&quot;: &quot;A String&quot;, # Output only. For a deleted resource, the time after which it will be permamently deleted.
   &quot;generation&quot;: &quot;A String&quot;, # Output only. A number that monotonically increases every time the user modifies the desired state.
@@ -486,7 +496,7 @@ Returns:
     &quot;labels&quot;: { # Unstructured key value map that can be used to organize and categorize objects. User-provided labels are shared with Google&#x27;s billing system, so they can be used to filter, or break down billing charges by team, component, environment, state, etc. For more information, visit https://cloud.google.com/resource-manager/docs/creating-managing-labels or https://cloud.google.com/run/docs/configuring/labels. Cloud Run API v2 does not support labels with `run.googleapis.com`, `cloud.googleapis.com`, `serving.knative.dev`, or `autoscaling.knative.dev` namespaces, and they will be rejected. All system labels in v1 now have a corresponding field in v2 ExecutionTemplate.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
-    &quot;parallelism&quot;: 42, # Specifies the maximum desired number of tasks the execution should run at given time. Must be &lt;= task_count. When the job is run, if this field is 0 or unset, the maximum possible value will be used for that execution. The actual number of tasks running in steady state will be less than this number when there are fewer tasks waiting to be completed remaining, i.e. when the work left to do is less than max parallelism.
+    &quot;parallelism&quot;: 42, # Optional. Specifies the maximum desired number of tasks the execution should run at given time. When the job is run, if this field is 0 or unset, the maximum possible value will be used for that execution. The actual number of tasks running in steady state will be less than this number when there are fewer tasks waiting to be completed remaining, i.e. when the work left to do is less than max parallelism.
     &quot;taskCount&quot;: 42, # Specifies the desired number of tasks the execution should run. Setting to 1 means that parallelism is limited to 1 and the success of that task signals the success of the execution. Defaults to 1.
     &quot;template&quot;: { # TaskTemplate describes the data a task should have when created from a template. # Required. Describes the task(s) that will be created when executing an execution.
       &quot;containers&quot;: [ # Holds the single container that defines the unit of execution for this task.
@@ -494,6 +504,11 @@ Returns:
           &quot;args&quot;: [ # Arguments to the entrypoint. The docker image&#x27;s CMD is used if this is not provided.
             &quot;A String&quot;,
           ],
+          &quot;baseImageUri&quot;: &quot;A String&quot;, # Base image for this container. Only supported for services. If set, it indicates that the service is enrolled into automatic base image update.
+          &quot;buildInfo&quot;: { # Build information of the image. # Output only. The build info of the container image.
+            &quot;functionTarget&quot;: &quot;A String&quot;, # Output only. Entry point of the function when the image is a Cloud Run function.
+            &quot;sourceLocation&quot;: &quot;A String&quot;, # Output only. Source code location of the image.
+          },
           &quot;command&quot;: [ # Entrypoint array. Not executed within a shell. The docker image&#x27;s ENTRYPOINT is used if this is not provided.
             &quot;A String&quot;,
           ],
@@ -577,6 +592,7 @@ Returns:
             { # VolumeMount describes a mounting of a Volume within a container.
               &quot;mountPath&quot;: &quot;A String&quot;, # Required. Path within the container at which the volume should be mounted. Must not contain &#x27;:&#x27;. For Cloud SQL volumes, it can be left empty, or must otherwise be `/cloudsql`. All instances defined in the Volume will be available as `/cloudsql/[instance]`. For more information on Cloud SQL volumes, visit https://cloud.google.com/sql/docs/mysql/connect-run
               &quot;name&quot;: &quot;A String&quot;, # Required. This must match the Name of a Volume.
+              &quot;subPath&quot;: &quot;A String&quot;, # Optional. Path within the volume from which the container&#x27;s volume should be mounted. Defaults to &quot;&quot; (volume&#x27;s root).
             },
           ],
           &quot;workingDir&quot;: &quot;A String&quot;, # Container&#x27;s working directory. If not specified, the container runtime&#x27;s default will be used, which might be configured in the container image.
@@ -584,7 +600,11 @@ Returns:
       ],
       &quot;encryptionKey&quot;: &quot;A String&quot;, # A reference to a customer managed encryption key (CMEK) to use to encrypt this container image. For more information, go to https://cloud.google.com/run/docs/securing/using-cmek
       &quot;executionEnvironment&quot;: &quot;A String&quot;, # Optional. The execution environment being used to host this Task.
+      &quot;gpuZonalRedundancyDisabled&quot;: True or False, # Optional. True if GPU zonal redundancy is disabled on this task template.
       &quot;maxRetries&quot;: 42, # Number of retries allowed per Task, before marking this Task failed. Defaults to 3.
+      &quot;nodeSelector&quot;: { # Hardware constraints configuration. # Optional. The node selector for the task template.
+        &quot;accelerator&quot;: &quot;A String&quot;, # Required. GPU accelerator type to attach to an instance.
+      },
       &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. Email address of the IAM service account associated with the Task of a Job. The service account represents the identity of the running task, and determines what permissions the task has. If not provided, the task will use the project&#x27;s default service account.
       &quot;timeout&quot;: &quot;A String&quot;, # Optional. Max allowed time duration the Task may be active before the system will actively try to mark it failed and kill associated containers. This applies per attempt of a task, meaning each retry can run for the full timeout. Defaults to 600 seconds.
       &quot;volumes&quot;: [ # Optional. A list of Volumes to make available to containers.
@@ -613,7 +633,7 @@ Returns:
           },
           &quot;secret&quot;: { # The secret&#x27;s value will be presented as the content of a file whose name is defined in the item path. If no items are defined, the name of the file is the secret. # Secret represents a secret that should populate this volume.
             &quot;defaultMode&quot;: 42, # Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.
-            &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
+            &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path + VolumeMount.sub_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
               { # VersionToPath maps a specific version of a secret to a relative file to mount to, relative to VolumeMount&#x27;s mount_path.
                 &quot;mode&quot;: 42, # Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume&#x27;s default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
                 &quot;path&quot;: &quot;A String&quot;, # Required. The relative path of the secret in the container.
@@ -747,7 +767,7 @@ Returns:
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The creation time.
       &quot;creator&quot;: &quot;A String&quot;, # Output only. Email address of the authenticated creator.
       &quot;deleteTime&quot;: &quot;A String&quot;, # Output only. The deletion time. It is only populated as a response to a Delete request.
-      &quot;etag&quot;: &quot;A String&quot;, # Output only. A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.
+      &quot;etag&quot;: &quot;A String&quot;, # Optional. A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.
       &quot;executionCount&quot;: 42, # Output only. Number of executions created for this job.
       &quot;expireTime&quot;: &quot;A String&quot;, # Output only. For a deleted resource, the time after which it will be permamently deleted.
       &quot;generation&quot;: &quot;A String&quot;, # Output only. A number that monotonically increases every time the user modifies the desired state.
@@ -776,7 +796,7 @@ Returns:
         &quot;labels&quot;: { # Unstructured key value map that can be used to organize and categorize objects. User-provided labels are shared with Google&#x27;s billing system, so they can be used to filter, or break down billing charges by team, component, environment, state, etc. For more information, visit https://cloud.google.com/resource-manager/docs/creating-managing-labels or https://cloud.google.com/run/docs/configuring/labels. Cloud Run API v2 does not support labels with `run.googleapis.com`, `cloud.googleapis.com`, `serving.knative.dev`, or `autoscaling.knative.dev` namespaces, and they will be rejected. All system labels in v1 now have a corresponding field in v2 ExecutionTemplate.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
-        &quot;parallelism&quot;: 42, # Specifies the maximum desired number of tasks the execution should run at given time. Must be &lt;= task_count. When the job is run, if this field is 0 or unset, the maximum possible value will be used for that execution. The actual number of tasks running in steady state will be less than this number when there are fewer tasks waiting to be completed remaining, i.e. when the work left to do is less than max parallelism.
+        &quot;parallelism&quot;: 42, # Optional. Specifies the maximum desired number of tasks the execution should run at given time. When the job is run, if this field is 0 or unset, the maximum possible value will be used for that execution. The actual number of tasks running in steady state will be less than this number when there are fewer tasks waiting to be completed remaining, i.e. when the work left to do is less than max parallelism.
         &quot;taskCount&quot;: 42, # Specifies the desired number of tasks the execution should run. Setting to 1 means that parallelism is limited to 1 and the success of that task signals the success of the execution. Defaults to 1.
         &quot;template&quot;: { # TaskTemplate describes the data a task should have when created from a template. # Required. Describes the task(s) that will be created when executing an execution.
           &quot;containers&quot;: [ # Holds the single container that defines the unit of execution for this task.
@@ -784,6 +804,11 @@ Returns:
               &quot;args&quot;: [ # Arguments to the entrypoint. The docker image&#x27;s CMD is used if this is not provided.
                 &quot;A String&quot;,
               ],
+              &quot;baseImageUri&quot;: &quot;A String&quot;, # Base image for this container. Only supported for services. If set, it indicates that the service is enrolled into automatic base image update.
+              &quot;buildInfo&quot;: { # Build information of the image. # Output only. The build info of the container image.
+                &quot;functionTarget&quot;: &quot;A String&quot;, # Output only. Entry point of the function when the image is a Cloud Run function.
+                &quot;sourceLocation&quot;: &quot;A String&quot;, # Output only. Source code location of the image.
+              },
               &quot;command&quot;: [ # Entrypoint array. Not executed within a shell. The docker image&#x27;s ENTRYPOINT is used if this is not provided.
                 &quot;A String&quot;,
               ],
@@ -867,6 +892,7 @@ Returns:
                 { # VolumeMount describes a mounting of a Volume within a container.
                   &quot;mountPath&quot;: &quot;A String&quot;, # Required. Path within the container at which the volume should be mounted. Must not contain &#x27;:&#x27;. For Cloud SQL volumes, it can be left empty, or must otherwise be `/cloudsql`. All instances defined in the Volume will be available as `/cloudsql/[instance]`. For more information on Cloud SQL volumes, visit https://cloud.google.com/sql/docs/mysql/connect-run
                   &quot;name&quot;: &quot;A String&quot;, # Required. This must match the Name of a Volume.
+                  &quot;subPath&quot;: &quot;A String&quot;, # Optional. Path within the volume from which the container&#x27;s volume should be mounted. Defaults to &quot;&quot; (volume&#x27;s root).
                 },
               ],
               &quot;workingDir&quot;: &quot;A String&quot;, # Container&#x27;s working directory. If not specified, the container runtime&#x27;s default will be used, which might be configured in the container image.
@@ -874,7 +900,11 @@ Returns:
           ],
           &quot;encryptionKey&quot;: &quot;A String&quot;, # A reference to a customer managed encryption key (CMEK) to use to encrypt this container image. For more information, go to https://cloud.google.com/run/docs/securing/using-cmek
           &quot;executionEnvironment&quot;: &quot;A String&quot;, # Optional. The execution environment being used to host this Task.
+          &quot;gpuZonalRedundancyDisabled&quot;: True or False, # Optional. True if GPU zonal redundancy is disabled on this task template.
           &quot;maxRetries&quot;: 42, # Number of retries allowed per Task, before marking this Task failed. Defaults to 3.
+          &quot;nodeSelector&quot;: { # Hardware constraints configuration. # Optional. The node selector for the task template.
+            &quot;accelerator&quot;: &quot;A String&quot;, # Required. GPU accelerator type to attach to an instance.
+          },
           &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. Email address of the IAM service account associated with the Task of a Job. The service account represents the identity of the running task, and determines what permissions the task has. If not provided, the task will use the project&#x27;s default service account.
           &quot;timeout&quot;: &quot;A String&quot;, # Optional. Max allowed time duration the Task may be active before the system will actively try to mark it failed and kill associated containers. This applies per attempt of a task, meaning each retry can run for the full timeout. Defaults to 600 seconds.
           &quot;volumes&quot;: [ # Optional. A list of Volumes to make available to containers.
@@ -903,7 +933,7 @@ Returns:
               },
               &quot;secret&quot;: { # The secret&#x27;s value will be presented as the content of a file whose name is defined in the item path. If no items are defined, the name of the file is the secret. # Secret represents a secret that should populate this volume.
                 &quot;defaultMode&quot;: 42, # Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.
-                &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
+                &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path + VolumeMount.sub_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
                   { # VersionToPath maps a specific version of a secret to a relative file to mount to, relative to VolumeMount&#x27;s mount_path.
                     &quot;mode&quot;: 42, # Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume&#x27;s default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
                     &quot;path&quot;: &quot;A String&quot;, # Required. The relative path of the secret in the container.
@@ -996,7 +1026,7 @@ Args:
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The creation time.
   &quot;creator&quot;: &quot;A String&quot;, # Output only. Email address of the authenticated creator.
   &quot;deleteTime&quot;: &quot;A String&quot;, # Output only. The deletion time. It is only populated as a response to a Delete request.
-  &quot;etag&quot;: &quot;A String&quot;, # Output only. A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.
+  &quot;etag&quot;: &quot;A String&quot;, # Optional. A system-generated fingerprint for this version of the resource. May be used to detect modification conflict during updates.
   &quot;executionCount&quot;: 42, # Output only. Number of executions created for this job.
   &quot;expireTime&quot;: &quot;A String&quot;, # Output only. For a deleted resource, the time after which it will be permamently deleted.
   &quot;generation&quot;: &quot;A String&quot;, # Output only. A number that monotonically increases every time the user modifies the desired state.
@@ -1025,7 +1055,7 @@ Args:
     &quot;labels&quot;: { # Unstructured key value map that can be used to organize and categorize objects. User-provided labels are shared with Google&#x27;s billing system, so they can be used to filter, or break down billing charges by team, component, environment, state, etc. For more information, visit https://cloud.google.com/resource-manager/docs/creating-managing-labels or https://cloud.google.com/run/docs/configuring/labels. Cloud Run API v2 does not support labels with `run.googleapis.com`, `cloud.googleapis.com`, `serving.knative.dev`, or `autoscaling.knative.dev` namespaces, and they will be rejected. All system labels in v1 now have a corresponding field in v2 ExecutionTemplate.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
-    &quot;parallelism&quot;: 42, # Specifies the maximum desired number of tasks the execution should run at given time. Must be &lt;= task_count. When the job is run, if this field is 0 or unset, the maximum possible value will be used for that execution. The actual number of tasks running in steady state will be less than this number when there are fewer tasks waiting to be completed remaining, i.e. when the work left to do is less than max parallelism.
+    &quot;parallelism&quot;: 42, # Optional. Specifies the maximum desired number of tasks the execution should run at given time. When the job is run, if this field is 0 or unset, the maximum possible value will be used for that execution. The actual number of tasks running in steady state will be less than this number when there are fewer tasks waiting to be completed remaining, i.e. when the work left to do is less than max parallelism.
     &quot;taskCount&quot;: 42, # Specifies the desired number of tasks the execution should run. Setting to 1 means that parallelism is limited to 1 and the success of that task signals the success of the execution. Defaults to 1.
     &quot;template&quot;: { # TaskTemplate describes the data a task should have when created from a template. # Required. Describes the task(s) that will be created when executing an execution.
       &quot;containers&quot;: [ # Holds the single container that defines the unit of execution for this task.
@@ -1033,6 +1063,11 @@ Args:
           &quot;args&quot;: [ # Arguments to the entrypoint. The docker image&#x27;s CMD is used if this is not provided.
             &quot;A String&quot;,
           ],
+          &quot;baseImageUri&quot;: &quot;A String&quot;, # Base image for this container. Only supported for services. If set, it indicates that the service is enrolled into automatic base image update.
+          &quot;buildInfo&quot;: { # Build information of the image. # Output only. The build info of the container image.
+            &quot;functionTarget&quot;: &quot;A String&quot;, # Output only. Entry point of the function when the image is a Cloud Run function.
+            &quot;sourceLocation&quot;: &quot;A String&quot;, # Output only. Source code location of the image.
+          },
           &quot;command&quot;: [ # Entrypoint array. Not executed within a shell. The docker image&#x27;s ENTRYPOINT is used if this is not provided.
             &quot;A String&quot;,
           ],
@@ -1116,6 +1151,7 @@ Args:
             { # VolumeMount describes a mounting of a Volume within a container.
               &quot;mountPath&quot;: &quot;A String&quot;, # Required. Path within the container at which the volume should be mounted. Must not contain &#x27;:&#x27;. For Cloud SQL volumes, it can be left empty, or must otherwise be `/cloudsql`. All instances defined in the Volume will be available as `/cloudsql/[instance]`. For more information on Cloud SQL volumes, visit https://cloud.google.com/sql/docs/mysql/connect-run
               &quot;name&quot;: &quot;A String&quot;, # Required. This must match the Name of a Volume.
+              &quot;subPath&quot;: &quot;A String&quot;, # Optional. Path within the volume from which the container&#x27;s volume should be mounted. Defaults to &quot;&quot; (volume&#x27;s root).
             },
           ],
           &quot;workingDir&quot;: &quot;A String&quot;, # Container&#x27;s working directory. If not specified, the container runtime&#x27;s default will be used, which might be configured in the container image.
@@ -1123,7 +1159,11 @@ Args:
       ],
       &quot;encryptionKey&quot;: &quot;A String&quot;, # A reference to a customer managed encryption key (CMEK) to use to encrypt this container image. For more information, go to https://cloud.google.com/run/docs/securing/using-cmek
       &quot;executionEnvironment&quot;: &quot;A String&quot;, # Optional. The execution environment being used to host this Task.
+      &quot;gpuZonalRedundancyDisabled&quot;: True or False, # Optional. True if GPU zonal redundancy is disabled on this task template.
       &quot;maxRetries&quot;: 42, # Number of retries allowed per Task, before marking this Task failed. Defaults to 3.
+      &quot;nodeSelector&quot;: { # Hardware constraints configuration. # Optional. The node selector for the task template.
+        &quot;accelerator&quot;: &quot;A String&quot;, # Required. GPU accelerator type to attach to an instance.
+      },
       &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. Email address of the IAM service account associated with the Task of a Job. The service account represents the identity of the running task, and determines what permissions the task has. If not provided, the task will use the project&#x27;s default service account.
       &quot;timeout&quot;: &quot;A String&quot;, # Optional. Max allowed time duration the Task may be active before the system will actively try to mark it failed and kill associated containers. This applies per attempt of a task, meaning each retry can run for the full timeout. Defaults to 600 seconds.
       &quot;volumes&quot;: [ # Optional. A list of Volumes to make available to containers.
@@ -1152,7 +1192,7 @@ Args:
           },
           &quot;secret&quot;: { # The secret&#x27;s value will be presented as the content of a file whose name is defined in the item path. If no items are defined, the name of the file is the secret. # Secret represents a secret that should populate this volume.
             &quot;defaultMode&quot;: 42, # Integer representation of mode bits to use on created files by default. Must be a value between 0000 and 0777 (octal), defaulting to 0444. Directories within the path are not affected by this setting. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set. This might be in conflict with other options that affect the file mode, like fsGroup, and as a result, other mode bits could be set.
-            &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
+            &quot;items&quot;: [ # If unspecified, the volume will expose a file whose name is the secret, relative to VolumeMount.mount_path + VolumeMount.sub_path. If specified, the key will be used as the version to fetch from Cloud Secret Manager and the path will be the name of the file exposed in the volume. When items are defined, they must specify a path and a version.
               { # VersionToPath maps a specific version of a secret to a relative file to mount to, relative to VolumeMount&#x27;s mount_path.
                 &quot;mode&quot;: 42, # Integer octal mode bits to use on this file, must be a value between 01 and 0777 (octal). If 0 or not set, the Volume&#x27;s default mode will be used. Notes * Internally, a umask of 0222 will be applied to any non-zero value. * This is an integer representation of the mode bits. So, the octal integer value should look exactly as the chmod numeric notation with a leading zero. Some examples: for chmod 640 (u=rw,g=r), set to 0640 (octal) or 416 (base-10). For chmod 755 (u=rwx,g=rx,o=rx), set to 0755 (octal) or 493 (base-10). * This might be in conflict with other options that affect the file mode, like fsGroup, and the result can be other mode bits set.
                 &quot;path&quot;: &quot;A String&quot;, # Required. The relative path of the secret in the container.

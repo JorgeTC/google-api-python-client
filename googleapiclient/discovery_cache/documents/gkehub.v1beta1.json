@@ -143,6 +143,12 @@
 "name"
 ],
 "parameters": {
+"extraLocationTypes": {
+"description": "Optional. Unless explicitly documented otherwise, don't use this unsupported field which is primarily intended for internal usage.",
+"location": "query",
+"repeated": true,
+"type": "string"
+},
 "filter": {
 "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
 "location": "query",
@@ -712,7 +718,7 @@
 }
 }
 },
-"revision": "20241206",
+"revision": "20250907",
 "rootUrl": "https://gkehub.googleapis.com/",
 "schemas": {
 "ApplianceCluster": {
@@ -1182,12 +1188,25 @@
 "additionalProperties": {
 "type": "string"
 },
-"description": "Optional. GCP labels for this membership.",
+"description": "Optional. GCP labels for this membership. These labels are not leveraged by multi-cluster features, instead, we prefer cluster labels, which can be set on GKE cluster or other cluster types.",
 "type": "object"
 },
 "lastConnectionTime": {
 "description": "Output only. For clusters using Connect, the timestamp of the most recent connection established with Google Cloud. This time is updated every several minutes, not continuously. For clusters that do not use GKE Connect, or that have never connected successfully, this field will be unset.",
 "format": "google-datetime",
+"readOnly": true,
+"type": "string"
+},
+"membershipType": {
+"description": "Output only. The type of the membership.",
+"enum": [
+"MEMBERSHIP_TYPE_UNSPECIFIED",
+"LIGHTWEIGHT"
+],
+"enumDescriptions": [
+"The MembershipType is not set.",
+"The membership supports only lightweight compatible features."
+],
 "readOnly": true,
 "type": "string"
 },
@@ -1508,8 +1527,12 @@
 "description": "Optional. The Connect agent version to use for connect_resources. Defaults to the latest GKE Connect version. The version must be a currently supported version, obsolete versions will be rejected.",
 "type": "string"
 },
+"k8sGitVersion": {
+"description": "Optional. Git version of the Kubernetes cluster. This is only used to gate the Connect Agent migration to svc.id.goog on GDC-SO 1.33.100 patch and above.",
+"type": "string"
+},
 "k8sVersion": {
-"description": "Optional. Major version of the Kubernetes cluster. This is only used to determine which version to use for the CustomResourceDefinition resources, `apiextensions/v1beta1` or`apiextensions/v1`.",
+"description": "Optional. Major and minor version of the Kubernetes cluster. This is only used to determine which version to use for the CustomResourceDefinition resources, `apiextensions/v1beta1` or`apiextensions/v1`.",
 "type": "string"
 },
 "v1beta1Crd": {

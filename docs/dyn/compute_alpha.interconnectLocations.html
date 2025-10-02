@@ -86,9 +86,6 @@ h1, h2, h3 {
 <p class="toc_element">
   <code><a href="#list_next">list_next()</a></code></p>
 <p class="firstline">Retrieves the next page of results.</p>
-<p class="toc_element">
-  <code><a href="#testIamPermissions">testIamPermissions(project, resource, body=None, x__xgafv=None)</a></code></p>
-<p class="firstline">Returns permissions that a caller has on the specified resource.</p>
 <h3>Method Details</h3>
 <div class="method">
     <code class="details" id="close">close()</code>
@@ -116,15 +113,15 @@ Returns:
   &quot;availableFeatures&quot;: [ # [Output only] List of features available at this InterconnectLocation, which can take one of the following values: - IF_MACSEC
     &quot;A String&quot;,
   ],
-  &quot;availableLinkTypes&quot;: [ # [Output only] List of link types available at this InterconnectLocation, which can take one of the following values: - LINK_TYPE_ETHERNET_10G_LR - LINK_TYPE_ETHERNET_100G_LR
+  &quot;availableLinkTypes&quot;: [ # [Output only] List of link types available at this InterconnectLocation, which can take one of the following values: - LINK_TYPE_ETHERNET_10G_LR - LINK_TYPE_ETHERNET_100G_LR - LINK_TYPE_ETHERNET_400G_LR4
     &quot;A String&quot;,
   ],
   &quot;city&quot;: &quot;A String&quot;, # [Output Only] Metropolitan area designator that indicates which city an interconnect is located. For example: &quot;Chicago, IL&quot;, &quot;Amsterdam, Netherlands&quot;.
   &quot;continent&quot;: &quot;A String&quot;, # [Output Only] Continent for this location, which can take one of the following values: - AFRICA - ASIA_PAC - EUROPE - NORTH_AMERICA - SOUTH_AMERICA
   &quot;creationTimestamp&quot;: &quot;A String&quot;, # [Output Only] Creation timestamp in RFC3339 text format.
-  &quot;crossSiteInterconnectInfos&quot;: [ # [Output Only] A list of InterconnectLocation.CrossSiteInterconnectInfo objects, that describe parameters pertaining to the relation between this InterconnectLocation and various Interconnect metros.
-    { # Information about any potential WireGroups between an Interconnect at a specific InterconnectLocation, and an Interconnect in another metro.
-      &quot;city&quot;: &quot;A String&quot;, # Metropolitan area designator
+  &quot;crossSiteInterconnectInfos&quot;: [ # [Output Only] A list of InterconnectLocation.CrossSiteInterconnectInfo objects, that describe where Cross-Site Interconnect wires may connect to from this location and associated connection parameters. Cross-Site Interconnect isn&#x27;t allowed to locations which are not listed.
+    { # Information about Cross-Site Interconnect wires which may be created between the containing location and another remote location.
+      &quot;city&quot;: &quot;A String&quot;, # The remote location for Cross-Site Interconnect wires. This specifies an InterconnectLocation city (metropolitan area designator), which itself may match multiple InterconnectLocations.
       &quot;maxSingleFlowGbps&quot;: 42, # The maximum gbps for a single flow to this metro. This limits the total bandwidth which may be configured per wire.
     },
   ],
@@ -138,12 +135,16 @@ Returns:
   &quot;regionInfos&quot;: [ # [Output Only] A list of InterconnectLocation.RegionInfo objects, that describe parameters pertaining to the relation between this InterconnectLocation and various Google Cloud regions.
     { # Information about any potential InterconnectAttachments between an Interconnect at a specific InterconnectLocation, and a specific Cloud Region.
       &quot;expectedRttMs&quot;: &quot;A String&quot;, # Expected round-trip time in milliseconds, from this InterconnectLocation to a VM in this region.
+      &quot;l2ForwardingEnabled&quot;: True or False, # Identifies whether L2 Interconnect Attachments can be created in this region for interconnects that are in this location.
       &quot;locationPresence&quot;: &quot;A String&quot;, # Identifies the network presence of this location.
       &quot;region&quot;: &quot;A String&quot;, # URL for the region of this location.
     },
   ],
   &quot;selfLink&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for the resource.
   &quot;selfLinkWithId&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for this resource with the resource id.
+  &quot;singleRegionProductionCriticalPeerLocations&quot;: [ # [Output Only] URLs of the other locations that can pair up with this location to support Single-Region 99.99% SLA. E.g. iad-zone1-1 and iad-zone2-5467 are Single-Region 99.99% peer locations of each other.
+    &quot;A String&quot;,
+  ],
   &quot;status&quot;: &quot;A String&quot;, # [Output Only] The status of this InterconnectLocation, which can take one of the following values: - CLOSED: The InterconnectLocation is closed and is unavailable for provisioning new Interconnects. - AVAILABLE: The InterconnectLocation is available for provisioning new Interconnects.
   &quot;supportsPzs&quot;: True or False, # [Output Only] Reserved for future use.
 }</pre>
@@ -177,15 +178,15 @@ Returns:
       &quot;availableFeatures&quot;: [ # [Output only] List of features available at this InterconnectLocation, which can take one of the following values: - IF_MACSEC
         &quot;A String&quot;,
       ],
-      &quot;availableLinkTypes&quot;: [ # [Output only] List of link types available at this InterconnectLocation, which can take one of the following values: - LINK_TYPE_ETHERNET_10G_LR - LINK_TYPE_ETHERNET_100G_LR
+      &quot;availableLinkTypes&quot;: [ # [Output only] List of link types available at this InterconnectLocation, which can take one of the following values: - LINK_TYPE_ETHERNET_10G_LR - LINK_TYPE_ETHERNET_100G_LR - LINK_TYPE_ETHERNET_400G_LR4
         &quot;A String&quot;,
       ],
       &quot;city&quot;: &quot;A String&quot;, # [Output Only] Metropolitan area designator that indicates which city an interconnect is located. For example: &quot;Chicago, IL&quot;, &quot;Amsterdam, Netherlands&quot;.
       &quot;continent&quot;: &quot;A String&quot;, # [Output Only] Continent for this location, which can take one of the following values: - AFRICA - ASIA_PAC - EUROPE - NORTH_AMERICA - SOUTH_AMERICA
       &quot;creationTimestamp&quot;: &quot;A String&quot;, # [Output Only] Creation timestamp in RFC3339 text format.
-      &quot;crossSiteInterconnectInfos&quot;: [ # [Output Only] A list of InterconnectLocation.CrossSiteInterconnectInfo objects, that describe parameters pertaining to the relation between this InterconnectLocation and various Interconnect metros.
-        { # Information about any potential WireGroups between an Interconnect at a specific InterconnectLocation, and an Interconnect in another metro.
-          &quot;city&quot;: &quot;A String&quot;, # Metropolitan area designator
+      &quot;crossSiteInterconnectInfos&quot;: [ # [Output Only] A list of InterconnectLocation.CrossSiteInterconnectInfo objects, that describe where Cross-Site Interconnect wires may connect to from this location and associated connection parameters. Cross-Site Interconnect isn&#x27;t allowed to locations which are not listed.
+        { # Information about Cross-Site Interconnect wires which may be created between the containing location and another remote location.
+          &quot;city&quot;: &quot;A String&quot;, # The remote location for Cross-Site Interconnect wires. This specifies an InterconnectLocation city (metropolitan area designator), which itself may match multiple InterconnectLocations.
           &quot;maxSingleFlowGbps&quot;: 42, # The maximum gbps for a single flow to this metro. This limits the total bandwidth which may be configured per wire.
         },
       ],
@@ -199,12 +200,16 @@ Returns:
       &quot;regionInfos&quot;: [ # [Output Only] A list of InterconnectLocation.RegionInfo objects, that describe parameters pertaining to the relation between this InterconnectLocation and various Google Cloud regions.
         { # Information about any potential InterconnectAttachments between an Interconnect at a specific InterconnectLocation, and a specific Cloud Region.
           &quot;expectedRttMs&quot;: &quot;A String&quot;, # Expected round-trip time in milliseconds, from this InterconnectLocation to a VM in this region.
+          &quot;l2ForwardingEnabled&quot;: True or False, # Identifies whether L2 Interconnect Attachments can be created in this region for interconnects that are in this location.
           &quot;locationPresence&quot;: &quot;A String&quot;, # Identifies the network presence of this location.
           &quot;region&quot;: &quot;A String&quot;, # URL for the region of this location.
         },
       ],
       &quot;selfLink&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for the resource.
       &quot;selfLinkWithId&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for this resource with the resource id.
+      &quot;singleRegionProductionCriticalPeerLocations&quot;: [ # [Output Only] URLs of the other locations that can pair up with this location to support Single-Region 99.99% SLA. E.g. iad-zone1-1 and iad-zone2-5467 are Single-Region 99.99% peer locations of each other.
+        &quot;A String&quot;,
+      ],
       &quot;status&quot;: &quot;A String&quot;, # [Output Only] The status of this InterconnectLocation, which can take one of the following values: - CLOSED: The InterconnectLocation is closed and is unavailable for provisioning new Interconnects. - AVAILABLE: The InterconnectLocation is available for provisioning new Interconnects.
       &quot;supportsPzs&quot;: True or False, # [Output Only] Reserved for future use.
     },
@@ -237,37 +242,6 @@ Returns:
           A request object that you can call &#x27;execute()&#x27; on to request the next
           page. Returns None if there are no more items in the collection.
         </pre>
-</div>
-
-<div class="method">
-    <code class="details" id="testIamPermissions">testIamPermissions(project, resource, body=None, x__xgafv=None)</code>
-  <pre>Returns permissions that a caller has on the specified resource.
-
-Args:
-  project: string, Project ID for this request. (required)
-  resource: string, Name or id of the resource for this request. (required)
-  body: object, The request body.
-    The object takes the form of:
-
-{
-  &quot;permissions&quot;: [ # The set of permissions to check for the &#x27;resource&#x27;. Permissions with wildcards (such as &#x27;*&#x27; or &#x27;storage.*&#x27;) are not allowed.
-    &quot;A String&quot;,
-  ],
-}
-
-  x__xgafv: string, V1 error format.
-    Allowed values
-      1 - v1 error format
-      2 - v2 error format
-
-Returns:
-  An object of the form:
-
-    {
-  &quot;permissions&quot;: [ # A subset of `TestPermissionsRequest.permissions` that the caller is allowed.
-    &quot;A String&quot;,
-  ],
-}</pre>
 </div>
 
 </body></html>

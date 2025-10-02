@@ -346,6 +346,11 @@
 "parent"
 ],
 "parameters": {
+"filter": {
+"description": "Optional. Filter the WorkstationClusters to be listed. Possible filters are described in https://google.aip.dev/160.",
+"location": "query",
+"type": "string"
+},
 "pageSize": {
 "description": "Optional. Maximum number of items to return.",
 "format": "int32",
@@ -564,6 +569,11 @@
 "parent"
 ],
 "parameters": {
+"filter": {
+"description": "Optional. Filter the WorkstationConfigs to be listed. Possible filters are described in https://google.aip.dev/160.",
+"location": "query",
+"type": "string"
+},
 "pageSize": {
 "description": "Optional. Maximum number of items to return.",
 "format": "int32",
@@ -897,6 +907,11 @@
 "parent"
 ],
 "parameters": {
+"filter": {
+"description": "Optional. Filter the Workstations to be listed. Possible filters are described in https://google.aip.dev/160.",
+"location": "query",
+"type": "string"
+},
 "pageSize": {
 "description": "Optional. Maximum number of items to return.",
 "format": "int32",
@@ -1127,7 +1142,7 @@
 }
 }
 },
-"revision": "20250101",
+"revision": "20250729",
 "rootUrl": "https://workstations.googleapis.com/",
 "schemas": {
 "Accelerator": {
@@ -1248,6 +1263,10 @@
 "description": "Optional. The number of boost VMs that the system should keep idle so that workstations can be boosted quickly. Defaults to `0`.",
 "format": "int32",
 "type": "integer"
+},
+"reservationAffinity": {
+"$ref": "ReservationAffinity",
+"description": "Optional. [ReservationAffinity](https://cloud.google.com/compute/docs/instances/reserving-zonal-resources) specifies a reservation that can be consumed to create boost VM instances. If SPECIFIC_RESERVATION is specified, Cloud Workstations will only create VMs in the zone where the reservation is located. This would affect availability since the service will no longer be resilient to zonal outages. If ANY_RESERVATION is specified, creating reservations in both zones that the config creates VMs in will ensure higher availability. **Important Considerations for Reservation Affinity:** * This feature is intended for advanced users and requires familiarity with Google Compute Engine reservations. * Using reservations incurs charges, regardless of utilization. * The resources in the pool will consume the specified reservation. Take this into account when setting the pool size."
 }
 },
 "type": "object"
@@ -1363,6 +1382,17 @@
 },
 "type": "object"
 },
+"GatewayConfig": {
+"description": "Configuration options for Cluster HTTP Gateway.",
+"id": "GatewayConfig",
+"properties": {
+"http2Enabled": {
+"description": "Optional. Whether HTTP/2 is enabled for this workstation cluster. Defaults to false.",
+"type": "boolean"
+}
+},
+"type": "object"
+},
 "GceConfidentialInstanceConfig": {
 "description": "A set of Compute Engine Confidential VM instance options.",
 "id": "GceConfidentialInstanceConfig",
@@ -1427,6 +1457,10 @@
 "format": "int32",
 "readOnly": true,
 "type": "integer"
+},
+"reservationAffinity": {
+"$ref": "ReservationAffinity",
+"description": "Optional. [ReservationAffinity](https://cloud.google.com/compute/docs/instances/reserving-zonal-resources) specifies a reservation that can be consumed to create VM instances. If SPECIFIC_RESERVATION is specified, Cloud Workstations will only create VMs in the zone where the reservation is located. This would affect availability since the service will no longer be resilient to zonal outages. If ANY_RESERVATION is specified, creating reservations in both zones that the config creates VMs in will ensure higher availability. **Important Considerations for Reservation Affinity:** * This feature is intended for advanced users and requires familiarity with Google Compute Engine reservations. * Using reservations incurs charges, regardless of utilization. * The resources in the pool will consume the specified reservation. Take this into account when setting the pool size."
 },
 "serviceAccount": {
 "description": "Optional. The email address of the service account for Cloud Workstations VMs created with this configuration. When specified, be sure that the service account has `logging.logEntries.create` and `monitoring.timeSeries.create` permissions on the project so it can write logs out to Cloud Logging. If using a custom container image, the service account must have [Artifact Registry Reader](https://cloud.google.com/artifact-registry/docs/access-control#roles) permission to pull the specified image. If you as the administrator want to be able to `ssh` into the underlying VM, you need to set this value to a service account for which you have the `iam.serviceAccounts.actAs` permission. Conversely, if you don't want anyone to be able to `ssh` into the underlying VM, use a service account where no one has that permission. If not set, VMs run with a service account provided by the Cloud Workstations service, and the image must be publicly accessible.",
@@ -1495,11 +1529,11 @@
 "type": "boolean"
 },
 "sourceImage": {
-"description": "Optional. Name of the disk image to use as the source for the disk. Must be empty if source_snapshot is set. Updating source_image will update content in the ephemeral directory after the workstation is restarted. This field is mutable.",
+"description": "Optional. Name of the disk image to use as the source for the disk. Must be empty if source_snapshot is set. Updating source_image will update content in the ephemeral directory after the workstation is restarted. Only file systems supported by Container-Optimized OS (COS) are explicitly supported. For a list of supported file systems, please refer to the [COS documentation](https://cloud.google.com/container-optimized-os/docs/concepts/supported-filesystems). This field is mutable.",
 "type": "string"
 },
 "sourceSnapshot": {
-"description": "Optional. Name of the snapshot to use as the source for the disk. Must be empty if source_image is set. Must be empty if read_only is false. Updating source_snapshot will update content in the ephemeral directory after the workstation is restarted. This field is mutable.",
+"description": "Optional. Name of the snapshot to use as the source for the disk. Must be empty if source_image is set. Must be empty if read_only is false. Updating source_snapshot will update content in the ephemeral directory after the workstation is restarted. Only file systems supported by Container-Optimized OS (COS) are explicitly supported. For a list of supported file systems, see [the filesystems available in Container-Optimized OS](https://cloud.google.com/container-optimized-os/docs/concepts/supported-filesystems). This field is mutable.",
 "type": "string"
 }
 },
@@ -1537,7 +1571,7 @@
 "type": "integer"
 },
 "sourceSnapshot": {
-"description": "Optional. Name of the snapshot to use as the source for the disk. If set, size_gb and fs_type must be empty.",
+"description": "Optional. Name of the snapshot to use as the source for the disk. If set, size_gb and fs_type must be empty. Must be formatted as ext4 file system with no partitions.",
 "type": "string"
 }
 },
@@ -1938,7 +1972,7 @@
 "type": "boolean"
 },
 "serviceAttachmentUri": {
-"description": "Output only. Service attachment URI for the workstation cluster. The service attachemnt is created when private endpoint is enabled. To access workstations in the workstation cluster, configure access to the managed service using [Private Service Connect](https://cloud.google.com/vpc/docs/configure-private-service-connect-services).",
+"description": "Output only. Service attachment URI for the workstation cluster. The service attachment is created when private endpoint is enabled. To access workstations in the workstation cluster, configure access to the managed service using [Private Service Connect](https://cloud.google.com/vpc/docs/configure-private-service-connect-services).",
 "readOnly": true,
 "type": "string"
 }
@@ -1957,6 +1991,40 @@
 "description": "Optional. Port to which the request should be sent.",
 "format": "int32",
 "type": "integer"
+}
+},
+"type": "object"
+},
+"ReservationAffinity": {
+"description": "ReservationAffinity is the configuration of the desired reservation from which instances can consume resources.",
+"id": "ReservationAffinity",
+"properties": {
+"consumeReservationType": {
+"description": "Optional. Corresponds to the type of reservation consumption.",
+"enum": [
+"TYPE_UNSPECIFIED",
+"NO_RESERVATION",
+"ANY_RESERVATION",
+"SPECIFIC_RESERVATION"
+],
+"enumDescriptions": [
+"Default value. This should not be used.",
+"Do not consume from any reserved capacity.",
+"Consume any reservation available.",
+"Must consume from a specific reservation. Must specify key value fields for specifying the reservations."
+],
+"type": "string"
+},
+"key": {
+"description": "Optional. Corresponds to the label key of reservation resource.",
+"type": "string"
+},
+"values": {
+"description": "Optional. Corresponds to the label values of reservation resources. Valid values are either the name of a reservation in the same project or \"projects/{project}/reservations/{reservation}\" to target a shared reservation in the same zone but in a different project.",
+"items": {
+"type": "string"
+},
+"type": "array"
 }
 },
 "type": "object"
@@ -2096,11 +2164,24 @@
 "readOnly": true,
 "type": "array"
 },
+"conditions": {
+"description": "Output only. Status conditions describing the workstation's current state.",
+"items": {
+"$ref": "Status"
+},
+"readOnly": true,
+"type": "array"
+},
 "createTime": {
 "description": "Output only. Time when this workstation was created.",
 "format": "google-datetime",
 "readOnly": true,
 "type": "string"
+},
+"degraded": {
+"description": "Output only. Whether this workstation is in degraded mode, in which case it may require user action to restore full functionality. The conditions field contains detailed information about the status of the workstation.",
+"readOnly": true,
+"type": "boolean"
 },
 "deleteTime": {
 "description": "Output only. Time when this workstation was soft-deleted.",
@@ -2215,6 +2296,11 @@
 "description": "Output only. Boost configuration ID.",
 "readOnly": true,
 "type": "string"
+},
+"running": {
+"description": "Output only. Whether or not the current workstation is actively boosted with this id.",
+"readOnly": true,
+"type": "boolean"
 }
 },
 "type": "object"
@@ -2250,7 +2336,7 @@
 "type": "string"
 },
 "degraded": {
-"description": "Output only. Whether this workstation cluster is in degraded mode, in which case it may require user action to restore full functionality. Details can be found in conditions.",
+"description": "Output only. Whether this workstation cluster is in degraded mode, in which case it may require user action to restore full functionality. The conditions field contains detailed information about the status of the cluster.",
 "readOnly": true,
 "type": "boolean"
 },
@@ -2271,6 +2357,10 @@
 "etag": {
 "description": "Optional. Checksum computed by the server. May be sent on update and delete requests to make sure that the client has an up-to-date value before proceeding.",
 "type": "string"
+},
+"gatewayConfig": {
+"$ref": "GatewayConfig",
+"description": "Optional. Configuration options for Cluster HTTP Gateway."
 },
 "labels": {
 "additionalProperties": {
@@ -2314,7 +2404,7 @@
 "additionalProperties": {
 "type": "string"
 },
-"description": "Optional. Tag keys/values directly bound to this resource. For example: \"123/environment\": \"production\", \"123/costCenter\": \"marketing\"",
+"description": "Optional. Input only. Immutable. Tag keys/values directly bound to this resource. For example: \"123/environment\": \"production\", \"123/costCenter\": \"marketing\"",
 "type": "object"
 },
 "uid": {
@@ -2350,7 +2440,7 @@
 "type": "object"
 },
 "conditions": {
-"description": "Output only. Status conditions describing the current resource state.",
+"description": "Output only. Status conditions describing the workstation configuration's current state.",
 "items": {
 "$ref": "Status"
 },
@@ -2368,7 +2458,7 @@
 "type": "string"
 },
 "degraded": {
-"description": "Output only. Whether this resource is degraded, in which case it may require user action to restore full functionality. See also the conditions field.",
+"description": "Output only. Whether this workstation configuration is in degraded mode, in which case it may require user action to restore full functionality. The conditions field contains detailed information about the status of the configuration.",
 "readOnly": true,
 "type": "boolean"
 },

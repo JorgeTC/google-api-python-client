@@ -88,6 +88,11 @@
 },
 {
 "description": "Regional Endpoint",
+"endpointUrl": "https://cloudbuild.europe-north2.rep.googleapis.com/",
+"location": "europe-north2"
+},
+{
+"description": "Regional Endpoint",
 "endpointUrl": "https://cloudbuild.europe-southwest1.rep.googleapis.com/",
 "location": "europe-southwest1"
 },
@@ -365,6 +370,12 @@
 "name"
 ],
 "parameters": {
+"extraLocationTypes": {
+"description": "Optional. Unless explicitly documented otherwise, don't use this unsupported field which is primarily intended for internal usage.",
+"location": "query",
+"repeated": true,
+"type": "string"
+},
 "filter": {
 "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
 "location": "query",
@@ -587,6 +598,11 @@
 "pattern": "^projects/[^/]+/locations/[^/]+$",
 "required": true,
 "type": "string"
+},
+"returnPartialSuccess": {
+"description": "Optional. If set to true, the response will return partial results when some regions are unreachable. If set to false, the response will fail if any region is unreachable.",
+"location": "query",
+"type": "boolean"
 }
 },
 "path": "v2/{+parent}/connections",
@@ -658,7 +674,7 @@
 "type": "string"
 },
 "webhookKey": {
-"description": "Arbitrary additional key to find the maching repository for a webhook event if needed.",
+"description": "Arbitrary additional key to find the matching repository for a webhook event if needed.",
 "location": "query",
 "type": "string"
 }
@@ -990,6 +1006,11 @@
 "pattern": "^projects/[^/]+/locations/[^/]+/connections/[^/]+$",
 "required": true,
 "type": "string"
+},
+"returnPartialSuccess": {
+"description": "Optional. If set to true, the response will return partial results when some regions are unreachable. If set to false, the response will fail if any region is unreachable.",
+"location": "query",
+"type": "boolean"
 }
 },
 "path": "v2/{+parent}/repositories",
@@ -1066,7 +1087,7 @@
 }
 }
 },
-"revision": "20250102",
+"revision": "20250903",
 "rootUrl": "https://cloudbuild.googleapis.com/",
 "schemas": {
 "AuditConfig": {
@@ -1230,27 +1251,6 @@
 "description": "The request message for Operations.CancelOperation.",
 "id": "CancelOperationRequest",
 "properties": {},
-"type": "object"
-},
-"Capabilities": {
-"description": "Capabilities adds and removes POSIX capabilities from running containers.",
-"id": "Capabilities",
-"properties": {
-"add": {
-"description": "Optional. Added capabilities +optional",
-"items": {
-"type": "string"
-},
-"type": "array"
-},
-"drop": {
-"description": "Optional. Removed capabilities +optional",
-"items": {
-"type": "string"
-},
-"type": "array"
-}
-},
 "type": "object"
 },
 "ChildStatusReference": {
@@ -1823,6 +1823,13 @@
 "nextPageToken": {
 "description": "A token identifying a page of results the server should return.",
 "type": "string"
+},
+"unreachable": {
+"description": "Locations that could not be reached.",
+"items": {
+"type": "string"
+},
+"type": "array"
 }
 },
 "type": "object"
@@ -1857,6 +1864,13 @@
 "description": "The list of Repositories.",
 "items": {
 "$ref": "Repository"
+},
+"type": "array"
+},
+"unreachable": {
+"description": "Locations that could not be reached.",
+"items": {
+"type": "string"
 },
 "type": "array"
 }
@@ -2773,10 +2787,6 @@
 "allowPrivilegeEscalation": {
 "description": "Optional. AllowPrivilegeEscalation controls whether a process can gain more privileges than its parent process. This bool directly controls if the no_new_privs flag will be set on the container process. AllowPrivilegeEscalation is true always when the container is: 1) run as Privileged 2) has CAP_SYS_ADMIN Note that this field cannot be set when spec.os.name is windows. +optional",
 "type": "boolean"
-},
-"capabilities": {
-"$ref": "Capabilities",
-"description": "Optional. Adds and removes POSIX capabilities from running containers."
 },
 "privileged": {
 "description": "Run container in privileged mode.",

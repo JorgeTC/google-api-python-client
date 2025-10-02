@@ -110,7 +110,7 @@ h1, h2, h3 {
   <pre>Backup Redis Cluster. If this is the first time a backup is being created, a backup collection will be created at the backend, and this backup belongs to this collection. Both collection and backup will have a resource name. Backup will be executed for each shard. A replica (primary if nonHA) will be selected to perform the execution. Backup call will be rejected if there is an ongoing backup or update operation. Be aware that during preview, if the cluster&#x27;s internal software version is too old, critical update will be performed before actual backup. Once the internal software version is updated to the minimum version required by the backup feature, subsequent backups will not require critical update. After preview, there will be no critical update needed for backup.
 
 Args:
-  name: string, Required. Redis cluster resource name using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}` where `location_id` refers to a GCP region. (required)
+  name: string, Required. Redis cluster resource name using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}` where `location_id` refers to a Google Cloud region. (required)
   body: object, The request body.
     The object takes the form of:
 
@@ -158,11 +158,13 @@ Returns:
   <pre>Creates a Redis cluster based on the specified properties. The creation is executed asynchronously and callers may check the returned operation to track its progress. Once the operation is completed the Redis cluster will be fully functional. The completed longrunning.Operation will contain the new cluster object in the response field. The returned operation is automatically deleted after a few hours, so there is no need to call DeleteOperation.
 
 Args:
-  parent: string, Required. The resource name of the cluster location using the form: `projects/{project_id}/locations/{location_id}` where `location_id` refers to a GCP region. (required)
+  parent: string, Required. The resource name of the cluster location using the form: `projects/{project_id}/locations/{location_id}` where `location_id` refers to a Google Cloud region. (required)
   body: object, The request body.
     The object takes the form of:
 
 { # A cluster instance.
+  &quot;allowFewerZonesDeployment&quot;: True or False, # Optional. Immutable. Deprecated, do not use.
+  &quot;asyncClusterEndpointsDeletionEnabled&quot;: True or False, # Optional. If true, cluster endpoints that are created and registered by customers can be deleted asynchronously. That is, such a cluster endpoint can be de-registered before the forwarding rules in the cluster endpoint are deleted.
   &quot;authorizationMode&quot;: &quot;A String&quot;, # Optional. The authorization mode of the Redis cluster. If not provided, auth feature is disabled for the cluster.
   &quot;automatedBackupConfig&quot;: { # The automated backup config for a cluster. # Optional. The automated backup config for the cluster.
     &quot;automatedBackupMode&quot;: &quot;A String&quot;, # Optional. The automated backup mode. If the mode is disabled, the other fields will be ignored.
@@ -177,9 +179,9 @@ Args:
     &quot;retention&quot;: &quot;A String&quot;, # Optional. How long to keep automated backups before the backups are deleted. The value should be between 1 day and 365 days. If not specified, the default value is 35 days.
   },
   &quot;backupCollection&quot;: &quot;A String&quot;, # Optional. Output only. The backup collection full resource name. Example: projects/{project}/locations/{location}/backupCollections/{collection}
-  &quot;clusterEndpoints&quot;: [ # Optional. A list of cluster enpoints.
+  &quot;clusterEndpoints&quot;: [ # Optional. A list of cluster endpoints.
     { # ClusterEndpoint consists of PSC connections that are created as a group in each VPC network for accessing the cluster. In each group, there shall be one connection for each service attachment in the cluster.
-      &quot;connections&quot;: [ # A group of PSC connections. They are created in the same VPC network, one for each service attachment in the cluster.
+      &quot;connections&quot;: [ # Required. A group of PSC connections. They are created in the same VPC network, one for each service attachment in the cluster.
         { # Detailed information of each PSC connection.
           &quot;pscAutoConnection&quot;: { # Details of consumer resources in a PSC connection that is created through Service Connectivity Automation. # Detailed information of a PSC connection that is created through service connectivity automation.
             &quot;address&quot;: &quot;A String&quot;, # Output only. The IP allocated on the consumer network for the PSC forwarding rule.
@@ -196,6 +198,7 @@ Args:
             &quot;connectionType&quot;: &quot;A String&quot;, # Output only. Type of the PSC connection.
             &quot;forwardingRule&quot;: &quot;A String&quot;, # Required. The URI of the consumer side forwarding rule. Example: projects/{projectNumOrId}/regions/us-east1/forwardingRules/{resourceId}.
             &quot;network&quot;: &quot;A String&quot;, # Required. The consumer network where the IP address resides, in the form of projects/{project_id}/global/networks/{network_id}.
+            &quot;port&quot;: 42, # Output only. port will only be set for Primary/Reader or Discovery endpoint.
             &quot;projectId&quot;: &quot;A String&quot;, # Optional. Project ID of the consumer project where the forwarding rule is created in.
             &quot;pscConnectionId&quot;: &quot;A String&quot;, # Required. The PSC connection id of the forwarding rule connected to the service attachment.
             &quot;pscConnectionStatus&quot;: &quot;A String&quot;, # Output only. The status of the PSC connection. Please note that this value is updated periodically. To get the latest status of a PSC connection, follow https://cloud.google.com/vpc/docs/configure-private-service-connect-services#endpoint-details.
@@ -207,26 +210,26 @@ Args:
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp associated with the cluster creation request.
   &quot;crossClusterReplicationConfig&quot;: { # Cross cluster replication config. # Optional. Cross cluster replication config.
-    &quot;clusterRole&quot;: &quot;A String&quot;, # The role of the cluster in cross cluster replication.
+    &quot;clusterRole&quot;: &quot;A String&quot;, # Output only. The role of the cluster in cross cluster replication.
     &quot;membership&quot;: { # An output only view of all the member clusters participating in the cross cluster replication. # Output only. An output only view of all the member clusters participating in the cross cluster replication. This view will be provided by every member cluster irrespective of its cluster role(primary or secondary). A primary cluster can provide information about all the secondary clusters replicating from it. However, a secondary cluster only knows about the primary cluster from which it is replicating. However, for scenarios, where the primary cluster is unavailable(e.g. regional outage), a GetCluster request can be sent to any other member cluster and this field will list all the member clusters participating in cross cluster replication.
       &quot;primaryCluster&quot;: { # Details of the remote cluster associated with this cluster in a cross cluster replication setup. # Output only. The primary cluster that acts as the source of replication for the secondary clusters.
-        &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+        &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
         &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
       },
       &quot;secondaryClusters&quot;: [ # Output only. The list of secondary clusters replicating from the primary cluster.
         { # Details of the remote cluster associated with this cluster in a cross cluster replication setup.
-          &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+          &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
           &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
         },
       ],
     },
     &quot;primaryCluster&quot;: { # Details of the remote cluster associated with this cluster in a cross cluster replication setup. # Details of the primary cluster that is used as the replication source for this secondary cluster. This field is only set for a secondary cluster.
-      &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+      &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
       &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
     },
     &quot;secondaryClusters&quot;: [ # List of secondary clusters that are replicating from this primary cluster. This field is only set for a primary cluster.
       { # Details of the remote cluster associated with this cluster in a cross cluster replication setup.
-        &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+        &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
         &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
       },
     ],
@@ -251,18 +254,21 @@ Args:
     &quot;lastUpdateTime&quot;: &quot;A String&quot;, # Output only. The most recent time when the encryption info was updated.
   },
   &quot;gcsSource&quot;: { # Backups stored in Cloud Storage buckets. The Cloud Storage buckets need to be the same region as the clusters. # Optional. Backups stored in Cloud Storage buckets. The Cloud Storage buckets need to be the same region as the clusters. Read permission is required to import from the provided Cloud Storage objects.
-    &quot;uris&quot;: [ # Optional. URIs of the GCS objects to import. Example: gs://bucket1/object1, gs://bucket2/folder2/object2
+    &quot;uris&quot;: [ # Optional. URIs of the Cloud Storage objects to import. Example: gs://bucket1/object1, gs://bucket2/folder2/object2
       &quot;A String&quot;,
     ],
   },
   &quot;kmsKey&quot;: &quot;A String&quot;, # Optional. The KMS key used to encrypt the at-rest data of the cluster.
+  &quot;labels&quot;: { # Optional. Labels to represent user-provided metadata.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
   &quot;maintenancePolicy&quot;: { # Maintenance policy per cluster. # Optional. ClusterMaintenancePolicy determines when to allow or deny updates.
     &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the policy was created i.e. Maintenance Window or Deny Period was assigned.
     &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time when the policy was updated i.e. Maintenance Window or Deny Period was updated.
     &quot;weeklyMaintenanceWindow&quot;: [ # Optional. Maintenance window that is applied to resources covered by this policy. Minimum 1. For the current version, the maximum number of weekly_maintenance_window is expected to be one.
       { # Time window specified for weekly operations.
-        &quot;day&quot;: &quot;A String&quot;, # Allows to define schedule that runs specified day of the week.
-        &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Start time of the window in UTC.
+        &quot;day&quot;: &quot;A String&quot;, # Optional. Allows to define schedule that runs specified day of the week.
+        &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Optional. Start time of the window in UTC.
           &quot;hours&quot;: 42, # Hours of a day in 24 hour format. Must be greater than or equal to 0 and typically must be less than or equal to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
           &quot;minutes&quot;: 42, # Minutes of an hour. Must be greater than or equal to 0 and less than or equal to 59.
           &quot;nanos&quot;: 42, # Fractions of seconds, in nanoseconds. Must be greater than or equal to 0 and less than or equal to 999,999,999.
@@ -271,7 +277,7 @@ Args:
       },
     ],
   },
-  &quot;maintenanceSchedule&quot;: { # Upcoming maitenance schedule. # Output only. ClusterMaintenanceSchedule Output only Published maintenance schedule.
+  &quot;maintenanceSchedule&quot;: { # Upcoming maintenance schedule. # Output only. ClusterMaintenanceSchedule Output only Published maintenance schedule.
     &quot;endTime&quot;: &quot;A String&quot;, # Output only. The end time of any upcoming scheduled maintenance for this instance.
     &quot;startTime&quot;: &quot;A String&quot;, # Output only. The start time of any upcoming scheduled maintenance for this instance.
   },
@@ -280,6 +286,7 @@ Args:
   },
   &quot;name&quot;: &quot;A String&quot;, # Required. Identifier. Unique name of the resource in this scope including project and location using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}`
   &quot;nodeType&quot;: &quot;A String&quot;, # Optional. The type of a redis node in the cluster. NodeType determines the underlying machine-type of a redis node.
+  &quot;ondemandMaintenance&quot;: True or False, # Optional. Input only. Ondemand maintenance for the cluster. This field can be used to trigger ondemand critical update on the cluster.
   &quot;persistenceConfig&quot;: { # Configuration of the persistence functionality. # Optional. Persistence config (RDB, AOF) for the cluster.
     &quot;aofConfig&quot;: { # Configuration of the AOF based persistence. # Optional. AOF configuration. This field will be ignored if mode is not AOF.
       &quot;appendFsync&quot;: &quot;A String&quot;, # Optional. fsync configuration.
@@ -302,6 +309,7 @@ Args:
       &quot;connectionType&quot;: &quot;A String&quot;, # Output only. Type of the PSC connection.
       &quot;forwardingRule&quot;: &quot;A String&quot;, # Required. The URI of the consumer side forwarding rule. Example: projects/{projectNumOrId}/regions/us-east1/forwardingRules/{resourceId}.
       &quot;network&quot;: &quot;A String&quot;, # Required. The consumer network where the IP address resides, in the form of projects/{project_id}/global/networks/{network_id}.
+      &quot;port&quot;: 42, # Output only. port will only be set for Primary/Reader or Discovery endpoint.
       &quot;projectId&quot;: &quot;A String&quot;, # Optional. Project ID of the consumer project where the forwarding rule is created in.
       &quot;pscConnectionId&quot;: &quot;A String&quot;, # Required. The PSC connection id of the forwarding rule connected to the service attachment.
       &quot;pscConnectionStatus&quot;: &quot;A String&quot;, # Output only. The status of the PSC connection. Please note that this value is updated periodically. To get the latest status of a PSC connection, follow https://cloud.google.com/vpc/docs/configure-private-service-connect-services#endpoint-details.
@@ -318,11 +326,15 @@ Args:
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;replicaCount&quot;: 42, # Optional. The number of replica nodes per shard.
+  &quot;satisfiesPzi&quot;: True or False, # Optional. Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Optional. Output only. Reserved for future use.
   &quot;shardCount&quot;: 42, # Optional. Number of shards for the Redis cluster.
+  &quot;simulateMaintenanceEvent&quot;: True or False, # Optional. Input only. Simulate a maintenance event.
   &quot;sizeGb&quot;: 42, # Output only. Redis memory size in GB for the entire cluster rounded up to the next integer.
   &quot;state&quot;: &quot;A String&quot;, # Output only. The current state of this cluster. Can be CREATING, READY, UPDATING, DELETING and SUSPENDED
   &quot;stateInfo&quot;: { # Represents additional information about the state of the cluster. # Output only. Additional information about the current state of the cluster.
     &quot;updateInfo&quot;: { # Represents information about an updating cluster. # Describes ongoing update on the cluster when cluster state is UPDATING.
+      &quot;targetNodeType&quot;: &quot;A String&quot;, # Target node type for redis cluster.
       &quot;targetReplicaCount&quot;: 42, # Target number of replica nodes per shard.
       &quot;targetShardCount&quot;: 42, # Target number of shards for redis cluster
     },
@@ -336,7 +348,7 @@ Args:
 }
 
   clusterId: string, Required. The logical name of the Redis cluster in the customer project with the following restrictions: * Must contain only lowercase letters, numbers, and hyphens. * Must start with a letter. * Must be between 1-63 characters. * Must end with a number or a letter. * Must be unique within the customer project / location
-  requestId: string, Idempotent request UUID.
+  requestId: string, Optional. Idempotent request UUID.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -371,8 +383,8 @@ Returns:
   <pre>Deletes a specific Redis cluster. Cluster stops serving and data is deleted.
 
 Args:
-  name: string, Required. Redis cluster resource name using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}` where `location_id` refers to a GCP region. (required)
-  requestId: string, Idempotent request UUID.
+  name: string, Required. Redis cluster resource name using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}` where `location_id` refers to a Google Cloud region. (required)
+  requestId: string, Optional. Idempotent request UUID.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -407,7 +419,7 @@ Returns:
   <pre>Gets the details of a specific Redis cluster.
 
 Args:
-  name: string, Required. Redis cluster resource name using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}` where `location_id` refers to a GCP region. (required)
+  name: string, Required. Redis cluster resource name using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}` where `location_id` refers to a Google Cloud region. (required)
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -417,6 +429,8 @@ Returns:
   An object of the form:
 
     { # A cluster instance.
+  &quot;allowFewerZonesDeployment&quot;: True or False, # Optional. Immutable. Deprecated, do not use.
+  &quot;asyncClusterEndpointsDeletionEnabled&quot;: True or False, # Optional. If true, cluster endpoints that are created and registered by customers can be deleted asynchronously. That is, such a cluster endpoint can be de-registered before the forwarding rules in the cluster endpoint are deleted.
   &quot;authorizationMode&quot;: &quot;A String&quot;, # Optional. The authorization mode of the Redis cluster. If not provided, auth feature is disabled for the cluster.
   &quot;automatedBackupConfig&quot;: { # The automated backup config for a cluster. # Optional. The automated backup config for the cluster.
     &quot;automatedBackupMode&quot;: &quot;A String&quot;, # Optional. The automated backup mode. If the mode is disabled, the other fields will be ignored.
@@ -431,9 +445,9 @@ Returns:
     &quot;retention&quot;: &quot;A String&quot;, # Optional. How long to keep automated backups before the backups are deleted. The value should be between 1 day and 365 days. If not specified, the default value is 35 days.
   },
   &quot;backupCollection&quot;: &quot;A String&quot;, # Optional. Output only. The backup collection full resource name. Example: projects/{project}/locations/{location}/backupCollections/{collection}
-  &quot;clusterEndpoints&quot;: [ # Optional. A list of cluster enpoints.
+  &quot;clusterEndpoints&quot;: [ # Optional. A list of cluster endpoints.
     { # ClusterEndpoint consists of PSC connections that are created as a group in each VPC network for accessing the cluster. In each group, there shall be one connection for each service attachment in the cluster.
-      &quot;connections&quot;: [ # A group of PSC connections. They are created in the same VPC network, one for each service attachment in the cluster.
+      &quot;connections&quot;: [ # Required. A group of PSC connections. They are created in the same VPC network, one for each service attachment in the cluster.
         { # Detailed information of each PSC connection.
           &quot;pscAutoConnection&quot;: { # Details of consumer resources in a PSC connection that is created through Service Connectivity Automation. # Detailed information of a PSC connection that is created through service connectivity automation.
             &quot;address&quot;: &quot;A String&quot;, # Output only. The IP allocated on the consumer network for the PSC forwarding rule.
@@ -450,6 +464,7 @@ Returns:
             &quot;connectionType&quot;: &quot;A String&quot;, # Output only. Type of the PSC connection.
             &quot;forwardingRule&quot;: &quot;A String&quot;, # Required. The URI of the consumer side forwarding rule. Example: projects/{projectNumOrId}/regions/us-east1/forwardingRules/{resourceId}.
             &quot;network&quot;: &quot;A String&quot;, # Required. The consumer network where the IP address resides, in the form of projects/{project_id}/global/networks/{network_id}.
+            &quot;port&quot;: 42, # Output only. port will only be set for Primary/Reader or Discovery endpoint.
             &quot;projectId&quot;: &quot;A String&quot;, # Optional. Project ID of the consumer project where the forwarding rule is created in.
             &quot;pscConnectionId&quot;: &quot;A String&quot;, # Required. The PSC connection id of the forwarding rule connected to the service attachment.
             &quot;pscConnectionStatus&quot;: &quot;A String&quot;, # Output only. The status of the PSC connection. Please note that this value is updated periodically. To get the latest status of a PSC connection, follow https://cloud.google.com/vpc/docs/configure-private-service-connect-services#endpoint-details.
@@ -461,26 +476,26 @@ Returns:
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp associated with the cluster creation request.
   &quot;crossClusterReplicationConfig&quot;: { # Cross cluster replication config. # Optional. Cross cluster replication config.
-    &quot;clusterRole&quot;: &quot;A String&quot;, # The role of the cluster in cross cluster replication.
+    &quot;clusterRole&quot;: &quot;A String&quot;, # Output only. The role of the cluster in cross cluster replication.
     &quot;membership&quot;: { # An output only view of all the member clusters participating in the cross cluster replication. # Output only. An output only view of all the member clusters participating in the cross cluster replication. This view will be provided by every member cluster irrespective of its cluster role(primary or secondary). A primary cluster can provide information about all the secondary clusters replicating from it. However, a secondary cluster only knows about the primary cluster from which it is replicating. However, for scenarios, where the primary cluster is unavailable(e.g. regional outage), a GetCluster request can be sent to any other member cluster and this field will list all the member clusters participating in cross cluster replication.
       &quot;primaryCluster&quot;: { # Details of the remote cluster associated with this cluster in a cross cluster replication setup. # Output only. The primary cluster that acts as the source of replication for the secondary clusters.
-        &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+        &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
         &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
       },
       &quot;secondaryClusters&quot;: [ # Output only. The list of secondary clusters replicating from the primary cluster.
         { # Details of the remote cluster associated with this cluster in a cross cluster replication setup.
-          &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+          &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
           &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
         },
       ],
     },
     &quot;primaryCluster&quot;: { # Details of the remote cluster associated with this cluster in a cross cluster replication setup. # Details of the primary cluster that is used as the replication source for this secondary cluster. This field is only set for a secondary cluster.
-      &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+      &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
       &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
     },
     &quot;secondaryClusters&quot;: [ # List of secondary clusters that are replicating from this primary cluster. This field is only set for a primary cluster.
       { # Details of the remote cluster associated with this cluster in a cross cluster replication setup.
-        &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+        &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
         &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
       },
     ],
@@ -505,18 +520,21 @@ Returns:
     &quot;lastUpdateTime&quot;: &quot;A String&quot;, # Output only. The most recent time when the encryption info was updated.
   },
   &quot;gcsSource&quot;: { # Backups stored in Cloud Storage buckets. The Cloud Storage buckets need to be the same region as the clusters. # Optional. Backups stored in Cloud Storage buckets. The Cloud Storage buckets need to be the same region as the clusters. Read permission is required to import from the provided Cloud Storage objects.
-    &quot;uris&quot;: [ # Optional. URIs of the GCS objects to import. Example: gs://bucket1/object1, gs://bucket2/folder2/object2
+    &quot;uris&quot;: [ # Optional. URIs of the Cloud Storage objects to import. Example: gs://bucket1/object1, gs://bucket2/folder2/object2
       &quot;A String&quot;,
     ],
   },
   &quot;kmsKey&quot;: &quot;A String&quot;, # Optional. The KMS key used to encrypt the at-rest data of the cluster.
+  &quot;labels&quot;: { # Optional. Labels to represent user-provided metadata.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
   &quot;maintenancePolicy&quot;: { # Maintenance policy per cluster. # Optional. ClusterMaintenancePolicy determines when to allow or deny updates.
     &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the policy was created i.e. Maintenance Window or Deny Period was assigned.
     &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time when the policy was updated i.e. Maintenance Window or Deny Period was updated.
     &quot;weeklyMaintenanceWindow&quot;: [ # Optional. Maintenance window that is applied to resources covered by this policy. Minimum 1. For the current version, the maximum number of weekly_maintenance_window is expected to be one.
       { # Time window specified for weekly operations.
-        &quot;day&quot;: &quot;A String&quot;, # Allows to define schedule that runs specified day of the week.
-        &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Start time of the window in UTC.
+        &quot;day&quot;: &quot;A String&quot;, # Optional. Allows to define schedule that runs specified day of the week.
+        &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Optional. Start time of the window in UTC.
           &quot;hours&quot;: 42, # Hours of a day in 24 hour format. Must be greater than or equal to 0 and typically must be less than or equal to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
           &quot;minutes&quot;: 42, # Minutes of an hour. Must be greater than or equal to 0 and less than or equal to 59.
           &quot;nanos&quot;: 42, # Fractions of seconds, in nanoseconds. Must be greater than or equal to 0 and less than or equal to 999,999,999.
@@ -525,7 +543,7 @@ Returns:
       },
     ],
   },
-  &quot;maintenanceSchedule&quot;: { # Upcoming maitenance schedule. # Output only. ClusterMaintenanceSchedule Output only Published maintenance schedule.
+  &quot;maintenanceSchedule&quot;: { # Upcoming maintenance schedule. # Output only. ClusterMaintenanceSchedule Output only Published maintenance schedule.
     &quot;endTime&quot;: &quot;A String&quot;, # Output only. The end time of any upcoming scheduled maintenance for this instance.
     &quot;startTime&quot;: &quot;A String&quot;, # Output only. The start time of any upcoming scheduled maintenance for this instance.
   },
@@ -534,6 +552,7 @@ Returns:
   },
   &quot;name&quot;: &quot;A String&quot;, # Required. Identifier. Unique name of the resource in this scope including project and location using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}`
   &quot;nodeType&quot;: &quot;A String&quot;, # Optional. The type of a redis node in the cluster. NodeType determines the underlying machine-type of a redis node.
+  &quot;ondemandMaintenance&quot;: True or False, # Optional. Input only. Ondemand maintenance for the cluster. This field can be used to trigger ondemand critical update on the cluster.
   &quot;persistenceConfig&quot;: { # Configuration of the persistence functionality. # Optional. Persistence config (RDB, AOF) for the cluster.
     &quot;aofConfig&quot;: { # Configuration of the AOF based persistence. # Optional. AOF configuration. This field will be ignored if mode is not AOF.
       &quot;appendFsync&quot;: &quot;A String&quot;, # Optional. fsync configuration.
@@ -556,6 +575,7 @@ Returns:
       &quot;connectionType&quot;: &quot;A String&quot;, # Output only. Type of the PSC connection.
       &quot;forwardingRule&quot;: &quot;A String&quot;, # Required. The URI of the consumer side forwarding rule. Example: projects/{projectNumOrId}/regions/us-east1/forwardingRules/{resourceId}.
       &quot;network&quot;: &quot;A String&quot;, # Required. The consumer network where the IP address resides, in the form of projects/{project_id}/global/networks/{network_id}.
+      &quot;port&quot;: 42, # Output only. port will only be set for Primary/Reader or Discovery endpoint.
       &quot;projectId&quot;: &quot;A String&quot;, # Optional. Project ID of the consumer project where the forwarding rule is created in.
       &quot;pscConnectionId&quot;: &quot;A String&quot;, # Required. The PSC connection id of the forwarding rule connected to the service attachment.
       &quot;pscConnectionStatus&quot;: &quot;A String&quot;, # Output only. The status of the PSC connection. Please note that this value is updated periodically. To get the latest status of a PSC connection, follow https://cloud.google.com/vpc/docs/configure-private-service-connect-services#endpoint-details.
@@ -572,11 +592,15 @@ Returns:
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;replicaCount&quot;: 42, # Optional. The number of replica nodes per shard.
+  &quot;satisfiesPzi&quot;: True or False, # Optional. Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Optional. Output only. Reserved for future use.
   &quot;shardCount&quot;: 42, # Optional. Number of shards for the Redis cluster.
+  &quot;simulateMaintenanceEvent&quot;: True or False, # Optional. Input only. Simulate a maintenance event.
   &quot;sizeGb&quot;: 42, # Output only. Redis memory size in GB for the entire cluster rounded up to the next integer.
   &quot;state&quot;: &quot;A String&quot;, # Output only. The current state of this cluster. Can be CREATING, READY, UPDATING, DELETING and SUSPENDED
   &quot;stateInfo&quot;: { # Represents additional information about the state of the cluster. # Output only. Additional information about the current state of the cluster.
     &quot;updateInfo&quot;: { # Represents information about an updating cluster. # Describes ongoing update on the cluster when cluster state is UPDATING.
+      &quot;targetNodeType&quot;: &quot;A String&quot;, # Target node type for redis cluster.
       &quot;targetReplicaCount&quot;: 42, # Target number of replica nodes per shard.
       &quot;targetShardCount&quot;: 42, # Target number of shards for redis cluster
     },
@@ -595,7 +619,7 @@ Returns:
   <pre>Gets the details of certificate authority information for Redis cluster.
 
 Args:
-  name: string, Required. Redis cluster certificate authority resource name using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}/certificateAuthority` where `location_id` refers to a GCP region. (required)
+  name: string, Required. Redis cluster certificate authority resource name using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}/certificateAuthority` where `location_id` refers to a Google Cloud region. (required)
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -623,7 +647,7 @@ Returns:
   <pre>Lists all Redis clusters owned by a project in either the specified location (region) or all locations. The location should have the following format: * `projects/{project_id}/locations/{location_id}` If `location_id` is specified as `-` (wildcard), then all regions available to the project are queried, and the results are aggregated.
 
 Args:
-  parent: string, Required. The resource name of the cluster location using the form: `projects/{project_id}/locations/{location_id}` where `location_id` refers to a GCP region. (required)
+  parent: string, Required. The resource name of the cluster location using the form: `projects/{project_id}/locations/{location_id}` where `location_id` refers to a Google Cloud region. (required)
   pageSize: integer, The maximum number of items to return. If not specified, a default value of 1000 will be used by the service. Regardless of the page_size value, the response may include a partial list and a caller should only rely on response&#x27;s `next_page_token` to determine if there are more clusters left to be queried.
   pageToken: string, The `next_page_token` value returned from a previous ListClusters request, if any.
   x__xgafv: string, V1 error format.
@@ -637,6 +661,8 @@ Returns:
     { # Response for ListClusters.
   &quot;clusters&quot;: [ # A list of Redis clusters in the project in the specified location, or across all locations. If the `location_id` in the parent field of the request is &quot;-&quot;, all regions available to the project are queried, and the results aggregated. If in such an aggregated query a location is unavailable, a placeholder Redis entry is included in the response with the `name` field set to a value of the form `projects/{project_id}/locations/{location_id}/clusters/`- and the `status` field set to ERROR and `status_message` field set to &quot;location not available for ListClusters&quot;.
     { # A cluster instance.
+      &quot;allowFewerZonesDeployment&quot;: True or False, # Optional. Immutable. Deprecated, do not use.
+      &quot;asyncClusterEndpointsDeletionEnabled&quot;: True or False, # Optional. If true, cluster endpoints that are created and registered by customers can be deleted asynchronously. That is, such a cluster endpoint can be de-registered before the forwarding rules in the cluster endpoint are deleted.
       &quot;authorizationMode&quot;: &quot;A String&quot;, # Optional. The authorization mode of the Redis cluster. If not provided, auth feature is disabled for the cluster.
       &quot;automatedBackupConfig&quot;: { # The automated backup config for a cluster. # Optional. The automated backup config for the cluster.
         &quot;automatedBackupMode&quot;: &quot;A String&quot;, # Optional. The automated backup mode. If the mode is disabled, the other fields will be ignored.
@@ -651,9 +677,9 @@ Returns:
         &quot;retention&quot;: &quot;A String&quot;, # Optional. How long to keep automated backups before the backups are deleted. The value should be between 1 day and 365 days. If not specified, the default value is 35 days.
       },
       &quot;backupCollection&quot;: &quot;A String&quot;, # Optional. Output only. The backup collection full resource name. Example: projects/{project}/locations/{location}/backupCollections/{collection}
-      &quot;clusterEndpoints&quot;: [ # Optional. A list of cluster enpoints.
+      &quot;clusterEndpoints&quot;: [ # Optional. A list of cluster endpoints.
         { # ClusterEndpoint consists of PSC connections that are created as a group in each VPC network for accessing the cluster. In each group, there shall be one connection for each service attachment in the cluster.
-          &quot;connections&quot;: [ # A group of PSC connections. They are created in the same VPC network, one for each service attachment in the cluster.
+          &quot;connections&quot;: [ # Required. A group of PSC connections. They are created in the same VPC network, one for each service attachment in the cluster.
             { # Detailed information of each PSC connection.
               &quot;pscAutoConnection&quot;: { # Details of consumer resources in a PSC connection that is created through Service Connectivity Automation. # Detailed information of a PSC connection that is created through service connectivity automation.
                 &quot;address&quot;: &quot;A String&quot;, # Output only. The IP allocated on the consumer network for the PSC forwarding rule.
@@ -670,6 +696,7 @@ Returns:
                 &quot;connectionType&quot;: &quot;A String&quot;, # Output only. Type of the PSC connection.
                 &quot;forwardingRule&quot;: &quot;A String&quot;, # Required. The URI of the consumer side forwarding rule. Example: projects/{projectNumOrId}/regions/us-east1/forwardingRules/{resourceId}.
                 &quot;network&quot;: &quot;A String&quot;, # Required. The consumer network where the IP address resides, in the form of projects/{project_id}/global/networks/{network_id}.
+                &quot;port&quot;: 42, # Output only. port will only be set for Primary/Reader or Discovery endpoint.
                 &quot;projectId&quot;: &quot;A String&quot;, # Optional. Project ID of the consumer project where the forwarding rule is created in.
                 &quot;pscConnectionId&quot;: &quot;A String&quot;, # Required. The PSC connection id of the forwarding rule connected to the service attachment.
                 &quot;pscConnectionStatus&quot;: &quot;A String&quot;, # Output only. The status of the PSC connection. Please note that this value is updated periodically. To get the latest status of a PSC connection, follow https://cloud.google.com/vpc/docs/configure-private-service-connect-services#endpoint-details.
@@ -681,26 +708,26 @@ Returns:
       ],
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp associated with the cluster creation request.
       &quot;crossClusterReplicationConfig&quot;: { # Cross cluster replication config. # Optional. Cross cluster replication config.
-        &quot;clusterRole&quot;: &quot;A String&quot;, # The role of the cluster in cross cluster replication.
+        &quot;clusterRole&quot;: &quot;A String&quot;, # Output only. The role of the cluster in cross cluster replication.
         &quot;membership&quot;: { # An output only view of all the member clusters participating in the cross cluster replication. # Output only. An output only view of all the member clusters participating in the cross cluster replication. This view will be provided by every member cluster irrespective of its cluster role(primary or secondary). A primary cluster can provide information about all the secondary clusters replicating from it. However, a secondary cluster only knows about the primary cluster from which it is replicating. However, for scenarios, where the primary cluster is unavailable(e.g. regional outage), a GetCluster request can be sent to any other member cluster and this field will list all the member clusters participating in cross cluster replication.
           &quot;primaryCluster&quot;: { # Details of the remote cluster associated with this cluster in a cross cluster replication setup. # Output only. The primary cluster that acts as the source of replication for the secondary clusters.
-            &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+            &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
             &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
           },
           &quot;secondaryClusters&quot;: [ # Output only. The list of secondary clusters replicating from the primary cluster.
             { # Details of the remote cluster associated with this cluster in a cross cluster replication setup.
-              &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+              &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
               &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
             },
           ],
         },
         &quot;primaryCluster&quot;: { # Details of the remote cluster associated with this cluster in a cross cluster replication setup. # Details of the primary cluster that is used as the replication source for this secondary cluster. This field is only set for a secondary cluster.
-          &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+          &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
           &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
         },
         &quot;secondaryClusters&quot;: [ # List of secondary clusters that are replicating from this primary cluster. This field is only set for a primary cluster.
           { # Details of the remote cluster associated with this cluster in a cross cluster replication setup.
-            &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+            &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
             &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
           },
         ],
@@ -725,18 +752,21 @@ Returns:
         &quot;lastUpdateTime&quot;: &quot;A String&quot;, # Output only. The most recent time when the encryption info was updated.
       },
       &quot;gcsSource&quot;: { # Backups stored in Cloud Storage buckets. The Cloud Storage buckets need to be the same region as the clusters. # Optional. Backups stored in Cloud Storage buckets. The Cloud Storage buckets need to be the same region as the clusters. Read permission is required to import from the provided Cloud Storage objects.
-        &quot;uris&quot;: [ # Optional. URIs of the GCS objects to import. Example: gs://bucket1/object1, gs://bucket2/folder2/object2
+        &quot;uris&quot;: [ # Optional. URIs of the Cloud Storage objects to import. Example: gs://bucket1/object1, gs://bucket2/folder2/object2
           &quot;A String&quot;,
         ],
       },
       &quot;kmsKey&quot;: &quot;A String&quot;, # Optional. The KMS key used to encrypt the at-rest data of the cluster.
+      &quot;labels&quot;: { # Optional. Labels to represent user-provided metadata.
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
       &quot;maintenancePolicy&quot;: { # Maintenance policy per cluster. # Optional. ClusterMaintenancePolicy determines when to allow or deny updates.
         &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the policy was created i.e. Maintenance Window or Deny Period was assigned.
         &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time when the policy was updated i.e. Maintenance Window or Deny Period was updated.
         &quot;weeklyMaintenanceWindow&quot;: [ # Optional. Maintenance window that is applied to resources covered by this policy. Minimum 1. For the current version, the maximum number of weekly_maintenance_window is expected to be one.
           { # Time window specified for weekly operations.
-            &quot;day&quot;: &quot;A String&quot;, # Allows to define schedule that runs specified day of the week.
-            &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Start time of the window in UTC.
+            &quot;day&quot;: &quot;A String&quot;, # Optional. Allows to define schedule that runs specified day of the week.
+            &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Optional. Start time of the window in UTC.
               &quot;hours&quot;: 42, # Hours of a day in 24 hour format. Must be greater than or equal to 0 and typically must be less than or equal to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
               &quot;minutes&quot;: 42, # Minutes of an hour. Must be greater than or equal to 0 and less than or equal to 59.
               &quot;nanos&quot;: 42, # Fractions of seconds, in nanoseconds. Must be greater than or equal to 0 and less than or equal to 999,999,999.
@@ -745,7 +775,7 @@ Returns:
           },
         ],
       },
-      &quot;maintenanceSchedule&quot;: { # Upcoming maitenance schedule. # Output only. ClusterMaintenanceSchedule Output only Published maintenance schedule.
+      &quot;maintenanceSchedule&quot;: { # Upcoming maintenance schedule. # Output only. ClusterMaintenanceSchedule Output only Published maintenance schedule.
         &quot;endTime&quot;: &quot;A String&quot;, # Output only. The end time of any upcoming scheduled maintenance for this instance.
         &quot;startTime&quot;: &quot;A String&quot;, # Output only. The start time of any upcoming scheduled maintenance for this instance.
       },
@@ -754,6 +784,7 @@ Returns:
       },
       &quot;name&quot;: &quot;A String&quot;, # Required. Identifier. Unique name of the resource in this scope including project and location using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}`
       &quot;nodeType&quot;: &quot;A String&quot;, # Optional. The type of a redis node in the cluster. NodeType determines the underlying machine-type of a redis node.
+      &quot;ondemandMaintenance&quot;: True or False, # Optional. Input only. Ondemand maintenance for the cluster. This field can be used to trigger ondemand critical update on the cluster.
       &quot;persistenceConfig&quot;: { # Configuration of the persistence functionality. # Optional. Persistence config (RDB, AOF) for the cluster.
         &quot;aofConfig&quot;: { # Configuration of the AOF based persistence. # Optional. AOF configuration. This field will be ignored if mode is not AOF.
           &quot;appendFsync&quot;: &quot;A String&quot;, # Optional. fsync configuration.
@@ -776,6 +807,7 @@ Returns:
           &quot;connectionType&quot;: &quot;A String&quot;, # Output only. Type of the PSC connection.
           &quot;forwardingRule&quot;: &quot;A String&quot;, # Required. The URI of the consumer side forwarding rule. Example: projects/{projectNumOrId}/regions/us-east1/forwardingRules/{resourceId}.
           &quot;network&quot;: &quot;A String&quot;, # Required. The consumer network where the IP address resides, in the form of projects/{project_id}/global/networks/{network_id}.
+          &quot;port&quot;: 42, # Output only. port will only be set for Primary/Reader or Discovery endpoint.
           &quot;projectId&quot;: &quot;A String&quot;, # Optional. Project ID of the consumer project where the forwarding rule is created in.
           &quot;pscConnectionId&quot;: &quot;A String&quot;, # Required. The PSC connection id of the forwarding rule connected to the service attachment.
           &quot;pscConnectionStatus&quot;: &quot;A String&quot;, # Output only. The status of the PSC connection. Please note that this value is updated periodically. To get the latest status of a PSC connection, follow https://cloud.google.com/vpc/docs/configure-private-service-connect-services#endpoint-details.
@@ -792,11 +824,15 @@ Returns:
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;replicaCount&quot;: 42, # Optional. The number of replica nodes per shard.
+      &quot;satisfiesPzi&quot;: True or False, # Optional. Output only. Reserved for future use.
+      &quot;satisfiesPzs&quot;: True or False, # Optional. Output only. Reserved for future use.
       &quot;shardCount&quot;: 42, # Optional. Number of shards for the Redis cluster.
+      &quot;simulateMaintenanceEvent&quot;: True or False, # Optional. Input only. Simulate a maintenance event.
       &quot;sizeGb&quot;: 42, # Output only. Redis memory size in GB for the entire cluster rounded up to the next integer.
       &quot;state&quot;: &quot;A String&quot;, # Output only. The current state of this cluster. Can be CREATING, READY, UPDATING, DELETING and SUSPENDED
       &quot;stateInfo&quot;: { # Represents additional information about the state of the cluster. # Output only. Additional information about the current state of the cluster.
         &quot;updateInfo&quot;: { # Represents information about an updating cluster. # Describes ongoing update on the cluster when cluster state is UPDATING.
+          &quot;targetNodeType&quot;: &quot;A String&quot;, # Target node type for redis cluster.
           &quot;targetReplicaCount&quot;: 42, # Target number of replica nodes per shard.
           &quot;targetShardCount&quot;: 42, # Target number of shards for redis cluster
         },
@@ -840,6 +876,8 @@ Args:
     The object takes the form of:
 
 { # A cluster instance.
+  &quot;allowFewerZonesDeployment&quot;: True or False, # Optional. Immutable. Deprecated, do not use.
+  &quot;asyncClusterEndpointsDeletionEnabled&quot;: True or False, # Optional. If true, cluster endpoints that are created and registered by customers can be deleted asynchronously. That is, such a cluster endpoint can be de-registered before the forwarding rules in the cluster endpoint are deleted.
   &quot;authorizationMode&quot;: &quot;A String&quot;, # Optional. The authorization mode of the Redis cluster. If not provided, auth feature is disabled for the cluster.
   &quot;automatedBackupConfig&quot;: { # The automated backup config for a cluster. # Optional. The automated backup config for the cluster.
     &quot;automatedBackupMode&quot;: &quot;A String&quot;, # Optional. The automated backup mode. If the mode is disabled, the other fields will be ignored.
@@ -854,9 +892,9 @@ Args:
     &quot;retention&quot;: &quot;A String&quot;, # Optional. How long to keep automated backups before the backups are deleted. The value should be between 1 day and 365 days. If not specified, the default value is 35 days.
   },
   &quot;backupCollection&quot;: &quot;A String&quot;, # Optional. Output only. The backup collection full resource name. Example: projects/{project}/locations/{location}/backupCollections/{collection}
-  &quot;clusterEndpoints&quot;: [ # Optional. A list of cluster enpoints.
+  &quot;clusterEndpoints&quot;: [ # Optional. A list of cluster endpoints.
     { # ClusterEndpoint consists of PSC connections that are created as a group in each VPC network for accessing the cluster. In each group, there shall be one connection for each service attachment in the cluster.
-      &quot;connections&quot;: [ # A group of PSC connections. They are created in the same VPC network, one for each service attachment in the cluster.
+      &quot;connections&quot;: [ # Required. A group of PSC connections. They are created in the same VPC network, one for each service attachment in the cluster.
         { # Detailed information of each PSC connection.
           &quot;pscAutoConnection&quot;: { # Details of consumer resources in a PSC connection that is created through Service Connectivity Automation. # Detailed information of a PSC connection that is created through service connectivity automation.
             &quot;address&quot;: &quot;A String&quot;, # Output only. The IP allocated on the consumer network for the PSC forwarding rule.
@@ -873,6 +911,7 @@ Args:
             &quot;connectionType&quot;: &quot;A String&quot;, # Output only. Type of the PSC connection.
             &quot;forwardingRule&quot;: &quot;A String&quot;, # Required. The URI of the consumer side forwarding rule. Example: projects/{projectNumOrId}/regions/us-east1/forwardingRules/{resourceId}.
             &quot;network&quot;: &quot;A String&quot;, # Required. The consumer network where the IP address resides, in the form of projects/{project_id}/global/networks/{network_id}.
+            &quot;port&quot;: 42, # Output only. port will only be set for Primary/Reader or Discovery endpoint.
             &quot;projectId&quot;: &quot;A String&quot;, # Optional. Project ID of the consumer project where the forwarding rule is created in.
             &quot;pscConnectionId&quot;: &quot;A String&quot;, # Required. The PSC connection id of the forwarding rule connected to the service attachment.
             &quot;pscConnectionStatus&quot;: &quot;A String&quot;, # Output only. The status of the PSC connection. Please note that this value is updated periodically. To get the latest status of a PSC connection, follow https://cloud.google.com/vpc/docs/configure-private-service-connect-services#endpoint-details.
@@ -884,26 +923,26 @@ Args:
   ],
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The timestamp associated with the cluster creation request.
   &quot;crossClusterReplicationConfig&quot;: { # Cross cluster replication config. # Optional. Cross cluster replication config.
-    &quot;clusterRole&quot;: &quot;A String&quot;, # The role of the cluster in cross cluster replication.
+    &quot;clusterRole&quot;: &quot;A String&quot;, # Output only. The role of the cluster in cross cluster replication.
     &quot;membership&quot;: { # An output only view of all the member clusters participating in the cross cluster replication. # Output only. An output only view of all the member clusters participating in the cross cluster replication. This view will be provided by every member cluster irrespective of its cluster role(primary or secondary). A primary cluster can provide information about all the secondary clusters replicating from it. However, a secondary cluster only knows about the primary cluster from which it is replicating. However, for scenarios, where the primary cluster is unavailable(e.g. regional outage), a GetCluster request can be sent to any other member cluster and this field will list all the member clusters participating in cross cluster replication.
       &quot;primaryCluster&quot;: { # Details of the remote cluster associated with this cluster in a cross cluster replication setup. # Output only. The primary cluster that acts as the source of replication for the secondary clusters.
-        &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+        &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
         &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
       },
       &quot;secondaryClusters&quot;: [ # Output only. The list of secondary clusters replicating from the primary cluster.
         { # Details of the remote cluster associated with this cluster in a cross cluster replication setup.
-          &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+          &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
           &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
         },
       ],
     },
     &quot;primaryCluster&quot;: { # Details of the remote cluster associated with this cluster in a cross cluster replication setup. # Details of the primary cluster that is used as the replication source for this secondary cluster. This field is only set for a secondary cluster.
-      &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+      &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
       &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
     },
     &quot;secondaryClusters&quot;: [ # List of secondary clusters that are replicating from this primary cluster. This field is only set for a primary cluster.
       { # Details of the remote cluster associated with this cluster in a cross cluster replication setup.
-        &quot;cluster&quot;: &quot;A String&quot;, # The full resource path of the remote cluster in the format: projects//locations//clusters/
+        &quot;cluster&quot;: &quot;A String&quot;, # Output only. The full resource path of the remote cluster in the format: projects//locations//clusters/
         &quot;uid&quot;: &quot;A String&quot;, # Output only. The unique identifier of the remote cluster.
       },
     ],
@@ -928,18 +967,21 @@ Args:
     &quot;lastUpdateTime&quot;: &quot;A String&quot;, # Output only. The most recent time when the encryption info was updated.
   },
   &quot;gcsSource&quot;: { # Backups stored in Cloud Storage buckets. The Cloud Storage buckets need to be the same region as the clusters. # Optional. Backups stored in Cloud Storage buckets. The Cloud Storage buckets need to be the same region as the clusters. Read permission is required to import from the provided Cloud Storage objects.
-    &quot;uris&quot;: [ # Optional. URIs of the GCS objects to import. Example: gs://bucket1/object1, gs://bucket2/folder2/object2
+    &quot;uris&quot;: [ # Optional. URIs of the Cloud Storage objects to import. Example: gs://bucket1/object1, gs://bucket2/folder2/object2
       &quot;A String&quot;,
     ],
   },
   &quot;kmsKey&quot;: &quot;A String&quot;, # Optional. The KMS key used to encrypt the at-rest data of the cluster.
+  &quot;labels&quot;: { # Optional. Labels to represent user-provided metadata.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
   &quot;maintenancePolicy&quot;: { # Maintenance policy per cluster. # Optional. ClusterMaintenancePolicy determines when to allow or deny updates.
     &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time when the policy was created i.e. Maintenance Window or Deny Period was assigned.
     &quot;updateTime&quot;: &quot;A String&quot;, # Output only. The time when the policy was updated i.e. Maintenance Window or Deny Period was updated.
     &quot;weeklyMaintenanceWindow&quot;: [ # Optional. Maintenance window that is applied to resources covered by this policy. Minimum 1. For the current version, the maximum number of weekly_maintenance_window is expected to be one.
       { # Time window specified for weekly operations.
-        &quot;day&quot;: &quot;A String&quot;, # Allows to define schedule that runs specified day of the week.
-        &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Start time of the window in UTC.
+        &quot;day&quot;: &quot;A String&quot;, # Optional. Allows to define schedule that runs specified day of the week.
+        &quot;startTime&quot;: { # Represents a time of day. The date and time zone are either not significant or are specified elsewhere. An API may choose to allow leap seconds. Related types are google.type.Date and `google.protobuf.Timestamp`. # Optional. Start time of the window in UTC.
           &quot;hours&quot;: 42, # Hours of a day in 24 hour format. Must be greater than or equal to 0 and typically must be less than or equal to 23. An API may choose to allow the value &quot;24:00:00&quot; for scenarios like business closing time.
           &quot;minutes&quot;: 42, # Minutes of an hour. Must be greater than or equal to 0 and less than or equal to 59.
           &quot;nanos&quot;: 42, # Fractions of seconds, in nanoseconds. Must be greater than or equal to 0 and less than or equal to 999,999,999.
@@ -948,7 +990,7 @@ Args:
       },
     ],
   },
-  &quot;maintenanceSchedule&quot;: { # Upcoming maitenance schedule. # Output only. ClusterMaintenanceSchedule Output only Published maintenance schedule.
+  &quot;maintenanceSchedule&quot;: { # Upcoming maintenance schedule. # Output only. ClusterMaintenanceSchedule Output only Published maintenance schedule.
     &quot;endTime&quot;: &quot;A String&quot;, # Output only. The end time of any upcoming scheduled maintenance for this instance.
     &quot;startTime&quot;: &quot;A String&quot;, # Output only. The start time of any upcoming scheduled maintenance for this instance.
   },
@@ -957,6 +999,7 @@ Args:
   },
   &quot;name&quot;: &quot;A String&quot;, # Required. Identifier. Unique name of the resource in this scope including project and location using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}`
   &quot;nodeType&quot;: &quot;A String&quot;, # Optional. The type of a redis node in the cluster. NodeType determines the underlying machine-type of a redis node.
+  &quot;ondemandMaintenance&quot;: True or False, # Optional. Input only. Ondemand maintenance for the cluster. This field can be used to trigger ondemand critical update on the cluster.
   &quot;persistenceConfig&quot;: { # Configuration of the persistence functionality. # Optional. Persistence config (RDB, AOF) for the cluster.
     &quot;aofConfig&quot;: { # Configuration of the AOF based persistence. # Optional. AOF configuration. This field will be ignored if mode is not AOF.
       &quot;appendFsync&quot;: &quot;A String&quot;, # Optional. fsync configuration.
@@ -979,6 +1022,7 @@ Args:
       &quot;connectionType&quot;: &quot;A String&quot;, # Output only. Type of the PSC connection.
       &quot;forwardingRule&quot;: &quot;A String&quot;, # Required. The URI of the consumer side forwarding rule. Example: projects/{projectNumOrId}/regions/us-east1/forwardingRules/{resourceId}.
       &quot;network&quot;: &quot;A String&quot;, # Required. The consumer network where the IP address resides, in the form of projects/{project_id}/global/networks/{network_id}.
+      &quot;port&quot;: 42, # Output only. port will only be set for Primary/Reader or Discovery endpoint.
       &quot;projectId&quot;: &quot;A String&quot;, # Optional. Project ID of the consumer project where the forwarding rule is created in.
       &quot;pscConnectionId&quot;: &quot;A String&quot;, # Required. The PSC connection id of the forwarding rule connected to the service attachment.
       &quot;pscConnectionStatus&quot;: &quot;A String&quot;, # Output only. The status of the PSC connection. Please note that this value is updated periodically. To get the latest status of a PSC connection, follow https://cloud.google.com/vpc/docs/configure-private-service-connect-services#endpoint-details.
@@ -995,11 +1039,15 @@ Args:
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;replicaCount&quot;: 42, # Optional. The number of replica nodes per shard.
+  &quot;satisfiesPzi&quot;: True or False, # Optional. Output only. Reserved for future use.
+  &quot;satisfiesPzs&quot;: True or False, # Optional. Output only. Reserved for future use.
   &quot;shardCount&quot;: 42, # Optional. Number of shards for the Redis cluster.
+  &quot;simulateMaintenanceEvent&quot;: True or False, # Optional. Input only. Simulate a maintenance event.
   &quot;sizeGb&quot;: 42, # Output only. Redis memory size in GB for the entire cluster rounded up to the next integer.
   &quot;state&quot;: &quot;A String&quot;, # Output only. The current state of this cluster. Can be CREATING, READY, UPDATING, DELETING and SUSPENDED
   &quot;stateInfo&quot;: { # Represents additional information about the state of the cluster. # Output only. Additional information about the current state of the cluster.
     &quot;updateInfo&quot;: { # Represents information about an updating cluster. # Describes ongoing update on the cluster when cluster state is UPDATING.
+      &quot;targetNodeType&quot;: &quot;A String&quot;, # Target node type for redis cluster.
       &quot;targetReplicaCount&quot;: 42, # Target number of replica nodes per shard.
       &quot;targetShardCount&quot;: 42, # Target number of shards for redis cluster
     },
@@ -1012,8 +1060,8 @@ Args:
   },
 }
 
-  requestId: string, Idempotent request UUID.
-  updateMask: string, Required. Mask of fields to update. At least one path must be supplied in this field. The elements of the repeated paths field may only include these fields from Cluster: * `size_gb` * `replica_count`
+  requestId: string, Optional. Idempotent request UUID.
+  updateMask: string, Required. Mask of fields to update. At least one path must be supplied in this field. The elements of the repeated paths field may only include these fields from Cluster: * `size_gb` * `replica_count` * `cluster_endpoints`
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -1048,7 +1096,7 @@ Returns:
   <pre>Reschedules upcoming maintenance event.
 
 Args:
-  name: string, Required. Redis Cluster instance resource name using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}` where `location_id` refers to a GCP region. (required)
+  name: string, Required. Redis Cluster instance resource name using the form: `projects/{project_id}/locations/{location_id}/clusters/{cluster_id}` where `location_id` refers to a Google Cloud region. (required)
   body: object, The request body.
     The object takes the form of:
 

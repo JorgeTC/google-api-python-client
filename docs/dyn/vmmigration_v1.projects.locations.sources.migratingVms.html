@@ -99,6 +99,9 @@ h1, h2, h3 {
   <code><a href="#delete">delete(name, x__xgafv=None)</a></code></p>
 <p class="firstline">Deletes a single MigratingVm.</p>
 <p class="toc_element">
+  <code><a href="#extendMigration">extendMigration(migratingVm, body=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Extend the migrating VM time to live.</p>
+<p class="toc_element">
   <code><a href="#finalizeMigration">finalizeMigration(migratingVm, body=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Marks a migration as completed, deleting migration resources that are no longer being used. Only applicable after cutover is done.</p>
 <p class="toc_element">
@@ -241,7 +244,7 @@ Args:
         { # NetworkInterface represents a NIC of a VM.
           &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
           &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-          &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+          &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
           &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
           &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
         },
@@ -256,6 +259,12 @@ Args:
     &quot;zone&quot;: &quot;A String&quot;, # The zone in which to create the Persistent Disks.
   },
   &quot;computeEngineTargetDefaults&quot;: { # ComputeEngineTargetDefaults is a collection of details for creating a VM in a target Compute Engine project. # Details of the target VM in Compute Engine.
+    &quot;adaptationModifiers&quot;: [ # Optional. AdaptationModifiers are the set of modifiers used during OS adaptation.
+      { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+        &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+        &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+      },
+    ],
     &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
       &quot;A String&quot;,
     ],
@@ -279,6 +288,9 @@ Args:
       &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
       &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
     },
+    &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+      &quot;A String&quot;,
+    ],
     &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
     &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled. This can be set to true only if the VM boot option is EFI, and vTPM is enabled.
     &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled. This can be set to true only if the VM boot option is EFI.
@@ -299,7 +311,7 @@ Args:
       { # NetworkInterface represents a NIC of a VM.
         &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
         &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-        &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+        &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
         &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
         &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
       },
@@ -308,7 +320,7 @@ Args:
       &quot;A String&quot;,
     ],
     &quot;secureBoot&quot;: True or False, # Defines whether the instance has Secure Boot enabled. This can be set to true only if the VM boot option is EFI.
-    &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account to associate the VM with.
+    &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. The service account to associate the VM with.
     &quot;targetProject&quot;: &quot;A String&quot;, # The full path of the resource of type TargetProject which represents the Compute Engine project in which to create this VM.
     &quot;vmName&quot;: &quot;A String&quot;, # The name of the VM to create.
     &quot;zone&quot;: &quot;A String&quot;, # The zone in which to create the VM.
@@ -381,6 +393,11 @@ Args:
       },
     ],
     &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;expiration&quot;: { # Expiration holds information about the expiration of a MigratingVm. # Output only. Provides details about the expiration state of the migrating VM.
+    &quot;expireTime&quot;: &quot;A String&quot;, # Output only. Timestamp of when this resource is considered expired.
+    &quot;extendable&quot;: True or False, # Output only. Describes whether the expiration can be extended.
+    &quot;extensionCount&quot;: 42, # Output only. The number of times expiration was extended.
   },
   &quot;group&quot;: &quot;A String&quot;, # Output only. The group this migrating vm is included in, if any. The group is represented by the full path of the appropriate Group resource.
   &quot;labels&quot;: { # The labels of the migrating VM.
@@ -464,6 +481,12 @@ Args:
         },
       },
       &quot;computeEngineTargetDetails&quot;: { # ComputeEngineTargetDetails is a collection of details for creating a VM in a target Compute Engine project. # Output only. Details of the target VM in Compute Engine.
+        &quot;adaptationModifiers&quot;: [ # Optional. Modifiers to be used as configuration of the OS adaptation process.
+          { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+            &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+            &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+          },
+        ],
         &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
           &quot;A String&quot;,
         ],
@@ -487,6 +510,9 @@ Args:
           &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
           &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
         },
+        &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+          &quot;A String&quot;,
+        ],
         &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
         &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
         &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
@@ -507,7 +533,7 @@ Args:
           { # NetworkInterface represents a NIC of a VM.
             &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
             &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-            &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+            &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
             &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
             &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
           },
@@ -550,7 +576,7 @@ Args:
     },
   ],
   &quot;recentCutoverJobs&quot;: [ # Output only. The recent cutover jobs performed on the migrating VM. This field holds the vm&#x27;s last completed cutover job and the vm&#x27;s running cutover job, if one exists. Note: To have this field populated you need to explicitly request it via the &quot;view&quot; parameter of the Get/List request.
-    { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and clonning the VM using the replicated snapshot.
+    { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and cloning the VM using the replicated snapshot.
       &quot;computeEngineDisksTargetDetails&quot;: { # ComputeEngineDisksTargetDetails is a collection of created Persistent Disks details. # Output only. Details of the target Persistent Disks in Compute Engine.
         &quot;disks&quot;: [ # The details of each created Persistent Disk.
           { # Details of a created Persistent Disk.
@@ -565,6 +591,12 @@ Args:
         },
       },
       &quot;computeEngineTargetDetails&quot;: { # ComputeEngineTargetDetails is a collection of details for creating a VM in a target Compute Engine project. # Output only. Details of the target VM in Compute Engine.
+        &quot;adaptationModifiers&quot;: [ # Optional. Modifiers to be used as configuration of the OS adaptation process.
+          { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+            &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+            &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+          },
+        ],
         &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
           &quot;A String&quot;,
         ],
@@ -588,6 +620,9 @@ Args:
           &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
           &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
         },
+        &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+          &quot;A String&quot;,
+        ],
         &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
         &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
         &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
@@ -608,7 +643,7 @@ Args:
           { # NetworkInterface represents a NIC of a VM.
             &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
             &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-            &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+            &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
             &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
             &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
           },
@@ -851,6 +886,47 @@ Returns:
 </div>
 
 <div class="method">
+    <code class="details" id="extendMigration">extendMigration(migratingVm, body=None, x__xgafv=None)</code>
+  <pre>Extend the migrating VM time to live.
+
+Args:
+  migratingVm: string, Required. The name of the MigratingVm. (required)
+  body: object, The request body.
+    The object takes the form of:
+
+{ # Request message for &#x27;ExtendMigrationRequest&#x27; request.
+}
+
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # This resource represents a long-running operation that is the result of a network API call.
+  &quot;done&quot;: True or False, # If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available.
+  &quot;error&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # The error result of the operation in case of failure or cancellation.
+    &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
+    &quot;details&quot;: [ # A list of messages that carry the error details. There is a common set of message types for APIs to use.
+      {
+        &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+      },
+    ],
+    &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;metadata&quot;: { # Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+  &quot;name&quot;: &quot;A String&quot;, # The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`.
+  &quot;response&quot;: { # The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should have the type `XxxResponse`, where `Xxx` is the original method name. For example, if the original method name is `TakeSnapshot()`, the inferred response type is `TakeSnapshotResponse`.
+    &quot;a_key&quot;: &quot;&quot;, # Properties of the object. Contains field @type with type URL.
+  },
+}</pre>
+</div>
+
+<div class="method">
     <code class="details" id="finalizeMigration">finalizeMigration(migratingVm, body=None, x__xgafv=None)</code>
   <pre>Marks a migration as completed, deleting migration resources that are no longer being used. Only applicable after cutover is done.
 
@@ -1014,7 +1090,7 @@ Returns:
         { # NetworkInterface represents a NIC of a VM.
           &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
           &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-          &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+          &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
           &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
           &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
         },
@@ -1029,6 +1105,12 @@ Returns:
     &quot;zone&quot;: &quot;A String&quot;, # The zone in which to create the Persistent Disks.
   },
   &quot;computeEngineTargetDefaults&quot;: { # ComputeEngineTargetDefaults is a collection of details for creating a VM in a target Compute Engine project. # Details of the target VM in Compute Engine.
+    &quot;adaptationModifiers&quot;: [ # Optional. AdaptationModifiers are the set of modifiers used during OS adaptation.
+      { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+        &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+        &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+      },
+    ],
     &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
       &quot;A String&quot;,
     ],
@@ -1052,6 +1134,9 @@ Returns:
       &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
       &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
     },
+    &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+      &quot;A String&quot;,
+    ],
     &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
     &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled. This can be set to true only if the VM boot option is EFI, and vTPM is enabled.
     &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled. This can be set to true only if the VM boot option is EFI.
@@ -1072,7 +1157,7 @@ Returns:
       { # NetworkInterface represents a NIC of a VM.
         &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
         &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-        &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+        &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
         &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
         &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
       },
@@ -1081,7 +1166,7 @@ Returns:
       &quot;A String&quot;,
     ],
     &quot;secureBoot&quot;: True or False, # Defines whether the instance has Secure Boot enabled. This can be set to true only if the VM boot option is EFI.
-    &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account to associate the VM with.
+    &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. The service account to associate the VM with.
     &quot;targetProject&quot;: &quot;A String&quot;, # The full path of the resource of type TargetProject which represents the Compute Engine project in which to create this VM.
     &quot;vmName&quot;: &quot;A String&quot;, # The name of the VM to create.
     &quot;zone&quot;: &quot;A String&quot;, # The zone in which to create the VM.
@@ -1154,6 +1239,11 @@ Returns:
       },
     ],
     &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;expiration&quot;: { # Expiration holds information about the expiration of a MigratingVm. # Output only. Provides details about the expiration state of the migrating VM.
+    &quot;expireTime&quot;: &quot;A String&quot;, # Output only. Timestamp of when this resource is considered expired.
+    &quot;extendable&quot;: True or False, # Output only. Describes whether the expiration can be extended.
+    &quot;extensionCount&quot;: 42, # Output only. The number of times expiration was extended.
   },
   &quot;group&quot;: &quot;A String&quot;, # Output only. The group this migrating vm is included in, if any. The group is represented by the full path of the appropriate Group resource.
   &quot;labels&quot;: { # The labels of the migrating VM.
@@ -1237,6 +1327,12 @@ Returns:
         },
       },
       &quot;computeEngineTargetDetails&quot;: { # ComputeEngineTargetDetails is a collection of details for creating a VM in a target Compute Engine project. # Output only. Details of the target VM in Compute Engine.
+        &quot;adaptationModifiers&quot;: [ # Optional. Modifiers to be used as configuration of the OS adaptation process.
+          { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+            &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+            &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+          },
+        ],
         &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
           &quot;A String&quot;,
         ],
@@ -1260,6 +1356,9 @@ Returns:
           &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
           &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
         },
+        &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+          &quot;A String&quot;,
+        ],
         &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
         &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
         &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
@@ -1280,7 +1379,7 @@ Returns:
           { # NetworkInterface represents a NIC of a VM.
             &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
             &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-            &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+            &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
             &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
             &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
           },
@@ -1323,7 +1422,7 @@ Returns:
     },
   ],
   &quot;recentCutoverJobs&quot;: [ # Output only. The recent cutover jobs performed on the migrating VM. This field holds the vm&#x27;s last completed cutover job and the vm&#x27;s running cutover job, if one exists. Note: To have this field populated you need to explicitly request it via the &quot;view&quot; parameter of the Get/List request.
-    { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and clonning the VM using the replicated snapshot.
+    { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and cloning the VM using the replicated snapshot.
       &quot;computeEngineDisksTargetDetails&quot;: { # ComputeEngineDisksTargetDetails is a collection of created Persistent Disks details. # Output only. Details of the target Persistent Disks in Compute Engine.
         &quot;disks&quot;: [ # The details of each created Persistent Disk.
           { # Details of a created Persistent Disk.
@@ -1338,6 +1437,12 @@ Returns:
         },
       },
       &quot;computeEngineTargetDetails&quot;: { # ComputeEngineTargetDetails is a collection of details for creating a VM in a target Compute Engine project. # Output only. Details of the target VM in Compute Engine.
+        &quot;adaptationModifiers&quot;: [ # Optional. Modifiers to be used as configuration of the OS adaptation process.
+          { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+            &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+            &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+          },
+        ],
         &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
           &quot;A String&quot;,
         ],
@@ -1361,6 +1466,9 @@ Returns:
           &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
           &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
         },
+        &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+          &quot;A String&quot;,
+        ],
         &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
         &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
         &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
@@ -1381,7 +1489,7 @@ Returns:
           { # NetworkInterface represents a NIC of a VM.
             &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
             &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-            &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+            &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
             &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
             &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
           },
@@ -1687,7 +1795,7 @@ Returns:
             { # NetworkInterface represents a NIC of a VM.
               &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
               &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-              &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+              &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
               &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
               &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
             },
@@ -1702,6 +1810,12 @@ Returns:
         &quot;zone&quot;: &quot;A String&quot;, # The zone in which to create the Persistent Disks.
       },
       &quot;computeEngineTargetDefaults&quot;: { # ComputeEngineTargetDefaults is a collection of details for creating a VM in a target Compute Engine project. # Details of the target VM in Compute Engine.
+        &quot;adaptationModifiers&quot;: [ # Optional. AdaptationModifiers are the set of modifiers used during OS adaptation.
+          { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+            &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+            &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+          },
+        ],
         &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
           &quot;A String&quot;,
         ],
@@ -1725,6 +1839,9 @@ Returns:
           &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
           &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
         },
+        &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+          &quot;A String&quot;,
+        ],
         &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
         &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled. This can be set to true only if the VM boot option is EFI, and vTPM is enabled.
         &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled. This can be set to true only if the VM boot option is EFI.
@@ -1745,7 +1862,7 @@ Returns:
           { # NetworkInterface represents a NIC of a VM.
             &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
             &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-            &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+            &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
             &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
             &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
           },
@@ -1754,7 +1871,7 @@ Returns:
           &quot;A String&quot;,
         ],
         &quot;secureBoot&quot;: True or False, # Defines whether the instance has Secure Boot enabled. This can be set to true only if the VM boot option is EFI.
-        &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account to associate the VM with.
+        &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. The service account to associate the VM with.
         &quot;targetProject&quot;: &quot;A String&quot;, # The full path of the resource of type TargetProject which represents the Compute Engine project in which to create this VM.
         &quot;vmName&quot;: &quot;A String&quot;, # The name of the VM to create.
         &quot;zone&quot;: &quot;A String&quot;, # The zone in which to create the VM.
@@ -1827,6 +1944,11 @@ Returns:
           },
         ],
         &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+      },
+      &quot;expiration&quot;: { # Expiration holds information about the expiration of a MigratingVm. # Output only. Provides details about the expiration state of the migrating VM.
+        &quot;expireTime&quot;: &quot;A String&quot;, # Output only. Timestamp of when this resource is considered expired.
+        &quot;extendable&quot;: True or False, # Output only. Describes whether the expiration can be extended.
+        &quot;extensionCount&quot;: 42, # Output only. The number of times expiration was extended.
       },
       &quot;group&quot;: &quot;A String&quot;, # Output only. The group this migrating vm is included in, if any. The group is represented by the full path of the appropriate Group resource.
       &quot;labels&quot;: { # The labels of the migrating VM.
@@ -1910,6 +2032,12 @@ Returns:
             },
           },
           &quot;computeEngineTargetDetails&quot;: { # ComputeEngineTargetDetails is a collection of details for creating a VM in a target Compute Engine project. # Output only. Details of the target VM in Compute Engine.
+            &quot;adaptationModifiers&quot;: [ # Optional. Modifiers to be used as configuration of the OS adaptation process.
+              { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+                &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+                &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+              },
+            ],
             &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
               &quot;A String&quot;,
             ],
@@ -1933,6 +2061,9 @@ Returns:
               &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
               &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
             },
+            &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+              &quot;A String&quot;,
+            ],
             &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
             &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
             &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
@@ -1953,7 +2084,7 @@ Returns:
               { # NetworkInterface represents a NIC of a VM.
                 &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
                 &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-                &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+                &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
                 &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
                 &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
               },
@@ -1996,7 +2127,7 @@ Returns:
         },
       ],
       &quot;recentCutoverJobs&quot;: [ # Output only. The recent cutover jobs performed on the migrating VM. This field holds the vm&#x27;s last completed cutover job and the vm&#x27;s running cutover job, if one exists. Note: To have this field populated you need to explicitly request it via the &quot;view&quot; parameter of the Get/List request.
-        { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and clonning the VM using the replicated snapshot.
+        { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and cloning the VM using the replicated snapshot.
           &quot;computeEngineDisksTargetDetails&quot;: { # ComputeEngineDisksTargetDetails is a collection of created Persistent Disks details. # Output only. Details of the target Persistent Disks in Compute Engine.
             &quot;disks&quot;: [ # The details of each created Persistent Disk.
               { # Details of a created Persistent Disk.
@@ -2011,6 +2142,12 @@ Returns:
             },
           },
           &quot;computeEngineTargetDetails&quot;: { # ComputeEngineTargetDetails is a collection of details for creating a VM in a target Compute Engine project. # Output only. Details of the target VM in Compute Engine.
+            &quot;adaptationModifiers&quot;: [ # Optional. Modifiers to be used as configuration of the OS adaptation process.
+              { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+                &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+                &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+              },
+            ],
             &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
               &quot;A String&quot;,
             ],
@@ -2034,6 +2171,9 @@ Returns:
               &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
               &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
             },
+            &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+              &quot;A String&quot;,
+            ],
             &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
             &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
             &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
@@ -2054,7 +2194,7 @@ Returns:
               { # NetworkInterface represents a NIC of a VM.
                 &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
                 &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-                &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+                &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
                 &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
                 &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
               },
@@ -2364,7 +2504,7 @@ Args:
         { # NetworkInterface represents a NIC of a VM.
           &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
           &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-          &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+          &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
           &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
           &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
         },
@@ -2379,6 +2519,12 @@ Args:
     &quot;zone&quot;: &quot;A String&quot;, # The zone in which to create the Persistent Disks.
   },
   &quot;computeEngineTargetDefaults&quot;: { # ComputeEngineTargetDefaults is a collection of details for creating a VM in a target Compute Engine project. # Details of the target VM in Compute Engine.
+    &quot;adaptationModifiers&quot;: [ # Optional. AdaptationModifiers are the set of modifiers used during OS adaptation.
+      { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+        &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+        &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+      },
+    ],
     &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
       &quot;A String&quot;,
     ],
@@ -2402,6 +2548,9 @@ Args:
       &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
       &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
     },
+    &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+      &quot;A String&quot;,
+    ],
     &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
     &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled. This can be set to true only if the VM boot option is EFI, and vTPM is enabled.
     &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled. This can be set to true only if the VM boot option is EFI.
@@ -2422,7 +2571,7 @@ Args:
       { # NetworkInterface represents a NIC of a VM.
         &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
         &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-        &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+        &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
         &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
         &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
       },
@@ -2431,7 +2580,7 @@ Args:
       &quot;A String&quot;,
     ],
     &quot;secureBoot&quot;: True or False, # Defines whether the instance has Secure Boot enabled. This can be set to true only if the VM boot option is EFI.
-    &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account to associate the VM with.
+    &quot;serviceAccount&quot;: &quot;A String&quot;, # Optional. The service account to associate the VM with.
     &quot;targetProject&quot;: &quot;A String&quot;, # The full path of the resource of type TargetProject which represents the Compute Engine project in which to create this VM.
     &quot;vmName&quot;: &quot;A String&quot;, # The name of the VM to create.
     &quot;zone&quot;: &quot;A String&quot;, # The zone in which to create the VM.
@@ -2504,6 +2653,11 @@ Args:
       },
     ],
     &quot;message&quot;: &quot;A String&quot;, # A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client.
+  },
+  &quot;expiration&quot;: { # Expiration holds information about the expiration of a MigratingVm. # Output only. Provides details about the expiration state of the migrating VM.
+    &quot;expireTime&quot;: &quot;A String&quot;, # Output only. Timestamp of when this resource is considered expired.
+    &quot;extendable&quot;: True or False, # Output only. Describes whether the expiration can be extended.
+    &quot;extensionCount&quot;: 42, # Output only. The number of times expiration was extended.
   },
   &quot;group&quot;: &quot;A String&quot;, # Output only. The group this migrating vm is included in, if any. The group is represented by the full path of the appropriate Group resource.
   &quot;labels&quot;: { # The labels of the migrating VM.
@@ -2587,6 +2741,12 @@ Args:
         },
       },
       &quot;computeEngineTargetDetails&quot;: { # ComputeEngineTargetDetails is a collection of details for creating a VM in a target Compute Engine project. # Output only. Details of the target VM in Compute Engine.
+        &quot;adaptationModifiers&quot;: [ # Optional. Modifiers to be used as configuration of the OS adaptation process.
+          { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+            &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+            &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+          },
+        ],
         &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
           &quot;A String&quot;,
         ],
@@ -2610,6 +2770,9 @@ Args:
           &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
           &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
         },
+        &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+          &quot;A String&quot;,
+        ],
         &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
         &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
         &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
@@ -2630,7 +2793,7 @@ Args:
           { # NetworkInterface represents a NIC of a VM.
             &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
             &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-            &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+            &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
             &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
             &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
           },
@@ -2673,7 +2836,7 @@ Args:
     },
   ],
   &quot;recentCutoverJobs&quot;: [ # Output only. The recent cutover jobs performed on the migrating VM. This field holds the vm&#x27;s last completed cutover job and the vm&#x27;s running cutover job, if one exists. Note: To have this field populated you need to explicitly request it via the &quot;view&quot; parameter of the Get/List request.
-    { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and clonning the VM using the replicated snapshot.
+    { # CutoverJob message describes a cutover of a migrating VM. The CutoverJob is the operation of shutting down the VM, creating a snapshot and cloning the VM using the replicated snapshot.
       &quot;computeEngineDisksTargetDetails&quot;: { # ComputeEngineDisksTargetDetails is a collection of created Persistent Disks details. # Output only. Details of the target Persistent Disks in Compute Engine.
         &quot;disks&quot;: [ # The details of each created Persistent Disk.
           { # Details of a created Persistent Disk.
@@ -2688,6 +2851,12 @@ Args:
         },
       },
       &quot;computeEngineTargetDetails&quot;: { # ComputeEngineTargetDetails is a collection of details for creating a VM in a target Compute Engine project. # Output only. Details of the target VM in Compute Engine.
+        &quot;adaptationModifiers&quot;: [ # Optional. Modifiers to be used as configuration of the OS adaptation process.
+          { # AdaptationModifier a modifier to be used for configuration of the OS adaptation process.
+            &quot;modifier&quot;: &quot;A String&quot;, # Optional. The modifier name.
+            &quot;value&quot;: &quot;A String&quot;, # Optional. The value of the modifier. The actual value depends on the modifier and can also be empty.
+          },
+        ],
         &quot;additionalLicenses&quot;: [ # Additional licenses to assign to the VM.
           &quot;A String&quot;,
         ],
@@ -2711,6 +2880,9 @@ Args:
           &quot;onHostMaintenance&quot;: &quot;A String&quot;, # How the instance should behave when the host machine undergoes maintenance that may temporarily impact instance performance.
           &quot;restartType&quot;: &quot;A String&quot;, # Whether the Instance should be automatically restarted whenever it is terminated by Compute Engine (not terminated by user). This configuration is identical to `automaticRestart` field in Compute Engine create instance under scheduling. It was changed to an enum (instead of a boolean) to match the default value in Compute Engine which is automatic restart.
         },
+        &quot;diskReplicaZones&quot;: [ # Optional. Additional replica zones of the target regional disks. If this list is not empty a regional disk will be created. The first supported zone would be the one stated in the zone field. The rest are taken from this list. Please refer to the [regional disk creation API](https://cloud.google.com/compute/docs/regions-zones/global-regional-zonal-resources) for further details about regional vs zonal disks. If not specified, a zonal disk will be created in the same zone the VM is created.
+          &quot;A String&quot;,
+        ],
         &quot;diskType&quot;: &quot;A String&quot;, # The disk type to use in the VM.
         &quot;enableIntegrityMonitoring&quot;: True or False, # Optional. Defines whether the instance has integrity monitoring enabled.
         &quot;enableVtpm&quot;: True or False, # Optional. Defines whether the instance has vTPM enabled.
@@ -2731,7 +2903,7 @@ Args:
           { # NetworkInterface represents a NIC of a VM.
             &quot;externalIp&quot;: &quot;A String&quot;, # Optional. The external IP to define in the NIC.
             &quot;internalIp&quot;: &quot;A String&quot;, # Optional. The internal IP to define in the NIC. The formats accepted are: `ephemeral` \ ipv4 address \ a named address resource full path.
-            &quot;network&quot;: &quot;A String&quot;, # The network to connect the NIC to.
+            &quot;network&quot;: &quot;A String&quot;, # Optional. The network to connect the NIC to.
             &quot;networkTier&quot;: &quot;A String&quot;, # Optional. The networking tier used for optimizing connectivity between instances and systems on the internet. Applies only for external ephemeral IP addresses. If left empty, will default to PREMIUM.
             &quot;subnetwork&quot;: &quot;A String&quot;, # Optional. The subnetwork to connect the NIC to.
           },

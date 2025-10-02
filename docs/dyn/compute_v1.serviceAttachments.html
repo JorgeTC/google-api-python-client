@@ -87,7 +87,7 @@ h1, h2, h3 {
   <code><a href="#delete">delete(project, region, serviceAttachment, requestId=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Deletes the specified ServiceAttachment in the given scope</p>
 <p class="toc_element">
-  <code><a href="#get">get(project, region, serviceAttachment, x__xgafv=None)</a></code></p>
+  <code><a href="#get">get(project, region, serviceAttachment, showNatIps=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Returns the specified ServiceAttachment resource in the given scope.</p>
 <p class="toc_element">
   <code><a href="#getIamPolicy">getIamPolicy(project, region, resource, optionsRequestedPolicyVersion=None, x__xgafv=None)</a></code></p>
@@ -142,15 +142,18 @@ Returns:
             { # [Output Only] A connection connected to this service attachment.
               &quot;consumerNetwork&quot;: &quot;A String&quot;, # The url of the consumer network.
               &quot;endpoint&quot;: &quot;A String&quot;, # The url of a connected endpoint.
+              &quot;natIps&quot;: [ # NAT IPs of the connected PSC endpoint and those of other endpoints propagated from it.
+                &quot;A String&quot;,
+              ],
               &quot;propagatedConnectionCount&quot;: 42, # The number of consumer Network Connectivity Center spokes that the connected Private Service Connect endpoint has propagated to.
               &quot;pscConnectionId&quot;: &quot;A String&quot;, # The PSC connection id of the connected endpoint.
               &quot;status&quot;: &quot;A String&quot;, # The status of a connected endpoint to this service attachment.
             },
           ],
           &quot;connectionPreference&quot;: &quot;A String&quot;, # The connection preference of service attachment. The value can be set to ACCEPT_AUTOMATIC. An ACCEPT_AUTOMATIC service attachment is one that always accepts the connection from consumer forwarding rules.
-          &quot;consumerAcceptLists&quot;: [ # Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks.
+          &quot;consumerAcceptLists&quot;: [ # Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks or only endpoints.
             {
-              &quot;connectionLimit&quot;: 42, # The value of the limit to set.
+              &quot;connectionLimit&quot;: 42, # The value of the limit to set. For endpoint_url, the limit should be no more than 1.
               &quot;networkUrl&quot;: &quot;A String&quot;, # The network URL for the network to set the limit for.
               &quot;projectIdOrNum&quot;: &quot;A String&quot;, # The project id or number for the project to set the limit for.
             },
@@ -167,6 +170,9 @@ Returns:
           &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a ServiceAttachment. An up-to-date fingerprint must be provided in order to patch/update the ServiceAttachment; otherwise, the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the ServiceAttachment.
           &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource type. The server generates this identifier.
           &quot;kind&quot;: &quot;compute#serviceAttachment&quot;, # [Output Only] Type of the resource. Always compute#serviceAttachment for service attachments.
+          &quot;metadata&quot;: { # Metadata of the service attachment.
+            &quot;a_key&quot;: &quot;A String&quot;,
+          },
           &quot;name&quot;: &quot;A String&quot;, # Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.
           &quot;natSubnets&quot;: [ # An array of URLs where each entry is the URL of a subnet provided by the service producer to use for NAT in this service attachment.
             &quot;A String&quot;,
@@ -359,13 +365,14 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="get">get(project, region, serviceAttachment, x__xgafv=None)</code>
+    <code class="details" id="get">get(project, region, serviceAttachment, showNatIps=None, x__xgafv=None)</code>
   <pre>Returns the specified ServiceAttachment resource in the given scope.
 
 Args:
   project: string, Project ID for this request. (required)
   region: string, Name of the region of this request. (required)
   serviceAttachment: string, Name of the ServiceAttachment resource to return. (required)
+  showNatIps: boolean, Indicates whether NAT IPs should be included in the response.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -379,15 +386,18 @@ Returns:
     { # [Output Only] A connection connected to this service attachment.
       &quot;consumerNetwork&quot;: &quot;A String&quot;, # The url of the consumer network.
       &quot;endpoint&quot;: &quot;A String&quot;, # The url of a connected endpoint.
+      &quot;natIps&quot;: [ # NAT IPs of the connected PSC endpoint and those of other endpoints propagated from it.
+        &quot;A String&quot;,
+      ],
       &quot;propagatedConnectionCount&quot;: 42, # The number of consumer Network Connectivity Center spokes that the connected Private Service Connect endpoint has propagated to.
       &quot;pscConnectionId&quot;: &quot;A String&quot;, # The PSC connection id of the connected endpoint.
       &quot;status&quot;: &quot;A String&quot;, # The status of a connected endpoint to this service attachment.
     },
   ],
   &quot;connectionPreference&quot;: &quot;A String&quot;, # The connection preference of service attachment. The value can be set to ACCEPT_AUTOMATIC. An ACCEPT_AUTOMATIC service attachment is one that always accepts the connection from consumer forwarding rules.
-  &quot;consumerAcceptLists&quot;: [ # Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks.
+  &quot;consumerAcceptLists&quot;: [ # Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks or only endpoints.
     {
-      &quot;connectionLimit&quot;: 42, # The value of the limit to set.
+      &quot;connectionLimit&quot;: 42, # The value of the limit to set. For endpoint_url, the limit should be no more than 1.
       &quot;networkUrl&quot;: &quot;A String&quot;, # The network URL for the network to set the limit for.
       &quot;projectIdOrNum&quot;: &quot;A String&quot;, # The project id or number for the project to set the limit for.
     },
@@ -404,6 +414,9 @@ Returns:
   &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a ServiceAttachment. An up-to-date fingerprint must be provided in order to patch/update the ServiceAttachment; otherwise, the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the ServiceAttachment.
   &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource type. The server generates this identifier.
   &quot;kind&quot;: &quot;compute#serviceAttachment&quot;, # [Output Only] Type of the resource. Always compute#serviceAttachment for service attachments.
+  &quot;metadata&quot;: { # Metadata of the service attachment.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
   &quot;name&quot;: &quot;A String&quot;, # Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.
   &quot;natSubnets&quot;: [ # An array of URLs where each entry is the URL of a subnet provided by the service producer to use for NAT in this service attachment.
     &quot;A String&quot;,
@@ -486,15 +499,18 @@ Args:
     { # [Output Only] A connection connected to this service attachment.
       &quot;consumerNetwork&quot;: &quot;A String&quot;, # The url of the consumer network.
       &quot;endpoint&quot;: &quot;A String&quot;, # The url of a connected endpoint.
+      &quot;natIps&quot;: [ # NAT IPs of the connected PSC endpoint and those of other endpoints propagated from it.
+        &quot;A String&quot;,
+      ],
       &quot;propagatedConnectionCount&quot;: 42, # The number of consumer Network Connectivity Center spokes that the connected Private Service Connect endpoint has propagated to.
       &quot;pscConnectionId&quot;: &quot;A String&quot;, # The PSC connection id of the connected endpoint.
       &quot;status&quot;: &quot;A String&quot;, # The status of a connected endpoint to this service attachment.
     },
   ],
   &quot;connectionPreference&quot;: &quot;A String&quot;, # The connection preference of service attachment. The value can be set to ACCEPT_AUTOMATIC. An ACCEPT_AUTOMATIC service attachment is one that always accepts the connection from consumer forwarding rules.
-  &quot;consumerAcceptLists&quot;: [ # Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks.
+  &quot;consumerAcceptLists&quot;: [ # Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks or only endpoints.
     {
-      &quot;connectionLimit&quot;: 42, # The value of the limit to set.
+      &quot;connectionLimit&quot;: 42, # The value of the limit to set. For endpoint_url, the limit should be no more than 1.
       &quot;networkUrl&quot;: &quot;A String&quot;, # The network URL for the network to set the limit for.
       &quot;projectIdOrNum&quot;: &quot;A String&quot;, # The project id or number for the project to set the limit for.
     },
@@ -511,6 +527,9 @@ Args:
   &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a ServiceAttachment. An up-to-date fingerprint must be provided in order to patch/update the ServiceAttachment; otherwise, the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the ServiceAttachment.
   &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource type. The server generates this identifier.
   &quot;kind&quot;: &quot;compute#serviceAttachment&quot;, # [Output Only] Type of the resource. Always compute#serviceAttachment for service attachments.
+  &quot;metadata&quot;: { # Metadata of the service attachment.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
   &quot;name&quot;: &quot;A String&quot;, # Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.
   &quot;natSubnets&quot;: [ # An array of URLs where each entry is the URL of a subnet provided by the service producer to use for NAT in this service attachment.
     &quot;A String&quot;,
@@ -672,15 +691,18 @@ Returns:
         { # [Output Only] A connection connected to this service attachment.
           &quot;consumerNetwork&quot;: &quot;A String&quot;, # The url of the consumer network.
           &quot;endpoint&quot;: &quot;A String&quot;, # The url of a connected endpoint.
+          &quot;natIps&quot;: [ # NAT IPs of the connected PSC endpoint and those of other endpoints propagated from it.
+            &quot;A String&quot;,
+          ],
           &quot;propagatedConnectionCount&quot;: 42, # The number of consumer Network Connectivity Center spokes that the connected Private Service Connect endpoint has propagated to.
           &quot;pscConnectionId&quot;: &quot;A String&quot;, # The PSC connection id of the connected endpoint.
           &quot;status&quot;: &quot;A String&quot;, # The status of a connected endpoint to this service attachment.
         },
       ],
       &quot;connectionPreference&quot;: &quot;A String&quot;, # The connection preference of service attachment. The value can be set to ACCEPT_AUTOMATIC. An ACCEPT_AUTOMATIC service attachment is one that always accepts the connection from consumer forwarding rules.
-      &quot;consumerAcceptLists&quot;: [ # Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks.
+      &quot;consumerAcceptLists&quot;: [ # Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks or only endpoints.
         {
-          &quot;connectionLimit&quot;: 42, # The value of the limit to set.
+          &quot;connectionLimit&quot;: 42, # The value of the limit to set. For endpoint_url, the limit should be no more than 1.
           &quot;networkUrl&quot;: &quot;A String&quot;, # The network URL for the network to set the limit for.
           &quot;projectIdOrNum&quot;: &quot;A String&quot;, # The project id or number for the project to set the limit for.
         },
@@ -697,6 +719,9 @@ Returns:
       &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a ServiceAttachment. An up-to-date fingerprint must be provided in order to patch/update the ServiceAttachment; otherwise, the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the ServiceAttachment.
       &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource type. The server generates this identifier.
       &quot;kind&quot;: &quot;compute#serviceAttachment&quot;, # [Output Only] Type of the resource. Always compute#serviceAttachment for service attachments.
+      &quot;metadata&quot;: { # Metadata of the service attachment.
+        &quot;a_key&quot;: &quot;A String&quot;,
+      },
       &quot;name&quot;: &quot;A String&quot;, # Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.
       &quot;natSubnets&quot;: [ # An array of URLs where each entry is the URL of a subnet provided by the service producer to use for NAT in this service attachment.
         &quot;A String&quot;,
@@ -759,15 +784,18 @@ Args:
     { # [Output Only] A connection connected to this service attachment.
       &quot;consumerNetwork&quot;: &quot;A String&quot;, # The url of the consumer network.
       &quot;endpoint&quot;: &quot;A String&quot;, # The url of a connected endpoint.
+      &quot;natIps&quot;: [ # NAT IPs of the connected PSC endpoint and those of other endpoints propagated from it.
+        &quot;A String&quot;,
+      ],
       &quot;propagatedConnectionCount&quot;: 42, # The number of consumer Network Connectivity Center spokes that the connected Private Service Connect endpoint has propagated to.
       &quot;pscConnectionId&quot;: &quot;A String&quot;, # The PSC connection id of the connected endpoint.
       &quot;status&quot;: &quot;A String&quot;, # The status of a connected endpoint to this service attachment.
     },
   ],
   &quot;connectionPreference&quot;: &quot;A String&quot;, # The connection preference of service attachment. The value can be set to ACCEPT_AUTOMATIC. An ACCEPT_AUTOMATIC service attachment is one that always accepts the connection from consumer forwarding rules.
-  &quot;consumerAcceptLists&quot;: [ # Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks.
+  &quot;consumerAcceptLists&quot;: [ # Specifies which consumer projects or networks are allowed to connect to the service attachment. Each project or network has a connection limit. A given service attachment can manage connections at either the project or network level. Therefore, both the accept and reject lists for a given service attachment must contain either only projects or only networks or only endpoints.
     {
-      &quot;connectionLimit&quot;: 42, # The value of the limit to set.
+      &quot;connectionLimit&quot;: 42, # The value of the limit to set. For endpoint_url, the limit should be no more than 1.
       &quot;networkUrl&quot;: &quot;A String&quot;, # The network URL for the network to set the limit for.
       &quot;projectIdOrNum&quot;: &quot;A String&quot;, # The project id or number for the project to set the limit for.
     },
@@ -784,6 +812,9 @@ Args:
   &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint of this resource. A hash of the contents stored in this object. This field is used in optimistic locking. This field will be ignored when inserting a ServiceAttachment. An up-to-date fingerprint must be provided in order to patch/update the ServiceAttachment; otherwise, the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the ServiceAttachment.
   &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource type. The server generates this identifier.
   &quot;kind&quot;: &quot;compute#serviceAttachment&quot;, # [Output Only] Type of the resource. Always compute#serviceAttachment for service attachments.
+  &quot;metadata&quot;: { # Metadata of the service attachment.
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
   &quot;name&quot;: &quot;A String&quot;, # Name of the resource. Provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?` which means the first character must be a lowercase letter, and all following characters must be a dash, lowercase letter, or digit, except the last character, which cannot be a dash.
   &quot;natSubnets&quot;: [ # An array of URLs where each entry is the URL of a subnet provided by the service producer to use for NAT in this service attachment.
     &quot;A String&quot;,

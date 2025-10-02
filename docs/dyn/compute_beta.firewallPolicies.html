@@ -161,6 +161,7 @@ Args:
   &quot;displayName&quot;: &quot;A String&quot;, # [Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.
   &quot;firewallPolicyId&quot;: &quot;A String&quot;, # [Output Only] The firewall policy ID of the association.
   &quot;name&quot;: &quot;A String&quot;, # The name for an association.
+  &quot;priority&quot;: 42, # An integer indicating the priority of an association. The priority must be a positive value between 1 and 2147483647. Firewall Policies are evaluated from highest to lowest priority where 1 is the highest priority and 2147483647 is the lowest priority. The default value is `1000`. If two associations have the same priority then lexicographical order on association names is applied.
   &quot;shortName&quot;: &quot;A String&quot;, # [Output Only] The short name of the firewall policy of the association.
 }
 
@@ -309,6 +310,7 @@ Args:
       &quot;A String&quot;,
     ],
     &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+    &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
     &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
       &quot;A String&quot;,
     ],
@@ -333,6 +335,7 @@ Args:
       &quot;A String&quot;,
     ],
     &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+    &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
     &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
       &quot;A String&quot;,
     ],
@@ -353,6 +356,9 @@ Args:
   &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
   &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
   &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+  &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+    &quot;A String&quot;,
+  ],
   &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
     &quot;A String&quot;,
   ],
@@ -365,6 +371,7 @@ Args:
   &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
     &quot;A String&quot;,
   ],
+  &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
   &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
 }
 
@@ -512,6 +519,7 @@ Args:
       &quot;A String&quot;,
     ],
     &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+    &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
     &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
       &quot;A String&quot;,
     ],
@@ -536,6 +544,7 @@ Args:
       &quot;A String&quot;,
     ],
     &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+    &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
     &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
       &quot;A String&quot;,
     ],
@@ -556,6 +565,9 @@ Args:
   &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
   &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
   &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+  &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+    &quot;A String&quot;,
+  ],
   &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
     &quot;A String&quot;,
   ],
@@ -568,6 +580,7 @@ Args:
   &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
     &quot;A String&quot;,
   ],
+  &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
   &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
 }
 
@@ -961,6 +974,7 @@ Returns:
       &quot;displayName&quot;: &quot;A String&quot;, # [Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.
       &quot;firewallPolicyId&quot;: &quot;A String&quot;, # [Output Only] The firewall policy ID of the association.
       &quot;name&quot;: &quot;A String&quot;, # The name for an association.
+      &quot;priority&quot;: 42, # An integer indicating the priority of an association. The priority must be a positive value between 1 and 2147483647. Firewall Policies are evaluated from highest to lowest priority where 1 is the highest priority and 2147483647 is the lowest priority. The default value is `1000`. If two associations have the same priority then lexicographical order on association names is applied.
       &quot;shortName&quot;: &quot;A String&quot;, # [Output Only] The short name of the firewall policy of the association.
     },
   ],
@@ -990,6 +1004,7 @@ Returns:
           &quot;A String&quot;,
         ],
         &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+        &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
         &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
           &quot;A String&quot;,
         ],
@@ -1014,6 +1029,7 @@ Returns:
           &quot;A String&quot;,
         ],
         &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+        &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
         &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
           &quot;A String&quot;,
         ],
@@ -1034,6 +1050,9 @@ Returns:
       &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
       &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
       &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+      &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+        &quot;A String&quot;,
+      ],
       &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
         &quot;A String&quot;,
       ],
@@ -1046,10 +1065,13 @@ Returns:
       &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
         &quot;A String&quot;,
       ],
+      &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
       &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
     },
   ],
   &quot;parent&quot;: &quot;A String&quot;, # [Output Only] The parent of the firewall policy. This field is not applicable to network firewall policies.
+  &quot;policySource&quot;: &quot;A String&quot;, # [Output Only] Source of this Firewall Policy. USER_DEFINED if created by a Cloud user, or SYSTEM if created by managed services like GKE.
+  &quot;policyType&quot;: &quot;A String&quot;, # The type of the firewall policy. This field can be either VPC_POLICY or RDMA_ROCE_POLICY. Note: if not specified then VPC_POLICY will be used.
   &quot;region&quot;: &quot;A String&quot;, # [Output Only] URL of the region where the regional firewall policy resides. This field is not applicable to global firewall policies. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
   &quot;ruleTupleCount&quot;: 42, # [Output Only] Total count of all firewall policy rule tuples. A firewall policy can not exceed a set number of tuples.
   &quot;rules&quot;: [ # A list of rules that belong to this policy. There must always be a default rule (rule with priority 2147483647 and match &quot;*&quot;). If no rules are provided when creating a firewall policy, a default rule with action &quot;allow&quot; will be added.
@@ -1071,6 +1093,7 @@ Returns:
           &quot;A String&quot;,
         ],
         &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+        &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
         &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
           &quot;A String&quot;,
         ],
@@ -1095,6 +1118,7 @@ Returns:
           &quot;A String&quot;,
         ],
         &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+        &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
         &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
           &quot;A String&quot;,
         ],
@@ -1115,6 +1139,9 @@ Returns:
       &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
       &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
       &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+      &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+        &quot;A String&quot;,
+      ],
       &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
         &quot;A String&quot;,
       ],
@@ -1127,6 +1154,7 @@ Returns:
       &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
         &quot;A String&quot;,
       ],
+      &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
       &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
     },
   ],
@@ -1156,6 +1184,7 @@ Returns:
   &quot;displayName&quot;: &quot;A String&quot;, # [Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.
   &quot;firewallPolicyId&quot;: &quot;A String&quot;, # [Output Only] The firewall policy ID of the association.
   &quot;name&quot;: &quot;A String&quot;, # The name for an association.
+  &quot;priority&quot;: 42, # An integer indicating the priority of an association. The priority must be a positive value between 1 and 2147483647. Firewall Policies are evaluated from highest to lowest priority where 1 is the highest priority and 2147483647 is the lowest priority. The default value is `1000`. If two associations have the same priority then lexicographical order on association names is applied.
   &quot;shortName&quot;: &quot;A String&quot;, # [Output Only] The short name of the firewall policy of the association.
 }</pre>
 </div>
@@ -1241,6 +1270,7 @@ Returns:
       &quot;A String&quot;,
     ],
     &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+    &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
     &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
       &quot;A String&quot;,
     ],
@@ -1265,6 +1295,7 @@ Returns:
       &quot;A String&quot;,
     ],
     &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+    &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
     &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
       &quot;A String&quot;,
     ],
@@ -1285,6 +1316,9 @@ Returns:
   &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
   &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
   &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+  &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+    &quot;A String&quot;,
+  ],
   &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
     &quot;A String&quot;,
   ],
@@ -1297,6 +1331,7 @@ Returns:
   &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
     &quot;A String&quot;,
   ],
+  &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
   &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
 }</pre>
 </div>
@@ -1334,6 +1369,7 @@ Returns:
       &quot;A String&quot;,
     ],
     &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+    &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
     &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
       &quot;A String&quot;,
     ],
@@ -1358,6 +1394,7 @@ Returns:
       &quot;A String&quot;,
     ],
     &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+    &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
     &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
       &quot;A String&quot;,
     ],
@@ -1378,6 +1415,9 @@ Returns:
   &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
   &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
   &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+  &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+    &quot;A String&quot;,
+  ],
   &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
     &quot;A String&quot;,
   ],
@@ -1390,6 +1430,7 @@ Returns:
   &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
     &quot;A String&quot;,
   ],
+  &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
   &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
 }</pre>
 </div>
@@ -1409,6 +1450,7 @@ Args:
       &quot;displayName&quot;: &quot;A String&quot;, # [Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.
       &quot;firewallPolicyId&quot;: &quot;A String&quot;, # [Output Only] The firewall policy ID of the association.
       &quot;name&quot;: &quot;A String&quot;, # The name for an association.
+      &quot;priority&quot;: 42, # An integer indicating the priority of an association. The priority must be a positive value between 1 and 2147483647. Firewall Policies are evaluated from highest to lowest priority where 1 is the highest priority and 2147483647 is the lowest priority. The default value is `1000`. If two associations have the same priority then lexicographical order on association names is applied.
       &quot;shortName&quot;: &quot;A String&quot;, # [Output Only] The short name of the firewall policy of the association.
     },
   ],
@@ -1438,6 +1480,7 @@ Args:
           &quot;A String&quot;,
         ],
         &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+        &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
         &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
           &quot;A String&quot;,
         ],
@@ -1462,6 +1505,7 @@ Args:
           &quot;A String&quot;,
         ],
         &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+        &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
         &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
           &quot;A String&quot;,
         ],
@@ -1482,6 +1526,9 @@ Args:
       &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
       &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
       &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+      &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+        &quot;A String&quot;,
+      ],
       &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
         &quot;A String&quot;,
       ],
@@ -1494,10 +1541,13 @@ Args:
       &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
         &quot;A String&quot;,
       ],
+      &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
       &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
     },
   ],
   &quot;parent&quot;: &quot;A String&quot;, # [Output Only] The parent of the firewall policy. This field is not applicable to network firewall policies.
+  &quot;policySource&quot;: &quot;A String&quot;, # [Output Only] Source of this Firewall Policy. USER_DEFINED if created by a Cloud user, or SYSTEM if created by managed services like GKE.
+  &quot;policyType&quot;: &quot;A String&quot;, # The type of the firewall policy. This field can be either VPC_POLICY or RDMA_ROCE_POLICY. Note: if not specified then VPC_POLICY will be used.
   &quot;region&quot;: &quot;A String&quot;, # [Output Only] URL of the region where the regional firewall policy resides. This field is not applicable to global firewall policies. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
   &quot;ruleTupleCount&quot;: 42, # [Output Only] Total count of all firewall policy rule tuples. A firewall policy can not exceed a set number of tuples.
   &quot;rules&quot;: [ # A list of rules that belong to this policy. There must always be a default rule (rule with priority 2147483647 and match &quot;*&quot;). If no rules are provided when creating a firewall policy, a default rule with action &quot;allow&quot; will be added.
@@ -1519,6 +1569,7 @@ Args:
           &quot;A String&quot;,
         ],
         &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+        &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
         &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
           &quot;A String&quot;,
         ],
@@ -1543,6 +1594,7 @@ Args:
           &quot;A String&quot;,
         ],
         &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+        &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
         &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
           &quot;A String&quot;,
         ],
@@ -1563,6 +1615,9 @@ Args:
       &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
       &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
       &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+      &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+        &quot;A String&quot;,
+      ],
       &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
         &quot;A String&quot;,
       ],
@@ -1575,6 +1630,7 @@ Args:
       &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
         &quot;A String&quot;,
       ],
+      &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
       &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
     },
   ],
@@ -1730,6 +1786,7 @@ Returns:
           &quot;displayName&quot;: &quot;A String&quot;, # [Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.
           &quot;firewallPolicyId&quot;: &quot;A String&quot;, # [Output Only] The firewall policy ID of the association.
           &quot;name&quot;: &quot;A String&quot;, # The name for an association.
+          &quot;priority&quot;: 42, # An integer indicating the priority of an association. The priority must be a positive value between 1 and 2147483647. Firewall Policies are evaluated from highest to lowest priority where 1 is the highest priority and 2147483647 is the lowest priority. The default value is `1000`. If two associations have the same priority then lexicographical order on association names is applied.
           &quot;shortName&quot;: &quot;A String&quot;, # [Output Only] The short name of the firewall policy of the association.
         },
       ],
@@ -1759,6 +1816,7 @@ Returns:
               &quot;A String&quot;,
             ],
             &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+            &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
             &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
               &quot;A String&quot;,
             ],
@@ -1783,6 +1841,7 @@ Returns:
               &quot;A String&quot;,
             ],
             &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+            &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
             &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
               &quot;A String&quot;,
             ],
@@ -1803,6 +1862,9 @@ Returns:
           &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
           &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
           &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+          &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+            &quot;A String&quot;,
+          ],
           &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
             &quot;A String&quot;,
           ],
@@ -1815,10 +1877,13 @@ Returns:
           &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
             &quot;A String&quot;,
           ],
+          &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
           &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
         },
       ],
       &quot;parent&quot;: &quot;A String&quot;, # [Output Only] The parent of the firewall policy. This field is not applicable to network firewall policies.
+      &quot;policySource&quot;: &quot;A String&quot;, # [Output Only] Source of this Firewall Policy. USER_DEFINED if created by a Cloud user, or SYSTEM if created by managed services like GKE.
+      &quot;policyType&quot;: &quot;A String&quot;, # The type of the firewall policy. This field can be either VPC_POLICY or RDMA_ROCE_POLICY. Note: if not specified then VPC_POLICY will be used.
       &quot;region&quot;: &quot;A String&quot;, # [Output Only] URL of the region where the regional firewall policy resides. This field is not applicable to global firewall policies. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
       &quot;ruleTupleCount&quot;: 42, # [Output Only] Total count of all firewall policy rule tuples. A firewall policy can not exceed a set number of tuples.
       &quot;rules&quot;: [ # A list of rules that belong to this policy. There must always be a default rule (rule with priority 2147483647 and match &quot;*&quot;). If no rules are provided when creating a firewall policy, a default rule with action &quot;allow&quot; will be added.
@@ -1840,6 +1905,7 @@ Returns:
               &quot;A String&quot;,
             ],
             &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+            &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
             &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
               &quot;A String&quot;,
             ],
@@ -1864,6 +1930,7 @@ Returns:
               &quot;A String&quot;,
             ],
             &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+            &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
             &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
               &quot;A String&quot;,
             ],
@@ -1884,6 +1951,9 @@ Returns:
           &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
           &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
           &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+          &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+            &quot;A String&quot;,
+          ],
           &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
             &quot;A String&quot;,
           ],
@@ -1896,6 +1966,7 @@ Returns:
           &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
             &quot;A String&quot;,
           ],
+          &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
           &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
         },
       ],
@@ -1940,6 +2011,7 @@ Returns:
       &quot;displayName&quot;: &quot;A String&quot;, # [Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.
       &quot;firewallPolicyId&quot;: &quot;A String&quot;, # [Output Only] The firewall policy ID of the association.
       &quot;name&quot;: &quot;A String&quot;, # The name for an association.
+      &quot;priority&quot;: 42, # An integer indicating the priority of an association. The priority must be a positive value between 1 and 2147483647. Firewall Policies are evaluated from highest to lowest priority where 1 is the highest priority and 2147483647 is the lowest priority. The default value is `1000`. If two associations have the same priority then lexicographical order on association names is applied.
       &quot;shortName&quot;: &quot;A String&quot;, # [Output Only] The short name of the firewall policy of the association.
     },
   ],
@@ -2101,6 +2173,7 @@ Args:
       &quot;displayName&quot;: &quot;A String&quot;, # [Output Only] Deprecated, please use short name instead. The display name of the firewall policy of the association.
       &quot;firewallPolicyId&quot;: &quot;A String&quot;, # [Output Only] The firewall policy ID of the association.
       &quot;name&quot;: &quot;A String&quot;, # The name for an association.
+      &quot;priority&quot;: 42, # An integer indicating the priority of an association. The priority must be a positive value between 1 and 2147483647. Firewall Policies are evaluated from highest to lowest priority where 1 is the highest priority and 2147483647 is the lowest priority. The default value is `1000`. If two associations have the same priority then lexicographical order on association names is applied.
       &quot;shortName&quot;: &quot;A String&quot;, # [Output Only] The short name of the firewall policy of the association.
     },
   ],
@@ -2130,6 +2203,7 @@ Args:
           &quot;A String&quot;,
         ],
         &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+        &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
         &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
           &quot;A String&quot;,
         ],
@@ -2154,6 +2228,7 @@ Args:
           &quot;A String&quot;,
         ],
         &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+        &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
         &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
           &quot;A String&quot;,
         ],
@@ -2174,6 +2249,9 @@ Args:
       &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
       &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
       &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+      &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+        &quot;A String&quot;,
+      ],
       &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
         &quot;A String&quot;,
       ],
@@ -2186,10 +2264,13 @@ Args:
       &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
         &quot;A String&quot;,
       ],
+      &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
       &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
     },
   ],
   &quot;parent&quot;: &quot;A String&quot;, # [Output Only] The parent of the firewall policy. This field is not applicable to network firewall policies.
+  &quot;policySource&quot;: &quot;A String&quot;, # [Output Only] Source of this Firewall Policy. USER_DEFINED if created by a Cloud user, or SYSTEM if created by managed services like GKE.
+  &quot;policyType&quot;: &quot;A String&quot;, # The type of the firewall policy. This field can be either VPC_POLICY or RDMA_ROCE_POLICY. Note: if not specified then VPC_POLICY will be used.
   &quot;region&quot;: &quot;A String&quot;, # [Output Only] URL of the region where the regional firewall policy resides. This field is not applicable to global firewall policies. You must specify this field as part of the HTTP request URL. It is not settable as a field in the request body.
   &quot;ruleTupleCount&quot;: 42, # [Output Only] Total count of all firewall policy rule tuples. A firewall policy can not exceed a set number of tuples.
   &quot;rules&quot;: [ # A list of rules that belong to this policy. There must always be a default rule (rule with priority 2147483647 and match &quot;*&quot;). If no rules are provided when creating a firewall policy, a default rule with action &quot;allow&quot; will be added.
@@ -2211,6 +2292,7 @@ Args:
           &quot;A String&quot;,
         ],
         &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+        &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
         &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
           &quot;A String&quot;,
         ],
@@ -2235,6 +2317,7 @@ Args:
           &quot;A String&quot;,
         ],
         &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+        &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
         &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
           &quot;A String&quot;,
         ],
@@ -2255,6 +2338,9 @@ Args:
       &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
       &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
       &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+      &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+        &quot;A String&quot;,
+      ],
       &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
         &quot;A String&quot;,
       ],
@@ -2267,6 +2353,7 @@ Args:
       &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
         &quot;A String&quot;,
       ],
+      &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
       &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
     },
   ],
@@ -2419,6 +2506,7 @@ Args:
       &quot;A String&quot;,
     ],
     &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+    &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
     &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
       &quot;A String&quot;,
     ],
@@ -2443,6 +2531,7 @@ Args:
       &quot;A String&quot;,
     ],
     &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+    &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
     &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
       &quot;A String&quot;,
     ],
@@ -2463,6 +2552,9 @@ Args:
   &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
   &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
   &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+  &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+    &quot;A String&quot;,
+  ],
   &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
     &quot;A String&quot;,
   ],
@@ -2475,6 +2567,7 @@ Args:
   &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
     &quot;A String&quot;,
   ],
+  &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
   &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
 }
 
@@ -2623,6 +2716,7 @@ Args:
       &quot;A String&quot;,
     ],
     &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+    &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
     &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
       &quot;A String&quot;,
     ],
@@ -2647,6 +2741,7 @@ Args:
       &quot;A String&quot;,
     ],
     &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+    &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
     &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
       &quot;A String&quot;,
     ],
@@ -2667,6 +2762,9 @@ Args:
   &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
   &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
   &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+  &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+    &quot;A String&quot;,
+  ],
   &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
     &quot;A String&quot;,
   ],
@@ -2679,6 +2777,7 @@ Args:
   &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
     &quot;A String&quot;,
   ],
+  &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
   &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
 }
 

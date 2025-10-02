@@ -168,6 +168,12 @@
 "name"
 ],
 "parameters": {
+"extraLocationTypes": {
+"description": "Optional. Unless explicitly documented otherwise, don't use this unsupported field which is primarily intended for internal usage.",
+"location": "query",
+"repeated": true,
+"type": "string"
+},
 "filter": {
 "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
 "location": "query",
@@ -378,12 +384,18 @@
 "enum": [
 "ASSET_VIEW_UNSPECIFIED",
 "ASSET_VIEW_BASIC",
-"ASSET_VIEW_FULL"
+"ASSET_VIEW_FULL",
+"ASSET_VIEW_STANDARD",
+"ASSET_VIEW_UI",
+"ASSET_VIEW_LABELS"
 ],
 "enumDescriptions": [
 "The asset view is not specified. The API displays the basic view by default.",
 "The asset view includes only basic metadata of the asset.",
-"The asset view includes all the metadata of an asset and performance data."
+"The asset view includes all the metadata of an asset and performance data.",
+"The asset view includes the standard metadata of an asset.",
+"The asset view includes fields needed by UI.",
+"The asset view includes asset name and labels."
 ],
 "location": "query",
 "type": "string"
@@ -434,17 +446,28 @@
 "required": true,
 "type": "string"
 },
+"showHidden": {
+"description": "Optional. When this value is set to 'true,' the response will include all assets, including those that are hidden.",
+"location": "query",
+"type": "boolean"
+},
 "view": {
 "description": "View of the assets. Defaults to BASIC.",
 "enum": [
 "ASSET_VIEW_UNSPECIFIED",
 "ASSET_VIEW_BASIC",
-"ASSET_VIEW_FULL"
+"ASSET_VIEW_FULL",
+"ASSET_VIEW_STANDARD",
+"ASSET_VIEW_UI",
+"ASSET_VIEW_LABELS"
 ],
 "enumDescriptions": [
 "The asset view is not specified. The API displays the basic view by default.",
 "The asset view includes only basic metadata of the asset.",
-"The asset view includes all the metadata of an asset and performance data."
+"The asset view includes all the metadata of an asset and performance data.",
+"The asset view includes the standard metadata of an asset.",
+"The asset view includes fields needed by UI.",
+"The asset view includes asset name and labels."
 ],
 "location": "query",
 "type": "string"
@@ -1509,6 +1532,11 @@
 "description": "The standard list page token.",
 "location": "query",
 "type": "string"
+},
+"returnPartialSuccess": {
+"description": "When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the [ListOperationsResponse.unreachable] field. This can only be `true` when reading across collections e.g. when `parent` is set to `\"projects/example/locations/-\"`. This field is not by default supported and will result in an `UNIMPLEMENTED` error if set unless explicitly documented otherwise in service or product specific documentation.",
+"location": "query",
+"type": "boolean"
 }
 },
 "path": "v1/{+name}/operations",
@@ -1691,6 +1719,81 @@
 },
 "response": {
 "$ref": "Operation"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform"
+]
+}
+}
+},
+"relations": {
+"methods": {
+"get": {
+"description": "Gets the details of an relation.",
+"flatPath": "v1/projects/{projectsId}/locations/{locationsId}/relations/{relationsId}",
+"httpMethod": "GET",
+"id": "migrationcenter.projects.locations.relations.get",
+"parameterOrder": [
+"name"
+],
+"parameters": {
+"name": {
+"description": "Required. Name of the resource.",
+"location": "path",
+"pattern": "^projects/[^/]+/locations/[^/]+/relations/[^/]+$",
+"required": true,
+"type": "string"
+}
+},
+"path": "v1/{+name}",
+"response": {
+"$ref": "Relation"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform"
+]
+},
+"list": {
+"description": "Lists all the relations in a given project and location.",
+"flatPath": "v1/projects/{projectsId}/locations/{locationsId}/relations",
+"httpMethod": "GET",
+"id": "migrationcenter.projects.locations.relations.list",
+"parameterOrder": [
+"parent"
+],
+"parameters": {
+"filter": {
+"description": "Optional. Filtering results.",
+"location": "query",
+"type": "string"
+},
+"orderBy": {
+"description": "Optional. Field to sort by. See https://google.aip.dev/132#ordering for more details.",
+"location": "query",
+"type": "string"
+},
+"pageSize": {
+"description": "Optional. Requested page size. Server may return fewer items than requested. If unspecified, server will pick an appropriate default.",
+"format": "int32",
+"location": "query",
+"type": "integer"
+},
+"pageToken": {
+"description": "Optional. A token identifying a page of results the server should return.",
+"location": "query",
+"type": "string"
+},
+"parent": {
+"description": "Required. Parent value for `ListRelationsRequest`.",
+"location": "path",
+"pattern": "^projects/[^/]+/locations/[^/]+$",
+"required": true,
+"type": "string"
+}
+},
+"path": "v1/{+parent}/relations",
+"response": {
+"$ref": "ListRelationsResponse"
 },
 "scopes": [
 "https://www.googleapis.com/auth/cloud-platform"
@@ -2309,7 +2412,7 @@
 }
 }
 },
-"revision": "20241205",
+"revision": "20250928",
 "rootUrl": "https://migrationcenter.googleapis.com/",
 "schemas": {
 "AddAssetsToGroupRequest": {
@@ -2345,6 +2448,10 @@
 "filter": {
 "description": "Optional. The aggregation will be performed on assets that match the provided filter.",
 "type": "string"
+},
+"showHidden": {
+"description": "Optional. When this value is set to 'true,' the response will include all assets, including those that are hidden.",
+"type": "boolean"
 }
 },
 "type": "object"
@@ -2552,6 +2659,20 @@
 "description": "Output only. Asset information specific for logical databases.",
 "readOnly": true
 },
+"hidden": {
+"description": "Optional. Indicates if the asset is hidden.",
+"type": "boolean"
+},
+"hideReason": {
+"description": "Optional. An optional reason for marking this asset as hidden.",
+"type": "string"
+},
+"hideTime": {
+"description": "Output only. The timestamp when the asset was marked as hidden.",
+"format": "google-datetime",
+"readOnly": true,
+"type": "string"
+},
 "insightList": {
 "$ref": "InsightList",
 "description": "Output only. The list of insights associated with the asset.",
@@ -2727,6 +2848,12 @@
 },
 "type": "object"
 },
+"AwsRds": {
+"description": "Specific details for an AWS RDS database deployment.",
+"id": "AwsRds",
+"properties": {},
+"type": "object"
+},
 "AzureVmPlatformDetails": {
 "description": "Azure VM specific details.",
 "id": "AzureVmPlatformDetails",
@@ -2767,6 +2894,13 @@
 "allowMissing": {
 "description": "Optional. When this value is set to `true` the request is a no-op for non-existing assets. See https://google.aip.dev/135#delete-if-existing for additional details. Default value is `false`.",
 "type": "boolean"
+},
+"cascadingRules": {
+"description": "Optional. Optional cascading rules for deleting related assets.",
+"items": {
+"$ref": "CascadingRule"
+},
+"type": "array"
 },
 "names": {
 "description": "Required. The IDs of the assets to delete. A maximum of 1000 assets can be deleted in a batch. Format: projects/{project}/locations/{location}/assets/{name}.",
@@ -2842,6 +2976,23 @@
 "description": "The request message for Operations.CancelOperation.",
 "id": "CancelOperationRequest",
 "properties": {},
+"type": "object"
+},
+"CascadeLogicalDBsRule": {
+"description": "Cascading rule for related logical DBs.",
+"id": "CascadeLogicalDBsRule",
+"properties": {},
+"type": "object"
+},
+"CascadingRule": {
+"description": "Specifies cascading rules for traversing relations.",
+"id": "CascadingRule",
+"properties": {
+"cascadeLogicalDbs": {
+"$ref": "CascadeLogicalDBsRule",
+"description": "Cascading rule for related logical DBs."
+}
+},
 "type": "object"
 },
 "ComputeEngineMigrationTarget": {
@@ -3097,6 +3248,10 @@
 "$ref": "DatabaseDeploymentDetailsAggregatedStats",
 "description": "Output only. Aggregated stats for the database deployment.",
 "readOnly": true
+},
+"awsRds": {
+"$ref": "AwsRds",
+"description": "Optional. Details of an AWS RDS instance."
 },
 "edition": {
 "description": "Optional. The database deployment edition.",
@@ -3583,7 +3738,7 @@
 "type": "string"
 },
 "mountPoint": {
-"description": "Mount pount (Linux/Windows) or drive letter (Windows).",
+"description": "Mount point (Linux/Windows) or drive letter (Windows).",
 "type": "string"
 },
 "subPartitions": {
@@ -3596,6 +3751,29 @@
 },
 "uuid": {
 "description": "Partition UUID.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"DiskPartitionDetails": {
+"description": "Disk partition details.",
+"id": "DiskPartitionDetails",
+"properties": {
+"freeSpaceBytes": {
+"description": "Output only. Total free space of all partitions.",
+"format": "int64",
+"readOnly": true,
+"type": "string"
+},
+"partitions": {
+"$ref": "DiskPartitionList",
+"description": "Optional. List of partitions."
+},
+"totalCapacityBytes": {
+"description": "Output only. Total capacity of all partitions.",
+"format": "int64",
+"readOnly": true,
 "type": "string"
 }
 },
@@ -3620,17 +3798,17 @@
 "id": "DiskUsageSample",
 "properties": {
 "averageIops": {
-"description": "Optional. Average IOPS sampled over a short window. Must be non-negative. Must be equal to the sum of read and write if one of them is positive. if both read and write are zero they are ignored.",
+"description": "Optional. Average IOPS sampled over a short window. Must be non-negative. If read or write are set, the sum of read and write will override the value of the average_iops.",
 "format": "float",
 "type": "number"
 },
 "averageReadIops": {
-"description": "Optional. Average read IOPS sampled over a short window. Must be non-negative.",
+"description": "Optional. Average read IOPS sampled over a short window. Must be non-negative. If both read and write are zero they are ignored.",
 "format": "float",
 "type": "number"
 },
 "averageWriteIops": {
-"description": "Optional. Average write IOPS sampled over a short window. Must be non-negative.",
+"description": "Optional. Average write IOPS sampled over a short window. Must be non-negative. If both read and write are zero they are ignored.",
 "format": "float",
 "type": "number"
 }
@@ -4593,6 +4771,13 @@
 "$ref": "Operation"
 },
 "type": "array"
+},
+"unreachable": {
+"description": "Unordered list. Unreachable resources. Populated when the request sets `ListOperationsRequest.return_partial_success` and reads across collections e.g. when attempting to list all resources across all supported locations.",
+"items": {
+"type": "string"
+},
+"type": "array"
 }
 },
 "type": "object"
@@ -4616,6 +4801,24 @@
 "description": "Locations that could not be reached.",
 "items": {
 "type": "string"
+},
+"type": "array"
+}
+},
+"type": "object"
+},
+"ListRelationsResponse": {
+"description": "Response message for listing relations.",
+"id": "ListRelationsResponse",
+"properties": {
+"nextPageToken": {
+"description": "A token identifying a page of results the server should return.",
+"type": "string"
+},
+"relations": {
+"description": "A list of relations.",
+"items": {
+"$ref": "Relation"
 },
 "type": "array"
 }
@@ -4814,6 +5017,10 @@
 "description": "Machine creation time.",
 "format": "google-datetime",
 "type": "string"
+},
+"diskPartitions": {
+"$ref": "DiskPartitionDetails",
+"description": "Optional. Disk partitions details. Note: Partitions are not necessarily mounted on local disks and therefore might not have a one-to-one correspondence with local disks."
 },
 "disks": {
 "$ref": "MachineDiskDetails",
@@ -5188,7 +5395,7 @@
 ],
 "enumDescriptions": [
 "Unknown (default value).",
-"Staticly assigned IP.",
+"Statically assigned IP.",
 "Dynamically assigned IP (DHCP)."
 ],
 "type": "string"
@@ -5700,6 +5907,48 @@
 "type": "string"
 },
 "type": "array"
+}
+},
+"type": "object"
+},
+"Relation": {
+"description": "Message representing a relation between 2 resource.",
+"id": "Relation",
+"properties": {
+"createTime": {
+"description": "Output only. The timestamp when the relation was created.",
+"format": "google-datetime",
+"readOnly": true,
+"type": "string"
+},
+"dstAsset": {
+"description": "Output only. The destination asset name in the relation.",
+"readOnly": true,
+"type": "string"
+},
+"name": {
+"description": "Output only. Identifier. The identifier of the relation.",
+"readOnly": true,
+"type": "string"
+},
+"srcAsset": {
+"description": "Output only. The source asset name in the relation.",
+"readOnly": true,
+"type": "string"
+},
+"type": {
+"description": "Optional. The type of the relation.",
+"enum": [
+"TYPE_UNSPECIFIED",
+"LOGICAL_DATABASE",
+"DATABASE_DEPLOYMENT_HOSTING_SERVER"
+],
+"enumDescriptions": [
+"Default value.",
+"DBDeployment -> Database",
+"A relation between a machine/VM and the database deployment it hosts."
+],
+"type": "string"
 }
 },
 "type": "object"

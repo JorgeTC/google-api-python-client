@@ -152,7 +152,7 @@ Returns:
   An object of the form:
 
     {
-  &quot;biglakeConfiguration&quot;: { # Configuration for BigLake managed tables. # Optional. Specifies the configuration of a BigLake managed table.
+  &quot;biglakeConfiguration&quot;: { # Configuration for BigQuery tables for Apache Iceberg (formerly BigLake managed tables.) # Optional. Specifies the configuration of a BigQuery table for Apache Iceberg.
     &quot;connectionId&quot;: &quot;A String&quot;, # Optional. The connection specifying the credentials to be used to read and write to external storage, such as Cloud Storage. The connection_id can have the form `{project}.{location}.{connection_id}` or `projects/{project}/locations/{location}/connections/{connection_id}&quot;.
     &quot;fileFormat&quot;: &quot;A String&quot;, # Optional. The file format the table data is stored in.
     &quot;storageUri&quot;: &quot;A String&quot;, # Optional. The fully qualified location prefix of the external folder where table data is stored. The &#x27;*&#x27; wildcard character is not allowed. The URI should be in the format `gs://bucket/path_to_table/`
@@ -234,11 +234,17 @@ Returns:
       &quot;encoding&quot;: &quot;A String&quot;, # Optional. The character encoding of the data. The supported values are UTF-8, ISO-8859-1, UTF-16BE, UTF-16LE, UTF-32BE, and UTF-32LE. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # Optional. The separator character for fields in a CSV file. The separator is interpreted as a single byte. For files encoded in ISO-8859-1, any single character can be used as a separator. For files encoded in UTF-8, characters represented in decimal range 1-127 (U+0001-U+007F) can be used without any modification. UTF-8 characters encoded with multiple bytes (i.e. U+0080 and above) will have only the first byte used for separating fields. The remaining bytes will be treated as a part of the field. BigQuery also supports the escape sequence &quot;\t&quot; (U+0009) to specify a tab separator. The default value is comma (&quot;,&quot;, U+002C).
       &quot;nullMarker&quot;: &quot;A String&quot;, # Optional. Specifies a string that represents a null value in a CSV file. For example, if you specify &quot;\N&quot;, BigQuery interprets &quot;\N&quot; as a null value when querying a CSV file. The default value is the empty string. If you set this property to a custom value, BigQuery throws an error if an empty string is present for all data types except for STRING and BYTE. For STRING and BYTE columns, BigQuery interprets the empty string as an empty value.
+      &quot;nullMarkers&quot;: [ # Optional. A list of strings represented as SQL NULL value in a CSV file. null_marker and null_markers can&#x27;t be set at the same time. If null_marker is set, null_markers has to be not set. If null_markers is set, null_marker has to be not set. If both null_marker and null_markers are set at the same time, a user error would be thrown. Any strings listed in null_markers, including empty string would be interpreted as SQL NULL. This applies to all column types.
+        &quot;A String&quot;,
+      ],
       &quot;preserveAsciiControlCharacters&quot;: True or False, # Optional. Indicates if the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) are preserved.
       &quot;quote&quot;: &quot;&quot;&quot;, # Optional. The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&quot;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true. To include the specific quote character within a quoted value, precede it with an additional matching quote character. For example, if you want to escape the default character &#x27; &quot; &#x27;, use &#x27; &quot;&quot; &#x27;.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # Optional. The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
+      &quot;sourceColumnMatch&quot;: &quot;A String&quot;, # Optional. Controls the strategy used to match loaded columns to the schema. If not set, a sensible default is chosen based on how the schema is provided. If autodetect is used, then columns are matched by name. Otherwise, columns are matched by position. This is done to keep the behavior backward-compatible. Acceptable values are: POSITION - matches by position. This assumes that the columns are ordered the same way as the schema. NAME - matches by name. This reads the header row as column names and reorders columns to match the field names in the schema.
     },
-    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exeeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
+    &quot;dateFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATE values. Supports C-style and SQL-style values.
+    &quot;datetimeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATETIME values. Supports C-style and SQL-style values.
+    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exceeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
       &quot;A String&quot;,
     ],
     &quot;fileSetSpecType&quot;: &quot;A String&quot;, # Optional. Specifies how source URIs are interpreted for constructing the file set to load. By default source URIs are expanded against the underlying storage. Other options include specifying manifest files. Only applicable to object storage systems.
@@ -277,8 +283,8 @@ Returns:
             ],
           },
           &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-          &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-            { # Data policy option proto, it currently supports name only, will support precedence later.
+          &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+            { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
               &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
             },
           ],
@@ -302,6 +308,7 @@ Returns:
           },
           &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
           &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+          &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
           &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
         },
       ],
@@ -313,6 +320,9 @@ Returns:
     &quot;sourceUris&quot;: [ # [Required] The fully-qualified URIs that point to your data in Google Cloud. For Google Cloud Storage URIs: Each URI can contain one &#x27;*&#x27; wildcard character and it must come after the &#x27;bucket&#x27; name. Size limits related to load jobs apply to external data sources. For Google Cloud Bigtable URIs: Exactly one URI can be specified and it has be a fully specified and valid HTTPS URL for a Google Cloud Bigtable table. For Google Cloud Datastore backups, exactly one URI can be specified. Also, the &#x27;*&#x27; wildcard character is not allowed.
       &quot;A String&quot;,
     ],
+    &quot;timeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIME values. Supports C-style and SQL-style values.
+    &quot;timeZone&quot;: &quot;A String&quot;, # Optional. Time zone used when parsing timestamp values that do not have specific time zone information (e.g. 2024-04-20 12:34:56). The expected format is a IANA timezone string (e.g. America/Los_Angeles).
+    &quot;timestampFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIMESTAMP values. Supports C-style and SQL-style values.
   },
   &quot;friendlyName&quot;: &quot;A String&quot;, # Optional. A descriptive name for this table.
   &quot;id&quot;: &quot;A String&quot;, # Output only. An opaque ID uniquely identifying the table.
@@ -324,7 +334,7 @@ Returns:
   &quot;location&quot;: &quot;A String&quot;, # Output only. The geographic location where the table resides. This value is inherited from the dataset.
   &quot;managedTableType&quot;: &quot;A String&quot;, # Optional. If set, overrides the default managed table type configured in the dataset.
   &quot;materializedView&quot;: { # Definition and configuration of a materialized view. # Optional. The materialized view definition.
-    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally.
+    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally. Non-incremental materialized views support an expanded range of SQL queries. The `allow_non_incremental_definition` option can&#x27;t be changed after the materialized view is created.
     &quot;enableRefresh&quot;: True or False, # Optional. Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # Output only. The time when this materialized view was last refreshed, in milliseconds since the epoch.
     &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
@@ -427,8 +437,8 @@ Returns:
           ],
         },
         &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-        &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-          { # Data policy option proto, it currently supports name only, will support precedence later.
+        &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+          { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
             &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
           },
         ],
@@ -452,6 +462,7 @@ Returns:
         },
         &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
         &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+        &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
         &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
       },
     ],
@@ -531,7 +542,7 @@ Returns:
         &quot;query&quot;: &quot;A String&quot;, # Required. The query that defines the view.
       },
     ],
-    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifices the privacy policy for the view.
+    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifies the privacy policy for the view.
       &quot;aggregationThresholdPolicy&quot;: { # Represents privacy policy associated with &quot;aggregation threshold&quot; method. # Optional. Policy used for aggregation thresholds.
         &quot;privacyUnitColumns&quot;: [ # Optional. The privacy unit column(s) associated with this policy. For now, only one column per data source object (table, view) is allowed as a privacy unit column. Representing as a repeated field in metadata for extensibility to multiple columns in future. Duplicates and Repeated struct fields are not allowed. For nested fields, use dot notation (&quot;outer.inner&quot;)
           &quot;A String&quot;,
@@ -635,7 +646,7 @@ Args:
     The object takes the form of:
 
 {
-  &quot;biglakeConfiguration&quot;: { # Configuration for BigLake managed tables. # Optional. Specifies the configuration of a BigLake managed table.
+  &quot;biglakeConfiguration&quot;: { # Configuration for BigQuery tables for Apache Iceberg (formerly BigLake managed tables.) # Optional. Specifies the configuration of a BigQuery table for Apache Iceberg.
     &quot;connectionId&quot;: &quot;A String&quot;, # Optional. The connection specifying the credentials to be used to read and write to external storage, such as Cloud Storage. The connection_id can have the form `{project}.{location}.{connection_id}` or `projects/{project}/locations/{location}/connections/{connection_id}&quot;.
     &quot;fileFormat&quot;: &quot;A String&quot;, # Optional. The file format the table data is stored in.
     &quot;storageUri&quot;: &quot;A String&quot;, # Optional. The fully qualified location prefix of the external folder where table data is stored. The &#x27;*&#x27; wildcard character is not allowed. The URI should be in the format `gs://bucket/path_to_table/`
@@ -717,11 +728,17 @@ Args:
       &quot;encoding&quot;: &quot;A String&quot;, # Optional. The character encoding of the data. The supported values are UTF-8, ISO-8859-1, UTF-16BE, UTF-16LE, UTF-32BE, and UTF-32LE. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # Optional. The separator character for fields in a CSV file. The separator is interpreted as a single byte. For files encoded in ISO-8859-1, any single character can be used as a separator. For files encoded in UTF-8, characters represented in decimal range 1-127 (U+0001-U+007F) can be used without any modification. UTF-8 characters encoded with multiple bytes (i.e. U+0080 and above) will have only the first byte used for separating fields. The remaining bytes will be treated as a part of the field. BigQuery also supports the escape sequence &quot;\t&quot; (U+0009) to specify a tab separator. The default value is comma (&quot;,&quot;, U+002C).
       &quot;nullMarker&quot;: &quot;A String&quot;, # Optional. Specifies a string that represents a null value in a CSV file. For example, if you specify &quot;\N&quot;, BigQuery interprets &quot;\N&quot; as a null value when querying a CSV file. The default value is the empty string. If you set this property to a custom value, BigQuery throws an error if an empty string is present for all data types except for STRING and BYTE. For STRING and BYTE columns, BigQuery interprets the empty string as an empty value.
+      &quot;nullMarkers&quot;: [ # Optional. A list of strings represented as SQL NULL value in a CSV file. null_marker and null_markers can&#x27;t be set at the same time. If null_marker is set, null_markers has to be not set. If null_markers is set, null_marker has to be not set. If both null_marker and null_markers are set at the same time, a user error would be thrown. Any strings listed in null_markers, including empty string would be interpreted as SQL NULL. This applies to all column types.
+        &quot;A String&quot;,
+      ],
       &quot;preserveAsciiControlCharacters&quot;: True or False, # Optional. Indicates if the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) are preserved.
       &quot;quote&quot;: &quot;&quot;&quot;, # Optional. The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&quot;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true. To include the specific quote character within a quoted value, precede it with an additional matching quote character. For example, if you want to escape the default character &#x27; &quot; &#x27;, use &#x27; &quot;&quot; &#x27;.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # Optional. The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
+      &quot;sourceColumnMatch&quot;: &quot;A String&quot;, # Optional. Controls the strategy used to match loaded columns to the schema. If not set, a sensible default is chosen based on how the schema is provided. If autodetect is used, then columns are matched by name. Otherwise, columns are matched by position. This is done to keep the behavior backward-compatible. Acceptable values are: POSITION - matches by position. This assumes that the columns are ordered the same way as the schema. NAME - matches by name. This reads the header row as column names and reorders columns to match the field names in the schema.
     },
-    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exeeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
+    &quot;dateFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATE values. Supports C-style and SQL-style values.
+    &quot;datetimeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATETIME values. Supports C-style and SQL-style values.
+    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exceeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
       &quot;A String&quot;,
     ],
     &quot;fileSetSpecType&quot;: &quot;A String&quot;, # Optional. Specifies how source URIs are interpreted for constructing the file set to load. By default source URIs are expanded against the underlying storage. Other options include specifying manifest files. Only applicable to object storage systems.
@@ -760,8 +777,8 @@ Args:
             ],
           },
           &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-          &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-            { # Data policy option proto, it currently supports name only, will support precedence later.
+          &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+            { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
               &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
             },
           ],
@@ -785,6 +802,7 @@ Args:
           },
           &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
           &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+          &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
           &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
         },
       ],
@@ -796,6 +814,9 @@ Args:
     &quot;sourceUris&quot;: [ # [Required] The fully-qualified URIs that point to your data in Google Cloud. For Google Cloud Storage URIs: Each URI can contain one &#x27;*&#x27; wildcard character and it must come after the &#x27;bucket&#x27; name. Size limits related to load jobs apply to external data sources. For Google Cloud Bigtable URIs: Exactly one URI can be specified and it has be a fully specified and valid HTTPS URL for a Google Cloud Bigtable table. For Google Cloud Datastore backups, exactly one URI can be specified. Also, the &#x27;*&#x27; wildcard character is not allowed.
       &quot;A String&quot;,
     ],
+    &quot;timeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIME values. Supports C-style and SQL-style values.
+    &quot;timeZone&quot;: &quot;A String&quot;, # Optional. Time zone used when parsing timestamp values that do not have specific time zone information (e.g. 2024-04-20 12:34:56). The expected format is a IANA timezone string (e.g. America/Los_Angeles).
+    &quot;timestampFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIMESTAMP values. Supports C-style and SQL-style values.
   },
   &quot;friendlyName&quot;: &quot;A String&quot;, # Optional. A descriptive name for this table.
   &quot;id&quot;: &quot;A String&quot;, # Output only. An opaque ID uniquely identifying the table.
@@ -807,7 +828,7 @@ Args:
   &quot;location&quot;: &quot;A String&quot;, # Output only. The geographic location where the table resides. This value is inherited from the dataset.
   &quot;managedTableType&quot;: &quot;A String&quot;, # Optional. If set, overrides the default managed table type configured in the dataset.
   &quot;materializedView&quot;: { # Definition and configuration of a materialized view. # Optional. The materialized view definition.
-    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally.
+    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally. Non-incremental materialized views support an expanded range of SQL queries. The `allow_non_incremental_definition` option can&#x27;t be changed after the materialized view is created.
     &quot;enableRefresh&quot;: True or False, # Optional. Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # Output only. The time when this materialized view was last refreshed, in milliseconds since the epoch.
     &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
@@ -910,8 +931,8 @@ Args:
           ],
         },
         &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-        &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-          { # Data policy option proto, it currently supports name only, will support precedence later.
+        &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+          { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
             &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
           },
         ],
@@ -935,6 +956,7 @@ Args:
         },
         &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
         &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+        &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
         &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
       },
     ],
@@ -1014,7 +1036,7 @@ Args:
         &quot;query&quot;: &quot;A String&quot;, # Required. The query that defines the view.
       },
     ],
-    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifices the privacy policy for the view.
+    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifies the privacy policy for the view.
       &quot;aggregationThresholdPolicy&quot;: { # Represents privacy policy associated with &quot;aggregation threshold&quot; method. # Optional. Policy used for aggregation thresholds.
         &quot;privacyUnitColumns&quot;: [ # Optional. The privacy unit column(s) associated with this policy. For now, only one column per data source object (table, view) is allowed as a privacy unit column. Representing as a repeated field in metadata for extensibility to multiple columns in future. Duplicates and Repeated struct fields are not allowed. For nested fields, use dot notation (&quot;outer.inner&quot;)
           &quot;A String&quot;,
@@ -1059,7 +1081,7 @@ Returns:
   An object of the form:
 
     {
-  &quot;biglakeConfiguration&quot;: { # Configuration for BigLake managed tables. # Optional. Specifies the configuration of a BigLake managed table.
+  &quot;biglakeConfiguration&quot;: { # Configuration for BigQuery tables for Apache Iceberg (formerly BigLake managed tables.) # Optional. Specifies the configuration of a BigQuery table for Apache Iceberg.
     &quot;connectionId&quot;: &quot;A String&quot;, # Optional. The connection specifying the credentials to be used to read and write to external storage, such as Cloud Storage. The connection_id can have the form `{project}.{location}.{connection_id}` or `projects/{project}/locations/{location}/connections/{connection_id}&quot;.
     &quot;fileFormat&quot;: &quot;A String&quot;, # Optional. The file format the table data is stored in.
     &quot;storageUri&quot;: &quot;A String&quot;, # Optional. The fully qualified location prefix of the external folder where table data is stored. The &#x27;*&#x27; wildcard character is not allowed. The URI should be in the format `gs://bucket/path_to_table/`
@@ -1141,11 +1163,17 @@ Returns:
       &quot;encoding&quot;: &quot;A String&quot;, # Optional. The character encoding of the data. The supported values are UTF-8, ISO-8859-1, UTF-16BE, UTF-16LE, UTF-32BE, and UTF-32LE. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # Optional. The separator character for fields in a CSV file. The separator is interpreted as a single byte. For files encoded in ISO-8859-1, any single character can be used as a separator. For files encoded in UTF-8, characters represented in decimal range 1-127 (U+0001-U+007F) can be used without any modification. UTF-8 characters encoded with multiple bytes (i.e. U+0080 and above) will have only the first byte used for separating fields. The remaining bytes will be treated as a part of the field. BigQuery also supports the escape sequence &quot;\t&quot; (U+0009) to specify a tab separator. The default value is comma (&quot;,&quot;, U+002C).
       &quot;nullMarker&quot;: &quot;A String&quot;, # Optional. Specifies a string that represents a null value in a CSV file. For example, if you specify &quot;\N&quot;, BigQuery interprets &quot;\N&quot; as a null value when querying a CSV file. The default value is the empty string. If you set this property to a custom value, BigQuery throws an error if an empty string is present for all data types except for STRING and BYTE. For STRING and BYTE columns, BigQuery interprets the empty string as an empty value.
+      &quot;nullMarkers&quot;: [ # Optional. A list of strings represented as SQL NULL value in a CSV file. null_marker and null_markers can&#x27;t be set at the same time. If null_marker is set, null_markers has to be not set. If null_markers is set, null_marker has to be not set. If both null_marker and null_markers are set at the same time, a user error would be thrown. Any strings listed in null_markers, including empty string would be interpreted as SQL NULL. This applies to all column types.
+        &quot;A String&quot;,
+      ],
       &quot;preserveAsciiControlCharacters&quot;: True or False, # Optional. Indicates if the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) are preserved.
       &quot;quote&quot;: &quot;&quot;&quot;, # Optional. The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&quot;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true. To include the specific quote character within a quoted value, precede it with an additional matching quote character. For example, if you want to escape the default character &#x27; &quot; &#x27;, use &#x27; &quot;&quot; &#x27;.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # Optional. The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
+      &quot;sourceColumnMatch&quot;: &quot;A String&quot;, # Optional. Controls the strategy used to match loaded columns to the schema. If not set, a sensible default is chosen based on how the schema is provided. If autodetect is used, then columns are matched by name. Otherwise, columns are matched by position. This is done to keep the behavior backward-compatible. Acceptable values are: POSITION - matches by position. This assumes that the columns are ordered the same way as the schema. NAME - matches by name. This reads the header row as column names and reorders columns to match the field names in the schema.
     },
-    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exeeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
+    &quot;dateFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATE values. Supports C-style and SQL-style values.
+    &quot;datetimeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATETIME values. Supports C-style and SQL-style values.
+    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exceeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
       &quot;A String&quot;,
     ],
     &quot;fileSetSpecType&quot;: &quot;A String&quot;, # Optional. Specifies how source URIs are interpreted for constructing the file set to load. By default source URIs are expanded against the underlying storage. Other options include specifying manifest files. Only applicable to object storage systems.
@@ -1184,8 +1212,8 @@ Returns:
             ],
           },
           &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-          &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-            { # Data policy option proto, it currently supports name only, will support precedence later.
+          &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+            { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
               &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
             },
           ],
@@ -1209,6 +1237,7 @@ Returns:
           },
           &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
           &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+          &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
           &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
         },
       ],
@@ -1220,6 +1249,9 @@ Returns:
     &quot;sourceUris&quot;: [ # [Required] The fully-qualified URIs that point to your data in Google Cloud. For Google Cloud Storage URIs: Each URI can contain one &#x27;*&#x27; wildcard character and it must come after the &#x27;bucket&#x27; name. Size limits related to load jobs apply to external data sources. For Google Cloud Bigtable URIs: Exactly one URI can be specified and it has be a fully specified and valid HTTPS URL for a Google Cloud Bigtable table. For Google Cloud Datastore backups, exactly one URI can be specified. Also, the &#x27;*&#x27; wildcard character is not allowed.
       &quot;A String&quot;,
     ],
+    &quot;timeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIME values. Supports C-style and SQL-style values.
+    &quot;timeZone&quot;: &quot;A String&quot;, # Optional. Time zone used when parsing timestamp values that do not have specific time zone information (e.g. 2024-04-20 12:34:56). The expected format is a IANA timezone string (e.g. America/Los_Angeles).
+    &quot;timestampFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIMESTAMP values. Supports C-style and SQL-style values.
   },
   &quot;friendlyName&quot;: &quot;A String&quot;, # Optional. A descriptive name for this table.
   &quot;id&quot;: &quot;A String&quot;, # Output only. An opaque ID uniquely identifying the table.
@@ -1231,7 +1263,7 @@ Returns:
   &quot;location&quot;: &quot;A String&quot;, # Output only. The geographic location where the table resides. This value is inherited from the dataset.
   &quot;managedTableType&quot;: &quot;A String&quot;, # Optional. If set, overrides the default managed table type configured in the dataset.
   &quot;materializedView&quot;: { # Definition and configuration of a materialized view. # Optional. The materialized view definition.
-    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally.
+    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally. Non-incremental materialized views support an expanded range of SQL queries. The `allow_non_incremental_definition` option can&#x27;t be changed after the materialized view is created.
     &quot;enableRefresh&quot;: True or False, # Optional. Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # Output only. The time when this materialized view was last refreshed, in milliseconds since the epoch.
     &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
@@ -1334,8 +1366,8 @@ Returns:
           ],
         },
         &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-        &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-          { # Data policy option proto, it currently supports name only, will support precedence later.
+        &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+          { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
             &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
           },
         ],
@@ -1359,6 +1391,7 @@ Returns:
         },
         &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
         &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+        &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
         &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
       },
     ],
@@ -1438,7 +1471,7 @@ Returns:
         &quot;query&quot;: &quot;A String&quot;, # Required. The query that defines the view.
       },
     ],
-    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifices the privacy policy for the view.
+    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifies the privacy policy for the view.
       &quot;aggregationThresholdPolicy&quot;: { # Represents privacy policy associated with &quot;aggregation threshold&quot; method. # Optional. Policy used for aggregation thresholds.
         &quot;privacyUnitColumns&quot;: [ # Optional. The privacy unit column(s) associated with this policy. For now, only one column per data source object (table, view) is allowed as a privacy unit column. Representing as a repeated field in metadata for extensibility to multiple columns in future. Duplicates and Repeated struct fields are not allowed. For nested fields, use dot notation (&quot;outer.inner&quot;)
           &quot;A String&quot;,
@@ -1533,7 +1566,7 @@ Returns:
       },
       &quot;type&quot;: &quot;A String&quot;, # The type of table.
       &quot;view&quot;: { # Information about a logical view.
-        &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Specifices the privacy policy for the view.
+        &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Specifies the privacy policy for the view.
           &quot;aggregationThresholdPolicy&quot;: { # Represents privacy policy associated with &quot;aggregation threshold&quot; method. # Optional. Policy used for aggregation thresholds.
             &quot;privacyUnitColumns&quot;: [ # Optional. The privacy unit column(s) associated with this policy. For now, only one column per data source object (table, view) is allowed as a privacy unit column. Representing as a repeated field in metadata for extensibility to multiple columns in future. Duplicates and Repeated struct fields are not allowed. For nested fields, use dot notation (&quot;outer.inner&quot;)
               &quot;A String&quot;,
@@ -1591,7 +1624,7 @@ Args:
     The object takes the form of:
 
 {
-  &quot;biglakeConfiguration&quot;: { # Configuration for BigLake managed tables. # Optional. Specifies the configuration of a BigLake managed table.
+  &quot;biglakeConfiguration&quot;: { # Configuration for BigQuery tables for Apache Iceberg (formerly BigLake managed tables.) # Optional. Specifies the configuration of a BigQuery table for Apache Iceberg.
     &quot;connectionId&quot;: &quot;A String&quot;, # Optional. The connection specifying the credentials to be used to read and write to external storage, such as Cloud Storage. The connection_id can have the form `{project}.{location}.{connection_id}` or `projects/{project}/locations/{location}/connections/{connection_id}&quot;.
     &quot;fileFormat&quot;: &quot;A String&quot;, # Optional. The file format the table data is stored in.
     &quot;storageUri&quot;: &quot;A String&quot;, # Optional. The fully qualified location prefix of the external folder where table data is stored. The &#x27;*&#x27; wildcard character is not allowed. The URI should be in the format `gs://bucket/path_to_table/`
@@ -1673,11 +1706,17 @@ Args:
       &quot;encoding&quot;: &quot;A String&quot;, # Optional. The character encoding of the data. The supported values are UTF-8, ISO-8859-1, UTF-16BE, UTF-16LE, UTF-32BE, and UTF-32LE. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # Optional. The separator character for fields in a CSV file. The separator is interpreted as a single byte. For files encoded in ISO-8859-1, any single character can be used as a separator. For files encoded in UTF-8, characters represented in decimal range 1-127 (U+0001-U+007F) can be used without any modification. UTF-8 characters encoded with multiple bytes (i.e. U+0080 and above) will have only the first byte used for separating fields. The remaining bytes will be treated as a part of the field. BigQuery also supports the escape sequence &quot;\t&quot; (U+0009) to specify a tab separator. The default value is comma (&quot;,&quot;, U+002C).
       &quot;nullMarker&quot;: &quot;A String&quot;, # Optional. Specifies a string that represents a null value in a CSV file. For example, if you specify &quot;\N&quot;, BigQuery interprets &quot;\N&quot; as a null value when querying a CSV file. The default value is the empty string. If you set this property to a custom value, BigQuery throws an error if an empty string is present for all data types except for STRING and BYTE. For STRING and BYTE columns, BigQuery interprets the empty string as an empty value.
+      &quot;nullMarkers&quot;: [ # Optional. A list of strings represented as SQL NULL value in a CSV file. null_marker and null_markers can&#x27;t be set at the same time. If null_marker is set, null_markers has to be not set. If null_markers is set, null_marker has to be not set. If both null_marker and null_markers are set at the same time, a user error would be thrown. Any strings listed in null_markers, including empty string would be interpreted as SQL NULL. This applies to all column types.
+        &quot;A String&quot;,
+      ],
       &quot;preserveAsciiControlCharacters&quot;: True or False, # Optional. Indicates if the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) are preserved.
       &quot;quote&quot;: &quot;&quot;&quot;, # Optional. The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&quot;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true. To include the specific quote character within a quoted value, precede it with an additional matching quote character. For example, if you want to escape the default character &#x27; &quot; &#x27;, use &#x27; &quot;&quot; &#x27;.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # Optional. The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
+      &quot;sourceColumnMatch&quot;: &quot;A String&quot;, # Optional. Controls the strategy used to match loaded columns to the schema. If not set, a sensible default is chosen based on how the schema is provided. If autodetect is used, then columns are matched by name. Otherwise, columns are matched by position. This is done to keep the behavior backward-compatible. Acceptable values are: POSITION - matches by position. This assumes that the columns are ordered the same way as the schema. NAME - matches by name. This reads the header row as column names and reorders columns to match the field names in the schema.
     },
-    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exeeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
+    &quot;dateFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATE values. Supports C-style and SQL-style values.
+    &quot;datetimeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATETIME values. Supports C-style and SQL-style values.
+    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exceeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
       &quot;A String&quot;,
     ],
     &quot;fileSetSpecType&quot;: &quot;A String&quot;, # Optional. Specifies how source URIs are interpreted for constructing the file set to load. By default source URIs are expanded against the underlying storage. Other options include specifying manifest files. Only applicable to object storage systems.
@@ -1716,8 +1755,8 @@ Args:
             ],
           },
           &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-          &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-            { # Data policy option proto, it currently supports name only, will support precedence later.
+          &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+            { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
               &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
             },
           ],
@@ -1741,6 +1780,7 @@ Args:
           },
           &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
           &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+          &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
           &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
         },
       ],
@@ -1752,6 +1792,9 @@ Args:
     &quot;sourceUris&quot;: [ # [Required] The fully-qualified URIs that point to your data in Google Cloud. For Google Cloud Storage URIs: Each URI can contain one &#x27;*&#x27; wildcard character and it must come after the &#x27;bucket&#x27; name. Size limits related to load jobs apply to external data sources. For Google Cloud Bigtable URIs: Exactly one URI can be specified and it has be a fully specified and valid HTTPS URL for a Google Cloud Bigtable table. For Google Cloud Datastore backups, exactly one URI can be specified. Also, the &#x27;*&#x27; wildcard character is not allowed.
       &quot;A String&quot;,
     ],
+    &quot;timeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIME values. Supports C-style and SQL-style values.
+    &quot;timeZone&quot;: &quot;A String&quot;, # Optional. Time zone used when parsing timestamp values that do not have specific time zone information (e.g. 2024-04-20 12:34:56). The expected format is a IANA timezone string (e.g. America/Los_Angeles).
+    &quot;timestampFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIMESTAMP values. Supports C-style and SQL-style values.
   },
   &quot;friendlyName&quot;: &quot;A String&quot;, # Optional. A descriptive name for this table.
   &quot;id&quot;: &quot;A String&quot;, # Output only. An opaque ID uniquely identifying the table.
@@ -1763,7 +1806,7 @@ Args:
   &quot;location&quot;: &quot;A String&quot;, # Output only. The geographic location where the table resides. This value is inherited from the dataset.
   &quot;managedTableType&quot;: &quot;A String&quot;, # Optional. If set, overrides the default managed table type configured in the dataset.
   &quot;materializedView&quot;: { # Definition and configuration of a materialized view. # Optional. The materialized view definition.
-    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally.
+    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally. Non-incremental materialized views support an expanded range of SQL queries. The `allow_non_incremental_definition` option can&#x27;t be changed after the materialized view is created.
     &quot;enableRefresh&quot;: True or False, # Optional. Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # Output only. The time when this materialized view was last refreshed, in milliseconds since the epoch.
     &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
@@ -1866,8 +1909,8 @@ Args:
           ],
         },
         &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-        &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-          { # Data policy option proto, it currently supports name only, will support precedence later.
+        &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+          { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
             &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
           },
         ],
@@ -1891,6 +1934,7 @@ Args:
         },
         &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
         &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+        &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
         &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
       },
     ],
@@ -1970,7 +2014,7 @@ Args:
         &quot;query&quot;: &quot;A String&quot;, # Required. The query that defines the view.
       },
     ],
-    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifices the privacy policy for the view.
+    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifies the privacy policy for the view.
       &quot;aggregationThresholdPolicy&quot;: { # Represents privacy policy associated with &quot;aggregation threshold&quot; method. # Optional. Policy used for aggregation thresholds.
         &quot;privacyUnitColumns&quot;: [ # Optional. The privacy unit column(s) associated with this policy. For now, only one column per data source object (table, view) is allowed as a privacy unit column. Representing as a repeated field in metadata for extensibility to multiple columns in future. Duplicates and Repeated struct fields are not allowed. For nested fields, use dot notation (&quot;outer.inner&quot;)
           &quot;A String&quot;,
@@ -2016,7 +2060,7 @@ Returns:
   An object of the form:
 
     {
-  &quot;biglakeConfiguration&quot;: { # Configuration for BigLake managed tables. # Optional. Specifies the configuration of a BigLake managed table.
+  &quot;biglakeConfiguration&quot;: { # Configuration for BigQuery tables for Apache Iceberg (formerly BigLake managed tables.) # Optional. Specifies the configuration of a BigQuery table for Apache Iceberg.
     &quot;connectionId&quot;: &quot;A String&quot;, # Optional. The connection specifying the credentials to be used to read and write to external storage, such as Cloud Storage. The connection_id can have the form `{project}.{location}.{connection_id}` or `projects/{project}/locations/{location}/connections/{connection_id}&quot;.
     &quot;fileFormat&quot;: &quot;A String&quot;, # Optional. The file format the table data is stored in.
     &quot;storageUri&quot;: &quot;A String&quot;, # Optional. The fully qualified location prefix of the external folder where table data is stored. The &#x27;*&#x27; wildcard character is not allowed. The URI should be in the format `gs://bucket/path_to_table/`
@@ -2098,11 +2142,17 @@ Returns:
       &quot;encoding&quot;: &quot;A String&quot;, # Optional. The character encoding of the data. The supported values are UTF-8, ISO-8859-1, UTF-16BE, UTF-16LE, UTF-32BE, and UTF-32LE. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # Optional. The separator character for fields in a CSV file. The separator is interpreted as a single byte. For files encoded in ISO-8859-1, any single character can be used as a separator. For files encoded in UTF-8, characters represented in decimal range 1-127 (U+0001-U+007F) can be used without any modification. UTF-8 characters encoded with multiple bytes (i.e. U+0080 and above) will have only the first byte used for separating fields. The remaining bytes will be treated as a part of the field. BigQuery also supports the escape sequence &quot;\t&quot; (U+0009) to specify a tab separator. The default value is comma (&quot;,&quot;, U+002C).
       &quot;nullMarker&quot;: &quot;A String&quot;, # Optional. Specifies a string that represents a null value in a CSV file. For example, if you specify &quot;\N&quot;, BigQuery interprets &quot;\N&quot; as a null value when querying a CSV file. The default value is the empty string. If you set this property to a custom value, BigQuery throws an error if an empty string is present for all data types except for STRING and BYTE. For STRING and BYTE columns, BigQuery interprets the empty string as an empty value.
+      &quot;nullMarkers&quot;: [ # Optional. A list of strings represented as SQL NULL value in a CSV file. null_marker and null_markers can&#x27;t be set at the same time. If null_marker is set, null_markers has to be not set. If null_markers is set, null_marker has to be not set. If both null_marker and null_markers are set at the same time, a user error would be thrown. Any strings listed in null_markers, including empty string would be interpreted as SQL NULL. This applies to all column types.
+        &quot;A String&quot;,
+      ],
       &quot;preserveAsciiControlCharacters&quot;: True or False, # Optional. Indicates if the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) are preserved.
       &quot;quote&quot;: &quot;&quot;&quot;, # Optional. The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&quot;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true. To include the specific quote character within a quoted value, precede it with an additional matching quote character. For example, if you want to escape the default character &#x27; &quot; &#x27;, use &#x27; &quot;&quot; &#x27;.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # Optional. The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
+      &quot;sourceColumnMatch&quot;: &quot;A String&quot;, # Optional. Controls the strategy used to match loaded columns to the schema. If not set, a sensible default is chosen based on how the schema is provided. If autodetect is used, then columns are matched by name. Otherwise, columns are matched by position. This is done to keep the behavior backward-compatible. Acceptable values are: POSITION - matches by position. This assumes that the columns are ordered the same way as the schema. NAME - matches by name. This reads the header row as column names and reorders columns to match the field names in the schema.
     },
-    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exeeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
+    &quot;dateFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATE values. Supports C-style and SQL-style values.
+    &quot;datetimeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATETIME values. Supports C-style and SQL-style values.
+    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exceeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
       &quot;A String&quot;,
     ],
     &quot;fileSetSpecType&quot;: &quot;A String&quot;, # Optional. Specifies how source URIs are interpreted for constructing the file set to load. By default source URIs are expanded against the underlying storage. Other options include specifying manifest files. Only applicable to object storage systems.
@@ -2141,8 +2191,8 @@ Returns:
             ],
           },
           &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-          &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-            { # Data policy option proto, it currently supports name only, will support precedence later.
+          &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+            { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
               &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
             },
           ],
@@ -2166,6 +2216,7 @@ Returns:
           },
           &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
           &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+          &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
           &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
         },
       ],
@@ -2177,6 +2228,9 @@ Returns:
     &quot;sourceUris&quot;: [ # [Required] The fully-qualified URIs that point to your data in Google Cloud. For Google Cloud Storage URIs: Each URI can contain one &#x27;*&#x27; wildcard character and it must come after the &#x27;bucket&#x27; name. Size limits related to load jobs apply to external data sources. For Google Cloud Bigtable URIs: Exactly one URI can be specified and it has be a fully specified and valid HTTPS URL for a Google Cloud Bigtable table. For Google Cloud Datastore backups, exactly one URI can be specified. Also, the &#x27;*&#x27; wildcard character is not allowed.
       &quot;A String&quot;,
     ],
+    &quot;timeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIME values. Supports C-style and SQL-style values.
+    &quot;timeZone&quot;: &quot;A String&quot;, # Optional. Time zone used when parsing timestamp values that do not have specific time zone information (e.g. 2024-04-20 12:34:56). The expected format is a IANA timezone string (e.g. America/Los_Angeles).
+    &quot;timestampFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIMESTAMP values. Supports C-style and SQL-style values.
   },
   &quot;friendlyName&quot;: &quot;A String&quot;, # Optional. A descriptive name for this table.
   &quot;id&quot;: &quot;A String&quot;, # Output only. An opaque ID uniquely identifying the table.
@@ -2188,7 +2242,7 @@ Returns:
   &quot;location&quot;: &quot;A String&quot;, # Output only. The geographic location where the table resides. This value is inherited from the dataset.
   &quot;managedTableType&quot;: &quot;A String&quot;, # Optional. If set, overrides the default managed table type configured in the dataset.
   &quot;materializedView&quot;: { # Definition and configuration of a materialized view. # Optional. The materialized view definition.
-    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally.
+    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally. Non-incremental materialized views support an expanded range of SQL queries. The `allow_non_incremental_definition` option can&#x27;t be changed after the materialized view is created.
     &quot;enableRefresh&quot;: True or False, # Optional. Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # Output only. The time when this materialized view was last refreshed, in milliseconds since the epoch.
     &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
@@ -2291,8 +2345,8 @@ Returns:
           ],
         },
         &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-        &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-          { # Data policy option proto, it currently supports name only, will support precedence later.
+        &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+          { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
             &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
           },
         ],
@@ -2316,6 +2370,7 @@ Returns:
         },
         &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
         &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+        &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
         &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
       },
     ],
@@ -2395,7 +2450,7 @@ Returns:
         &quot;query&quot;: &quot;A String&quot;, # Required. The query that defines the view.
       },
     ],
-    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifices the privacy policy for the view.
+    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifies the privacy policy for the view.
       &quot;aggregationThresholdPolicy&quot;: { # Represents privacy policy associated with &quot;aggregation threshold&quot; method. # Optional. Policy used for aggregation thresholds.
         &quot;privacyUnitColumns&quot;: [ # Optional. The privacy unit column(s) associated with this policy. For now, only one column per data source object (table, view) is allowed as a privacy unit column. Representing as a repeated field in metadata for extensibility to multiple columns in future. Duplicates and Repeated struct fields are not allowed. For nested fields, use dot notation (&quot;outer.inner&quot;)
           &quot;A String&quot;,
@@ -2559,7 +2614,7 @@ Args:
     The object takes the form of:
 
 {
-  &quot;biglakeConfiguration&quot;: { # Configuration for BigLake managed tables. # Optional. Specifies the configuration of a BigLake managed table.
+  &quot;biglakeConfiguration&quot;: { # Configuration for BigQuery tables for Apache Iceberg (formerly BigLake managed tables.) # Optional. Specifies the configuration of a BigQuery table for Apache Iceberg.
     &quot;connectionId&quot;: &quot;A String&quot;, # Optional. The connection specifying the credentials to be used to read and write to external storage, such as Cloud Storage. The connection_id can have the form `{project}.{location}.{connection_id}` or `projects/{project}/locations/{location}/connections/{connection_id}&quot;.
     &quot;fileFormat&quot;: &quot;A String&quot;, # Optional. The file format the table data is stored in.
     &quot;storageUri&quot;: &quot;A String&quot;, # Optional. The fully qualified location prefix of the external folder where table data is stored. The &#x27;*&#x27; wildcard character is not allowed. The URI should be in the format `gs://bucket/path_to_table/`
@@ -2641,11 +2696,17 @@ Args:
       &quot;encoding&quot;: &quot;A String&quot;, # Optional. The character encoding of the data. The supported values are UTF-8, ISO-8859-1, UTF-16BE, UTF-16LE, UTF-32BE, and UTF-32LE. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # Optional. The separator character for fields in a CSV file. The separator is interpreted as a single byte. For files encoded in ISO-8859-1, any single character can be used as a separator. For files encoded in UTF-8, characters represented in decimal range 1-127 (U+0001-U+007F) can be used without any modification. UTF-8 characters encoded with multiple bytes (i.e. U+0080 and above) will have only the first byte used for separating fields. The remaining bytes will be treated as a part of the field. BigQuery also supports the escape sequence &quot;\t&quot; (U+0009) to specify a tab separator. The default value is comma (&quot;,&quot;, U+002C).
       &quot;nullMarker&quot;: &quot;A String&quot;, # Optional. Specifies a string that represents a null value in a CSV file. For example, if you specify &quot;\N&quot;, BigQuery interprets &quot;\N&quot; as a null value when querying a CSV file. The default value is the empty string. If you set this property to a custom value, BigQuery throws an error if an empty string is present for all data types except for STRING and BYTE. For STRING and BYTE columns, BigQuery interprets the empty string as an empty value.
+      &quot;nullMarkers&quot;: [ # Optional. A list of strings represented as SQL NULL value in a CSV file. null_marker and null_markers can&#x27;t be set at the same time. If null_marker is set, null_markers has to be not set. If null_markers is set, null_marker has to be not set. If both null_marker and null_markers are set at the same time, a user error would be thrown. Any strings listed in null_markers, including empty string would be interpreted as SQL NULL. This applies to all column types.
+        &quot;A String&quot;,
+      ],
       &quot;preserveAsciiControlCharacters&quot;: True or False, # Optional. Indicates if the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) are preserved.
       &quot;quote&quot;: &quot;&quot;&quot;, # Optional. The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&quot;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true. To include the specific quote character within a quoted value, precede it with an additional matching quote character. For example, if you want to escape the default character &#x27; &quot; &#x27;, use &#x27; &quot;&quot; &#x27;.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # Optional. The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
+      &quot;sourceColumnMatch&quot;: &quot;A String&quot;, # Optional. Controls the strategy used to match loaded columns to the schema. If not set, a sensible default is chosen based on how the schema is provided. If autodetect is used, then columns are matched by name. Otherwise, columns are matched by position. This is done to keep the behavior backward-compatible. Acceptable values are: POSITION - matches by position. This assumes that the columns are ordered the same way as the schema. NAME - matches by name. This reads the header row as column names and reorders columns to match the field names in the schema.
     },
-    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exeeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
+    &quot;dateFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATE values. Supports C-style and SQL-style values.
+    &quot;datetimeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATETIME values. Supports C-style and SQL-style values.
+    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exceeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
       &quot;A String&quot;,
     ],
     &quot;fileSetSpecType&quot;: &quot;A String&quot;, # Optional. Specifies how source URIs are interpreted for constructing the file set to load. By default source URIs are expanded against the underlying storage. Other options include specifying manifest files. Only applicable to object storage systems.
@@ -2684,8 +2745,8 @@ Args:
             ],
           },
           &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-          &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-            { # Data policy option proto, it currently supports name only, will support precedence later.
+          &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+            { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
               &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
             },
           ],
@@ -2709,6 +2770,7 @@ Args:
           },
           &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
           &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+          &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
           &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
         },
       ],
@@ -2720,6 +2782,9 @@ Args:
     &quot;sourceUris&quot;: [ # [Required] The fully-qualified URIs that point to your data in Google Cloud. For Google Cloud Storage URIs: Each URI can contain one &#x27;*&#x27; wildcard character and it must come after the &#x27;bucket&#x27; name. Size limits related to load jobs apply to external data sources. For Google Cloud Bigtable URIs: Exactly one URI can be specified and it has be a fully specified and valid HTTPS URL for a Google Cloud Bigtable table. For Google Cloud Datastore backups, exactly one URI can be specified. Also, the &#x27;*&#x27; wildcard character is not allowed.
       &quot;A String&quot;,
     ],
+    &quot;timeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIME values. Supports C-style and SQL-style values.
+    &quot;timeZone&quot;: &quot;A String&quot;, # Optional. Time zone used when parsing timestamp values that do not have specific time zone information (e.g. 2024-04-20 12:34:56). The expected format is a IANA timezone string (e.g. America/Los_Angeles).
+    &quot;timestampFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIMESTAMP values. Supports C-style and SQL-style values.
   },
   &quot;friendlyName&quot;: &quot;A String&quot;, # Optional. A descriptive name for this table.
   &quot;id&quot;: &quot;A String&quot;, # Output only. An opaque ID uniquely identifying the table.
@@ -2731,7 +2796,7 @@ Args:
   &quot;location&quot;: &quot;A String&quot;, # Output only. The geographic location where the table resides. This value is inherited from the dataset.
   &quot;managedTableType&quot;: &quot;A String&quot;, # Optional. If set, overrides the default managed table type configured in the dataset.
   &quot;materializedView&quot;: { # Definition and configuration of a materialized view. # Optional. The materialized view definition.
-    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally.
+    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally. Non-incremental materialized views support an expanded range of SQL queries. The `allow_non_incremental_definition` option can&#x27;t be changed after the materialized view is created.
     &quot;enableRefresh&quot;: True or False, # Optional. Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # Output only. The time when this materialized view was last refreshed, in milliseconds since the epoch.
     &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
@@ -2834,8 +2899,8 @@ Args:
           ],
         },
         &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-        &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-          { # Data policy option proto, it currently supports name only, will support precedence later.
+        &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+          { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
             &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
           },
         ],
@@ -2859,6 +2924,7 @@ Args:
         },
         &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
         &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+        &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
         &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
       },
     ],
@@ -2938,7 +3004,7 @@ Args:
         &quot;query&quot;: &quot;A String&quot;, # Required. The query that defines the view.
       },
     ],
-    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifices the privacy policy for the view.
+    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifies the privacy policy for the view.
       &quot;aggregationThresholdPolicy&quot;: { # Represents privacy policy associated with &quot;aggregation threshold&quot; method. # Optional. Policy used for aggregation thresholds.
         &quot;privacyUnitColumns&quot;: [ # Optional. The privacy unit column(s) associated with this policy. For now, only one column per data source object (table, view) is allowed as a privacy unit column. Representing as a repeated field in metadata for extensibility to multiple columns in future. Duplicates and Repeated struct fields are not allowed. For nested fields, use dot notation (&quot;outer.inner&quot;)
           &quot;A String&quot;,
@@ -2984,7 +3050,7 @@ Returns:
   An object of the form:
 
     {
-  &quot;biglakeConfiguration&quot;: { # Configuration for BigLake managed tables. # Optional. Specifies the configuration of a BigLake managed table.
+  &quot;biglakeConfiguration&quot;: { # Configuration for BigQuery tables for Apache Iceberg (formerly BigLake managed tables.) # Optional. Specifies the configuration of a BigQuery table for Apache Iceberg.
     &quot;connectionId&quot;: &quot;A String&quot;, # Optional. The connection specifying the credentials to be used to read and write to external storage, such as Cloud Storage. The connection_id can have the form `{project}.{location}.{connection_id}` or `projects/{project}/locations/{location}/connections/{connection_id}&quot;.
     &quot;fileFormat&quot;: &quot;A String&quot;, # Optional. The file format the table data is stored in.
     &quot;storageUri&quot;: &quot;A String&quot;, # Optional. The fully qualified location prefix of the external folder where table data is stored. The &#x27;*&#x27; wildcard character is not allowed. The URI should be in the format `gs://bucket/path_to_table/`
@@ -3066,11 +3132,17 @@ Returns:
       &quot;encoding&quot;: &quot;A String&quot;, # Optional. The character encoding of the data. The supported values are UTF-8, ISO-8859-1, UTF-16BE, UTF-16LE, UTF-32BE, and UTF-32LE. The default value is UTF-8. BigQuery decodes the data after the raw, binary data has been split using the values of the quote and fieldDelimiter properties.
       &quot;fieldDelimiter&quot;: &quot;A String&quot;, # Optional. The separator character for fields in a CSV file. The separator is interpreted as a single byte. For files encoded in ISO-8859-1, any single character can be used as a separator. For files encoded in UTF-8, characters represented in decimal range 1-127 (U+0001-U+007F) can be used without any modification. UTF-8 characters encoded with multiple bytes (i.e. U+0080 and above) will have only the first byte used for separating fields. The remaining bytes will be treated as a part of the field. BigQuery also supports the escape sequence &quot;\t&quot; (U+0009) to specify a tab separator. The default value is comma (&quot;,&quot;, U+002C).
       &quot;nullMarker&quot;: &quot;A String&quot;, # Optional. Specifies a string that represents a null value in a CSV file. For example, if you specify &quot;\N&quot;, BigQuery interprets &quot;\N&quot; as a null value when querying a CSV file. The default value is the empty string. If you set this property to a custom value, BigQuery throws an error if an empty string is present for all data types except for STRING and BYTE. For STRING and BYTE columns, BigQuery interprets the empty string as an empty value.
+      &quot;nullMarkers&quot;: [ # Optional. A list of strings represented as SQL NULL value in a CSV file. null_marker and null_markers can&#x27;t be set at the same time. If null_marker is set, null_markers has to be not set. If null_markers is set, null_marker has to be not set. If both null_marker and null_markers are set at the same time, a user error would be thrown. Any strings listed in null_markers, including empty string would be interpreted as SQL NULL. This applies to all column types.
+        &quot;A String&quot;,
+      ],
       &quot;preserveAsciiControlCharacters&quot;: True or False, # Optional. Indicates if the embedded ASCII control characters (the first 32 characters in the ASCII-table, from &#x27;\x00&#x27; to &#x27;\x1F&#x27;) are preserved.
       &quot;quote&quot;: &quot;&quot;&quot;, # Optional. The value that is used to quote data sections in a CSV file. BigQuery converts the string to ISO-8859-1 encoding, and then uses the first byte of the encoded string to split the data in its raw, binary state. The default value is a double-quote (&quot;). If your data does not contain quoted sections, set the property value to an empty string. If your data contains quoted newline characters, you must also set the allowQuotedNewlines property to true. To include the specific quote character within a quoted value, precede it with an additional matching quote character. For example, if you want to escape the default character &#x27; &quot; &#x27;, use &#x27; &quot;&quot; &#x27;.
       &quot;skipLeadingRows&quot;: &quot;A String&quot;, # Optional. The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N &gt; 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.
+      &quot;sourceColumnMatch&quot;: &quot;A String&quot;, # Optional. Controls the strategy used to match loaded columns to the schema. If not set, a sensible default is chosen based on how the schema is provided. If autodetect is used, then columns are matched by name. Otherwise, columns are matched by position. This is done to keep the behavior backward-compatible. Acceptable values are: POSITION - matches by position. This assumes that the columns are ordered the same way as the schema. NAME - matches by name. This reads the header row as column names and reorders columns to match the field names in the schema.
     },
-    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exeeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
+    &quot;dateFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATE values. Supports C-style and SQL-style values.
+    &quot;datetimeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse DATETIME values. Supports C-style and SQL-style values.
+    &quot;decimalTargetTypes&quot;: [ # Defines the list of possible SQL data types to which the source decimal values are converted. This list and the precision and the scale parameters of the decimal field determine the target type. In the order of NUMERIC, BIGNUMERIC, and STRING, a type is picked if it is in the specified list and if it supports the precision and the scale. STRING supports all precision and scale values. If none of the listed types supports the precision and the scale, the type supporting the widest range in the specified list is picked, and if a value exceeds the supported range when reading the data, an error will be thrown. Example: Suppose the value of this field is [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;]. If (precision,scale) is: * (38,9) -&gt; NUMERIC; * (39,9) -&gt; BIGNUMERIC (NUMERIC cannot hold 30 integer digits); * (38,10) -&gt; BIGNUMERIC (NUMERIC cannot hold 10 fractional digits); * (76,38) -&gt; BIGNUMERIC; * (77,38) -&gt; BIGNUMERIC (error if value exceeds supported range). This field cannot contain duplicate types. The order of the types in this field is ignored. For example, [&quot;BIGNUMERIC&quot;, &quot;NUMERIC&quot;] is the same as [&quot;NUMERIC&quot;, &quot;BIGNUMERIC&quot;] and NUMERIC always takes precedence over BIGNUMERIC. Defaults to [&quot;NUMERIC&quot;, &quot;STRING&quot;] for ORC and [&quot;NUMERIC&quot;] for the other file formats.
       &quot;A String&quot;,
     ],
     &quot;fileSetSpecType&quot;: &quot;A String&quot;, # Optional. Specifies how source URIs are interpreted for constructing the file set to load. By default source URIs are expanded against the underlying storage. Other options include specifying manifest files. Only applicable to object storage systems.
@@ -3109,8 +3181,8 @@ Returns:
             ],
           },
           &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-          &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-            { # Data policy option proto, it currently supports name only, will support precedence later.
+          &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+            { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
               &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
             },
           ],
@@ -3134,6 +3206,7 @@ Returns:
           },
           &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
           &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+          &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
           &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
         },
       ],
@@ -3145,6 +3218,9 @@ Returns:
     &quot;sourceUris&quot;: [ # [Required] The fully-qualified URIs that point to your data in Google Cloud. For Google Cloud Storage URIs: Each URI can contain one &#x27;*&#x27; wildcard character and it must come after the &#x27;bucket&#x27; name. Size limits related to load jobs apply to external data sources. For Google Cloud Bigtable URIs: Exactly one URI can be specified and it has be a fully specified and valid HTTPS URL for a Google Cloud Bigtable table. For Google Cloud Datastore backups, exactly one URI can be specified. Also, the &#x27;*&#x27; wildcard character is not allowed.
       &quot;A String&quot;,
     ],
+    &quot;timeFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIME values. Supports C-style and SQL-style values.
+    &quot;timeZone&quot;: &quot;A String&quot;, # Optional. Time zone used when parsing timestamp values that do not have specific time zone information (e.g. 2024-04-20 12:34:56). The expected format is a IANA timezone string (e.g. America/Los_Angeles).
+    &quot;timestampFormat&quot;: &quot;A String&quot;, # Optional. Format used to parse TIMESTAMP values. Supports C-style and SQL-style values.
   },
   &quot;friendlyName&quot;: &quot;A String&quot;, # Optional. A descriptive name for this table.
   &quot;id&quot;: &quot;A String&quot;, # Output only. An opaque ID uniquely identifying the table.
@@ -3156,7 +3232,7 @@ Returns:
   &quot;location&quot;: &quot;A String&quot;, # Output only. The geographic location where the table resides. This value is inherited from the dataset.
   &quot;managedTableType&quot;: &quot;A String&quot;, # Optional. If set, overrides the default managed table type configured in the dataset.
   &quot;materializedView&quot;: { # Definition and configuration of a materialized view. # Optional. The materialized view definition.
-    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally.
+    &quot;allowNonIncrementalDefinition&quot;: True or False, # Optional. This option declares the intention to construct a materialized view that isn&#x27;t refreshed incrementally. Non-incremental materialized views support an expanded range of SQL queries. The `allow_non_incremental_definition` option can&#x27;t be changed after the materialized view is created.
     &quot;enableRefresh&quot;: True or False, # Optional. Enable automatic refresh of the materialized view when the base table is updated. The default value is &quot;true&quot;.
     &quot;lastRefreshTime&quot;: &quot;A String&quot;, # Output only. The time when this materialized view was last refreshed, in milliseconds since the epoch.
     &quot;maxStaleness&quot;: &quot;A String&quot;, # [Optional] Max staleness of data that could be returned when materizlized view is queried (formatted as Google SQL Interval type).
@@ -3259,8 +3335,8 @@ Returns:
           ],
         },
         &quot;collation&quot;: &quot;A String&quot;, # Optional. Field collation can be set only when the type of field is STRING. The following values are supported: * &#x27;und:ci&#x27;: undetermined locale, case insensitive. * &#x27;&#x27;: empty string. Default to case-sensitive behavior.
-        &quot;dataPolicies&quot;: [ # Optional. Data policy options, will replace the data_policies.
-          { # Data policy option proto, it currently supports name only, will support precedence later.
+        &quot;dataPolicies&quot;: [ # Optional. Data policies attached to this field, used for field-level access control.
+          { # Data policy option. For more information, see [Mask data by applying data policies to a column](https://cloud.google.com/bigquery/docs/column-data-masking#data-policies-on-column/).
             &quot;name&quot;: &quot;A String&quot;, # Data policy resource name in the form of projects/project_id/locations/location_id/dataPolicies/data_policy_id.
           },
         ],
@@ -3284,6 +3360,7 @@ Returns:
         },
         &quot;roundingMode&quot;: &quot;A String&quot;, # Optional. Specifies the rounding mode to be used when storing values of NUMERIC and BIGNUMERIC type.
         &quot;scale&quot;: &quot;A String&quot;, # Optional. See documentation for precision.
+        &quot;timestampPrecision&quot;: &quot;6&quot;, # Optional. Precision (maximum number of total digits in base 10) for seconds of TIMESTAMP type. Possible values include: * 6 (Default, for TIMESTAMP type with microsecond precision) * 12 (For TIMESTAMP type with picosecond precision)
         &quot;type&quot;: &quot;A String&quot;, # Required. The field data type. Possible values include: * STRING * BYTES * INTEGER (or INT64) * FLOAT (or FLOAT64) * BOOLEAN (or BOOL) * TIMESTAMP * DATE * TIME * DATETIME * GEOGRAPHY * NUMERIC * BIGNUMERIC * JSON * RECORD (or STRUCT) * RANGE Use of RECORD/STRUCT indicates that the field contains a nested schema.
       },
     ],
@@ -3363,7 +3440,7 @@ Returns:
         &quot;query&quot;: &quot;A String&quot;, # Required. The query that defines the view.
       },
     ],
-    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifices the privacy policy for the view.
+    &quot;privacyPolicy&quot;: { # Represents privacy policy that contains the privacy requirements specified by the data owner. Currently, this is only supported on views. # Optional. Specifies the privacy policy for the view.
       &quot;aggregationThresholdPolicy&quot;: { # Represents privacy policy associated with &quot;aggregation threshold&quot; method. # Optional. Policy used for aggregation thresholds.
         &quot;privacyUnitColumns&quot;: [ # Optional. The privacy unit column(s) associated with this policy. For now, only one column per data source object (table, view) is allowed as a privacy unit column. Representing as a repeated field in metadata for extensibility to multiple columns in future. Duplicates and Repeated struct fields are not allowed. For nested fields, use dot notation (&quot;outer.inner&quot;)
           &quot;A String&quot;,

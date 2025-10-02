@@ -2679,9 +2679,39 @@
 ]
 }
 }
+},
+"walletobjects": {
+"resources": {
+"v1": {
+"resources": {
+"privateContent": {
+"methods": {
+"setPassUpdateNotice": {
+"description": "Provide Google with information about awaiting private pass update. This will allow Google to provide the update notification to the device that currently holds this pass.",
+"flatPath": "walletobjects/v1/privateContent/setPassUpdateNotice",
+"httpMethod": "POST",
+"id": "walletobjects.walletobjects.v1.privateContent.setPassUpdateNotice",
+"parameterOrder": [],
+"parameters": {},
+"path": "walletobjects/v1/privateContent/setPassUpdateNotice",
+"request": {
+"$ref": "SetPassUpdateNoticeRequest"
+},
+"response": {
+"$ref": "SetPassUpdateNoticeResponse"
+},
+"scopes": [
+"https://www.googleapis.com/auth/wallet_object.issuer"
+]
+}
+}
+}
+}
+}
+}
 }
 },
-"revision": "20241203",
+"revision": "20250909",
 "rootUrl": "https://walletobjects.googleapis.com/",
 "schemas": {
 "ActivationOptions": {
@@ -3580,7 +3610,7 @@ true
 "id": "DiscoverableProgramMerchantSignupInfo",
 "properties": {
 "signupSharedDatas": {
-"description": " User data that is sent in a POST request to the signup website URL. This information is encoded and then shared so that the merchant's website can prefill fields used to enroll the user for the discoverable program.",
+"description": "User data that is sent in a POST request to the signup website URL. This information is encoded and then shared so that the merchant's website can prefill fields used to enroll the user for the discoverable program.",
 "items": {
 "enum": [
 "SHARED_DATA_TYPE_UNSPECIFIED",
@@ -4339,14 +4369,14 @@ false,
 true
 ],
 "enumDescriptions": [
-"",
+"Default value.",
 "Object is active and displayed to with other active objects.",
 "Legacy alias for `ACTIVE`. Deprecated.",
-"",
+"Object has completed it's lifecycle.",
 "Legacy alias for `COMPLETED`. Deprecated.",
 "Object is no longer valid (`validTimeInterval` passed).",
 "Legacy alias for `EXPIRED`. Deprecated.",
-"",
+"Object is no longer valid",
 "Legacy alias for `INACTIVE`. Deprecated."
 ],
 "type": "string"
@@ -5145,14 +5175,14 @@ false,
 true
 ],
 "enumDescriptions": [
-"",
+"Default value.",
 "Object is active and displayed to with other active objects.",
 "Legacy alias for `ACTIVE`. Deprecated.",
-"",
+"Object has completed it's lifecycle.",
 "Legacy alias for `COMPLETED`. Deprecated.",
 "Object is no longer valid (`validTimeInterval` passed).",
 "Legacy alias for `EXPIRED`. Deprecated.",
-"",
+"Object is no longer valid",
 "Legacy alias for `INACTIVE`. Deprecated."
 ],
 "type": "string"
@@ -5543,14 +5573,14 @@ false,
 true
 ],
 "enumDescriptions": [
-"",
+"Default value.",
 "Object is active and displayed to with other active objects.",
 "Legacy alias for `ACTIVE`. Deprecated.",
-"",
+"Object has completed it's lifecycle.",
 "Legacy alias for `COMPLETED`. Deprecated.",
 "Object is no longer valid (`validTimeInterval` passed).",
 "Legacy alias for `EXPIRED`. Deprecated.",
-"",
+"Object is no longer valid",
 "Legacy alias for `INACTIVE`. Deprecated."
 ],
 "type": "string"
@@ -6082,14 +6112,14 @@ false,
 true
 ],
 "enumDescriptions": [
-"",
+"Default value.",
 "Object is active and displayed to with other active objects.",
 "Legacy alias for `ACTIVE`. Deprecated.",
-"",
+"Object has completed it's lifecycle.",
 "Legacy alias for `COMPLETED`. Deprecated.",
 "Object is no longer valid (`validTimeInterval` passed).",
 "Legacy alias for `EXPIRED`. Deprecated.",
-"",
+"Object is no longer valid",
 "Legacy alias for `INACTIVE`. Deprecated."
 ],
 "type": "string"
@@ -6164,7 +6194,7 @@ true
 "type": "object"
 },
 "Image": {
-"description": "Wrapping type for Google hosted images. Next ID: 7",
+"description": "Wrapping type for Google hosted images.",
 "id": "Image",
 "properties": {
 "contentDescription": {
@@ -6176,9 +6206,13 @@ true
 "description": "Identifies what kind of resource this is. Value: the fixed string `\"walletobjects#image\"`.",
 "type": "string"
 },
+"privateImageId": {
+"description": "An ID for an already uploaded private image. Either this or source_uri should be set. Requests setting both or neither will be rejected. Please contact support to use private images.",
+"type": "string"
+},
 "sourceUri": {
 "$ref": "ImageUri",
-"description": "The URI for the image."
+"description": "A URI for the image. Either this or private_image_id should be set. Requests setting both or neither will be rejected."
 }
 },
 "type": "object"
@@ -6975,14 +7009,14 @@ false,
 true
 ],
 "enumDescriptions": [
-"",
+"Default value.",
 "Object is active and displayed to with other active objects.",
 "Legacy alias for `ACTIVE`. Deprecated.",
-"",
+"Object has completed it's lifecycle.",
 "Legacy alias for `COMPLETED`. Deprecated.",
 "Object is no longer valid (`validTimeInterval` passed).",
 "Legacy alias for `EXPIRED`. Deprecated.",
-"",
+"Object is no longer valid",
 "Legacy alias for `INACTIVE`. Deprecated."
 ],
 "type": "string"
@@ -7296,6 +7330,11 @@ true
 "Such requests occur after an END and signal that the response has been sent back to the client. RESPONSE_SENT is only sent to the backend if it is configured to receive them. The response does not need to contain anything.",
 "Such requests indicate that an error occurred while processing the request. ERROR is only sent to the backend if it is configured to receive them. It is not guaranteed that all errors will result in this notification to the backend, even if the backend requests them. Since these requests are just for informational purposes, the response does not need to contain anything."
 ],
+"type": "string"
+},
+"physicalHeaders": {
+"description": "The physical headers provided by RequestReceivedParameters in Scotty request. type is uploader_service.KeyValuePairs.",
+"format": "byte",
 "type": "string"
 },
 "requestId": {
@@ -7989,14 +8028,14 @@ false,
 true
 ],
 "enumDescriptions": [
-"",
+"Default value.",
 "Object is active and displayed to with other active objects.",
 "Legacy alias for `ACTIVE`. Deprecated.",
-"",
+"Object has completed it's lifecycle.",
 "Legacy alias for `COMPLETED`. Deprecated.",
 "Object is no longer valid (`validTimeInterval` passed).",
 "Legacy alias for `EXPIRED`. Deprecated.",
-"",
+"Object is no longer valid",
 "Legacy alias for `INACTIVE`. Deprecated."
 ],
 "type": "string"
@@ -8570,6 +8609,31 @@ true
 "type": "string"
 }
 },
+"type": "object"
+},
+"SetPassUpdateNoticeRequest": {
+"description": "Request to send a private pass update notice information to Google, so that devices can then fetch the notice prompting the user to update a pass.",
+"id": "SetPassUpdateNoticeRequest",
+"properties": {
+"externalPassId": {
+"description": "Required. A fully qualified identifier of the pass that the issuer wants to notify the pass holder(s) about. Formatted as .",
+"type": "string"
+},
+"updateUri": {
+"description": "Required. The issuer endpoint URI the pass holder needs to follow in order to receive an updated pass JWT. It can not contain any sensitive information. The endpoint needs to authenticate the user before giving the user the updated JWT. Example update URI https://someissuer.com/update/passId=someExternalPassId",
+"type": "string"
+},
+"updatedPassJwtSignature": {
+"description": "Required. The JWT signature of the updated pass that the issuer wants to notify Google about. Only devices that report a different JWT signature than this JWT signature will receive the update notification.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"SetPassUpdateNoticeResponse": {
+"description": "A response to a request to notify Google of an awaiting update to a private pass.",
+"id": "SetPassUpdateNoticeResponse",
+"properties": {},
 "type": "object"
 },
 "SignUpInfo": {
@@ -9496,14 +9560,14 @@ false,
 true
 ],
 "enumDescriptions": [
-"",
+"Default value.",
 "Object is active and displayed to with other active objects.",
 "Legacy alias for `ACTIVE`. Deprecated.",
-"",
+"Object has completed it's lifecycle.",
 "Legacy alias for `COMPLETED`. Deprecated.",
 "Object is no longer valid (`validTimeInterval` passed).",
 "Legacy alias for `EXPIRED`. Deprecated.",
-"",
+"Object is no longer valid",
 "Legacy alias for `INACTIVE`. Deprecated."
 ],
 "type": "string"
@@ -9688,6 +9752,23 @@ true
 "enableNotification": {
 "description": "Indicates if the object needs to have upcoming notification enabled.",
 "type": "boolean"
+}
+},
+"type": "object"
+},
+"UploadPrivateImageRequest": {
+"description": "Request to upload a private image to use in a pass.",
+"id": "UploadPrivateImageRequest",
+"properties": {},
+"type": "object"
+},
+"UploadPrivateImageResponse": {
+"description": "Response for uploading the private image.",
+"id": "UploadPrivateImageResponse",
+"properties": {
+"privateImageId": {
+"description": "Unique ID of the uploaded image to be referenced later in Image.private_image_id.",
+"type": "string"
 }
 },
 "type": "object"

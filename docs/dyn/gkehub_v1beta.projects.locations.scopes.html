@@ -410,7 +410,8 @@ Returns:
           ],
           &quot;resourceOptions&quot;: { # ResourceOptions represent options for Kubernetes resource generation. # Optional. Options for Kubernetes resource generation.
             &quot;connectVersion&quot;: &quot;A String&quot;, # Optional. The Connect agent version to use for connect_resources. Defaults to the latest GKE Connect version. The version must be a currently supported version, obsolete versions will be rejected.
-            &quot;k8sVersion&quot;: &quot;A String&quot;, # Optional. Major version of the Kubernetes cluster. This is only used to determine which version to use for the CustomResourceDefinition resources, `apiextensions/v1beta1` or`apiextensions/v1`.
+            &quot;k8sGitVersion&quot;: &quot;A String&quot;, # Optional. Git version of the Kubernetes cluster. This is only used to gate the Connect Agent migration to svc.id.goog on GDC-SO 1.33.100 patch and above.
+            &quot;k8sVersion&quot;: &quot;A String&quot;, # Optional. Major and minor version of the Kubernetes cluster. This is only used to determine which version to use for the CustomResourceDefinition resources, `apiextensions/v1beta1` or`apiextensions/v1`.
             &quot;v1beta1Crd&quot;: True or False, # Optional. Use `apiextensions/v1beta1` instead of `apiextensions/v1` for CustomResourceDefinition resources. This option should be set for clusters with Kubernetes apiserver versions &lt;1.16.
           },
         },
@@ -426,10 +427,11 @@ Returns:
         },
       },
       &quot;externalId&quot;: &quot;A String&quot;, # Optional. An externally-generated and managed ID for this Membership. This ID may be modified after creation, but this is not recommended. The ID must match the regex: `a-zA-Z0-9*` If this Membership represents a Kubernetes cluster, this value should be set to the UID of the `kube-system` namespace object.
-      &quot;labels&quot;: { # Optional. Labels for this membership.
+      &quot;labels&quot;: { # Optional. Labels for this membership. These labels are not leveraged by multi-cluster features, instead, we prefer cluster labels, which can be set on GKE cluster or other cluster types.
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;lastConnectionTime&quot;: &quot;A String&quot;, # Output only. For clusters using Connect, the timestamp of the most recent connection established with Google Cloud. This time is updated every several minutes, not continuously. For clusters that do not use GKE Connect, or that have never connected successfully, this field will be unset.
+      &quot;membershipType&quot;: &quot;A String&quot;, # Output only. The type of the membership.
       &quot;monitoringConfig&quot;: { # MonitoringConfig informs Fleet-based applications/services/UIs how the metrics for the underlying cluster is reported to cloud monitoring services. It can be set from empty to non-empty, but can&#x27;t be mutated directly to prevent accidentally breaking the constinousty of metrics. # Optional. The monitoring config information for this membership.
         &quot;cluster&quot;: &quot;A String&quot;, # Optional. Cluster name used to report metrics. For Anthos on VMWare/Baremetal/MultiCloud clusters, it would be in format {cluster_type}/{cluster_name}, e.g., &quot;awsClusters/cluster_1&quot;.
         &quot;clusterHash&quot;: &quot;A String&quot;, # Optional. For GKE and Multicloud clusters, this is the UUID of the cluster resource. For VMWare and Baremetal clusters, this is the kube-system UID.

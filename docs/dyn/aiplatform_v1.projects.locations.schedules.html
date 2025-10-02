@@ -135,7 +135,7 @@ Args:
           &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
             &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
             &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
-            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation or reservation block.
               &quot;A String&quot;,
             ],
           },
@@ -176,7 +176,7 @@ Args:
       },
       &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of this NotebookExecutionJob. Format: `projects/{project_id}/locations/{location}/notebookExecutionJobs/{job_id}`
       &quot;notebookRuntimeTemplateResourceName&quot;: &quot;A String&quot;, # The NotebookRuntimeTemplate to source compute configuration from.
-      &quot;scheduleResourceName&quot;: &quot;A String&quot;, # Output only. The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
+      &quot;scheduleResourceName&quot;: &quot;A String&quot;, # The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
       &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account to run the execution as.
       &quot;status&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Populated when the NotebookExecutionJob is completed. When there is an error during notebook execution, the error details are populated.
         &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
@@ -367,6 +367,7 @@ Args:
             &quot;state&quot;: &quot;A String&quot;, # Output only. State of the task.
             &quot;taskId&quot;: &quot;A String&quot;, # Output only. The system generated ID of the task.
             &quot;taskName&quot;: &quot;A String&quot;, # Output only. The user specified name of the task that is defined in pipeline_spec.
+            &quot;taskUniqueName&quot;: &quot;A String&quot;, # Output only. The unique name of a task. This field is used by rerun pipeline job. Console UI and Vertex AI SDK will support triggering pipeline job reruns. The name is constructed by concatenating all the parent tasks name with the task name. For example, if a task named &quot;child_task&quot; has a parent task named &quot;parent_task_1&quot; and parent task 1 has a parent task named &quot;parent_task_2&quot;, the task unique name will be &quot;parent_task_2.parent_task_1.child_task&quot;.
           },
         ],
       },
@@ -379,6 +380,16 @@ Args:
         &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
       },
       &quot;preflightValidations&quot;: True or False, # Optional. Whether to do component level validations before job creation.
+      &quot;pscInterfaceConfig&quot;: { # Configuration for PSC-I. # Optional. Configuration for PSC-I for PipelineJob.
+        &quot;dnsPeeringConfigs&quot;: [ # Optional. DNS peering configurations. When specified, Vertex AI will attempt to configure DNS peering zones in the tenant project VPC to resolve the specified domains using the target network&#x27;s Cloud DNS. The user must grant the dns.peer role to the Vertex AI Service Agent on the target project.
+          { # DNS peering configuration. These configurations are used to create DNS peering zones in the Vertex tenant project VPC, enabling resolution of records within the specified domain hosted in the target network&#x27;s Cloud DNS.
+            &quot;domain&quot;: &quot;A String&quot;, # Required. The DNS name suffix of the zone being peered to, e.g., &quot;my-internal-domain.corp.&quot;. Must end with a dot.
+            &quot;targetNetwork&quot;: &quot;A String&quot;, # Required. The VPC network name in the target_project where the DNS zone specified by &#x27;domain&#x27; is visible.
+            &quot;targetProject&quot;: &quot;A String&quot;, # Required. The project ID hosting the Cloud DNS managed zone that contains the &#x27;domain&#x27;. The Vertex AI Service Agent requires the dns.peer role on this project.
+          },
+        ],
+        &quot;networkAttachment&quot;: &quot;A String&quot;, # Optional. The name of the Compute Engine [network attachment](https://cloud.google.com/vpc/docs/about-network-attachments) to attach to the resource within the region and user project. To specify this field, you must have already [created a network attachment] (https://cloud.google.com/vpc/docs/create-manage-network-attachments#create-network-attachments). This field is only used for resources using PSC-I.
+      },
       &quot;reservedIpRanges&quot;: [ # A list of names for the reserved ip ranges under the VPC network that can be used for this Pipeline Job&#x27;s workload. If set, we will deploy the Pipeline Job&#x27;s workload within the provided ip ranges. Otherwise, the job will be deployed to any ip ranges under the provided VPC network. Example: [&#x27;vertex-ai-ip-range&#x27;].
         &quot;A String&quot;,
       ],
@@ -455,7 +466,7 @@ Returns:
           &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
             &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
             &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
-            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation or reservation block.
               &quot;A String&quot;,
             ],
           },
@@ -496,7 +507,7 @@ Returns:
       },
       &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of this NotebookExecutionJob. Format: `projects/{project_id}/locations/{location}/notebookExecutionJobs/{job_id}`
       &quot;notebookRuntimeTemplateResourceName&quot;: &quot;A String&quot;, # The NotebookRuntimeTemplate to source compute configuration from.
-      &quot;scheduleResourceName&quot;: &quot;A String&quot;, # Output only. The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
+      &quot;scheduleResourceName&quot;: &quot;A String&quot;, # The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
       &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account to run the execution as.
       &quot;status&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Populated when the NotebookExecutionJob is completed. When there is an error during notebook execution, the error details are populated.
         &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
@@ -687,6 +698,7 @@ Returns:
             &quot;state&quot;: &quot;A String&quot;, # Output only. State of the task.
             &quot;taskId&quot;: &quot;A String&quot;, # Output only. The system generated ID of the task.
             &quot;taskName&quot;: &quot;A String&quot;, # Output only. The user specified name of the task that is defined in pipeline_spec.
+            &quot;taskUniqueName&quot;: &quot;A String&quot;, # Output only. The unique name of a task. This field is used by rerun pipeline job. Console UI and Vertex AI SDK will support triggering pipeline job reruns. The name is constructed by concatenating all the parent tasks name with the task name. For example, if a task named &quot;child_task&quot; has a parent task named &quot;parent_task_1&quot; and parent task 1 has a parent task named &quot;parent_task_2&quot;, the task unique name will be &quot;parent_task_2.parent_task_1.child_task&quot;.
           },
         ],
       },
@@ -699,6 +711,16 @@ Returns:
         &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
       },
       &quot;preflightValidations&quot;: True or False, # Optional. Whether to do component level validations before job creation.
+      &quot;pscInterfaceConfig&quot;: { # Configuration for PSC-I. # Optional. Configuration for PSC-I for PipelineJob.
+        &quot;dnsPeeringConfigs&quot;: [ # Optional. DNS peering configurations. When specified, Vertex AI will attempt to configure DNS peering zones in the tenant project VPC to resolve the specified domains using the target network&#x27;s Cloud DNS. The user must grant the dns.peer role to the Vertex AI Service Agent on the target project.
+          { # DNS peering configuration. These configurations are used to create DNS peering zones in the Vertex tenant project VPC, enabling resolution of records within the specified domain hosted in the target network&#x27;s Cloud DNS.
+            &quot;domain&quot;: &quot;A String&quot;, # Required. The DNS name suffix of the zone being peered to, e.g., &quot;my-internal-domain.corp.&quot;. Must end with a dot.
+            &quot;targetNetwork&quot;: &quot;A String&quot;, # Required. The VPC network name in the target_project where the DNS zone specified by &#x27;domain&#x27; is visible.
+            &quot;targetProject&quot;: &quot;A String&quot;, # Required. The project ID hosting the Cloud DNS managed zone that contains the &#x27;domain&#x27;. The Vertex AI Service Agent requires the dns.peer role on this project.
+          },
+        ],
+        &quot;networkAttachment&quot;: &quot;A String&quot;, # Optional. The name of the Compute Engine [network attachment](https://cloud.google.com/vpc/docs/about-network-attachments) to attach to the resource within the region and user project. To specify this field, you must have already [created a network attachment] (https://cloud.google.com/vpc/docs/create-manage-network-attachments#create-network-attachments). This field is only used for resources using PSC-I.
+      },
       &quot;reservedIpRanges&quot;: [ # A list of names for the reserved ip ranges under the VPC network that can be used for this Pipeline Job&#x27;s workload. If set, we will deploy the Pipeline Job&#x27;s workload within the provided ip ranges. Otherwise, the job will be deployed to any ip ranges under the provided VPC network. Example: [&#x27;vertex-ai-ip-range&#x27;].
         &quot;A String&quot;,
       ],
@@ -817,7 +839,7 @@ Returns:
           &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
             &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
             &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
-            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation or reservation block.
               &quot;A String&quot;,
             ],
           },
@@ -858,7 +880,7 @@ Returns:
       },
       &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of this NotebookExecutionJob. Format: `projects/{project_id}/locations/{location}/notebookExecutionJobs/{job_id}`
       &quot;notebookRuntimeTemplateResourceName&quot;: &quot;A String&quot;, # The NotebookRuntimeTemplate to source compute configuration from.
-      &quot;scheduleResourceName&quot;: &quot;A String&quot;, # Output only. The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
+      &quot;scheduleResourceName&quot;: &quot;A String&quot;, # The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
       &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account to run the execution as.
       &quot;status&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Populated when the NotebookExecutionJob is completed. When there is an error during notebook execution, the error details are populated.
         &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
@@ -1049,6 +1071,7 @@ Returns:
             &quot;state&quot;: &quot;A String&quot;, # Output only. State of the task.
             &quot;taskId&quot;: &quot;A String&quot;, # Output only. The system generated ID of the task.
             &quot;taskName&quot;: &quot;A String&quot;, # Output only. The user specified name of the task that is defined in pipeline_spec.
+            &quot;taskUniqueName&quot;: &quot;A String&quot;, # Output only. The unique name of a task. This field is used by rerun pipeline job. Console UI and Vertex AI SDK will support triggering pipeline job reruns. The name is constructed by concatenating all the parent tasks name with the task name. For example, if a task named &quot;child_task&quot; has a parent task named &quot;parent_task_1&quot; and parent task 1 has a parent task named &quot;parent_task_2&quot;, the task unique name will be &quot;parent_task_2.parent_task_1.child_task&quot;.
           },
         ],
       },
@@ -1061,6 +1084,16 @@ Returns:
         &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
       },
       &quot;preflightValidations&quot;: True or False, # Optional. Whether to do component level validations before job creation.
+      &quot;pscInterfaceConfig&quot;: { # Configuration for PSC-I. # Optional. Configuration for PSC-I for PipelineJob.
+        &quot;dnsPeeringConfigs&quot;: [ # Optional. DNS peering configurations. When specified, Vertex AI will attempt to configure DNS peering zones in the tenant project VPC to resolve the specified domains using the target network&#x27;s Cloud DNS. The user must grant the dns.peer role to the Vertex AI Service Agent on the target project.
+          { # DNS peering configuration. These configurations are used to create DNS peering zones in the Vertex tenant project VPC, enabling resolution of records within the specified domain hosted in the target network&#x27;s Cloud DNS.
+            &quot;domain&quot;: &quot;A String&quot;, # Required. The DNS name suffix of the zone being peered to, e.g., &quot;my-internal-domain.corp.&quot;. Must end with a dot.
+            &quot;targetNetwork&quot;: &quot;A String&quot;, # Required. The VPC network name in the target_project where the DNS zone specified by &#x27;domain&#x27; is visible.
+            &quot;targetProject&quot;: &quot;A String&quot;, # Required. The project ID hosting the Cloud DNS managed zone that contains the &#x27;domain&#x27;. The Vertex AI Service Agent requires the dns.peer role on this project.
+          },
+        ],
+        &quot;networkAttachment&quot;: &quot;A String&quot;, # Optional. The name of the Compute Engine [network attachment](https://cloud.google.com/vpc/docs/about-network-attachments) to attach to the resource within the region and user project. To specify this field, you must have already [created a network attachment] (https://cloud.google.com/vpc/docs/create-manage-network-attachments#create-network-attachments). This field is only used for resources using PSC-I.
+      },
       &quot;reservedIpRanges&quot;: [ # A list of names for the reserved ip ranges under the VPC network that can be used for this Pipeline Job&#x27;s workload. If set, we will deploy the Pipeline Job&#x27;s workload within the provided ip ranges. Otherwise, the job will be deployed to any ip ranges under the provided VPC network. Example: [&#x27;vertex-ai-ip-range&#x27;].
         &quot;A String&quot;,
       ],
@@ -1151,7 +1184,7 @@ Returns:
               &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
                 &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
                 &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
-                &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+                &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation or reservation block.
                   &quot;A String&quot;,
                 ],
               },
@@ -1192,7 +1225,7 @@ Returns:
           },
           &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of this NotebookExecutionJob. Format: `projects/{project_id}/locations/{location}/notebookExecutionJobs/{job_id}`
           &quot;notebookRuntimeTemplateResourceName&quot;: &quot;A String&quot;, # The NotebookRuntimeTemplate to source compute configuration from.
-          &quot;scheduleResourceName&quot;: &quot;A String&quot;, # Output only. The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
+          &quot;scheduleResourceName&quot;: &quot;A String&quot;, # The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
           &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account to run the execution as.
           &quot;status&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Populated when the NotebookExecutionJob is completed. When there is an error during notebook execution, the error details are populated.
             &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
@@ -1383,6 +1416,7 @@ Returns:
                 &quot;state&quot;: &quot;A String&quot;, # Output only. State of the task.
                 &quot;taskId&quot;: &quot;A String&quot;, # Output only. The system generated ID of the task.
                 &quot;taskName&quot;: &quot;A String&quot;, # Output only. The user specified name of the task that is defined in pipeline_spec.
+                &quot;taskUniqueName&quot;: &quot;A String&quot;, # Output only. The unique name of a task. This field is used by rerun pipeline job. Console UI and Vertex AI SDK will support triggering pipeline job reruns. The name is constructed by concatenating all the parent tasks name with the task name. For example, if a task named &quot;child_task&quot; has a parent task named &quot;parent_task_1&quot; and parent task 1 has a parent task named &quot;parent_task_2&quot;, the task unique name will be &quot;parent_task_2.parent_task_1.child_task&quot;.
               },
             ],
           },
@@ -1395,6 +1429,16 @@ Returns:
             &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
           },
           &quot;preflightValidations&quot;: True or False, # Optional. Whether to do component level validations before job creation.
+          &quot;pscInterfaceConfig&quot;: { # Configuration for PSC-I. # Optional. Configuration for PSC-I for PipelineJob.
+            &quot;dnsPeeringConfigs&quot;: [ # Optional. DNS peering configurations. When specified, Vertex AI will attempt to configure DNS peering zones in the tenant project VPC to resolve the specified domains using the target network&#x27;s Cloud DNS. The user must grant the dns.peer role to the Vertex AI Service Agent on the target project.
+              { # DNS peering configuration. These configurations are used to create DNS peering zones in the Vertex tenant project VPC, enabling resolution of records within the specified domain hosted in the target network&#x27;s Cloud DNS.
+                &quot;domain&quot;: &quot;A String&quot;, # Required. The DNS name suffix of the zone being peered to, e.g., &quot;my-internal-domain.corp.&quot;. Must end with a dot.
+                &quot;targetNetwork&quot;: &quot;A String&quot;, # Required. The VPC network name in the target_project where the DNS zone specified by &#x27;domain&#x27; is visible.
+                &quot;targetProject&quot;: &quot;A String&quot;, # Required. The project ID hosting the Cloud DNS managed zone that contains the &#x27;domain&#x27;. The Vertex AI Service Agent requires the dns.peer role on this project.
+              },
+            ],
+            &quot;networkAttachment&quot;: &quot;A String&quot;, # Optional. The name of the Compute Engine [network attachment](https://cloud.google.com/vpc/docs/about-network-attachments) to attach to the resource within the region and user project. To specify this field, you must have already [created a network attachment] (https://cloud.google.com/vpc/docs/create-manage-network-attachments#create-network-attachments). This field is only used for resources using PSC-I.
+          },
           &quot;reservedIpRanges&quot;: [ # A list of names for the reserved ip ranges under the VPC network that can be used for this Pipeline Job&#x27;s workload. If set, we will deploy the Pipeline Job&#x27;s workload within the provided ip ranges. Otherwise, the job will be deployed to any ip ranges under the provided VPC network. Example: [&#x27;vertex-ai-ip-range&#x27;].
             &quot;A String&quot;,
           ],
@@ -1489,7 +1533,7 @@ Args:
           &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
             &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
             &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
-            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation or reservation block.
               &quot;A String&quot;,
             ],
           },
@@ -1530,7 +1574,7 @@ Args:
       },
       &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of this NotebookExecutionJob. Format: `projects/{project_id}/locations/{location}/notebookExecutionJobs/{job_id}`
       &quot;notebookRuntimeTemplateResourceName&quot;: &quot;A String&quot;, # The NotebookRuntimeTemplate to source compute configuration from.
-      &quot;scheduleResourceName&quot;: &quot;A String&quot;, # Output only. The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
+      &quot;scheduleResourceName&quot;: &quot;A String&quot;, # The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
       &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account to run the execution as.
       &quot;status&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Populated when the NotebookExecutionJob is completed. When there is an error during notebook execution, the error details are populated.
         &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
@@ -1721,6 +1765,7 @@ Args:
             &quot;state&quot;: &quot;A String&quot;, # Output only. State of the task.
             &quot;taskId&quot;: &quot;A String&quot;, # Output only. The system generated ID of the task.
             &quot;taskName&quot;: &quot;A String&quot;, # Output only. The user specified name of the task that is defined in pipeline_spec.
+            &quot;taskUniqueName&quot;: &quot;A String&quot;, # Output only. The unique name of a task. This field is used by rerun pipeline job. Console UI and Vertex AI SDK will support triggering pipeline job reruns. The name is constructed by concatenating all the parent tasks name with the task name. For example, if a task named &quot;child_task&quot; has a parent task named &quot;parent_task_1&quot; and parent task 1 has a parent task named &quot;parent_task_2&quot;, the task unique name will be &quot;parent_task_2.parent_task_1.child_task&quot;.
           },
         ],
       },
@@ -1733,6 +1778,16 @@ Args:
         &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
       },
       &quot;preflightValidations&quot;: True or False, # Optional. Whether to do component level validations before job creation.
+      &quot;pscInterfaceConfig&quot;: { # Configuration for PSC-I. # Optional. Configuration for PSC-I for PipelineJob.
+        &quot;dnsPeeringConfigs&quot;: [ # Optional. DNS peering configurations. When specified, Vertex AI will attempt to configure DNS peering zones in the tenant project VPC to resolve the specified domains using the target network&#x27;s Cloud DNS. The user must grant the dns.peer role to the Vertex AI Service Agent on the target project.
+          { # DNS peering configuration. These configurations are used to create DNS peering zones in the Vertex tenant project VPC, enabling resolution of records within the specified domain hosted in the target network&#x27;s Cloud DNS.
+            &quot;domain&quot;: &quot;A String&quot;, # Required. The DNS name suffix of the zone being peered to, e.g., &quot;my-internal-domain.corp.&quot;. Must end with a dot.
+            &quot;targetNetwork&quot;: &quot;A String&quot;, # Required. The VPC network name in the target_project where the DNS zone specified by &#x27;domain&#x27; is visible.
+            &quot;targetProject&quot;: &quot;A String&quot;, # Required. The project ID hosting the Cloud DNS managed zone that contains the &#x27;domain&#x27;. The Vertex AI Service Agent requires the dns.peer role on this project.
+          },
+        ],
+        &quot;networkAttachment&quot;: &quot;A String&quot;, # Optional. The name of the Compute Engine [network attachment](https://cloud.google.com/vpc/docs/about-network-attachments) to attach to the resource within the region and user project. To specify this field, you must have already [created a network attachment] (https://cloud.google.com/vpc/docs/create-manage-network-attachments#create-network-attachments). This field is only used for resources using PSC-I.
+      },
       &quot;reservedIpRanges&quot;: [ # A list of names for the reserved ip ranges under the VPC network that can be used for this Pipeline Job&#x27;s workload. If set, we will deploy the Pipeline Job&#x27;s workload within the provided ip ranges. Otherwise, the job will be deployed to any ip ranges under the provided VPC network. Example: [&#x27;vertex-ai-ip-range&#x27;].
         &quot;A String&quot;,
       ],
@@ -1810,7 +1865,7 @@ Returns:
           &quot;reservationAffinity&quot;: { # A ReservationAffinity can be used to configure a Vertex AI resource (e.g., a DeployedModel) to draw its Compute Engine resources from a Shared Reservation, or exclusively from on-demand capacity. # Optional. Immutable. Configuration controlling how this resource pool consumes reservation.
             &quot;key&quot;: &quot;A String&quot;, # Optional. Corresponds to the label key of a reservation resource. To target a SPECIFIC_RESERVATION by name, use `compute.googleapis.com/reservation-name` as the key and specify the name of your reservation as its value.
             &quot;reservationAffinityType&quot;: &quot;A String&quot;, # Required. Specifies the reservation affinity type.
-            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation.
+            &quot;values&quot;: [ # Optional. Corresponds to the label values of a reservation resource. This must be the full resource name of the reservation or reservation block.
               &quot;A String&quot;,
             ],
           },
@@ -1851,7 +1906,7 @@ Returns:
       },
       &quot;name&quot;: &quot;A String&quot;, # Output only. The resource name of this NotebookExecutionJob. Format: `projects/{project_id}/locations/{location}/notebookExecutionJobs/{job_id}`
       &quot;notebookRuntimeTemplateResourceName&quot;: &quot;A String&quot;, # The NotebookRuntimeTemplate to source compute configuration from.
-      &quot;scheduleResourceName&quot;: &quot;A String&quot;, # Output only. The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
+      &quot;scheduleResourceName&quot;: &quot;A String&quot;, # The Schedule resource name if this job is triggered by one. Format: `projects/{project_id}/locations/{location}/schedules/{schedule_id}`
       &quot;serviceAccount&quot;: &quot;A String&quot;, # The service account to run the execution as.
       &quot;status&quot;: { # The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors). # Output only. Populated when the NotebookExecutionJob is completed. When there is an error during notebook execution, the error details are populated.
         &quot;code&quot;: 42, # The status code, which should be an enum value of google.rpc.Code.
@@ -2042,6 +2097,7 @@ Returns:
             &quot;state&quot;: &quot;A String&quot;, # Output only. State of the task.
             &quot;taskId&quot;: &quot;A String&quot;, # Output only. The system generated ID of the task.
             &quot;taskName&quot;: &quot;A String&quot;, # Output only. The user specified name of the task that is defined in pipeline_spec.
+            &quot;taskUniqueName&quot;: &quot;A String&quot;, # Output only. The unique name of a task. This field is used by rerun pipeline job. Console UI and Vertex AI SDK will support triggering pipeline job reruns. The name is constructed by concatenating all the parent tasks name with the task name. For example, if a task named &quot;child_task&quot; has a parent task named &quot;parent_task_1&quot; and parent task 1 has a parent task named &quot;parent_task_2&quot;, the task unique name will be &quot;parent_task_2.parent_task_1.child_task&quot;.
           },
         ],
       },
@@ -2054,6 +2110,16 @@ Returns:
         &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
       },
       &quot;preflightValidations&quot;: True or False, # Optional. Whether to do component level validations before job creation.
+      &quot;pscInterfaceConfig&quot;: { # Configuration for PSC-I. # Optional. Configuration for PSC-I for PipelineJob.
+        &quot;dnsPeeringConfigs&quot;: [ # Optional. DNS peering configurations. When specified, Vertex AI will attempt to configure DNS peering zones in the tenant project VPC to resolve the specified domains using the target network&#x27;s Cloud DNS. The user must grant the dns.peer role to the Vertex AI Service Agent on the target project.
+          { # DNS peering configuration. These configurations are used to create DNS peering zones in the Vertex tenant project VPC, enabling resolution of records within the specified domain hosted in the target network&#x27;s Cloud DNS.
+            &quot;domain&quot;: &quot;A String&quot;, # Required. The DNS name suffix of the zone being peered to, e.g., &quot;my-internal-domain.corp.&quot;. Must end with a dot.
+            &quot;targetNetwork&quot;: &quot;A String&quot;, # Required. The VPC network name in the target_project where the DNS zone specified by &#x27;domain&#x27; is visible.
+            &quot;targetProject&quot;: &quot;A String&quot;, # Required. The project ID hosting the Cloud DNS managed zone that contains the &#x27;domain&#x27;. The Vertex AI Service Agent requires the dns.peer role on this project.
+          },
+        ],
+        &quot;networkAttachment&quot;: &quot;A String&quot;, # Optional. The name of the Compute Engine [network attachment](https://cloud.google.com/vpc/docs/about-network-attachments) to attach to the resource within the region and user project. To specify this field, you must have already [created a network attachment] (https://cloud.google.com/vpc/docs/create-manage-network-attachments#create-network-attachments). This field is only used for resources using PSC-I.
+      },
       &quot;reservedIpRanges&quot;: [ # A list of names for the reserved ip ranges under the VPC network that can be used for this Pipeline Job&#x27;s workload. If set, we will deploy the Pipeline Job&#x27;s workload within the provided ip ranges. Otherwise, the job will be deployed to any ip ranges under the provided VPC network. Example: [&#x27;vertex-ai-ip-range&#x27;].
         &quot;A String&quot;,
       ],

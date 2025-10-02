@@ -112,11 +112,11 @@ Args:
 
 { # SecurityProfile is a resource that defines the behavior for one of many ProfileTypes.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Resource creation timestamp.
-  &quot;customInterceptProfile&quot;: { # CustomInterceptProfile defines the Packet Intercept Endpoint Group used to intercept traffic to a third-party firewall in a Firewall rule. # The custom TPPI configuration for the SecurityProfile.
-    &quot;interceptEndpointGroup&quot;: &quot;A String&quot;, # Required. The InterceptEndpointGroup to which traffic associated with the SP should be mirrored.
+  &quot;customInterceptProfile&quot;: { # CustomInterceptProfile defines in-band integration behavior (intercept). It is used by firewall rules with an APPLY_SECURITY_PROFILE_GROUP action. # The custom TPPI configuration for the SecurityProfile.
+    &quot;interceptEndpointGroup&quot;: &quot;A String&quot;, # Required. The target InterceptEndpointGroup. When a firewall rule with this security profile attached matches a packet, the packet will be intercepted to the location-local target in this group.
   },
-  &quot;customMirroringProfile&quot;: { # CustomMirroringProfile defines an action for mirroring traffic to a collector&#x27;s EndpointGroup # The custom Packet Mirroring v2 configuration for the SecurityProfile.
-    &quot;mirroringEndpointGroup&quot;: &quot;A String&quot;, # Required. The MirroringEndpointGroup to which traffic associated with the SP should be mirrored.
+  &quot;customMirroringProfile&quot;: { # CustomMirroringProfile defines out-of-band integration behavior (mirroring). It is used by mirroring rules with a MIRROR action. # The custom Packet Mirroring v2 configuration for the SecurityProfile.
+    &quot;mirroringEndpointGroup&quot;: &quot;A String&quot;, # Required. The target MirroringEndpointGroup. When a mirroring rule with this security profile attached matches a packet, a replica will be mirrored to the location-local target in this group.
   },
   &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the profile. Max length 512 characters.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
@@ -125,6 +125,12 @@ Args:
   },
   &quot;name&quot;: &quot;A String&quot;, # Immutable. Identifier. Name of the SecurityProfile resource. It matches pattern `projects|organizations/*/locations/{location}/securityProfiles/{security_profile}`.
   &quot;threatPreventionProfile&quot;: { # ThreatPreventionProfile defines an action for specific threat signatures or severity levels. # The threat prevention configuration for the SecurityProfile.
+    &quot;antivirusOverrides&quot;: [ # Optional. Configuration for overriding antivirus actions per protocol.
+      { # Defines what action to take for antivirus threats per protocol.
+        &quot;action&quot;: &quot;A String&quot;, # Required. Threat action override. For some threat types, only a subset of actions applies.
+        &quot;protocol&quot;: &quot;A String&quot;, # Required. Protocol to match.
+      },
+    ],
     &quot;severityOverrides&quot;: [ # Optional. Configuration for overriding threats actions by severity match.
       { # Defines what action to take for a specific severity match.
         &quot;action&quot;: &quot;A String&quot;, # Required. Threat action override.
@@ -141,6 +147,17 @@ Args:
   },
   &quot;type&quot;: &quot;A String&quot;, # Immutable. The single ProfileType that the SecurityProfile resource configures.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Last resource update timestamp.
+  &quot;urlFilteringProfile&quot;: { # UrlFilteringProfile defines filters based on URL. # The URL filtering configuration for the SecurityProfile.
+    &quot;urlFilters&quot;: [ # Optional. The list of filtering configs in which each config defines an action to take for some URL match.
+      { # A URL filter defines an action to take for some URL match.
+        &quot;filteringAction&quot;: &quot;A String&quot;, # Required. The action taken when this filter is applied.
+        &quot;priority&quot;: 42, # Required. The priority of this filter within the URL Filtering Profile. Lower integers indicate higher priorities. The priority of a filter must be unique within a URL Filtering Profile.
+        &quot;urls&quot;: [ # Required. The list of strings that a URL must match with for this filter to be applied.
+          &quot;A String&quot;,
+        ],
+      },
+    ],
+  },
 }
 
   securityProfileId: string, Required. Short name of the SecurityProfile resource to be created. This value should be 1-63 characters long, containing only letters, numbers, hyphens, and underscores, and should not start with a number. E.g. &quot;security_profile1&quot;.
@@ -225,11 +242,11 @@ Returns:
 
     { # SecurityProfile is a resource that defines the behavior for one of many ProfileTypes.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Resource creation timestamp.
-  &quot;customInterceptProfile&quot;: { # CustomInterceptProfile defines the Packet Intercept Endpoint Group used to intercept traffic to a third-party firewall in a Firewall rule. # The custom TPPI configuration for the SecurityProfile.
-    &quot;interceptEndpointGroup&quot;: &quot;A String&quot;, # Required. The InterceptEndpointGroup to which traffic associated with the SP should be mirrored.
+  &quot;customInterceptProfile&quot;: { # CustomInterceptProfile defines in-band integration behavior (intercept). It is used by firewall rules with an APPLY_SECURITY_PROFILE_GROUP action. # The custom TPPI configuration for the SecurityProfile.
+    &quot;interceptEndpointGroup&quot;: &quot;A String&quot;, # Required. The target InterceptEndpointGroup. When a firewall rule with this security profile attached matches a packet, the packet will be intercepted to the location-local target in this group.
   },
-  &quot;customMirroringProfile&quot;: { # CustomMirroringProfile defines an action for mirroring traffic to a collector&#x27;s EndpointGroup # The custom Packet Mirroring v2 configuration for the SecurityProfile.
-    &quot;mirroringEndpointGroup&quot;: &quot;A String&quot;, # Required. The MirroringEndpointGroup to which traffic associated with the SP should be mirrored.
+  &quot;customMirroringProfile&quot;: { # CustomMirroringProfile defines out-of-band integration behavior (mirroring). It is used by mirroring rules with a MIRROR action. # The custom Packet Mirroring v2 configuration for the SecurityProfile.
+    &quot;mirroringEndpointGroup&quot;: &quot;A String&quot;, # Required. The target MirroringEndpointGroup. When a mirroring rule with this security profile attached matches a packet, a replica will be mirrored to the location-local target in this group.
   },
   &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the profile. Max length 512 characters.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
@@ -238,6 +255,12 @@ Returns:
   },
   &quot;name&quot;: &quot;A String&quot;, # Immutable. Identifier. Name of the SecurityProfile resource. It matches pattern `projects|organizations/*/locations/{location}/securityProfiles/{security_profile}`.
   &quot;threatPreventionProfile&quot;: { # ThreatPreventionProfile defines an action for specific threat signatures or severity levels. # The threat prevention configuration for the SecurityProfile.
+    &quot;antivirusOverrides&quot;: [ # Optional. Configuration for overriding antivirus actions per protocol.
+      { # Defines what action to take for antivirus threats per protocol.
+        &quot;action&quot;: &quot;A String&quot;, # Required. Threat action override. For some threat types, only a subset of actions applies.
+        &quot;protocol&quot;: &quot;A String&quot;, # Required. Protocol to match.
+      },
+    ],
     &quot;severityOverrides&quot;: [ # Optional. Configuration for overriding threats actions by severity match.
       { # Defines what action to take for a specific severity match.
         &quot;action&quot;: &quot;A String&quot;, # Required. Threat action override.
@@ -254,6 +277,17 @@ Returns:
   },
   &quot;type&quot;: &quot;A String&quot;, # Immutable. The single ProfileType that the SecurityProfile resource configures.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Last resource update timestamp.
+  &quot;urlFilteringProfile&quot;: { # UrlFilteringProfile defines filters based on URL. # The URL filtering configuration for the SecurityProfile.
+    &quot;urlFilters&quot;: [ # Optional. The list of filtering configs in which each config defines an action to take for some URL match.
+      { # A URL filter defines an action to take for some URL match.
+        &quot;filteringAction&quot;: &quot;A String&quot;, # Required. The action taken when this filter is applied.
+        &quot;priority&quot;: 42, # Required. The priority of this filter within the URL Filtering Profile. Lower integers indicate higher priorities. The priority of a filter must be unique within a URL Filtering Profile.
+        &quot;urls&quot;: [ # Required. The list of strings that a URL must match with for this filter to be applied.
+          &quot;A String&quot;,
+        ],
+      },
+    ],
+  },
 }</pre>
 </div>
 
@@ -278,11 +312,11 @@ Returns:
   &quot;securityProfiles&quot;: [ # List of SecurityProfile resources.
     { # SecurityProfile is a resource that defines the behavior for one of many ProfileTypes.
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. Resource creation timestamp.
-      &quot;customInterceptProfile&quot;: { # CustomInterceptProfile defines the Packet Intercept Endpoint Group used to intercept traffic to a third-party firewall in a Firewall rule. # The custom TPPI configuration for the SecurityProfile.
-        &quot;interceptEndpointGroup&quot;: &quot;A String&quot;, # Required. The InterceptEndpointGroup to which traffic associated with the SP should be mirrored.
+      &quot;customInterceptProfile&quot;: { # CustomInterceptProfile defines in-band integration behavior (intercept). It is used by firewall rules with an APPLY_SECURITY_PROFILE_GROUP action. # The custom TPPI configuration for the SecurityProfile.
+        &quot;interceptEndpointGroup&quot;: &quot;A String&quot;, # Required. The target InterceptEndpointGroup. When a firewall rule with this security profile attached matches a packet, the packet will be intercepted to the location-local target in this group.
       },
-      &quot;customMirroringProfile&quot;: { # CustomMirroringProfile defines an action for mirroring traffic to a collector&#x27;s EndpointGroup # The custom Packet Mirroring v2 configuration for the SecurityProfile.
-        &quot;mirroringEndpointGroup&quot;: &quot;A String&quot;, # Required. The MirroringEndpointGroup to which traffic associated with the SP should be mirrored.
+      &quot;customMirroringProfile&quot;: { # CustomMirroringProfile defines out-of-band integration behavior (mirroring). It is used by mirroring rules with a MIRROR action. # The custom Packet Mirroring v2 configuration for the SecurityProfile.
+        &quot;mirroringEndpointGroup&quot;: &quot;A String&quot;, # Required. The target MirroringEndpointGroup. When a mirroring rule with this security profile attached matches a packet, a replica will be mirrored to the location-local target in this group.
       },
       &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the profile. Max length 512 characters.
       &quot;etag&quot;: &quot;A String&quot;, # Output only. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
@@ -291,6 +325,12 @@ Returns:
       },
       &quot;name&quot;: &quot;A String&quot;, # Immutable. Identifier. Name of the SecurityProfile resource. It matches pattern `projects|organizations/*/locations/{location}/securityProfiles/{security_profile}`.
       &quot;threatPreventionProfile&quot;: { # ThreatPreventionProfile defines an action for specific threat signatures or severity levels. # The threat prevention configuration for the SecurityProfile.
+        &quot;antivirusOverrides&quot;: [ # Optional. Configuration for overriding antivirus actions per protocol.
+          { # Defines what action to take for antivirus threats per protocol.
+            &quot;action&quot;: &quot;A String&quot;, # Required. Threat action override. For some threat types, only a subset of actions applies.
+            &quot;protocol&quot;: &quot;A String&quot;, # Required. Protocol to match.
+          },
+        ],
         &quot;severityOverrides&quot;: [ # Optional. Configuration for overriding threats actions by severity match.
           { # Defines what action to take for a specific severity match.
             &quot;action&quot;: &quot;A String&quot;, # Required. Threat action override.
@@ -307,6 +347,17 @@ Returns:
       },
       &quot;type&quot;: &quot;A String&quot;, # Immutable. The single ProfileType that the SecurityProfile resource configures.
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Last resource update timestamp.
+      &quot;urlFilteringProfile&quot;: { # UrlFilteringProfile defines filters based on URL. # The URL filtering configuration for the SecurityProfile.
+        &quot;urlFilters&quot;: [ # Optional. The list of filtering configs in which each config defines an action to take for some URL match.
+          { # A URL filter defines an action to take for some URL match.
+            &quot;filteringAction&quot;: &quot;A String&quot;, # Required. The action taken when this filter is applied.
+            &quot;priority&quot;: 42, # Required. The priority of this filter within the URL Filtering Profile. Lower integers indicate higher priorities. The priority of a filter must be unique within a URL Filtering Profile.
+            &quot;urls&quot;: [ # Required. The list of strings that a URL must match with for this filter to be applied.
+              &quot;A String&quot;,
+            ],
+          },
+        ],
+      },
     },
   ],
 }</pre>
@@ -337,11 +388,11 @@ Args:
 
 { # SecurityProfile is a resource that defines the behavior for one of many ProfileTypes.
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. Resource creation timestamp.
-  &quot;customInterceptProfile&quot;: { # CustomInterceptProfile defines the Packet Intercept Endpoint Group used to intercept traffic to a third-party firewall in a Firewall rule. # The custom TPPI configuration for the SecurityProfile.
-    &quot;interceptEndpointGroup&quot;: &quot;A String&quot;, # Required. The InterceptEndpointGroup to which traffic associated with the SP should be mirrored.
+  &quot;customInterceptProfile&quot;: { # CustomInterceptProfile defines in-band integration behavior (intercept). It is used by firewall rules with an APPLY_SECURITY_PROFILE_GROUP action. # The custom TPPI configuration for the SecurityProfile.
+    &quot;interceptEndpointGroup&quot;: &quot;A String&quot;, # Required. The target InterceptEndpointGroup. When a firewall rule with this security profile attached matches a packet, the packet will be intercepted to the location-local target in this group.
   },
-  &quot;customMirroringProfile&quot;: { # CustomMirroringProfile defines an action for mirroring traffic to a collector&#x27;s EndpointGroup # The custom Packet Mirroring v2 configuration for the SecurityProfile.
-    &quot;mirroringEndpointGroup&quot;: &quot;A String&quot;, # Required. The MirroringEndpointGroup to which traffic associated with the SP should be mirrored.
+  &quot;customMirroringProfile&quot;: { # CustomMirroringProfile defines out-of-band integration behavior (mirroring). It is used by mirroring rules with a MIRROR action. # The custom Packet Mirroring v2 configuration for the SecurityProfile.
+    &quot;mirroringEndpointGroup&quot;: &quot;A String&quot;, # Required. The target MirroringEndpointGroup. When a mirroring rule with this security profile attached matches a packet, a replica will be mirrored to the location-local target in this group.
   },
   &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the profile. Max length 512 characters.
   &quot;etag&quot;: &quot;A String&quot;, # Output only. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
@@ -350,6 +401,12 @@ Args:
   },
   &quot;name&quot;: &quot;A String&quot;, # Immutable. Identifier. Name of the SecurityProfile resource. It matches pattern `projects|organizations/*/locations/{location}/securityProfiles/{security_profile}`.
   &quot;threatPreventionProfile&quot;: { # ThreatPreventionProfile defines an action for specific threat signatures or severity levels. # The threat prevention configuration for the SecurityProfile.
+    &quot;antivirusOverrides&quot;: [ # Optional. Configuration for overriding antivirus actions per protocol.
+      { # Defines what action to take for antivirus threats per protocol.
+        &quot;action&quot;: &quot;A String&quot;, # Required. Threat action override. For some threat types, only a subset of actions applies.
+        &quot;protocol&quot;: &quot;A String&quot;, # Required. Protocol to match.
+      },
+    ],
     &quot;severityOverrides&quot;: [ # Optional. Configuration for overriding threats actions by severity match.
       { # Defines what action to take for a specific severity match.
         &quot;action&quot;: &quot;A String&quot;, # Required. Threat action override.
@@ -366,6 +423,17 @@ Args:
   },
   &quot;type&quot;: &quot;A String&quot;, # Immutable. The single ProfileType that the SecurityProfile resource configures.
   &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Last resource update timestamp.
+  &quot;urlFilteringProfile&quot;: { # UrlFilteringProfile defines filters based on URL. # The URL filtering configuration for the SecurityProfile.
+    &quot;urlFilters&quot;: [ # Optional. The list of filtering configs in which each config defines an action to take for some URL match.
+      { # A URL filter defines an action to take for some URL match.
+        &quot;filteringAction&quot;: &quot;A String&quot;, # Required. The action taken when this filter is applied.
+        &quot;priority&quot;: 42, # Required. The priority of this filter within the URL Filtering Profile. Lower integers indicate higher priorities. The priority of a filter must be unique within a URL Filtering Profile.
+        &quot;urls&quot;: [ # Required. The list of strings that a URL must match with for this filter to be applied.
+          &quot;A String&quot;,
+        ],
+      },
+    ],
+  },
 }
 
   updateMask: string, Required. Field mask is used to specify the fields to be overwritten in the SecurityProfile resource by the update. The fields specified in the update_mask are relative to the resource, not the full request. A field will be overwritten if it is in the mask.

@@ -111,6 +111,7 @@ Args:
       AUTH_SCHEMA_VIEW_UNSPECIFIED - Default value.
       BASIC - Basic view of the AuthSchema.
       JSON_SCHEMA - JSON schema view of the AuthSchema.
+      EUA_SCHEMA - EUA Schema view of the AuthSchema.
   x__xgafv: string, V1 error format.
     Allowed values
       1 - v1 error format
@@ -187,7 +188,7 @@ Returns:
           &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
             &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
             &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-              &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+              &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
             },
             &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
             &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -207,7 +208,7 @@ Returns:
           &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
           &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
           &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-          &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+          &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
           &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
             &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
             &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -238,7 +239,7 @@ Returns:
           },
           &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
             &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-            &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+            &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
             &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
               &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
               &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -263,7 +264,7 @@ Returns:
       &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
         &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
         &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-          &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+          &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
         },
         &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
         &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -283,7 +284,7 @@ Returns:
       &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
       &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
       &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-      &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+      &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
       &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
         &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
         &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -314,7 +315,7 @@ Returns:
       },
       &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
         &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-        &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+        &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
         &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
           &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
           &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -341,7 +342,13 @@ Returns:
     &quot;maxInstanceRequestConcurrency&quot;: 42, # Max Instance Request Conncurrency for Cloud Run service.
     &quot;migrateDeploymentModel&quot;: True or False, # Indicate whether connector is being migrated to cloud run deployment model.
     &quot;migrateTls&quot;: True or False, # Indicate whether connector is being migrated to TLS.
+    &quot;networkEgressModeOverride&quot;: { # NetworkEgressModeOverride provides the network egress mode override for a connector. # Network egress mode override to migrate to direct VPC egress.
+      &quot;isEventingOverrideEnabled&quot;: True or False, # boolean should be set to true to make sure only eventing enabled connections are migrated to direct vpc egress.
+      &quot;isJobsOverrideEnabled&quot;: True or False, # boolean should be set to true to make sure only async operations enabled connections are migrated to direct vpc egress.
+      &quot;networkEgressMode&quot;: &quot;A String&quot;, # Determines the VPC Egress mode for the connector.
+    },
     &quot;provisionCloudSpanner&quot;: True or False, # Indicate whether cloud spanner is required for connector job.
+    &quot;provisionMemstore&quot;: True or False, # Indicate whether memstore is required for connector job.
     &quot;ratelimitThreshold&quot;: &quot;A String&quot;, # Max QPS supported by the connector version before throttling of requests.
     &quot;resourceLimits&quot;: { # Resource limits defined for connection pods of a given connector type. # System resource limits.
       &quot;cpu&quot;: &quot;A String&quot;, # Output only. CPU limit.
@@ -378,20 +385,20 @@ Returns:
         { # Extraction Rule.
           &quot;extractionRegex&quot;: &quot;A String&quot;, # Regex used to extract backend details from source. If empty, whole source value will be used.
           &quot;source&quot;: { # Source to extract the backend from. # Source on which the rule is applied.
-            &quot;fieldId&quot;: &quot;A String&quot;, # Field identifier. For example config vaiable name.
+            &quot;fieldId&quot;: &quot;A String&quot;, # Field identifier. For example config variable name.
             &quot;sourceType&quot;: &quot;A String&quot;, # Type of the source.
           },
         },
       ],
     },
   },
-  &quot;eventingConfigTemplate&quot;: { # Eventing Config details of a connector version. # Output only. Eventing configuration supported by the Connector.
+  &quot;eventingConfigTemplate&quot;: { # Eventing Config details of a connector version. next: 14 # Output only. Eventing configuration supported by the Connector.
     &quot;additionalVariables&quot;: [ # Additional fields that need to be rendered.
       { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
         &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
           &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
           &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-            &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+            &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
           },
           &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
           &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -411,7 +418,7 @@ Returns:
         &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
         &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
         &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-        &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+        &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
         &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
           &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
           &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -442,7 +449,7 @@ Returns:
         },
         &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
           &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-          &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+          &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
           &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
             &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
             &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -465,7 +472,7 @@ Returns:
             &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
               &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
               &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-                &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+                &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
               },
               &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
               &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -485,7 +492,7 @@ Returns:
             &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
             &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
             &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-            &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+            &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
             &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
               &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
               &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -516,7 +523,7 @@ Returns:
             },
             &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
               &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-              &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+              &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
               &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
                 &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
                 &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -541,7 +548,7 @@ Returns:
       &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
         &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
         &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-          &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+          &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
         },
         &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
         &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -561,7 +568,7 @@ Returns:
       &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
       &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
       &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-      &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+      &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
       &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
         &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
         &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -592,7 +599,7 @@ Returns:
       },
       &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
         &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-        &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+        &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
         &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
           &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
           &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -617,7 +624,7 @@ Returns:
             &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
               &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
               &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-                &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+                &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
               },
               &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
               &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -637,7 +644,7 @@ Returns:
             &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
             &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
             &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-            &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+            &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
             &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
               &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
               &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -668,7 +675,7 @@ Returns:
             },
             &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
               &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-              &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+              &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
               &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
                 &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
                 &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -715,326 +722,13 @@ Returns:
       &quot;portFieldType&quot;: &quot;A String&quot;, # Whether port number should be provided by customers.
       &quot;regexPattern&quot;: &quot;A String&quot;, # Regex pattern for host.
     },
-    &quot;triggerConfigVariables&quot;: [ # Trigger Config fields that needs to be rendered
-      { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
-        &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
-          &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
-          &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-            &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
-          },
-          &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
-          &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
-          &quot;scopes&quot;: [ # Optional. The scopes for which the user will authorize Google Cloud Connectors on the connector data source.
-            &quot;A String&quot;,
-          ],
-          &quot;uri&quot;: &quot;A String&quot;, # Optional. The base URI the user must click to trigger the authorization code login flow.
-        },
-        &quot;description&quot;: &quot;A String&quot;, # Optional. Description.
-        &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the parameter.
-        &quot;enumOptions&quot;: [ # Optional. Enum options. To be populated if `ValueType` is `ENUM`
-          { # EnumOption definition
-            &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the option.
-            &quot;id&quot;: &quot;A String&quot;, # Optional. Id of the option.
-          },
-        ],
-        &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
-        &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
-        &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-        &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
-        &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
-          &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
-          &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
-            { # MultiplSelecteOption represents the single option for a config variable.
-              &quot;description&quot;: &quot;A String&quot;, # Optional. Value of the option.
-              &quot;displayName&quot;: &quot;A String&quot;, # Required. Display name of the option.
-              &quot;key&quot;: &quot;A String&quot;, # Required. Key of the option.
-              &quot;preselected&quot;: True or False, # Optional. Indicates if the option is preselected.
-            },
-          ],
-          &quot;valueSeparator&quot;: &quot;A String&quot;, # Required. Value separator. Only &quot;,&quot; can be used for OAuth auth code flow scope field.
-        },
-        &quot;required&quot;: True or False, # Optional. Flag represents that this `ConfigVariable` must be provided for a connection.
-        &quot;requiredCondition&quot;: { # Struct for representing boolean expressions. # Optional. Condition under which a field would be required. The condition can be represented in the form of a logical expression.
-          &quot;fieldComparisons&quot;: [ # Optional. A list of fields to be compared.
-            { # Field that needs to be compared.
-              &quot;boolValue&quot;: True or False, # Boolean value
-              &quot;comparator&quot;: &quot;A String&quot;, # Optional. Comparator to use for comparing the field value.
-              &quot;intValue&quot;: &quot;A String&quot;, # Integer value
-              &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the field.
-              &quot;stringValue&quot;: &quot;A String&quot;, # String value
-            },
-          ],
-          &quot;logicalExpressions&quot;: [ # Optional. A list of nested conditions to be compared.
-            # Object with schema name: LogicalExpression
-          ],
-          &quot;logicalOperator&quot;: &quot;A String&quot;, # Optional. The logical operator to use between the fields and conditions.
-        },
-        &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
-          &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-          &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
-          &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
-            &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
-            &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
-          },
-          &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
-            &quot;A String&quot;,
-          ],
-        },
-        &quot;state&quot;: &quot;A String&quot;, # Output only. State of the config variable.
-        &quot;validationRegex&quot;: &quot;A String&quot;, # Optional. Regular expression in RE2 syntax used for validating the `value` of a `ConfigVariable`.
-        &quot;valueType&quot;: &quot;A String&quot;, # Optional. Type of the parameter: string, int, bool etc. consider custom type for the benefit for the validation.
-      },
-    ],
-  },
-  &quot;isAsyncOperationsSupported&quot;: True or False, # Output only. Is async operations supported.
-  &quot;isCustomActionsSupported&quot;: True or False, # Output only. Is custom actions supported.
-  &quot;isCustomEntitiesSupported&quot;: True or False, # Output only. Is custom entities supported.
-  &quot;labels&quot;: { # Output only. Resource labels to represent user-provided metadata. Refer to cloud documentation on labels for more details. https://cloud.google.com/compute/docs/labeling-resources
-    &quot;a_key&quot;: &quot;A String&quot;,
-  },
-  &quot;launchStage&quot;: &quot;A String&quot;, # Output only. Flag to mark the version indicating the launch stage.
-  &quot;name&quot;: &quot;A String&quot;, # Output only. Resource name of the Version. Format: projects/{project}/locations/{location}/providers/{provider}/connectors/{connector}/versions/{version} Only global location is supported for Connector resource.
-  &quot;releaseVersion&quot;: &quot;A String&quot;, # Output only. ReleaseVersion of the connector, for example: &quot;1.0.1-alpha&quot;.
-  &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Output only. Role grant configuration for this config variable. It will be DEPRECATED soon.
-    &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-    &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
-    &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
-      &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
-      &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
-    },
-    &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
-      &quot;A String&quot;,
-    ],
-  },
-  &quot;roleGrants&quot;: [ # Output only. Role grant configurations for this connector version.
-    { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user.
-      &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-      &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
-      &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
-        &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
-        &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
-      },
-      &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
-        &quot;A String&quot;,
-      ],
-    },
-  ],
-  &quot;schemaRefreshConfig&quot;: { # Config for connection schema refresh # Connection Schema Refresh Config
-    &quot;useActionDisplayNames&quot;: True or False, # Whether to use displayName for actions in UI.
-    &quot;useSynchronousSchemaRefresh&quot;: True or False, # Whether to use synchronous schema refresh.
-  },
-  &quot;sslConfigTemplate&quot;: { # Ssl config details of a connector version # Output only. Ssl configuration supported by the Connector.
-    &quot;additionalVariables&quot;: [ # Any additional fields that need to be rendered
-      { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
-        &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
-          &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
-          &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-            &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
-          },
-          &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
-          &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
-          &quot;scopes&quot;: [ # Optional. The scopes for which the user will authorize Google Cloud Connectors on the connector data source.
-            &quot;A String&quot;,
-          ],
-          &quot;uri&quot;: &quot;A String&quot;, # Optional. The base URI the user must click to trigger the authorization code login flow.
-        },
-        &quot;description&quot;: &quot;A String&quot;, # Optional. Description.
-        &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the parameter.
-        &quot;enumOptions&quot;: [ # Optional. Enum options. To be populated if `ValueType` is `ENUM`
-          { # EnumOption definition
-            &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the option.
-            &quot;id&quot;: &quot;A String&quot;, # Optional. Id of the option.
-          },
-        ],
-        &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
-        &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
-        &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-        &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
-        &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
-          &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
-          &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
-            { # MultiplSelecteOption represents the single option for a config variable.
-              &quot;description&quot;: &quot;A String&quot;, # Optional. Value of the option.
-              &quot;displayName&quot;: &quot;A String&quot;, # Required. Display name of the option.
-              &quot;key&quot;: &quot;A String&quot;, # Required. Key of the option.
-              &quot;preselected&quot;: True or False, # Optional. Indicates if the option is preselected.
-            },
-          ],
-          &quot;valueSeparator&quot;: &quot;A String&quot;, # Required. Value separator. Only &quot;,&quot; can be used for OAuth auth code flow scope field.
-        },
-        &quot;required&quot;: True or False, # Optional. Flag represents that this `ConfigVariable` must be provided for a connection.
-        &quot;requiredCondition&quot;: { # Struct for representing boolean expressions. # Optional. Condition under which a field would be required. The condition can be represented in the form of a logical expression.
-          &quot;fieldComparisons&quot;: [ # Optional. A list of fields to be compared.
-            { # Field that needs to be compared.
-              &quot;boolValue&quot;: True or False, # Boolean value
-              &quot;comparator&quot;: &quot;A String&quot;, # Optional. Comparator to use for comparing the field value.
-              &quot;intValue&quot;: &quot;A String&quot;, # Integer value
-              &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the field.
-              &quot;stringValue&quot;: &quot;A String&quot;, # String value
-            },
-          ],
-          &quot;logicalExpressions&quot;: [ # Optional. A list of nested conditions to be compared.
-            # Object with schema name: LogicalExpression
-          ],
-          &quot;logicalOperator&quot;: &quot;A String&quot;, # Optional. The logical operator to use between the fields and conditions.
-        },
-        &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
-          &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-          &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
-          &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
-            &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
-            &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
-          },
-          &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
-            &quot;A String&quot;,
-          ],
-        },
-        &quot;state&quot;: &quot;A String&quot;, # Output only. State of the config variable.
-        &quot;validationRegex&quot;: &quot;A String&quot;, # Optional. Regular expression in RE2 syntax used for validating the `value` of a `ConfigVariable`.
-        &quot;valueType&quot;: &quot;A String&quot;, # Optional. Type of the parameter: string, int, bool etc. consider custom type for the benefit for the validation.
-      },
-    ],
-    &quot;clientCertType&quot;: [ # List of supported Client Cert Types
-      &quot;A String&quot;,
-    ],
-    &quot;isTlsMandatory&quot;: True or False, # Boolean for determining if the connector version mandates TLS.
-    &quot;serverCertType&quot;: [ # List of supported Server Cert Types
-      &quot;A String&quot;,
-    ],
-    &quot;sslType&quot;: &quot;A String&quot;, # Controls the ssl type for the given connector version
-  },
-  &quot;supportedRuntimeFeatures&quot;: { # Supported runtime features of a connector version. # Output only. Information about the runtime features supported by the Connector.
-    &quot;actionApis&quot;: True or False, # Specifies if the connector supports action apis like &#x27;executeAction&#x27;.
-    &quot;entityApis&quot;: True or False, # Specifies if the connector supports entity apis like &#x27;createEntity&#x27;.
-    &quot;sqlQuery&quot;: True or False, # Specifies if the connector supports &#x27;ExecuteSqlQuery&#x27; operation.
-  },
-  &quot;supportedStandardActions&quot;: [ # Output only. Supported standard actions.
-    { # Standard action
-      &quot;name&quot;: &quot;A String&quot;, # Name of the standard action.
-    },
-  ],
-  &quot;supportedStandardEntities&quot;: [ # Output only. Supported standard entities.
-    { # Standard entity
-      &quot;name&quot;: &quot;A String&quot;, # Name of the standard entity.
-    },
-  ],
-  &quot;unsupportedConnectionTypes&quot;: [ # Output only. Unsupported connection types.
-    &quot;A String&quot;,
-  ],
-  &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Updated time.
-}</pre>
-</div>
-
-<div class="method">
-    <code class="details" id="list">list(parent, pageSize=None, pageToken=None, view=None, x__xgafv=None)</code>
-  <pre>Lists Connector Versions in a given project and location.
-
-Args:
-  parent: string, Required. Parent resource of the connectors, of the form: `projects/*/locations/*/providers/*/connectors/*` Only global location is supported for ConnectorVersion resource. (required)
-  pageSize: integer, Page size.
-  pageToken: string, Page token.
-  view: string, Specifies which fields of the ConnectorVersion are returned in the response. Defaults to `BASIC` view.
-    Allowed values
-      CONNECTOR_VERSION_VIEW_UNSPECIFIED - CONNECTOR_VERSION_VIEW_UNSPECIFIED.
-      CONNECTOR_VERSION_VIEW_BASIC - Do not include role grant configs.
-      CONNECTOR_VERSION_VIEW_FULL - Include role grant configs.
-  x__xgafv: string, V1 error format.
-    Allowed values
-      1 - v1 error format
-      2 - v2 error format
-
-Returns:
-  An object of the form:
-
-    { # Response message for Connectors.ListConnectorVersions.
-  &quot;connectorVersions&quot;: [ # A list of connector versions.
-    { # ConnectorVersion indicates a specific version of a connector.
-      &quot;authConfigTemplates&quot;: [ # Output only. List of auth configs supported by the Connector Version.
-        { # AuthConfigTemplate defines required field over an authentication type.
-          &quot;authKey&quot;: &quot;A String&quot;, # Identifier key for auth config
-          &quot;authType&quot;: &quot;A String&quot;, # The type of authentication configured.
-          &quot;configVariableTemplates&quot;: [ # Config variables to describe an `AuthConfig` for a `Connection`.
-            { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
-              &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
-                &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
-                &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-                  &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
-                },
-                &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
-                &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
-                &quot;scopes&quot;: [ # Optional. The scopes for which the user will authorize Google Cloud Connectors on the connector data source.
-                  &quot;A String&quot;,
-                ],
-                &quot;uri&quot;: &quot;A String&quot;, # Optional. The base URI the user must click to trigger the authorization code login flow.
-              },
-              &quot;description&quot;: &quot;A String&quot;, # Optional. Description.
-              &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the parameter.
-              &quot;enumOptions&quot;: [ # Optional. Enum options. To be populated if `ValueType` is `ENUM`
-                { # EnumOption definition
-                  &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the option.
-                  &quot;id&quot;: &quot;A String&quot;, # Optional. Id of the option.
-                },
-              ],
-              &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
-              &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
-              &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-              &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
-              &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
-                &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
-                &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
-                  { # MultiplSelecteOption represents the single option for a config variable.
-                    &quot;description&quot;: &quot;A String&quot;, # Optional. Value of the option.
-                    &quot;displayName&quot;: &quot;A String&quot;, # Required. Display name of the option.
-                    &quot;key&quot;: &quot;A String&quot;, # Required. Key of the option.
-                    &quot;preselected&quot;: True or False, # Optional. Indicates if the option is preselected.
-                  },
-                ],
-                &quot;valueSeparator&quot;: &quot;A String&quot;, # Required. Value separator. Only &quot;,&quot; can be used for OAuth auth code flow scope field.
-              },
-              &quot;required&quot;: True or False, # Optional. Flag represents that this `ConfigVariable` must be provided for a connection.
-              &quot;requiredCondition&quot;: { # Struct for representing boolean expressions. # Optional. Condition under which a field would be required. The condition can be represented in the form of a logical expression.
-                &quot;fieldComparisons&quot;: [ # Optional. A list of fields to be compared.
-                  { # Field that needs to be compared.
-                    &quot;boolValue&quot;: True or False, # Boolean value
-                    &quot;comparator&quot;: &quot;A String&quot;, # Optional. Comparator to use for comparing the field value.
-                    &quot;intValue&quot;: &quot;A String&quot;, # Integer value
-                    &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the field.
-                    &quot;stringValue&quot;: &quot;A String&quot;, # String value
-                  },
-                ],
-                &quot;logicalExpressions&quot;: [ # Optional. A list of nested conditions to be compared.
-                  # Object with schema name: LogicalExpression
-                ],
-                &quot;logicalOperator&quot;: &quot;A String&quot;, # Optional. The logical operator to use between the fields and conditions.
-              },
-              &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
-                &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-                &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
-                &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
-                  &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
-                  &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
-                },
-                &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
-                  &quot;A String&quot;,
-                ],
-              },
-              &quot;state&quot;: &quot;A String&quot;, # Output only. State of the config variable.
-              &quot;validationRegex&quot;: &quot;A String&quot;, # Optional. Regular expression in RE2 syntax used for validating the `value` of a `ConfigVariable`.
-              &quot;valueType&quot;: &quot;A String&quot;, # Optional. Type of the parameter: string, int, bool etc. consider custom type for the benefit for the validation.
-            },
-          ],
-          &quot;description&quot;: &quot;A String&quot;, # Connector specific description for an authentication template.
-          &quot;displayName&quot;: &quot;A String&quot;, # Display name for authentication template.
-          &quot;isDefault&quot;: True or False, # Whether the auth config is the default one.
-        },
-      ],
-      &quot;authOverrideEnabled&quot;: True or False, # Output only. Flag to mark the dynamic auth override.
-      &quot;configVariableTemplates&quot;: [ # Output only. List of config variables needed to create a connection.
+    &quot;sslConfigTemplate&quot;: { # Ssl config details of a connector version # SSL Config template for the connector version.
+      &quot;additionalVariables&quot;: [ # Any additional fields that need to be rendered
         { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
           &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
             &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
             &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-              &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+              &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
             },
             &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
             &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -1054,7 +748,7 @@ Returns:
           &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
           &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
           &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-          &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+          &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
           &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
             &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
             &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -1085,7 +779,406 @@ Returns:
           },
           &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
             &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-            &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+            &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
+            &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
+              &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
+              &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
+            },
+            &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
+              &quot;A String&quot;,
+            ],
+          },
+          &quot;state&quot;: &quot;A String&quot;, # Output only. State of the config variable.
+          &quot;validationRegex&quot;: &quot;A String&quot;, # Optional. Regular expression in RE2 syntax used for validating the `value` of a `ConfigVariable`.
+          &quot;valueType&quot;: &quot;A String&quot;, # Optional. Type of the parameter: string, int, bool etc. consider custom type for the benefit for the validation.
+        },
+      ],
+      &quot;clientCertType&quot;: [ # List of supported Client Cert Types
+        &quot;A String&quot;,
+      ],
+      &quot;isTlsMandatory&quot;: True or False, # Boolean for determining if the connector version mandates TLS.
+      &quot;serverCertType&quot;: [ # List of supported Server Cert Types
+        &quot;A String&quot;,
+      ],
+      &quot;sslType&quot;: &quot;A String&quot;, # Controls the ssl type for the given connector version
+    },
+    &quot;triggerConfigVariables&quot;: [ # Trigger Config fields that needs to be rendered
+      { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
+        &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
+          &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
+          &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
+            &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+          },
+          &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
+          &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
+          &quot;scopes&quot;: [ # Optional. The scopes for which the user will authorize Google Cloud Connectors on the connector data source.
+            &quot;A String&quot;,
+          ],
+          &quot;uri&quot;: &quot;A String&quot;, # Optional. The base URI the user must click to trigger the authorization code login flow.
+        },
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description.
+        &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the parameter.
+        &quot;enumOptions&quot;: [ # Optional. Enum options. To be populated if `ValueType` is `ENUM`
+          { # EnumOption definition
+            &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the option.
+            &quot;id&quot;: &quot;A String&quot;, # Optional. Id of the option.
+          },
+        ],
+        &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
+        &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
+        &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
+        &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
+        &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
+          &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
+          &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
+            { # MultiplSelecteOption represents the single option for a config variable.
+              &quot;description&quot;: &quot;A String&quot;, # Optional. Value of the option.
+              &quot;displayName&quot;: &quot;A String&quot;, # Required. Display name of the option.
+              &quot;key&quot;: &quot;A String&quot;, # Required. Key of the option.
+              &quot;preselected&quot;: True or False, # Optional. Indicates if the option is preselected.
+            },
+          ],
+          &quot;valueSeparator&quot;: &quot;A String&quot;, # Required. Value separator. Only &quot;,&quot; can be used for OAuth auth code flow scope field.
+        },
+        &quot;required&quot;: True or False, # Optional. Flag represents that this `ConfigVariable` must be provided for a connection.
+        &quot;requiredCondition&quot;: { # Struct for representing boolean expressions. # Optional. Condition under which a field would be required. The condition can be represented in the form of a logical expression.
+          &quot;fieldComparisons&quot;: [ # Optional. A list of fields to be compared.
+            { # Field that needs to be compared.
+              &quot;boolValue&quot;: True or False, # Boolean value
+              &quot;comparator&quot;: &quot;A String&quot;, # Optional. Comparator to use for comparing the field value.
+              &quot;intValue&quot;: &quot;A String&quot;, # Integer value
+              &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the field.
+              &quot;stringValue&quot;: &quot;A String&quot;, # String value
+            },
+          ],
+          &quot;logicalExpressions&quot;: [ # Optional. A list of nested conditions to be compared.
+            # Object with schema name: LogicalExpression
+          ],
+          &quot;logicalOperator&quot;: &quot;A String&quot;, # Optional. The logical operator to use between the fields and conditions.
+        },
+        &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
+          &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
+          &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
+          &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
+            &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
+            &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
+          },
+          &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
+            &quot;A String&quot;,
+          ],
+        },
+        &quot;state&quot;: &quot;A String&quot;, # Output only. State of the config variable.
+        &quot;validationRegex&quot;: &quot;A String&quot;, # Optional. Regular expression in RE2 syntax used for validating the `value` of a `ConfigVariable`.
+        &quot;valueType&quot;: &quot;A String&quot;, # Optional. Type of the parameter: string, int, bool etc. consider custom type for the benefit for the validation.
+      },
+    ],
+  },
+  &quot;isCustomActionsSupported&quot;: True or False, # Output only. Is custom actions supported.
+  &quot;isCustomEntitiesSupported&quot;: True or False, # Output only. Is custom entities supported.
+  &quot;labels&quot;: { # Output only. Resource labels to represent user-provided metadata. Refer to cloud documentation on labels for more details. https://cloud.google.com/compute/docs/labeling-resources
+    &quot;a_key&quot;: &quot;A String&quot;,
+  },
+  &quot;launchStage&quot;: &quot;A String&quot;, # Output only. Flag to mark the version indicating the launch stage.
+  &quot;name&quot;: &quot;A String&quot;, # Output only. Resource name of the Version. Format: projects/{project}/locations/{location}/providers/{provider}/connectors/{connector}/versions/{version} Only global location is supported for Connector resource.
+  &quot;releaseVersion&quot;: &quot;A String&quot;, # Output only. ReleaseVersion of the connector, for example: &quot;1.0.1-alpha&quot;.
+  &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Output only. Role grant configuration for this config variable. It will be DEPRECATED soon.
+    &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
+    &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
+    &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
+      &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
+      &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
+    },
+    &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
+      &quot;A String&quot;,
+    ],
+  },
+  &quot;roleGrants&quot;: [ # Output only. Role grant configurations for this connector version.
+    { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user.
+      &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
+      &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
+      &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
+        &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
+        &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
+      },
+      &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
+        &quot;A String&quot;,
+      ],
+    },
+  ],
+  &quot;schemaRefreshConfig&quot;: { # Config for connection schema refresh # Connection Schema Refresh Config
+    &quot;useActionDisplayNames&quot;: True or False, # Whether to use displayName for actions in UI.
+    &quot;useSynchronousSchemaRefresh&quot;: True or False, # Whether to use synchronous schema refresh.
+  },
+  &quot;sslConfigTemplate&quot;: { # Ssl config details of a connector version # Output only. Ssl configuration supported by the Connector.
+    &quot;additionalVariables&quot;: [ # Any additional fields that need to be rendered
+      { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
+        &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
+          &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
+          &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
+            &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+          },
+          &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
+          &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
+          &quot;scopes&quot;: [ # Optional. The scopes for which the user will authorize Google Cloud Connectors on the connector data source.
+            &quot;A String&quot;,
+          ],
+          &quot;uri&quot;: &quot;A String&quot;, # Optional. The base URI the user must click to trigger the authorization code login flow.
+        },
+        &quot;description&quot;: &quot;A String&quot;, # Optional. Description.
+        &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the parameter.
+        &quot;enumOptions&quot;: [ # Optional. Enum options. To be populated if `ValueType` is `ENUM`
+          { # EnumOption definition
+            &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the option.
+            &quot;id&quot;: &quot;A String&quot;, # Optional. Id of the option.
+          },
+        ],
+        &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
+        &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
+        &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
+        &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
+        &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
+          &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
+          &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
+            { # MultiplSelecteOption represents the single option for a config variable.
+              &quot;description&quot;: &quot;A String&quot;, # Optional. Value of the option.
+              &quot;displayName&quot;: &quot;A String&quot;, # Required. Display name of the option.
+              &quot;key&quot;: &quot;A String&quot;, # Required. Key of the option.
+              &quot;preselected&quot;: True or False, # Optional. Indicates if the option is preselected.
+            },
+          ],
+          &quot;valueSeparator&quot;: &quot;A String&quot;, # Required. Value separator. Only &quot;,&quot; can be used for OAuth auth code flow scope field.
+        },
+        &quot;required&quot;: True or False, # Optional. Flag represents that this `ConfigVariable` must be provided for a connection.
+        &quot;requiredCondition&quot;: { # Struct for representing boolean expressions. # Optional. Condition under which a field would be required. The condition can be represented in the form of a logical expression.
+          &quot;fieldComparisons&quot;: [ # Optional. A list of fields to be compared.
+            { # Field that needs to be compared.
+              &quot;boolValue&quot;: True or False, # Boolean value
+              &quot;comparator&quot;: &quot;A String&quot;, # Optional. Comparator to use for comparing the field value.
+              &quot;intValue&quot;: &quot;A String&quot;, # Integer value
+              &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the field.
+              &quot;stringValue&quot;: &quot;A String&quot;, # String value
+            },
+          ],
+          &quot;logicalExpressions&quot;: [ # Optional. A list of nested conditions to be compared.
+            # Object with schema name: LogicalExpression
+          ],
+          &quot;logicalOperator&quot;: &quot;A String&quot;, # Optional. The logical operator to use between the fields and conditions.
+        },
+        &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
+          &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
+          &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
+          &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
+            &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
+            &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
+          },
+          &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
+            &quot;A String&quot;,
+          ],
+        },
+        &quot;state&quot;: &quot;A String&quot;, # Output only. State of the config variable.
+        &quot;validationRegex&quot;: &quot;A String&quot;, # Optional. Regular expression in RE2 syntax used for validating the `value` of a `ConfigVariable`.
+        &quot;valueType&quot;: &quot;A String&quot;, # Optional. Type of the parameter: string, int, bool etc. consider custom type for the benefit for the validation.
+      },
+    ],
+    &quot;clientCertType&quot;: [ # List of supported Client Cert Types
+      &quot;A String&quot;,
+    ],
+    &quot;isTlsMandatory&quot;: True or False, # Boolean for determining if the connector version mandates TLS.
+    &quot;serverCertType&quot;: [ # List of supported Server Cert Types
+      &quot;A String&quot;,
+    ],
+    &quot;sslType&quot;: &quot;A String&quot;, # Controls the ssl type for the given connector version
+  },
+  &quot;supportedRuntimeFeatures&quot;: { # Supported runtime features of a connector version. # Output only. Information about the runtime features supported by the Connector.
+    &quot;actionApis&quot;: True or False, # Specifies if the connector supports action apis like &#x27;executeAction&#x27;.
+    &quot;asyncOperations&quot;: True or False, # Specifies if the connector supports async long running operations.
+    &quot;entityApis&quot;: True or False, # Specifies if the connector supports entity apis like &#x27;createEntity&#x27;.
+    &quot;sqlQuery&quot;: True or False, # Specifies if the connector supports &#x27;ExecuteSqlQuery&#x27; operation.
+  },
+  &quot;supportedStandardActions&quot;: [ # Output only. Supported standard actions.
+    { # Standard action
+      &quot;name&quot;: &quot;A String&quot;, # Name of the standard action.
+    },
+  ],
+  &quot;supportedStandardEntities&quot;: [ # Output only. Supported standard entities.
+    { # Standard entity
+      &quot;name&quot;: &quot;A String&quot;, # Name of the standard entity.
+    },
+  ],
+  &quot;unsupportedConnectionTypes&quot;: [ # Output only. Unsupported connection types.
+    &quot;A String&quot;,
+  ],
+  &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Updated time.
+  &quot;vpcscConfig&quot;: { # This configuration provides VPCSC config for a connector. # Output only. VPCSC config for the connector.
+    &quot;defaultAllowlistedHost&quot;: [ # The list of allowlisted FQDNs for VPCSC.
+      &quot;A String&quot;,
+    ],
+    &quot;disableFirewallVpcscFlow&quot;: True or False, # Whether to disable firewall VPCSC flow.
+  },
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="list">list(parent, pageSize=None, pageToken=None, view=None, x__xgafv=None)</code>
+  <pre>Lists Connector Versions in a given project and location.
+
+Args:
+  parent: string, A parameter (required)
+  pageSize: integer, Page size.
+  pageToken: string, Page token.
+  view: string, Specifies which fields of the ConnectorVersion are returned in the response. Defaults to `BASIC` view.
+    Allowed values
+      CONNECTOR_VERSION_VIEW_UNSPECIFIED - CONNECTOR_VERSION_VIEW_UNSPECIFIED.
+      CONNECTOR_VERSION_VIEW_BASIC - Do not include role grant configs.
+      CONNECTOR_VERSION_VIEW_FULL - Include role grant configs.
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # Response message for Connectors.ListConnectorVersions.
+  &quot;connectorVersions&quot;: [ # A list of connector versions.
+    { # ConnectorVersion indicates a specific version of a connector.
+      &quot;authConfigTemplates&quot;: [ # Output only. List of auth configs supported by the Connector Version.
+        { # AuthConfigTemplate defines required field over an authentication type.
+          &quot;authKey&quot;: &quot;A String&quot;, # Identifier key for auth config
+          &quot;authType&quot;: &quot;A String&quot;, # The type of authentication configured.
+          &quot;configVariableTemplates&quot;: [ # Config variables to describe an `AuthConfig` for a `Connection`.
+            { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
+              &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
+                &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
+                &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
+                  &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+                },
+                &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
+                &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
+                &quot;scopes&quot;: [ # Optional. The scopes for which the user will authorize Google Cloud Connectors on the connector data source.
+                  &quot;A String&quot;,
+                ],
+                &quot;uri&quot;: &quot;A String&quot;, # Optional. The base URI the user must click to trigger the authorization code login flow.
+              },
+              &quot;description&quot;: &quot;A String&quot;, # Optional. Description.
+              &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the parameter.
+              &quot;enumOptions&quot;: [ # Optional. Enum options. To be populated if `ValueType` is `ENUM`
+                { # EnumOption definition
+                  &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the option.
+                  &quot;id&quot;: &quot;A String&quot;, # Optional. Id of the option.
+                },
+              ],
+              &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
+              &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
+              &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
+              &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
+              &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
+                &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
+                &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
+                  { # MultiplSelecteOption represents the single option for a config variable.
+                    &quot;description&quot;: &quot;A String&quot;, # Optional. Value of the option.
+                    &quot;displayName&quot;: &quot;A String&quot;, # Required. Display name of the option.
+                    &quot;key&quot;: &quot;A String&quot;, # Required. Key of the option.
+                    &quot;preselected&quot;: True or False, # Optional. Indicates if the option is preselected.
+                  },
+                ],
+                &quot;valueSeparator&quot;: &quot;A String&quot;, # Required. Value separator. Only &quot;,&quot; can be used for OAuth auth code flow scope field.
+              },
+              &quot;required&quot;: True or False, # Optional. Flag represents that this `ConfigVariable` must be provided for a connection.
+              &quot;requiredCondition&quot;: { # Struct for representing boolean expressions. # Optional. Condition under which a field would be required. The condition can be represented in the form of a logical expression.
+                &quot;fieldComparisons&quot;: [ # Optional. A list of fields to be compared.
+                  { # Field that needs to be compared.
+                    &quot;boolValue&quot;: True or False, # Boolean value
+                    &quot;comparator&quot;: &quot;A String&quot;, # Optional. Comparator to use for comparing the field value.
+                    &quot;intValue&quot;: &quot;A String&quot;, # Integer value
+                    &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the field.
+                    &quot;stringValue&quot;: &quot;A String&quot;, # String value
+                  },
+                ],
+                &quot;logicalExpressions&quot;: [ # Optional. A list of nested conditions to be compared.
+                  # Object with schema name: LogicalExpression
+                ],
+                &quot;logicalOperator&quot;: &quot;A String&quot;, # Optional. The logical operator to use between the fields and conditions.
+              },
+              &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
+                &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
+                &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
+                &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
+                  &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
+                  &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
+                },
+                &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
+                  &quot;A String&quot;,
+                ],
+              },
+              &quot;state&quot;: &quot;A String&quot;, # Output only. State of the config variable.
+              &quot;validationRegex&quot;: &quot;A String&quot;, # Optional. Regular expression in RE2 syntax used for validating the `value` of a `ConfigVariable`.
+              &quot;valueType&quot;: &quot;A String&quot;, # Optional. Type of the parameter: string, int, bool etc. consider custom type for the benefit for the validation.
+            },
+          ],
+          &quot;description&quot;: &quot;A String&quot;, # Connector specific description for an authentication template.
+          &quot;displayName&quot;: &quot;A String&quot;, # Display name for authentication template.
+          &quot;isDefault&quot;: True or False, # Whether the auth config is the default one.
+        },
+      ],
+      &quot;authOverrideEnabled&quot;: True or False, # Output only. Flag to mark the dynamic auth override.
+      &quot;configVariableTemplates&quot;: [ # Output only. List of config variables needed to create a connection.
+        { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
+          &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
+            &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
+            &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
+              &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+            },
+            &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
+            &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
+            &quot;scopes&quot;: [ # Optional. The scopes for which the user will authorize Google Cloud Connectors on the connector data source.
+              &quot;A String&quot;,
+            ],
+            &quot;uri&quot;: &quot;A String&quot;, # Optional. The base URI the user must click to trigger the authorization code login flow.
+          },
+          &quot;description&quot;: &quot;A String&quot;, # Optional. Description.
+          &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the parameter.
+          &quot;enumOptions&quot;: [ # Optional. Enum options. To be populated if `ValueType` is `ENUM`
+            { # EnumOption definition
+              &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the option.
+              &quot;id&quot;: &quot;A String&quot;, # Optional. Id of the option.
+            },
+          ],
+          &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
+          &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
+          &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
+          &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
+          &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
+            &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
+            &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
+              { # MultiplSelecteOption represents the single option for a config variable.
+                &quot;description&quot;: &quot;A String&quot;, # Optional. Value of the option.
+                &quot;displayName&quot;: &quot;A String&quot;, # Required. Display name of the option.
+                &quot;key&quot;: &quot;A String&quot;, # Required. Key of the option.
+                &quot;preselected&quot;: True or False, # Optional. Indicates if the option is preselected.
+              },
+            ],
+            &quot;valueSeparator&quot;: &quot;A String&quot;, # Required. Value separator. Only &quot;,&quot; can be used for OAuth auth code flow scope field.
+          },
+          &quot;required&quot;: True or False, # Optional. Flag represents that this `ConfigVariable` must be provided for a connection.
+          &quot;requiredCondition&quot;: { # Struct for representing boolean expressions. # Optional. Condition under which a field would be required. The condition can be represented in the form of a logical expression.
+            &quot;fieldComparisons&quot;: [ # Optional. A list of fields to be compared.
+              { # Field that needs to be compared.
+                &quot;boolValue&quot;: True or False, # Boolean value
+                &quot;comparator&quot;: &quot;A String&quot;, # Optional. Comparator to use for comparing the field value.
+                &quot;intValue&quot;: &quot;A String&quot;, # Integer value
+                &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the field.
+                &quot;stringValue&quot;: &quot;A String&quot;, # String value
+              },
+            ],
+            &quot;logicalExpressions&quot;: [ # Optional. A list of nested conditions to be compared.
+              # Object with schema name: LogicalExpression
+            ],
+            &quot;logicalOperator&quot;: &quot;A String&quot;, # Optional. The logical operator to use between the fields and conditions.
+          },
+          &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
+            &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
+            &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
             &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
               &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
               &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -1112,7 +1205,13 @@ Returns:
         &quot;maxInstanceRequestConcurrency&quot;: 42, # Max Instance Request Conncurrency for Cloud Run service.
         &quot;migrateDeploymentModel&quot;: True or False, # Indicate whether connector is being migrated to cloud run deployment model.
         &quot;migrateTls&quot;: True or False, # Indicate whether connector is being migrated to TLS.
+        &quot;networkEgressModeOverride&quot;: { # NetworkEgressModeOverride provides the network egress mode override for a connector. # Network egress mode override to migrate to direct VPC egress.
+          &quot;isEventingOverrideEnabled&quot;: True or False, # boolean should be set to true to make sure only eventing enabled connections are migrated to direct vpc egress.
+          &quot;isJobsOverrideEnabled&quot;: True or False, # boolean should be set to true to make sure only async operations enabled connections are migrated to direct vpc egress.
+          &quot;networkEgressMode&quot;: &quot;A String&quot;, # Determines the VPC Egress mode for the connector.
+        },
         &quot;provisionCloudSpanner&quot;: True or False, # Indicate whether cloud spanner is required for connector job.
+        &quot;provisionMemstore&quot;: True or False, # Indicate whether memstore is required for connector job.
         &quot;ratelimitThreshold&quot;: &quot;A String&quot;, # Max QPS supported by the connector version before throttling of requests.
         &quot;resourceLimits&quot;: { # Resource limits defined for connection pods of a given connector type. # System resource limits.
           &quot;cpu&quot;: &quot;A String&quot;, # Output only. CPU limit.
@@ -1149,20 +1248,20 @@ Returns:
             { # Extraction Rule.
               &quot;extractionRegex&quot;: &quot;A String&quot;, # Regex used to extract backend details from source. If empty, whole source value will be used.
               &quot;source&quot;: { # Source to extract the backend from. # Source on which the rule is applied.
-                &quot;fieldId&quot;: &quot;A String&quot;, # Field identifier. For example config vaiable name.
+                &quot;fieldId&quot;: &quot;A String&quot;, # Field identifier. For example config variable name.
                 &quot;sourceType&quot;: &quot;A String&quot;, # Type of the source.
               },
             },
           ],
         },
       },
-      &quot;eventingConfigTemplate&quot;: { # Eventing Config details of a connector version. # Output only. Eventing configuration supported by the Connector.
+      &quot;eventingConfigTemplate&quot;: { # Eventing Config details of a connector version. next: 14 # Output only. Eventing configuration supported by the Connector.
         &quot;additionalVariables&quot;: [ # Additional fields that need to be rendered.
           { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
             &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
               &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
               &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-                &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+                &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
               },
               &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
               &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -1182,7 +1281,7 @@ Returns:
             &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
             &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
             &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-            &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+            &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
             &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
               &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
               &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -1213,7 +1312,7 @@ Returns:
             },
             &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
               &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-              &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+              &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
               &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
                 &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
                 &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -1236,7 +1335,7 @@ Returns:
                 &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
                   &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
                   &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-                    &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+                    &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
                   },
                   &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
                   &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -1256,7 +1355,7 @@ Returns:
                 &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
                 &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
                 &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-                &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+                &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
                 &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
                   &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
                   &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -1287,7 +1386,7 @@ Returns:
                 },
                 &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
                   &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-                  &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+                  &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
                   &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
                     &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
                     &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -1312,7 +1411,7 @@ Returns:
           &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
             &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
             &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-              &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+              &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
             },
             &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
             &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -1332,7 +1431,7 @@ Returns:
           &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
           &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
           &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-          &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+          &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
           &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
             &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
             &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -1363,7 +1462,7 @@ Returns:
           },
           &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
             &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-            &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+            &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
             &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
               &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
               &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -1388,7 +1487,7 @@ Returns:
                 &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
                   &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
                   &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-                    &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+                    &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
                   },
                   &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
                   &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -1408,7 +1507,7 @@ Returns:
                 &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
                 &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
                 &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-                &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+                &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
                 &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
                   &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
                   &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -1439,7 +1538,7 @@ Returns:
                 },
                 &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
                   &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-                  &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+                  &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
                   &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
                     &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
                     &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -1486,12 +1585,92 @@ Returns:
           &quot;portFieldType&quot;: &quot;A String&quot;, # Whether port number should be provided by customers.
           &quot;regexPattern&quot;: &quot;A String&quot;, # Regex pattern for host.
         },
+        &quot;sslConfigTemplate&quot;: { # Ssl config details of a connector version # SSL Config template for the connector version.
+          &quot;additionalVariables&quot;: [ # Any additional fields that need to be rendered
+            { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
+              &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
+                &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
+                &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
+                  &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+                },
+                &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
+                &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
+                &quot;scopes&quot;: [ # Optional. The scopes for which the user will authorize Google Cloud Connectors on the connector data source.
+                  &quot;A String&quot;,
+                ],
+                &quot;uri&quot;: &quot;A String&quot;, # Optional. The base URI the user must click to trigger the authorization code login flow.
+              },
+              &quot;description&quot;: &quot;A String&quot;, # Optional. Description.
+              &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the parameter.
+              &quot;enumOptions&quot;: [ # Optional. Enum options. To be populated if `ValueType` is `ENUM`
+                { # EnumOption definition
+                  &quot;displayName&quot;: &quot;A String&quot;, # Optional. Display name of the option.
+                  &quot;id&quot;: &quot;A String&quot;, # Optional. Id of the option.
+                },
+              ],
+              &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
+              &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
+              &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
+              &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
+              &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
+                &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
+                &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
+                  { # MultiplSelecteOption represents the single option for a config variable.
+                    &quot;description&quot;: &quot;A String&quot;, # Optional. Value of the option.
+                    &quot;displayName&quot;: &quot;A String&quot;, # Required. Display name of the option.
+                    &quot;key&quot;: &quot;A String&quot;, # Required. Key of the option.
+                    &quot;preselected&quot;: True or False, # Optional. Indicates if the option is preselected.
+                  },
+                ],
+                &quot;valueSeparator&quot;: &quot;A String&quot;, # Required. Value separator. Only &quot;,&quot; can be used for OAuth auth code flow scope field.
+              },
+              &quot;required&quot;: True or False, # Optional. Flag represents that this `ConfigVariable` must be provided for a connection.
+              &quot;requiredCondition&quot;: { # Struct for representing boolean expressions. # Optional. Condition under which a field would be required. The condition can be represented in the form of a logical expression.
+                &quot;fieldComparisons&quot;: [ # Optional. A list of fields to be compared.
+                  { # Field that needs to be compared.
+                    &quot;boolValue&quot;: True or False, # Boolean value
+                    &quot;comparator&quot;: &quot;A String&quot;, # Optional. Comparator to use for comparing the field value.
+                    &quot;intValue&quot;: &quot;A String&quot;, # Integer value
+                    &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the field.
+                    &quot;stringValue&quot;: &quot;A String&quot;, # String value
+                  },
+                ],
+                &quot;logicalExpressions&quot;: [ # Optional. A list of nested conditions to be compared.
+                  # Object with schema name: LogicalExpression
+                ],
+                &quot;logicalOperator&quot;: &quot;A String&quot;, # Optional. The logical operator to use between the fields and conditions.
+              },
+              &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
+                &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
+                &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
+                &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
+                  &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
+                  &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
+                },
+                &quot;roles&quot;: [ # Optional. List of roles that need to be granted.
+                  &quot;A String&quot;,
+                ],
+              },
+              &quot;state&quot;: &quot;A String&quot;, # Output only. State of the config variable.
+              &quot;validationRegex&quot;: &quot;A String&quot;, # Optional. Regular expression in RE2 syntax used for validating the `value` of a `ConfigVariable`.
+              &quot;valueType&quot;: &quot;A String&quot;, # Optional. Type of the parameter: string, int, bool etc. consider custom type for the benefit for the validation.
+            },
+          ],
+          &quot;clientCertType&quot;: [ # List of supported Client Cert Types
+            &quot;A String&quot;,
+          ],
+          &quot;isTlsMandatory&quot;: True or False, # Boolean for determining if the connector version mandates TLS.
+          &quot;serverCertType&quot;: [ # List of supported Server Cert Types
+            &quot;A String&quot;,
+          ],
+          &quot;sslType&quot;: &quot;A String&quot;, # Controls the ssl type for the given connector version
+        },
         &quot;triggerConfigVariables&quot;: [ # Trigger Config fields that needs to be rendered
           { # ConfigVariableTemplate provides metadata about a `ConfigVariable` that is used in a Connection.
             &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
               &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
               &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-                &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+                &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
               },
               &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
               &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -1511,7 +1690,7 @@ Returns:
             &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
             &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
             &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-            &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+            &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
             &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
               &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
               &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -1542,7 +1721,7 @@ Returns:
             },
             &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
               &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-              &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+              &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
               &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
                 &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
                 &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -1557,7 +1736,6 @@ Returns:
           },
         ],
       },
-      &quot;isAsyncOperationsSupported&quot;: True or False, # Output only. Is async operations supported.
       &quot;isCustomActionsSupported&quot;: True or False, # Output only. Is custom actions supported.
       &quot;isCustomEntitiesSupported&quot;: True or False, # Output only. Is custom entities supported.
       &quot;labels&quot;: { # Output only. Resource labels to represent user-provided metadata. Refer to cloud documentation on labels for more details. https://cloud.google.com/compute/docs/labeling-resources
@@ -1568,7 +1746,7 @@ Returns:
       &quot;releaseVersion&quot;: &quot;A String&quot;, # Output only. ReleaseVersion of the connector, for example: &quot;1.0.1-alpha&quot;.
       &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Output only. Role grant configuration for this config variable. It will be DEPRECATED soon.
         &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-        &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+        &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
         &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
           &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
           &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -1580,7 +1758,7 @@ Returns:
       &quot;roleGrants&quot;: [ # Output only. Role grant configurations for this connector version.
         { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user.
           &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-          &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+          &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
           &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
             &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
             &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -1600,7 +1778,7 @@ Returns:
             &quot;authorizationCodeLink&quot;: { # This configuration captures the details required to render an authorization link for the OAuth Authorization Code Flow. # Optional. Authorization code link options. To be populated if `ValueType` is `AUTHORIZATION_CODE`
               &quot;clientId&quot;: &quot;A String&quot;, # Optional. The client ID assigned to the Google Cloud Connectors OAuth app for the connector data source.
               &quot;clientSecret&quot;: { # Secret provides a reference to entries in Secret Manager. # Optional. The client secret assigned to the Google Cloud Connectors OAuth app for the connector data source.
-                &quot;secretVersion&quot;: &quot;A String&quot;, # The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
+                &quot;secretVersion&quot;: &quot;A String&quot;, # Optional. The resource name of the secret version in the format, format as: `projects/*/secrets/*/versions/*`.
               },
               &quot;enablePkce&quot;: True or False, # Optional. Whether to enable PKCE for the auth code flow.
               &quot;omitQueryParams&quot;: True or False, # Optional. Omit query params from the redirect URI.
@@ -1620,7 +1798,7 @@ Returns:
             &quot;enumSource&quot;: &quot;A String&quot;, # Optional. enum source denotes the source of api to fill the enum options
             &quot;isAdvanced&quot;: True or False, # Optional. Indicates if current template is part of advanced settings
             &quot;key&quot;: &quot;A String&quot;, # Optional. Key of the config variable.
-            &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Tyep denotes where this value should be sent in BYOC connections.
+            &quot;locationType&quot;: &quot;A String&quot;, # Optional. Location Type denotes where this value should be sent in BYOC connections.
             &quot;multipleSelectConfig&quot;: { # MultipleSelectConfig represents the multiple options for a config variable. # Optional. MultipleSelectConfig represents the multiple options for a config variable.
               &quot;allowCustomValues&quot;: True or False, # Optional. Allow custom values.
               &quot;multipleSelectOptions&quot;: [ # Required. Multiple select options.
@@ -1651,7 +1829,7 @@ Returns:
             },
             &quot;roleGrant&quot;: { # This configuration defines all the Cloud IAM roles that needs to be granted to a particular Google Cloud resource for the selected principal like service account. These configurations will let UI display to customers what IAM roles need to be granted by them. Or these configurations can be used by the UI to render a &#x27;grant&#x27; button to do the same on behalf of the user. # Optional. Role grant configuration for the config variable.
               &quot;helperTextTemplate&quot;: &quot;A String&quot;, # Optional. Template that UI can use to provide helper text to customers.
-              &quot;principal&quot;: &quot;A String&quot;, # Optional. Prinicipal/Identity for whom the role need to assigned.
+              &quot;principal&quot;: &quot;A String&quot;, # Optional. Principal/Identity for whom the role need to assigned.
               &quot;resource&quot;: { # Resource definition # Optional. Resource on which the roles needs to be granted for the principal.
                 &quot;pathTemplate&quot;: &quot;A String&quot;, # Optional. Template to uniquely represent a Google Cloud resource in a format IAM expects This is a template that can have references to other values provided in the config variable template.
                 &quot;type&quot;: &quot;A String&quot;, # Optional. Different types of resource supported.
@@ -1676,6 +1854,7 @@ Returns:
       },
       &quot;supportedRuntimeFeatures&quot;: { # Supported runtime features of a connector version. # Output only. Information about the runtime features supported by the Connector.
         &quot;actionApis&quot;: True or False, # Specifies if the connector supports action apis like &#x27;executeAction&#x27;.
+        &quot;asyncOperations&quot;: True or False, # Specifies if the connector supports async long running operations.
         &quot;entityApis&quot;: True or False, # Specifies if the connector supports entity apis like &#x27;createEntity&#x27;.
         &quot;sqlQuery&quot;: True or False, # Specifies if the connector supports &#x27;ExecuteSqlQuery&#x27; operation.
       },
@@ -1693,6 +1872,12 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;updateTime&quot;: &quot;A String&quot;, # Output only. Updated time.
+      &quot;vpcscConfig&quot;: { # This configuration provides VPCSC config for a connector. # Output only. VPCSC config for the connector.
+        &quot;defaultAllowlistedHost&quot;: [ # The list of allowlisted FQDNs for VPCSC.
+          &quot;A String&quot;,
+        ],
+        &quot;disableFirewallVpcscFlow&quot;: True or False, # Whether to disable firewall VPCSC flow.
+      },
     },
   ],
   &quot;nextPageToken&quot;: &quot;A String&quot;, # Next page token.

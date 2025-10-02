@@ -143,6 +143,12 @@
 "name"
 ],
 "parameters": {
+"extraLocationTypes": {
+"description": "Optional. Unless explicitly documented otherwise, don't use this unsupported field which is primarily intended for internal usage.",
+"location": "query",
+"repeated": true,
+"type": "string"
+},
 "filter": {
 "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
 "location": "query",
@@ -512,7 +518,7 @@
 }
 }
 },
-"revision": "20241205",
+"revision": "20250918",
 "rootUrl": "https://contactcenteraiplatform.googleapis.com/",
 "schemas": {
 "AdminUser": {
@@ -555,12 +561,16 @@
 "type": "object"
 },
 "ContactCenter": {
-"description": "Message describing ContactCenter object Next ID: 24",
+"description": "Message describing ContactCenter object",
 "id": "ContactCenter",
 "properties": {
 "adminUser": {
 "$ref": "AdminUser",
 "description": "Optional. Info about the first admin user, such as given name and family name."
+},
+"advancedReportingEnabled": {
+"description": "Optional. Whether the advanced reporting feature is enabled.",
+"type": "boolean"
 },
 "ccaipManagedUsers": {
 "description": "Optional. Whether to enable users to be created in the CCAIP-instance concurrently to having users in Cloud identity",
@@ -587,6 +597,10 @@
 "early": {
 "$ref": "Early",
 "description": "Optional. Early release channel."
+},
+"featureConfig": {
+"$ref": "FeatureConfig",
+"description": "Optional. Feature configuration to populate the feature flags."
 },
 "instanceConfig": {
 "$ref": "InstanceConfig",
@@ -622,6 +636,11 @@
 },
 "readOnly": true,
 "type": "array"
+},
+"releaseVersion": {
+"description": "Output only. UJET release version, unique for each new release.",
+"readOnly": true,
+"type": "string"
 },
 "samlParams": {
 "$ref": "SAMLParams",
@@ -728,6 +747,16 @@
 "properties": {},
 "type": "object"
 },
+"FeatureConfig": {
+"id": "FeatureConfig",
+"properties": {
+"agentDesktopEnabled": {
+"description": "Optional. If true - enables the agent desktop feature. Default is false.",
+"type": "boolean"
+}
+},
+"type": "object"
+},
 "GoogleCloudCommonOperationMetadata": {
 "description": "Represents the metadata of the long-running operation.",
 "id": "GoogleCloudCommonOperationMetadata",
@@ -786,7 +815,6 @@
 "STANDARD_XLARGE",
 "STANDARD_2XLARGE",
 "STANDARD_3XLARGE",
-"DEV_XSMALL",
 "MULTIREGION_SMALL",
 "MULTIREGION_MEDIUM",
 "MULTIREGION_LARGE",
@@ -806,7 +834,6 @@
 "Instance Size STANDARD_XLARGE.",
 "Instance Size STANDARD_2XLARGE.",
 "Instance Size STANDARD_3XLARGE.",
-"Instance Size DEV_EXTRA_SMALL.",
 "Instance Size MULTIREGION_SMALL",
 "Instance Size MULTIREGION_MEDIUM",
 "Instance Size MULTIREGION_LARGE",
@@ -1078,7 +1105,6 @@
 "STANDARD_XLARGE",
 "STANDARD_2XLARGE",
 "STANDARD_3XLARGE",
-"DEV_XSMALL",
 "MULTIREGION_SMALL",
 "MULTIREGION_MEDIUM",
 "MULTIREGION_LARGE",
@@ -1098,7 +1124,6 @@
 "Instance Size STANDARD_XLARGE.",
 "Instance Size STANDARD_2XLARGE.",
 "Instance Size STANDARD_3XLARGE.",
-"Instance Size DEV_EXTRA_SMALL.",
 "Instance Size MULTIREGION_SMALL",
 "Instance Size MULTIREGION_MEDIUM",
 "Instance Size MULTIREGION_LARGE",

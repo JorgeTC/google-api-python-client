@@ -148,6 +148,16 @@ Returns:
           &quot;text&quot;: { # Represents the natural language text to be processed. # The natural language text to be processed.
             &quot;text&quot;: &quot;A String&quot;, # Required. The UTF-8 encoded natural language text to be processed.
           },
+          &quot;toolCallResult&quot;: { # The result of calling a tool&#x27;s action that has been executed by the client. # The results of a tool executed by the client.
+            &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+            &quot;error&quot;: { # An error produced by the tool call. # The tool call&#x27;s error.
+              &quot;message&quot;: &quot;A String&quot;, # Optional. The error message of the function.
+            },
+            &quot;outputParameters&quot;: { # The tool call&#x27;s output parameters.
+              &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+            },
+            &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+          },
         },
         &quot;isWebhookEnabled&quot;: True or False, # If webhooks should be allowed to trigger in response to the user utterance. Often if parameters are injected, webhooks should not be enabled.
       },
@@ -175,7 +185,7 @@ Returns:
                 &quot;a_key&quot;: &quot;A String&quot;,
               },
               &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-              &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+              &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
             },
           },
           &quot;description&quot;: &quot;A String&quot;, # The description of the page. The maximum length is 500 characters.
@@ -203,7 +213,7 @@ Returns:
                   &quot;a_key&quot;: &quot;A String&quot;,
                 },
                 &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
               },
             },
             &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -260,6 +270,13 @@ Returns:
                               &quot;A String&quot;,
                             ],
                           },
+                          &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                            &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                            &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                              &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                            },
+                            &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                          },
                         },
                       },
                     ],
@@ -269,6 +286,15 @@ Returns:
               },
             ],
             &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+            &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+              { # Generator settings used by the LLM to generate a text response.
+                &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                  &quot;a_key&quot;: &quot;A String&quot;,
+                },
+                &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+              },
+            ],
             &quot;messages&quot;: [ # The list of rich message responses to present to the user.
               { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                 &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -317,6 +343,13 @@ Returns:
                     &quot;A String&quot;,
                   ],
                 },
+                &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                  &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                  &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                    &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                  },
+                  &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                },
               },
             ],
             &quot;returnPartialResponses&quot;: True or False, # Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.
@@ -359,7 +392,7 @@ Returns:
                       &quot;a_key&quot;: &quot;A String&quot;,
                     },
                     &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                    &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                    &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                   },
                 },
                 &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -416,6 +449,13 @@ Returns:
                                   &quot;A String&quot;,
                                 ],
                               },
+                              &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                                &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                                &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                  &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                                },
+                                &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                              },
                             },
                           },
                         ],
@@ -425,6 +465,15 @@ Returns:
                   },
                 ],
                 &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+                &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+                  { # Generator settings used by the LLM to generate a text response.
+                    &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                    &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                      &quot;a_key&quot;: &quot;A String&quot;,
+                    },
+                    &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+                  },
+                ],
                 &quot;messages&quot;: [ # The list of rich message responses to present to the user.
                   { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                     &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -473,6 +522,13 @@ Returns:
                         &quot;A String&quot;,
                       ],
                     },
+                    &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                      &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                      &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                        &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                      },
+                      &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                    },
                   },
                 ],
                 &quot;returnPartialResponses&quot;: True or False, # Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.
@@ -512,7 +568,7 @@ Returns:
                       &quot;a_key&quot;: &quot;A String&quot;,
                     },
                     &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                    &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                    &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                   },
                 },
                 &quot;defaultValue&quot;: &quot;&quot;, # The default value of an optional parameter. If the parameter is required, the default value will be ignored.
@@ -542,7 +598,7 @@ Returns:
                           &quot;a_key&quot;: &quot;A String&quot;,
                         },
                         &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                        &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                        &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                       },
                     },
                     &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -599,6 +655,13 @@ Returns:
                                       &quot;A String&quot;,
                                     ],
                                   },
+                                  &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                                    &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                                    &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                      &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                                    },
+                                    &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                                  },
                                 },
                               },
                             ],
@@ -608,6 +671,15 @@ Returns:
                       },
                     ],
                     &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+                    &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+                      { # Generator settings used by the LLM to generate a text response.
+                        &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                        &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                          &quot;a_key&quot;: &quot;A String&quot;,
+                        },
+                        &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+                      },
+                    ],
                     &quot;messages&quot;: [ # The list of rich message responses to present to the user.
                       { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                         &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -656,6 +728,13 @@ Returns:
                             &quot;A String&quot;,
                           ],
                         },
+                        &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                          &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                          &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                            &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                          },
+                          &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                        },
                       },
                     ],
                     &quot;returnPartialResponses&quot;: True or False, # Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.
@@ -698,7 +777,7 @@ Returns:
                               &quot;a_key&quot;: &quot;A String&quot;,
                             },
                             &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                            &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                            &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                           },
                         },
                         &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -755,6 +834,13 @@ Returns:
                                           &quot;A String&quot;,
                                         ],
                                       },
+                                      &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                                        &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                                        &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                          &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                                        },
+                                        &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                                      },
                                     },
                                   },
                                 ],
@@ -764,6 +850,15 @@ Returns:
                           },
                         ],
                         &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+                        &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+                          { # Generator settings used by the LLM to generate a text response.
+                            &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                            &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                              &quot;a_key&quot;: &quot;A String&quot;,
+                            },
+                            &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+                          },
+                        ],
                         &quot;messages&quot;: [ # The list of rich message responses to present to the user.
                           { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                             &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -812,6 +907,13 @@ Returns:
                                 &quot;A String&quot;,
                               ],
                             },
+                            &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                              &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                              &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                              },
+                              &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                            },
                           },
                         ],
                         &quot;returnPartialResponses&quot;: True or False, # Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.
@@ -838,6 +940,7 @@ Returns:
               { # A data store connection. It represents a data store in Discovery Engine and the type of the contents it contains.
                 &quot;dataStore&quot;: &quot;A String&quot;, # The full name of the referenced data store. Formats: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{data_store}` `projects/{project}/locations/{location}/dataStores/{data_store}`
                 &quot;dataStoreType&quot;: &quot;A String&quot;, # The type of the connected data store.
+                &quot;documentProcessingMode&quot;: &quot;A String&quot;, # The document processing mode for the data store connection. Should only be set for PUBLIC_WEB and UNSTRUCTURED data stores. If not set it is considered as DOCUMENTS, as this is the legacy mode.
               },
             ],
             &quot;enabled&quot;: True or False, # Whether Knowledge Connector is enabled or not.
@@ -866,7 +969,7 @@ Returns:
                     &quot;a_key&quot;: &quot;A String&quot;,
                   },
                   &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                  &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                  &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                 },
               },
               &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -923,6 +1026,13 @@ Returns:
                                 &quot;A String&quot;,
                               ],
                             },
+                            &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                              &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                              &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                              },
+                              &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                            },
                           },
                         },
                       ],
@@ -932,6 +1042,15 @@ Returns:
                 },
               ],
               &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+              &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+                { # Generator settings used by the LLM to generate a text response.
+                  &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                  &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                    &quot;a_key&quot;: &quot;A String&quot;,
+                  },
+                  &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+                },
+              ],
               &quot;messages&quot;: [ # The list of rich message responses to present to the user.
                 { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                   &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -980,6 +1099,13 @@ Returns:
                       &quot;A String&quot;,
                     ],
                   },
+                  &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                    &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                    &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                      &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                    },
+                    &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                  },
                 },
               ],
               &quot;returnPartialResponses&quot;: True or False, # Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.
@@ -997,7 +1123,7 @@ Returns:
           &quot;transitionRouteGroups&quot;: [ # Ordered list of `TransitionRouteGroups` added to the page. Transition route groups must be unique within a page. If the page links both flow-level transition route groups and agent-level transition route groups, the flow-level ones will have higher priority and will be put before the agent-level ones. * If multiple transition routes within a page scope refer to the same intent, then the precedence order is: page&#x27;s transition route -&gt; page&#x27;s transition route group -&gt; flow&#x27;s transition routes. * If multiple transition route groups within a page contain the same intent, then the first group in the ordered list takes precedence. Format:`projects//locations//agents//flows//transitionRouteGroups/` or `projects//locations//agents//transitionRouteGroups/` for agent-level groups.
             &quot;A String&quot;,
           ],
-          &quot;transitionRoutes&quot;: [ # A list of transitions for the transition rules of this page. They route the conversation to another page in the same flow, or another flow. When we are in a certain page, the TransitionRoutes are evalauted in the following order: * TransitionRoutes defined in the page with intent specified. * TransitionRoutes defined in the transition route groups with intent specified. * TransitionRoutes defined in flow with intent specified. * TransitionRoutes defined in the transition route groups with intent specified. * TransitionRoutes defined in the page with only condition specified. * TransitionRoutes defined in the transition route groups with only condition specified.
+          &quot;transitionRoutes&quot;: [ # A list of transitions for the transition rules of this page. They route the conversation to another page in the same flow, or another flow. When we are in a certain page, the TransitionRoutes are evaluated in the following order: * TransitionRoutes defined in the page with intent specified. * TransitionRoutes defined in the transition route groups with intent specified. * TransitionRoutes defined in flow with intent specified. * TransitionRoutes defined in the transition route groups with intent specified. * TransitionRoutes defined in the page with only condition specified. * TransitionRoutes defined in the transition route groups with only condition specified.
             { # A transition route specifies a intent that can be matched and/or a data condition that can be evaluated during a session. When a specified transition is matched, the following actions are taken in order: * If there is a `trigger_fulfillment` associated with the transition, it will be called. * If there is a `target_page` associated with the transition, the session will transition into the specified page. * If there is a `target_flow` associated with the transition, the session will transition into the specified flow.
               &quot;condition&quot;: &quot;A String&quot;, # The condition to evaluate against form parameters or session parameters. See the [conditions reference](https://cloud.google.com/dialogflow/cx/docs/reference/condition). At least one of `intent` or `condition` must be specified. When both `intent` and `condition` are specified, the transition can only happen when both are fulfilled.
               &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the transition route. The maximum length is 500 characters.
@@ -1028,7 +1154,7 @@ Returns:
                       &quot;a_key&quot;: &quot;A String&quot;,
                     },
                     &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                    &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                    &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                   },
                 },
                 &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -1085,6 +1211,13 @@ Returns:
                                   &quot;A String&quot;,
                                 ],
                               },
+                              &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                                &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                                &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                  &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                                },
+                                &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                              },
                             },
                           },
                         ],
@@ -1094,6 +1227,15 @@ Returns:
                   },
                 ],
                 &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+                &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+                  { # Generator settings used by the LLM to generate a text response.
+                    &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                    &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                      &quot;a_key&quot;: &quot;A String&quot;,
+                    },
+                    &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+                  },
+                ],
                 &quot;messages&quot;: [ # The list of rich message responses to present to the user.
                   { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                     &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -1141,6 +1283,13 @@ Returns:
                       &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                         &quot;A String&quot;,
                       ],
+                    },
+                    &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                      &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                      &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                        &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                      },
+                      &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
                     },
                   },
                 ],
@@ -1288,6 +1437,16 @@ Returns:
               &quot;text&quot;: { # Represents the natural language text to be processed. # The natural language text to be processed.
                 &quot;text&quot;: &quot;A String&quot;, # Required. The UTF-8 encoded natural language text to be processed.
               },
+              &quot;toolCallResult&quot;: { # The result of calling a tool&#x27;s action that has been executed by the client. # The results of a tool executed by the client.
+                &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                &quot;error&quot;: { # An error produced by the tool call. # The tool call&#x27;s error.
+                  &quot;message&quot;: &quot;A String&quot;, # Optional. The error message of the function.
+                },
+                &quot;outputParameters&quot;: { # The tool call&#x27;s output parameters.
+                  &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                },
+                &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+              },
             },
             &quot;isWebhookEnabled&quot;: True or False, # If webhooks should be allowed to trigger in response to the user utterance. Often if parameters are injected, webhooks should not be enabled.
           },
@@ -1315,7 +1474,7 @@ Returns:
                     &quot;a_key&quot;: &quot;A String&quot;,
                   },
                   &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                  &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                  &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                 },
               },
               &quot;description&quot;: &quot;A String&quot;, # The description of the page. The maximum length is 500 characters.
@@ -1343,7 +1502,7 @@ Returns:
                       &quot;a_key&quot;: &quot;A String&quot;,
                     },
                     &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                    &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                    &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                   },
                 },
                 &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -1400,6 +1559,13 @@ Returns:
                                   &quot;A String&quot;,
                                 ],
                               },
+                              &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                                &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                                &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                  &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                                },
+                                &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                              },
                             },
                           },
                         ],
@@ -1409,6 +1575,15 @@ Returns:
                   },
                 ],
                 &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+                &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+                  { # Generator settings used by the LLM to generate a text response.
+                    &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                    &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                      &quot;a_key&quot;: &quot;A String&quot;,
+                    },
+                    &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+                  },
+                ],
                 &quot;messages&quot;: [ # The list of rich message responses to present to the user.
                   { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                     &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -1457,6 +1632,13 @@ Returns:
                         &quot;A String&quot;,
                       ],
                     },
+                    &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                      &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                      &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                        &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                      },
+                      &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                    },
                   },
                 ],
                 &quot;returnPartialResponses&quot;: True or False, # Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.
@@ -1499,7 +1681,7 @@ Returns:
                           &quot;a_key&quot;: &quot;A String&quot;,
                         },
                         &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                        &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                        &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                       },
                     },
                     &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -1556,6 +1738,13 @@ Returns:
                                       &quot;A String&quot;,
                                     ],
                                   },
+                                  &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                                    &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                                    &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                      &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                                    },
+                                    &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                                  },
                                 },
                               },
                             ],
@@ -1565,6 +1754,15 @@ Returns:
                       },
                     ],
                     &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+                    &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+                      { # Generator settings used by the LLM to generate a text response.
+                        &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                        &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                          &quot;a_key&quot;: &quot;A String&quot;,
+                        },
+                        &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+                      },
+                    ],
                     &quot;messages&quot;: [ # The list of rich message responses to present to the user.
                       { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                         &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -1613,6 +1811,13 @@ Returns:
                             &quot;A String&quot;,
                           ],
                         },
+                        &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                          &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                          &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                            &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                          },
+                          &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                        },
                       },
                     ],
                     &quot;returnPartialResponses&quot;: True or False, # Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.
@@ -1652,7 +1857,7 @@ Returns:
                           &quot;a_key&quot;: &quot;A String&quot;,
                         },
                         &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                        &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                        &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                       },
                     },
                     &quot;defaultValue&quot;: &quot;&quot;, # The default value of an optional parameter. If the parameter is required, the default value will be ignored.
@@ -1682,7 +1887,7 @@ Returns:
                               &quot;a_key&quot;: &quot;A String&quot;,
                             },
                             &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                            &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                            &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                           },
                         },
                         &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -1739,6 +1944,13 @@ Returns:
                                           &quot;A String&quot;,
                                         ],
                                       },
+                                      &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                                        &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                                        &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                          &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                                        },
+                                        &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                                      },
                                     },
                                   },
                                 ],
@@ -1748,6 +1960,15 @@ Returns:
                           },
                         ],
                         &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+                        &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+                          { # Generator settings used by the LLM to generate a text response.
+                            &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                            &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                              &quot;a_key&quot;: &quot;A String&quot;,
+                            },
+                            &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+                          },
+                        ],
                         &quot;messages&quot;: [ # The list of rich message responses to present to the user.
                           { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                             &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -1796,6 +2017,13 @@ Returns:
                                 &quot;A String&quot;,
                               ],
                             },
+                            &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                              &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                              &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                              },
+                              &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                            },
                           },
                         ],
                         &quot;returnPartialResponses&quot;: True or False, # Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.
@@ -1838,7 +2066,7 @@ Returns:
                                   &quot;a_key&quot;: &quot;A String&quot;,
                                 },
                                 &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                                &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                                &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                               },
                             },
                             &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -1895,6 +2123,13 @@ Returns:
                                               &quot;A String&quot;,
                                             ],
                                           },
+                                          &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                                            &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                                            &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                              &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                                            },
+                                            &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                                          },
                                         },
                                       },
                                     ],
@@ -1904,6 +2139,15 @@ Returns:
                               },
                             ],
                             &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+                            &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+                              { # Generator settings used by the LLM to generate a text response.
+                                &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                                &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                                  &quot;a_key&quot;: &quot;A String&quot;,
+                                },
+                                &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+                              },
+                            ],
                             &quot;messages&quot;: [ # The list of rich message responses to present to the user.
                               { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                                 &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -1952,6 +2196,13 @@ Returns:
                                     &quot;A String&quot;,
                                   ],
                                 },
+                                &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                                  &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                                  &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                    &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                                  },
+                                  &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                                },
                               },
                             ],
                             &quot;returnPartialResponses&quot;: True or False, # Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.
@@ -1978,6 +2229,7 @@ Returns:
                   { # A data store connection. It represents a data store in Discovery Engine and the type of the contents it contains.
                     &quot;dataStore&quot;: &quot;A String&quot;, # The full name of the referenced data store. Formats: `projects/{project}/locations/{location}/collections/{collection}/dataStores/{data_store}` `projects/{project}/locations/{location}/dataStores/{data_store}`
                     &quot;dataStoreType&quot;: &quot;A String&quot;, # The type of the connected data store.
+                    &quot;documentProcessingMode&quot;: &quot;A String&quot;, # The document processing mode for the data store connection. Should only be set for PUBLIC_WEB and UNSTRUCTURED data stores. If not set it is considered as DOCUMENTS, as this is the legacy mode.
                   },
                 ],
                 &quot;enabled&quot;: True or False, # Whether Knowledge Connector is enabled or not.
@@ -2006,7 +2258,7 @@ Returns:
                         &quot;a_key&quot;: &quot;A String&quot;,
                       },
                       &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                      &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                      &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                     },
                   },
                   &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -2063,6 +2315,13 @@ Returns:
                                     &quot;A String&quot;,
                                   ],
                                 },
+                                &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                                  &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                                  &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                    &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                                  },
+                                  &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                                },
                               },
                             },
                           ],
@@ -2072,6 +2331,15 @@ Returns:
                     },
                   ],
                   &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+                  &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+                    { # Generator settings used by the LLM to generate a text response.
+                      &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                      &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                        &quot;a_key&quot;: &quot;A String&quot;,
+                      },
+                      &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+                    },
+                  ],
                   &quot;messages&quot;: [ # The list of rich message responses to present to the user.
                     { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                       &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -2120,6 +2388,13 @@ Returns:
                           &quot;A String&quot;,
                         ],
                       },
+                      &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                        &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                        &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                          &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                        },
+                        &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                      },
                     },
                   ],
                   &quot;returnPartialResponses&quot;: True or False, # Whether Dialogflow should return currently queued fulfillment response messages in streaming APIs. If a webhook is specified, it happens before Dialogflow invokes webhook. Warning: 1) This flag only affects streaming API. Responses are still queued and returned once in non-streaming API. 2) The flag can be enabled in any fulfillment but only the first 3 partial responses will be returned. You may only want to apply it to fulfillments that have slow webhooks.
@@ -2137,7 +2412,7 @@ Returns:
               &quot;transitionRouteGroups&quot;: [ # Ordered list of `TransitionRouteGroups` added to the page. Transition route groups must be unique within a page. If the page links both flow-level transition route groups and agent-level transition route groups, the flow-level ones will have higher priority and will be put before the agent-level ones. * If multiple transition routes within a page scope refer to the same intent, then the precedence order is: page&#x27;s transition route -&gt; page&#x27;s transition route group -&gt; flow&#x27;s transition routes. * If multiple transition route groups within a page contain the same intent, then the first group in the ordered list takes precedence. Format:`projects//locations//agents//flows//transitionRouteGroups/` or `projects//locations//agents//transitionRouteGroups/` for agent-level groups.
                 &quot;A String&quot;,
               ],
-              &quot;transitionRoutes&quot;: [ # A list of transitions for the transition rules of this page. They route the conversation to another page in the same flow, or another flow. When we are in a certain page, the TransitionRoutes are evalauted in the following order: * TransitionRoutes defined in the page with intent specified. * TransitionRoutes defined in the transition route groups with intent specified. * TransitionRoutes defined in flow with intent specified. * TransitionRoutes defined in the transition route groups with intent specified. * TransitionRoutes defined in the page with only condition specified. * TransitionRoutes defined in the transition route groups with only condition specified.
+              &quot;transitionRoutes&quot;: [ # A list of transitions for the transition rules of this page. They route the conversation to another page in the same flow, or another flow. When we are in a certain page, the TransitionRoutes are evaluated in the following order: * TransitionRoutes defined in the page with intent specified. * TransitionRoutes defined in the transition route groups with intent specified. * TransitionRoutes defined in flow with intent specified. * TransitionRoutes defined in the transition route groups with intent specified. * TransitionRoutes defined in the page with only condition specified. * TransitionRoutes defined in the transition route groups with only condition specified.
                 { # A transition route specifies a intent that can be matched and/or a data condition that can be evaluated during a session. When a specified transition is matched, the following actions are taken in order: * If there is a `trigger_fulfillment` associated with the transition, it will be called. * If there is a `target_page` associated with the transition, the session will transition into the specified page. * If there is a `target_flow` associated with the transition, the session will transition into the specified flow.
                   &quot;condition&quot;: &quot;A String&quot;, # The condition to evaluate against form parameters or session parameters. See the [conditions reference](https://cloud.google.com/dialogflow/cx/docs/reference/condition). At least one of `intent` or `condition` must be specified. When both `intent` and `condition` are specified, the transition can only happen when both are fulfilled.
                   &quot;description&quot;: &quot;A String&quot;, # Optional. The description of the transition route. The maximum length is 500 characters.
@@ -2168,7 +2443,7 @@ Returns:
                           &quot;a_key&quot;: &quot;A String&quot;,
                         },
                         &quot;noSpeechTimeout&quot;: &quot;A String&quot;, # Timeout before detecting no speech.
-                        &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivy as seconds of timeout value.
+                        &quot;useTimeoutBasedEndpointing&quot;: True or False, # Use timeout based endpointing, interpreting endpointer sensitivity as seconds of timeout value.
                       },
                     },
                     &quot;conditionalCases&quot;: [ # Conditional cases for this fulfillment.
@@ -2225,6 +2500,13 @@ Returns:
                                       &quot;A String&quot;,
                                     ],
                                   },
+                                  &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                                    &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                                    &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                                      &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                                    },
+                                    &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
+                                  },
                                 },
                               },
                             ],
@@ -2234,6 +2516,15 @@ Returns:
                       },
                     ],
                     &quot;enableGenerativeFallback&quot;: True or False, # If the flag is true, the agent will utilize LLM to generate a text response. If LLM generation fails, the defined responses in the fulfillment will be respected. This flag is only useful for fulfillments associated with no-match event handlers.
+                    &quot;generators&quot;: [ # A list of Generators to be called during this fulfillment.
+                      { # Generator settings used by the LLM to generate a text response.
+                        &quot;generator&quot;: &quot;A String&quot;, # Required. The generator to call. Format: `projects//locations//agents//generators/`.
+                        &quot;inputParameters&quot;: { # Map from placeholder parameter in the Generator to corresponding session parameters. By default, Dialogflow uses the session parameter with the same name to fill in the generator template. e.g. If there is a placeholder parameter `city` in the Generator, Dialogflow default to fill in the `$city` with `$session.params.city`. However, you may choose to fill `$city` with `$session.params.desination-city`. - Map key: parameter ID - Map value: session parameter name
+                          &quot;a_key&quot;: &quot;A String&quot;,
+                        },
+                        &quot;outputParameter&quot;: &quot;A String&quot;, # Required. Output parameter which should contain the generator response.
+                      },
+                    ],
                     &quot;messages&quot;: [ # The list of rich message responses to present to the user.
                       { # Represents a response message that can be returned by a conversational agent. Response messages are also used for output audio synthesis. The approach is as follows: * If at least one OutputAudioText response is present, then all OutputAudioText responses are linearly concatenated, and the result is used for output audio synthesis. * If the OutputAudioText responses are a mixture of text and SSML, then the concatenated result is treated as SSML; otherwise, the result is treated as either text or SSML as appropriate. The agent designer should ideally use either text or SSML consistently throughout the bot design. * Otherwise, all Text responses are linearly concatenated, and the result is used for output audio synthesis. This approach allows for more sophisticated user experience scenarios, where the text displayed to the user may differ from what is heard.
                         &quot;channel&quot;: &quot;A String&quot;, # The channel which the response is associated with. Clients can specify the channel via QueryParameters.channel, and only associated channel response will be returned.
@@ -2281,6 +2572,13 @@ Returns:
                           &quot;text&quot;: [ # Required. A collection of text response variants. If multiple variants are defined, only one text response variant is returned at runtime.
                             &quot;A String&quot;,
                           ],
+                        },
+                        &quot;toolCall&quot;: { # Represents a call of a specific tool&#x27;s action with the specified inputs. # Returns the definition of a tool call that should be executed by the client.
+                          &quot;action&quot;: &quot;A String&quot;, # Required. The name of the tool&#x27;s action associated with this call.
+                          &quot;inputParameters&quot;: { # Optional. The action&#x27;s input parameters.
+                            &quot;a_key&quot;: &quot;&quot;, # Properties of the object.
+                          },
+                          &quot;tool&quot;: &quot;A String&quot;, # Required. The tool associated with this call. Format: `projects//locations//agents//tools/`.
                         },
                       },
                     ],

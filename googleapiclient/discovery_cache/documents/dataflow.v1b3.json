@@ -21,6 +21,16 @@
 "endpoints": [
 {
 "description": "Regional Endpoint",
+"endpointUrl": "https://dataflow.asia-south1.rep.googleapis.com/",
+"location": "asia-south1"
+},
+{
+"description": "Regional Endpoint",
+"endpointUrl": "https://dataflow.asia-south2.rep.googleapis.com/",
+"location": "asia-south2"
+},
+{
+"description": "Regional Endpoint",
 "endpointUrl": "https://dataflow.europe-west3.rep.googleapis.com/",
 "location": "europe-west3"
 },
@@ -341,7 +351,7 @@
 ]
 },
 "create": {
-"description": "Creates a Cloud Dataflow job. To create a job, we recommend using `projects.locations.jobs.create` with a [regional endpoint] (https://cloud.google.com/dataflow/docs/concepts/regional-endpoints). Using `projects.jobs.create` is not recommended, as your job will always start in `us-central1`. Do not enter confidential information when you supply string values using the API.",
+"description": "Creates a Dataflow job. To create a job, we recommend using `projects.locations.jobs.create` with a [regional endpoint] (https://cloud.google.com/dataflow/docs/concepts/regional-endpoints). Using `projects.jobs.create` is not recommended, as your job will always start in `us-central1`. Do not enter confidential information when you supply string values using the API.",
 "flatPath": "v1b3/projects/{projectId}/jobs",
 "httpMethod": "POST",
 "id": "dataflow.projects.jobs.create",
@@ -972,7 +982,7 @@
 "jobs": {
 "methods": {
 "create": {
-"description": "Creates a Cloud Dataflow job. To create a job, we recommend using `projects.locations.jobs.create` with a [regional endpoint] (https://cloud.google.com/dataflow/docs/concepts/regional-endpoints). Using `projects.jobs.create` is not recommended, as your job will always start in `us-central1`. Do not enter confidential information when you supply string values using the API.",
+"description": "Creates a Dataflow job. To create a job, we recommend using `projects.locations.jobs.create` with a [regional endpoint] (https://cloud.google.com/dataflow/docs/concepts/regional-endpoints). Using `projects.jobs.create` is not recommended, as your job will always start in `us-central1`. Do not enter confidential information when you supply string values using the API.",
 "flatPath": "v1b3/projects/{projectId}/locations/{location}/jobs",
 "httpMethod": "POST",
 "id": "dataflow.projects.locations.jobs.create",
@@ -1392,6 +1402,48 @@
 },
 "response": {
 "$ref": "GetDebugConfigResponse"
+},
+"scopes": [
+"https://www.googleapis.com/auth/cloud-platform",
+"https://www.googleapis.com/auth/compute"
+]
+},
+"getWorkerStacktraces": {
+"description": "Get worker stacktraces from debug capture.",
+"flatPath": "v1b3/projects/{projectId}/locations/{location}/jobs/{jobId}/debug/getWorkerStacktraces",
+"httpMethod": "POST",
+"id": "dataflow.projects.locations.jobs.debug.getWorkerStacktraces",
+"parameterOrder": [
+"projectId",
+"location",
+"jobId"
+],
+"parameters": {
+"jobId": {
+"description": "The job for which to get stacktraces.",
+"location": "path",
+"required": true,
+"type": "string"
+},
+"location": {
+"description": "The [regional endpoint] (https://cloud.google.com/dataflow/docs/concepts/regional-endpoints) that contains the job specified by job_id.",
+"location": "path",
+"required": true,
+"type": "string"
+},
+"projectId": {
+"description": "The project id.",
+"location": "path",
+"required": true,
+"type": "string"
+}
+},
+"path": "v1b3/projects/{projectId}/locations/{location}/jobs/{jobId}/debug/getWorkerStacktraces",
+"request": {
+"$ref": "GetWorkerStacktracesRequest"
+},
+"response": {
+"$ref": "GetWorkerStacktracesResponse"
 },
 "scopes": [
 "https://www.googleapis.com/auth/cloud-platform",
@@ -2208,7 +2260,7 @@
 }
 }
 },
-"revision": "20250106",
+"revision": "20250922",
 "rootUrl": "https://dataflow.googleapis.com/",
 "schemas": {
 "ApproximateProgress": {
@@ -3306,6 +3358,10 @@
 "description": "The prefix of the resources the system should use for temporary storage. The system will append the suffix \"/temp-{JOBNAME} to this resource prefix, where {JOBNAME} is the value of the job_name field. The resulting bucket and object prefix is used as the prefix of the resources used to store temporary data needed during the job execution. NOTE: This will override the value in taskrunner_settings. The supported resource type is: Google Cloud Storage: storage.googleapis.com/{bucket}/{object} bucket.storage.googleapis.com/{object}",
 "type": "string"
 },
+"usePublicIps": {
+"description": "Optional. True when any worker pool that uses public IPs is present.",
+"type": "boolean"
+},
 "useStreamingEngineResourceBasedBilling": {
 "description": "Output only. Whether the job uses the Streaming Engine resource-based billing model.",
 "readOnly": true,
@@ -3373,7 +3429,9 @@
 "JOB_STATE_PENDING",
 "JOB_STATE_CANCELLING",
 "JOB_STATE_QUEUED",
-"JOB_STATE_RESOURCE_CLEANING_UP"
+"JOB_STATE_RESOURCE_CLEANING_UP",
+"JOB_STATE_PAUSING",
+"JOB_STATE_PAUSED"
 ],
 "enumDescriptions": [
 "The job's run state isn't specified.",
@@ -3388,7 +3446,9 @@
 "`JOB_STATE_PENDING` indicates that the job has been created but is not yet running. Jobs that are pending may only transition to `JOB_STATE_RUNNING`, or `JOB_STATE_FAILED`.",
 "`JOB_STATE_CANCELLING` indicates that the job has been explicitly cancelled and is in the process of stopping. Jobs that are cancelling may only transition to `JOB_STATE_CANCELLED` or `JOB_STATE_FAILED`.",
 "`JOB_STATE_QUEUED` indicates that the job has been created but is being delayed until launch. Jobs that are queued may only transition to `JOB_STATE_PENDING` or `JOB_STATE_CANCELLED`.",
-"`JOB_STATE_RESOURCE_CLEANING_UP` indicates that the batch job's associated resources are currently being cleaned up after a successful run. Currently, this is an opt-in feature, please reach out to Cloud support team if you are interested."
+"`JOB_STATE_RESOURCE_CLEANING_UP` indicates that the batch job's associated resources are currently being cleaned up after a successful run. Currently, this is an opt-in feature, please reach out to Cloud support team if you are interested.",
+"`JOB_STATE_PAUSING` is not implemented yet.",
+"`JOB_STATE_PAUSED` is not implemented yet."
 ],
 "type": "string"
 }
@@ -3513,6 +3573,13 @@
 "properties": {
 "additionalExperiments": {
 "description": "Additional experiment flags for the job.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
+"additionalPipelineOptions": {
+"description": "Optional. Additional pipeline option flags for the job.",
 "items": {
 "type": "string"
 },
@@ -3785,6 +3852,31 @@
 },
 "type": "object"
 },
+"GetWorkerStacktracesRequest": {
+"description": "Request to get worker stacktraces from debug capture.",
+"id": "GetWorkerStacktracesRequest",
+"properties": {
+"workerId": {
+"description": "The worker for which to get stacktraces. The returned stacktraces will be for the SDK harness running on this worker.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"GetWorkerStacktracesResponse": {
+"description": "Response to get worker stacktraces from debug capture.",
+"id": "GetWorkerStacktracesResponse",
+"properties": {
+"sdks": {
+"description": "Repeated as unified worker may have multiple SDK processes.",
+"items": {
+"$ref": "Sdk"
+},
+"type": "array"
+}
+},
+"type": "object"
+},
 "Histogram": {
 "description": "Histogram of value counts for a distribution. Buckets have an inclusive lower bound and exclusive upper bound and use \"1,2,5 bucketing\": The first bucket range is from [0,1) and all subsequent bucket boundaries are powers of ten multiplied by 1, 2, or 5. Thus, bucket boundaries are 0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, ... Negative values are not supported.",
 "id": "Histogram",
@@ -3988,7 +4080,9 @@
 "JOB_STATE_PENDING",
 "JOB_STATE_CANCELLING",
 "JOB_STATE_QUEUED",
-"JOB_STATE_RESOURCE_CLEANING_UP"
+"JOB_STATE_RESOURCE_CLEANING_UP",
+"JOB_STATE_PAUSING",
+"JOB_STATE_PAUSED"
 ],
 "enumDescriptions": [
 "The job's run state isn't specified.",
@@ -4003,7 +4097,9 @@
 "`JOB_STATE_PENDING` indicates that the job has been created but is not yet running. Jobs that are pending may only transition to `JOB_STATE_RUNNING`, or `JOB_STATE_FAILED`.",
 "`JOB_STATE_CANCELLING` indicates that the job has been explicitly cancelled and is in the process of stopping. Jobs that are cancelling may only transition to `JOB_STATE_CANCELLED` or `JOB_STATE_FAILED`.",
 "`JOB_STATE_QUEUED` indicates that the job has been created but is being delayed until launch. Jobs that are queued may only transition to `JOB_STATE_PENDING` or `JOB_STATE_CANCELLED`.",
-"`JOB_STATE_RESOURCE_CLEANING_UP` indicates that the batch job's associated resources are currently being cleaned up after a successful run. Currently, this is an opt-in feature, please reach out to Cloud support team if you are interested."
+"`JOB_STATE_RESOURCE_CLEANING_UP` indicates that the batch job's associated resources are currently being cleaned up after a successful run. Currently, this is an opt-in feature, please reach out to Cloud support team if you are interested.",
+"`JOB_STATE_PAUSING` is not implemented yet.",
+"`JOB_STATE_PAUSED` is not implemented yet."
 ],
 "type": "string"
 },
@@ -4074,7 +4170,9 @@
 "JOB_STATE_PENDING",
 "JOB_STATE_CANCELLING",
 "JOB_STATE_QUEUED",
-"JOB_STATE_RESOURCE_CLEANING_UP"
+"JOB_STATE_RESOURCE_CLEANING_UP",
+"JOB_STATE_PAUSING",
+"JOB_STATE_PAUSED"
 ],
 "enumDescriptions": [
 "The job's run state isn't specified.",
@@ -4089,7 +4187,9 @@
 "`JOB_STATE_PENDING` indicates that the job has been created but is not yet running. Jobs that are pending may only transition to `JOB_STATE_RUNNING`, or `JOB_STATE_FAILED`.",
 "`JOB_STATE_CANCELLING` indicates that the job has been explicitly cancelled and is in the process of stopping. Jobs that are cancelling may only transition to `JOB_STATE_CANCELLED` or `JOB_STATE_FAILED`.",
 "`JOB_STATE_QUEUED` indicates that the job has been created but is being delayed until launch. Jobs that are queued may only transition to `JOB_STATE_PENDING` or `JOB_STATE_CANCELLED`.",
-"`JOB_STATE_RESOURCE_CLEANING_UP` indicates that the batch job's associated resources are currently being cleaned up after a successful run. Currently, this is an opt-in feature, please reach out to Cloud support team if you are interested."
+"`JOB_STATE_RESOURCE_CLEANING_UP` indicates that the batch job's associated resources are currently being cleaned up after a successful run. Currently, this is an opt-in feature, please reach out to Cloud support team if you are interested.",
+"`JOB_STATE_PAUSING` is not implemented yet.",
+"`JOB_STATE_PAUSED` is not implemented yet."
 ],
 "type": "string"
 },
@@ -4753,9 +4853,13 @@
 "type": "object"
 },
 "MetricUpdate": {
-"description": "Describes the state of a metric. Next ID: 14",
+"description": "Describes the state of a metric.",
 "id": "MetricUpdate",
 "properties": {
+"boundedTrie": {
+"description": "Worker-computed aggregate value for the \"Trie\" aggregation kind. The only possible value type is a BoundedTrieNode. Introduced this field to avoid breaking older SDKs when Dataflow service starts to populate the `bounded_trie` field.",
+"type": "any"
+},
 "cumulative": {
 "description": "True if this metric is reported as the total cumulative aggregate value accumulated since the worker started working on this WorkItem. By default this is false, indicating that this metric is reported as a delta that is not associated with any WorkItem.",
 "type": "boolean"
@@ -5600,6 +5704,13 @@ false
 },
 "type": "array"
 },
+"additionalPipelineOptions": {
+"description": "Optional. Additional pipeline option flags for the job.",
+"items": {
+"type": "string"
+},
+"type": "array"
+},
 "additionalUserLabels": {
 "additionalProperties": {
 "type": "string"
@@ -5747,19 +5858,39 @@ false
 "UNKNOWN",
 "JAVA",
 "PYTHON",
-"GO"
+"GO",
+"YAML"
 ],
 "enumDescriptions": [
 "UNKNOWN Language.",
 "Java.",
 "Python.",
-"Go."
+"Go.",
+"YAML."
 ],
 "type": "string"
 },
 "version": {
 "description": "Optional. The SDK version.",
 "type": "string"
+}
+},
+"type": "object"
+},
+"Sdk": {
+"description": "A structured representation of an SDK.",
+"id": "Sdk",
+"properties": {
+"sdkId": {
+"description": "The SDK harness id.",
+"type": "string"
+},
+"stacks": {
+"description": "The stacktraces for the processes running on the SDK harness.",
+"items": {
+"$ref": "Stack"
+},
+"type": "array"
 }
 },
 "type": "object"
@@ -6466,6 +6597,35 @@ false
 "description": "The low order bits: n & 0xffffffff.",
 "format": "uint32",
 "type": "integer"
+}
+},
+"type": "object"
+},
+"Stack": {
+"description": "A structuredstacktrace for a process running on the worker.",
+"id": "Stack",
+"properties": {
+"stackContent": {
+"description": "The raw stack trace.",
+"type": "string"
+},
+"threadCount": {
+"description": "With java thread dumps we may get collapsed stacks e.g., N threads in stack \"\". Instead of having to copy over the same stack trace N times, this int field captures this.",
+"format": "int32",
+"type": "integer"
+},
+"threadName": {
+"description": "Thread name. For example, \"CommitThread-0,10,main\"",
+"type": "string"
+},
+"threadState": {
+"description": "The state of the thread. For example, \"WAITING\".",
+"type": "string"
+},
+"timestamp": {
+"description": "Timestamp at which the stack was captured.",
+"format": "google-datetime",
+"type": "string"
 }
 },
 "type": "object"
@@ -7241,6 +7401,10 @@ false
 "supportsExactlyOnce": {
 "description": "Optional. Indicates if the streaming template supports exactly once mode.",
 "type": "boolean"
+},
+"yamlDefinition": {
+"description": "Optional. For future use.",
+"type": "string"
 }
 },
 "type": "object"

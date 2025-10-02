@@ -105,6 +105,9 @@ h1, h2, h3 {
   <code><a href="#get">get(project, zone, instanceGroupManager, x__xgafv=None)</a></code></p>
 <p class="firstline">Returns all of the details about the specified managed instance group.</p>
 <p class="toc_element">
+  <code><a href="#getAvailableAcceleratorTopologies">getAvailableAcceleratorTopologies(project, zone, resourceId, x__xgafv=None)</a></code></p>
+<p class="firstline">Returns information about available accelerator topologies for a given MIG.</p>
+<p class="toc_element">
   <code><a href="#insert">insert(project, zone, body=None, requestId=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Creates a managed instance group using the information that you specify in the request. After the group is created, instances in the group are created using the specified instance template. This operation is marked as DONE when the group is created even if the instances in the group have not yet been created. You must separately verify the status of the individual instances with the listmanagedinstances method. A managed instance group can have up to 1000 VM instances per group. Please contact Cloud Support if you need an increase in this limit.</p>
 <p class="toc_element">
@@ -423,7 +426,10 @@ Returns:
             &quot;metadataBasedReadinessSignal&quot;: { # The configuration for metadata based readiness signal sent by the instance during initialization when stopping / suspending an instance. The Instance Group Manager will wait for a signal that indicates successful initialization before stopping / suspending an instance. If a successful readiness signal is not sent before timeout, the corresponding instance will not be stopped / suspended. Instead, an error will be visible in the lastAttempt.errors field of the managed instance in the listmanagedinstances method. If metadataBasedReadinessSignal.timeoutSec is unset, the Instance Group Manager will directly proceed to suspend / stop instances, skipping initialization on them.
               &quot;timeoutSec&quot;: 42, # The number of seconds to wait for a readiness signal during initialization before timing out.
             },
-            &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see about repairing VMs in a MIG.
+            &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see About repairing VMs in a MIG.
+            &quot;onRepair&quot;: { # Configuration for VM repairs in the MIG. # Configuration for VM repairs in the MIG.
+              &quot;allowChangingZone&quot;: &quot;A String&quot;, # Specifies whether the MIG can change a VM&#x27;s zone during a repair.
+            },
           },
           &quot;instanceTemplate&quot;: &quot;A String&quot;, # The URL of the instance template that is specified for this managed instance group. The group uses this template to create all new instances in the managed instance group. The templates for existing instances in the group do not change unless you run recreateInstances, run applyUpdatesToInstances, or set the group&#x27;s updatePolicy.type to PROACTIVE.
           &quot;kind&quot;: &quot;compute#instanceGroupManager&quot;, # [Output Only] The resource type, which is always compute#instanceGroupManager for managed instance groups.
@@ -479,10 +485,10 @@ Returns:
               &quot;effective&quot;: True or False, # [Output Only] A bit indicating whether this configuration has been applied to all managed instances in the group.
             },
             &quot;autoscaler&quot;: &quot;A String&quot;, # [Output Only] The URL of the Autoscaler that targets this instance group manager.
-            &quot;bulkInstanceOperation&quot;: { # [Output Only] Status of bulk instance operation.
+            &quot;bulkInstanceOperation&quot;: { # Bulk instance operation is the creation of VMs in a MIG when the targetSizePolicy.mode is set to BULK. # [Output Only] The status of bulk instance operation.
               &quot;inProgress&quot;: True or False, # [Output Only] Informs whether bulk instance operation is in progress.
-              &quot;lastProgressCheck&quot;: { # [Output Only] Information from last progress check of bulk instance operation.
-                &quot;error&quot;: { # [Output Only] Contains errors encountered during bulk instance operation.
+              &quot;lastProgressCheck&quot;: { # [Output Only] Information from the last progress check of bulk instance operation.
+                &quot;error&quot;: { # [Output Only] Errors encountered during bulk instance operation.
                   &quot;errors&quot;: [ # [Output Only] The array of errors encountered while processing this operation.
                     {
                       &quot;code&quot;: &quot;A String&quot;, # [Output Only] The error type identifier for this error.
@@ -543,8 +549,8 @@ Returns:
             &quot;A String&quot;,
           ],
           &quot;targetSize&quot;: 42, # The target number of running instances for this managed instance group. You can reduce this number by using the instanceGroupManager deleteInstances or abandonInstances methods. Resizing the group also changes this number.
-          &quot;targetSizePolicy&quot;: { # Configures how target size of MIG is achieved.
-            &quot;mode&quot;: &quot;A String&quot;, # Mode in which operations on size are processed.
+          &quot;targetSizePolicy&quot;: { # The policy that specifies how the MIG creates its VMs to achieve the target size.
+            &quot;mode&quot;: &quot;A String&quot;, # The mode of target size policy based on which the MIG creates its VMs individually or all at once.
           },
           &quot;targetSizeUnit&quot;: &quot;A String&quot;, # The unit of measure for the target size.
           &quot;targetStoppedSize&quot;: 42, # The target number of stopped instances for this managed instance group. This number changes when you: - Stop instance using the stopInstances method or start instances using the startInstances method. - Manually change the targetStoppedSize using the update method.
@@ -1439,7 +1445,10 @@ Returns:
     &quot;metadataBasedReadinessSignal&quot;: { # The configuration for metadata based readiness signal sent by the instance during initialization when stopping / suspending an instance. The Instance Group Manager will wait for a signal that indicates successful initialization before stopping / suspending an instance. If a successful readiness signal is not sent before timeout, the corresponding instance will not be stopped / suspended. Instead, an error will be visible in the lastAttempt.errors field of the managed instance in the listmanagedinstances method. If metadataBasedReadinessSignal.timeoutSec is unset, the Instance Group Manager will directly proceed to suspend / stop instances, skipping initialization on them.
       &quot;timeoutSec&quot;: 42, # The number of seconds to wait for a readiness signal during initialization before timing out.
     },
-    &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see about repairing VMs in a MIG.
+    &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see About repairing VMs in a MIG.
+    &quot;onRepair&quot;: { # Configuration for VM repairs in the MIG. # Configuration for VM repairs in the MIG.
+      &quot;allowChangingZone&quot;: &quot;A String&quot;, # Specifies whether the MIG can change a VM&#x27;s zone during a repair.
+    },
   },
   &quot;instanceTemplate&quot;: &quot;A String&quot;, # The URL of the instance template that is specified for this managed instance group. The group uses this template to create all new instances in the managed instance group. The templates for existing instances in the group do not change unless you run recreateInstances, run applyUpdatesToInstances, or set the group&#x27;s updatePolicy.type to PROACTIVE.
   &quot;kind&quot;: &quot;compute#instanceGroupManager&quot;, # [Output Only] The resource type, which is always compute#instanceGroupManager for managed instance groups.
@@ -1495,10 +1504,10 @@ Returns:
       &quot;effective&quot;: True or False, # [Output Only] A bit indicating whether this configuration has been applied to all managed instances in the group.
     },
     &quot;autoscaler&quot;: &quot;A String&quot;, # [Output Only] The URL of the Autoscaler that targets this instance group manager.
-    &quot;bulkInstanceOperation&quot;: { # [Output Only] Status of bulk instance operation.
+    &quot;bulkInstanceOperation&quot;: { # Bulk instance operation is the creation of VMs in a MIG when the targetSizePolicy.mode is set to BULK. # [Output Only] The status of bulk instance operation.
       &quot;inProgress&quot;: True or False, # [Output Only] Informs whether bulk instance operation is in progress.
-      &quot;lastProgressCheck&quot;: { # [Output Only] Information from last progress check of bulk instance operation.
-        &quot;error&quot;: { # [Output Only] Contains errors encountered during bulk instance operation.
+      &quot;lastProgressCheck&quot;: { # [Output Only] Information from the last progress check of bulk instance operation.
+        &quot;error&quot;: { # [Output Only] Errors encountered during bulk instance operation.
           &quot;errors&quot;: [ # [Output Only] The array of errors encountered while processing this operation.
             {
               &quot;code&quot;: &quot;A String&quot;, # [Output Only] The error type identifier for this error.
@@ -1559,8 +1568,8 @@ Returns:
     &quot;A String&quot;,
   ],
   &quot;targetSize&quot;: 42, # The target number of running instances for this managed instance group. You can reduce this number by using the instanceGroupManager deleteInstances or abandonInstances methods. Resizing the group also changes this number.
-  &quot;targetSizePolicy&quot;: { # Configures how target size of MIG is achieved.
-    &quot;mode&quot;: &quot;A String&quot;, # Mode in which operations on size are processed.
+  &quot;targetSizePolicy&quot;: { # The policy that specifies how the MIG creates its VMs to achieve the target size.
+    &quot;mode&quot;: &quot;A String&quot;, # The mode of target size policy based on which the MIG creates its VMs individually or all at once.
   },
   &quot;targetSizeUnit&quot;: &quot;A String&quot;, # The unit of measure for the target size.
   &quot;targetStoppedSize&quot;: 42, # The target number of stopped instances for this managed instance group. This number changes when you: - Stop instance using the stopInstances method or start instances using the startInstances method. - Manually change the targetStoppedSize using the update method.
@@ -1596,6 +1605,32 @@ Returns:
     },
   ],
   &quot;zone&quot;: &quot;A String&quot;, # [Output Only] The URL of a zone where the managed instance group is located (for zonal resources).
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="getAvailableAcceleratorTopologies">getAvailableAcceleratorTopologies(project, zone, resourceId, x__xgafv=None)</code>
+  <pre>Returns information about available accelerator topologies for a given MIG.
+
+Args:
+  project: string, Required. Project ID for this request. (required)
+  zone: string, Required. The name of the zone where the managed instance group is located. Name should conform to RFC1035. (required)
+  resourceId: string, Required. The name of the managed instance group. It should conform to RFC1035. (required)
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    {
+  &quot;acceleratorTopologiesInfo&quot;: { # The accelerator topology information returned per id of the topology location.
+    &quot;a_key&quot;: {
+      &quot;acceleratorTopology&quot;: &quot;A String&quot;, # Topology in the format of: &quot;16x16&quot;, &quot;4x4x4&quot;, etc.
+      &quot;acceleratorTopologyHealth&quot;: &quot;A String&quot;,
+    },
+  },
 }</pre>
 </div>
 
@@ -1694,7 +1729,10 @@ Args:
     &quot;metadataBasedReadinessSignal&quot;: { # The configuration for metadata based readiness signal sent by the instance during initialization when stopping / suspending an instance. The Instance Group Manager will wait for a signal that indicates successful initialization before stopping / suspending an instance. If a successful readiness signal is not sent before timeout, the corresponding instance will not be stopped / suspended. Instead, an error will be visible in the lastAttempt.errors field of the managed instance in the listmanagedinstances method. If metadataBasedReadinessSignal.timeoutSec is unset, the Instance Group Manager will directly proceed to suspend / stop instances, skipping initialization on them.
       &quot;timeoutSec&quot;: 42, # The number of seconds to wait for a readiness signal during initialization before timing out.
     },
-    &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see about repairing VMs in a MIG.
+    &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see About repairing VMs in a MIG.
+    &quot;onRepair&quot;: { # Configuration for VM repairs in the MIG. # Configuration for VM repairs in the MIG.
+      &quot;allowChangingZone&quot;: &quot;A String&quot;, # Specifies whether the MIG can change a VM&#x27;s zone during a repair.
+    },
   },
   &quot;instanceTemplate&quot;: &quot;A String&quot;, # The URL of the instance template that is specified for this managed instance group. The group uses this template to create all new instances in the managed instance group. The templates for existing instances in the group do not change unless you run recreateInstances, run applyUpdatesToInstances, or set the group&#x27;s updatePolicy.type to PROACTIVE.
   &quot;kind&quot;: &quot;compute#instanceGroupManager&quot;, # [Output Only] The resource type, which is always compute#instanceGroupManager for managed instance groups.
@@ -1750,10 +1788,10 @@ Args:
       &quot;effective&quot;: True or False, # [Output Only] A bit indicating whether this configuration has been applied to all managed instances in the group.
     },
     &quot;autoscaler&quot;: &quot;A String&quot;, # [Output Only] The URL of the Autoscaler that targets this instance group manager.
-    &quot;bulkInstanceOperation&quot;: { # [Output Only] Status of bulk instance operation.
+    &quot;bulkInstanceOperation&quot;: { # Bulk instance operation is the creation of VMs in a MIG when the targetSizePolicy.mode is set to BULK. # [Output Only] The status of bulk instance operation.
       &quot;inProgress&quot;: True or False, # [Output Only] Informs whether bulk instance operation is in progress.
-      &quot;lastProgressCheck&quot;: { # [Output Only] Information from last progress check of bulk instance operation.
-        &quot;error&quot;: { # [Output Only] Contains errors encountered during bulk instance operation.
+      &quot;lastProgressCheck&quot;: { # [Output Only] Information from the last progress check of bulk instance operation.
+        &quot;error&quot;: { # [Output Only] Errors encountered during bulk instance operation.
           &quot;errors&quot;: [ # [Output Only] The array of errors encountered while processing this operation.
             {
               &quot;code&quot;: &quot;A String&quot;, # [Output Only] The error type identifier for this error.
@@ -1814,8 +1852,8 @@ Args:
     &quot;A String&quot;,
   ],
   &quot;targetSize&quot;: 42, # The target number of running instances for this managed instance group. You can reduce this number by using the instanceGroupManager deleteInstances or abandonInstances methods. Resizing the group also changes this number.
-  &quot;targetSizePolicy&quot;: { # Configures how target size of MIG is achieved.
-    &quot;mode&quot;: &quot;A String&quot;, # Mode in which operations on size are processed.
+  &quot;targetSizePolicy&quot;: { # The policy that specifies how the MIG creates its VMs to achieve the target size.
+    &quot;mode&quot;: &quot;A String&quot;, # The mode of target size policy based on which the MIG creates its VMs individually or all at once.
   },
   &quot;targetSizeUnit&quot;: &quot;A String&quot;, # The unit of measure for the target size.
   &quot;targetStoppedSize&quot;: 42, # The target number of stopped instances for this managed instance group. This number changes when you: - Stop instance using the stopInstances method or start instances using the startInstances method. - Manually change the targetStoppedSize using the update method.
@@ -2079,7 +2117,10 @@ Returns:
         &quot;metadataBasedReadinessSignal&quot;: { # The configuration for metadata based readiness signal sent by the instance during initialization when stopping / suspending an instance. The Instance Group Manager will wait for a signal that indicates successful initialization before stopping / suspending an instance. If a successful readiness signal is not sent before timeout, the corresponding instance will not be stopped / suspended. Instead, an error will be visible in the lastAttempt.errors field of the managed instance in the listmanagedinstances method. If metadataBasedReadinessSignal.timeoutSec is unset, the Instance Group Manager will directly proceed to suspend / stop instances, skipping initialization on them.
           &quot;timeoutSec&quot;: 42, # The number of seconds to wait for a readiness signal during initialization before timing out.
         },
-        &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see about repairing VMs in a MIG.
+        &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see About repairing VMs in a MIG.
+        &quot;onRepair&quot;: { # Configuration for VM repairs in the MIG. # Configuration for VM repairs in the MIG.
+          &quot;allowChangingZone&quot;: &quot;A String&quot;, # Specifies whether the MIG can change a VM&#x27;s zone during a repair.
+        },
       },
       &quot;instanceTemplate&quot;: &quot;A String&quot;, # The URL of the instance template that is specified for this managed instance group. The group uses this template to create all new instances in the managed instance group. The templates for existing instances in the group do not change unless you run recreateInstances, run applyUpdatesToInstances, or set the group&#x27;s updatePolicy.type to PROACTIVE.
       &quot;kind&quot;: &quot;compute#instanceGroupManager&quot;, # [Output Only] The resource type, which is always compute#instanceGroupManager for managed instance groups.
@@ -2135,10 +2176,10 @@ Returns:
           &quot;effective&quot;: True or False, # [Output Only] A bit indicating whether this configuration has been applied to all managed instances in the group.
         },
         &quot;autoscaler&quot;: &quot;A String&quot;, # [Output Only] The URL of the Autoscaler that targets this instance group manager.
-        &quot;bulkInstanceOperation&quot;: { # [Output Only] Status of bulk instance operation.
+        &quot;bulkInstanceOperation&quot;: { # Bulk instance operation is the creation of VMs in a MIG when the targetSizePolicy.mode is set to BULK. # [Output Only] The status of bulk instance operation.
           &quot;inProgress&quot;: True or False, # [Output Only] Informs whether bulk instance operation is in progress.
-          &quot;lastProgressCheck&quot;: { # [Output Only] Information from last progress check of bulk instance operation.
-            &quot;error&quot;: { # [Output Only] Contains errors encountered during bulk instance operation.
+          &quot;lastProgressCheck&quot;: { # [Output Only] Information from the last progress check of bulk instance operation.
+            &quot;error&quot;: { # [Output Only] Errors encountered during bulk instance operation.
               &quot;errors&quot;: [ # [Output Only] The array of errors encountered while processing this operation.
                 {
                   &quot;code&quot;: &quot;A String&quot;, # [Output Only] The error type identifier for this error.
@@ -2199,8 +2240,8 @@ Returns:
         &quot;A String&quot;,
       ],
       &quot;targetSize&quot;: 42, # The target number of running instances for this managed instance group. You can reduce this number by using the instanceGroupManager deleteInstances or abandonInstances methods. Resizing the group also changes this number.
-      &quot;targetSizePolicy&quot;: { # Configures how target size of MIG is achieved.
-        &quot;mode&quot;: &quot;A String&quot;, # Mode in which operations on size are processed.
+      &quot;targetSizePolicy&quot;: { # The policy that specifies how the MIG creates its VMs to achieve the target size.
+        &quot;mode&quot;: &quot;A String&quot;, # The mode of target size policy based on which the MIG creates its VMs individually or all at once.
       },
       &quot;targetSizeUnit&quot;: &quot;A String&quot;, # The unit of measure for the target size.
       &quot;targetStoppedSize&quot;: 42, # The target number of stopped instances for this managed instance group. This number changes when you: - Stop instance using the stopInstances method or start instances using the startInstances method. - Manually change the targetStoppedSize using the update method.
@@ -2467,6 +2508,9 @@ Returns:
         &quot;machineType&quot;: &quot;A String&quot;, # The machine type to be used for this instance.
         &quot;provisioningModel&quot;: &quot;A String&quot;, # The provisioning model to be used for this instance.
       },
+      &quot;scheduling&quot;: { # [Output Only] Information about the termination timestamp of the instance, if applicable.
+        &quot;terminationTimestamp&quot;: &quot;A String&quot;, # [Output Only] The timestamp at which the managed instance will be terminated. This is in RFC3339 text format.
+      },
       &quot;sizeInUnit&quot;: 3.14, # [Output only] The size of the VM represented by this Managed Instance. This is how much this Managed Instance contributes to the size of the group.
       &quot;tag&quot;: &quot;A String&quot;, # [Output Only] Tag describing the version.
       &quot;targetStatus&quot;: &quot;A String&quot;, # [Output Only] The eventual status of the instance. The instance group manager will not be identified as stable till each managed instance reaches its targetStatus.
@@ -2691,7 +2735,10 @@ Args:
     &quot;metadataBasedReadinessSignal&quot;: { # The configuration for metadata based readiness signal sent by the instance during initialization when stopping / suspending an instance. The Instance Group Manager will wait for a signal that indicates successful initialization before stopping / suspending an instance. If a successful readiness signal is not sent before timeout, the corresponding instance will not be stopped / suspended. Instead, an error will be visible in the lastAttempt.errors field of the managed instance in the listmanagedinstances method. If metadataBasedReadinessSignal.timeoutSec is unset, the Instance Group Manager will directly proceed to suspend / stop instances, skipping initialization on them.
       &quot;timeoutSec&quot;: 42, # The number of seconds to wait for a readiness signal during initialization before timing out.
     },
-    &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see about repairing VMs in a MIG.
+    &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see About repairing VMs in a MIG.
+    &quot;onRepair&quot;: { # Configuration for VM repairs in the MIG. # Configuration for VM repairs in the MIG.
+      &quot;allowChangingZone&quot;: &quot;A String&quot;, # Specifies whether the MIG can change a VM&#x27;s zone during a repair.
+    },
   },
   &quot;instanceTemplate&quot;: &quot;A String&quot;, # The URL of the instance template that is specified for this managed instance group. The group uses this template to create all new instances in the managed instance group. The templates for existing instances in the group do not change unless you run recreateInstances, run applyUpdatesToInstances, or set the group&#x27;s updatePolicy.type to PROACTIVE.
   &quot;kind&quot;: &quot;compute#instanceGroupManager&quot;, # [Output Only] The resource type, which is always compute#instanceGroupManager for managed instance groups.
@@ -2747,10 +2794,10 @@ Args:
       &quot;effective&quot;: True or False, # [Output Only] A bit indicating whether this configuration has been applied to all managed instances in the group.
     },
     &quot;autoscaler&quot;: &quot;A String&quot;, # [Output Only] The URL of the Autoscaler that targets this instance group manager.
-    &quot;bulkInstanceOperation&quot;: { # [Output Only] Status of bulk instance operation.
+    &quot;bulkInstanceOperation&quot;: { # Bulk instance operation is the creation of VMs in a MIG when the targetSizePolicy.mode is set to BULK. # [Output Only] The status of bulk instance operation.
       &quot;inProgress&quot;: True or False, # [Output Only] Informs whether bulk instance operation is in progress.
-      &quot;lastProgressCheck&quot;: { # [Output Only] Information from last progress check of bulk instance operation.
-        &quot;error&quot;: { # [Output Only] Contains errors encountered during bulk instance operation.
+      &quot;lastProgressCheck&quot;: { # [Output Only] Information from the last progress check of bulk instance operation.
+        &quot;error&quot;: { # [Output Only] Errors encountered during bulk instance operation.
           &quot;errors&quot;: [ # [Output Only] The array of errors encountered while processing this operation.
             {
               &quot;code&quot;: &quot;A String&quot;, # [Output Only] The error type identifier for this error.
@@ -2811,8 +2858,8 @@ Args:
     &quot;A String&quot;,
   ],
   &quot;targetSize&quot;: 42, # The target number of running instances for this managed instance group. You can reduce this number by using the instanceGroupManager deleteInstances or abandonInstances methods. Resizing the group also changes this number.
-  &quot;targetSizePolicy&quot;: { # Configures how target size of MIG is achieved.
-    &quot;mode&quot;: &quot;A String&quot;, # Mode in which operations on size are processed.
+  &quot;targetSizePolicy&quot;: { # The policy that specifies how the MIG creates its VMs to achieve the target size.
+    &quot;mode&quot;: &quot;A String&quot;, # The mode of target size policy based on which the MIG creates its VMs individually or all at once.
   },
   &quot;targetSizeUnit&quot;: &quot;A String&quot;, # The unit of measure for the target size.
   &quot;targetStoppedSize&quot;: 42, # The target number of stopped instances for this managed instance group. This number changes when you: - Stop instance using the stopInstances method or start instances using the startInstances method. - Manually change the targetStoppedSize using the update method.
@@ -4618,7 +4665,10 @@ Args:
     &quot;metadataBasedReadinessSignal&quot;: { # The configuration for metadata based readiness signal sent by the instance during initialization when stopping / suspending an instance. The Instance Group Manager will wait for a signal that indicates successful initialization before stopping / suspending an instance. If a successful readiness signal is not sent before timeout, the corresponding instance will not be stopped / suspended. Instead, an error will be visible in the lastAttempt.errors field of the managed instance in the listmanagedinstances method. If metadataBasedReadinessSignal.timeoutSec is unset, the Instance Group Manager will directly proceed to suspend / stop instances, skipping initialization on them.
       &quot;timeoutSec&quot;: 42, # The number of seconds to wait for a readiness signal during initialization before timing out.
     },
-    &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see about repairing VMs in a MIG.
+    &quot;onFailedHealthCheck&quot;: &quot;A String&quot;, # The action that a MIG performs on an unhealthy VM. A VM is marked as unhealthy when the application running on that VM fails a health check. Valid values are: - DEFAULT_ACTION (default): MIG uses the same action configured for instanceLifecyclePolicy.defaultActionOnFailure field. - REPAIR: MIG automatically repairs an unhealthy VM by recreating it. - DO_NOTHING: MIG doesn&#x27;t repair an unhealthy VM. For more information, see About repairing VMs in a MIG.
+    &quot;onRepair&quot;: { # Configuration for VM repairs in the MIG. # Configuration for VM repairs in the MIG.
+      &quot;allowChangingZone&quot;: &quot;A String&quot;, # Specifies whether the MIG can change a VM&#x27;s zone during a repair.
+    },
   },
   &quot;instanceTemplate&quot;: &quot;A String&quot;, # The URL of the instance template that is specified for this managed instance group. The group uses this template to create all new instances in the managed instance group. The templates for existing instances in the group do not change unless you run recreateInstances, run applyUpdatesToInstances, or set the group&#x27;s updatePolicy.type to PROACTIVE.
   &quot;kind&quot;: &quot;compute#instanceGroupManager&quot;, # [Output Only] The resource type, which is always compute#instanceGroupManager for managed instance groups.
@@ -4674,10 +4724,10 @@ Args:
       &quot;effective&quot;: True or False, # [Output Only] A bit indicating whether this configuration has been applied to all managed instances in the group.
     },
     &quot;autoscaler&quot;: &quot;A String&quot;, # [Output Only] The URL of the Autoscaler that targets this instance group manager.
-    &quot;bulkInstanceOperation&quot;: { # [Output Only] Status of bulk instance operation.
+    &quot;bulkInstanceOperation&quot;: { # Bulk instance operation is the creation of VMs in a MIG when the targetSizePolicy.mode is set to BULK. # [Output Only] The status of bulk instance operation.
       &quot;inProgress&quot;: True or False, # [Output Only] Informs whether bulk instance operation is in progress.
-      &quot;lastProgressCheck&quot;: { # [Output Only] Information from last progress check of bulk instance operation.
-        &quot;error&quot;: { # [Output Only] Contains errors encountered during bulk instance operation.
+      &quot;lastProgressCheck&quot;: { # [Output Only] Information from the last progress check of bulk instance operation.
+        &quot;error&quot;: { # [Output Only] Errors encountered during bulk instance operation.
           &quot;errors&quot;: [ # [Output Only] The array of errors encountered while processing this operation.
             {
               &quot;code&quot;: &quot;A String&quot;, # [Output Only] The error type identifier for this error.
@@ -4738,8 +4788,8 @@ Args:
     &quot;A String&quot;,
   ],
   &quot;targetSize&quot;: 42, # The target number of running instances for this managed instance group. You can reduce this number by using the instanceGroupManager deleteInstances or abandonInstances methods. Resizing the group also changes this number.
-  &quot;targetSizePolicy&quot;: { # Configures how target size of MIG is achieved.
-    &quot;mode&quot;: &quot;A String&quot;, # Mode in which operations on size are processed.
+  &quot;targetSizePolicy&quot;: { # The policy that specifies how the MIG creates its VMs to achieve the target size.
+    &quot;mode&quot;: &quot;A String&quot;, # The mode of target size policy based on which the MIG creates its VMs individually or all at once.
   },
   &quot;targetSizeUnit&quot;: &quot;A String&quot;, # The unit of measure for the target size.
   &quot;targetStoppedSize&quot;: 42, # The target number of stopped instances for this managed instance group. This number changes when you: - Stop instance using the stopInstances method or start instances using the startInstances method. - Manually change the targetStoppedSize using the update method.

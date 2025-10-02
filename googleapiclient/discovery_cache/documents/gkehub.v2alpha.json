@@ -143,6 +143,12 @@
 "name"
 ],
 "parameters": {
+"extraLocationTypes": {
+"description": "Optional. Unless explicitly documented otherwise, don't use this unsupported field which is primarily intended for internal usage.",
+"location": "query",
+"repeated": true,
+"type": "string"
+},
 "filter": {
 "description": "A filter to narrow down results to a preferred subset. The filtering language accepts strings like `\"displayName=tokyo\"`, and is documented in more detail in [AIP-160](https://google.aip.dev/160).",
 "location": "query",
@@ -471,7 +477,7 @@
 }
 }
 },
-"revision": "20250103",
+"revision": "20250907",
 "rootUrl": "https://gkehub.googleapis.com/",
 "schemas": {
 "AppDevExperienceState": {
@@ -700,10 +706,12 @@
 "description": "Configuration for Config Sync",
 "id": "ConfigManagementConfigSync",
 "properties": {
-"allowVerticalScale": {
-"deprecated": true,
-"description": "Optional. Set to true to allow the vertical scaling. Defaults to false which disallows vertical scaling. This field is deprecated.",
-"type": "boolean"
+"deploymentOverrides": {
+"description": "Optional. Configuration for deployment overrides.",
+"items": {
+"$ref": "ConfigManagementDeploymentOverride"
+},
+"type": "array"
 },
 "enabled": {
 "description": "Optional. Enables the installation of ConfigSync. If set to true, ConfigSync resources will be created and the other ConfigSync fields will be applied if exist. If set to false, all other ConfigSync fields will be ignored, ConfigSync resources will be deleted. If omitted, ConfigSync resources will be managed depends on the presence of the git or oci field.",
@@ -1070,6 +1078,55 @@
 },
 "type": "object"
 },
+"ConfigManagementContainerOverride": {
+"description": "Configuration for a container override.",
+"id": "ConfigManagementContainerOverride",
+"properties": {
+"containerName": {
+"description": "Required. The name of the container.",
+"type": "string"
+},
+"cpuLimit": {
+"description": "Optional. The cpu limit of the container.",
+"type": "string"
+},
+"cpuRequest": {
+"description": "Optional. The cpu request of the container.",
+"type": "string"
+},
+"memoryLimit": {
+"description": "Optional. The memory limit of the container.",
+"type": "string"
+},
+"memoryRequest": {
+"description": "Optional. The memory request of the container.",
+"type": "string"
+}
+},
+"type": "object"
+},
+"ConfigManagementDeploymentOverride": {
+"description": "Configuration for a deployment override.",
+"id": "ConfigManagementDeploymentOverride",
+"properties": {
+"containers": {
+"description": "Optional. The containers of the deployment resource to be overridden.",
+"items": {
+"$ref": "ConfigManagementContainerOverride"
+},
+"type": "array"
+},
+"deploymentName": {
+"description": "Required. The name of the deployment resource to be overridden.",
+"type": "string"
+},
+"deploymentNamespace": {
+"description": "Required. The namespace of the deployment resource to be overridden.",
+"type": "string"
+}
+},
+"type": "object"
+},
 "ConfigManagementErrorResource": {
 "description": "Model for a config file in the git repo with an associated Sync error.",
 "id": "ConfigManagementErrorResource",
@@ -1171,7 +1228,7 @@
 "type": "string"
 },
 "secretType": {
-"description": "Required. Type of secret configured for access to the Git repo. Must be one of ssh, cookiefile, gcenode, token, gcpserviceaccount or none. The validation of this is case-sensitive. Required.",
+"description": "Required. Type of secret configured for access to the Git repo. Must be one of ssh, cookiefile, gcenode, token, gcpserviceaccount, githubapp or none. The validation of this is case-sensitive.",
 "type": "string"
 },
 "syncBranch": {
@@ -1179,7 +1236,7 @@
 "type": "string"
 },
 "syncRepo": {
-"description": "Optional. The URL of the Git repository to use as the source of truth.",
+"description": "Required. The URL of the Git repository to use as the source of truth.",
 "type": "string"
 },
 "syncRev": {
@@ -1329,11 +1386,11 @@
 "type": "string"
 },
 "secretType": {
-"description": "Optional. Type of secret configured for access to the Git repo.",
+"description": "Required. Type of secret configured for access to the OCI repo. Must be one of gcenode, gcpserviceaccount, k8sserviceaccount or none. The validation of this is case-sensitive.",
 "type": "string"
 },
 "syncRepo": {
-"description": "Optional. The OCI image repository URL for the package to sync from. e.g. `LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY_NAME/PACKAGE_NAME`.",
+"description": "Required. The OCI image repository URL for the package to sync from. e.g. `LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY_NAME/PACKAGE_NAME`.",
 "type": "string"
 },
 "syncWaitSecs": {
@@ -1711,6 +1768,10 @@
 "$ref": "PolicyControllerSpec",
 "description": "Policycontroller-specific FeatureSpec."
 },
+"rbacrolebindingactuation": {
+"$ref": "RBACRoleBindingActuationSpec",
+"description": "Rbacrolebindingactuation-specific FeatureSpec."
+},
 "servicemesh": {
 "$ref": "ServiceMeshSpec",
 "description": "ServiceMesh Feature Spec."
@@ -1749,6 +1810,10 @@
 "policycontroller": {
 "$ref": "PolicyControllerState",
 "description": "Policy Controller state"
+},
+"rbacrolebindingactuation": {
+"$ref": "RBACRoleBindingActuationState",
+"description": "RBAC Role Binding Actuation state"
 },
 "servicemesh": {
 "$ref": "ServiceMeshState",
@@ -2837,6 +2902,58 @@
 },
 "type": "object"
 },
+"RBACRoleBindingActuationRBACRoleBindingState": {
+"description": "RBACRoleBindingState is the status of an RBACRoleBinding which exists on a membership.",
+"id": "RBACRoleBindingActuationRBACRoleBindingState",
+"properties": {
+"description": {
+"description": "The reason for the failure.",
+"type": "string"
+},
+"state": {
+"description": "Output only. The state of the RBACRoleBinding.",
+"enum": [
+"ROLE_BINDING_STATE_UNSPECIFIED",
+"OK",
+"CUSTOM_ROLE_MISSING_FROM_CLUSTER"
+],
+"enumDescriptions": [
+"Unspecified state.",
+"RBACRoleBinding is created properly on the cluster.",
+"The RBACRoleBinding was created on the cluster but the specified custom role does not exist on the cluster, hence the RBACRoleBinding has no effect."
+],
+"readOnly": true,
+"type": "string"
+},
+"updateTime": {
+"description": "The time the RBACRoleBinding status was last updated.",
+"format": "google-datetime",
+"type": "string"
+}
+},
+"type": "object"
+},
+"RBACRoleBindingActuationSpec": {
+"description": "**RBAC RoleBinding Actuation**: The membership-specific input for RBACRoleBindingActuation feature.",
+"id": "RBACRoleBindingActuationSpec",
+"properties": {},
+"type": "object"
+},
+"RBACRoleBindingActuationState": {
+"description": "**RBAC RoleBinding Actuation**: A membership-specific Feature state for the RBACRoleBindingActuation fleet feature.",
+"id": "RBACRoleBindingActuationState",
+"properties": {
+"rbacrolebindingStates": {
+"additionalProperties": {
+"$ref": "RBACRoleBindingActuationRBACRoleBindingState"
+},
+"description": "Output only. The state of RBACRoleBindings using custom roles that exist on the cluster, keyed by RBACRoleBinding resource name with format: projects/{project}/locations/{location}/scopes/{scope}/rbacrolebindings/{rbacrolebinding}.",
+"readOnly": true,
+"type": "object"
+}
+},
+"type": "object"
+},
 "ServiceMeshAnalysisMessage": {
 "description": "AnalysisMessage is a single message produced by an analyzer, and it used to communicate to the end user about the state of their Service Mesh configuration.",
 "id": "ServiceMeshAnalysisMessage",
@@ -2914,6 +3031,7 @@
 "CNI_INSTALLATION_FAILED",
 "CNI_POD_UNSCHEDULABLE",
 "CLUSTER_HAS_ZERO_NODES",
+"CANONICAL_SERVICE_ERROR",
 "UNSUPPORTED_MULTIPLE_CONTROL_PLANES",
 "VPCSC_GA_SUPPORTED",
 "DEPRECATED_SPEC_CONTROL_PLANE_MANAGEMENT",
@@ -2936,10 +3054,27 @@
 "QUOTA_EXCEEDED_HTTP_FILTERS",
 "QUOTA_EXCEEDED_TCP_FILTERS",
 "QUOTA_EXCEEDED_NETWORK_ENDPOINT_GROUPS",
+"LEGACY_MC_SECRETS",
+"WORKLOAD_IDENTITY_REQUIRED",
+"NON_STANDARD_BINARY_USAGE",
+"UNSUPPORTED_GATEWAY_CLASS",
+"MANAGED_CNI_NOT_ENABLED",
 "MODERNIZATION_SCHEDULED",
 "MODERNIZATION_IN_PROGRESS",
 "MODERNIZATION_COMPLETED",
-"MODERNIZATION_ABORTED"
+"MODERNIZATION_ABORTED",
+"MODERNIZATION_PREPARING",
+"MODERNIZATION_STALLED",
+"MODERNIZATION_PREPARED",
+"MODERNIZATION_MIGRATING_WORKLOADS",
+"MODERNIZATION_ROLLING_BACK_CLUSTER",
+"MODERNIZATION_WILL_BE_SCHEDULED",
+"MODERNIZATION_MANUAL",
+"MODERNIZATION_ELIGIBLE",
+"MODERNIZATION_MODERNIZING",
+"MODERNIZATION_MODERNIZED_SOAKING",
+"MODERNIZATION_FINALIZED",
+"MODERNIZATION_ROLLING_BACK_FLEET"
 ],
 "enumDescriptions": [
 "Default Unspecified code",
@@ -2951,6 +3086,7 @@
 "CNI installation failed error code",
 "CNI pod unschedulable error code",
 "Cluster has zero node code",
+"Failure to reconcile CanonicalServices",
 "Multiple control planes unsupported error code",
 "VPC-SC GA is supported for this control plane.",
 "User is using deprecated ControlPlaneManagement and they have not yet set Management.",
@@ -2973,10 +3109,27 @@
 "HTTPFilter quota exceeded error code.",
 "TCPFilter quota exceeded error code.",
 "NetworkEndpointGroup quota exceeded error code.",
+"Legacy istio secrets found for multicluster error code",
+"Workload identity required error code",
+"Non-standard binary usage error code",
+"Unsupported gateway class error code",
+"Managed CNI not enabled error code",
 "Modernization is scheduled for a cluster.",
 "Modernization is in progress for a cluster.",
 "Modernization is completed for a cluster.",
-"Modernization is aborted for a cluster."
+"Modernization is aborted for a cluster.",
+"Preparing cluster so that its workloads can be migrated.",
+"Modernization is stalled for a cluster.",
+"Cluster has been prepared for its workloads to be migrated.",
+"Migrating the cluster's workloads to the new implementation.",
+"Rollback is in progress for modernization of a cluster.",
+"Modernization will be scheduled for a fleet.",
+"Fleet is opted out from automated modernization.",
+"Fleet is eligible for modernization.",
+"Modernization of one or more clusters in a fleet is in progress.",
+"Modernization of all the fleet's clusters is complete. Soaking before finalizing the modernization.",
+"Modernization is finalized for all clusters in a fleet. Rollback is no longer allowed.",
+"Rollback is in progress for modernization of all clusters in a fleet."
 ],
 "type": "string"
 },
@@ -3045,7 +3198,8 @@
 "ACTIVE",
 "STALLED",
 "NEEDS_ATTENTION",
-"DEGRADED"
+"DEGRADED",
+"DEPROVISIONING"
 ],
 "enumDescriptions": [
 "Unspecified",
@@ -3055,7 +3209,8 @@
 "ACTIVE means that the component is ready for use.",
 "STALLED means that provisioning could not be done.",
 "NEEDS_ATTENTION means that the component is ready, but some user intervention is required. (For example that the user should migrate workloads to a new control plane revision.)",
-"DEGRADED means that the component is ready, but operating in a degraded state."
+"DEGRADED means that the component is ready, but operating in a degraded state.",
+"DEPROVISIONING means that deprovisioning is in progress."
 ],
 "type": "string"
 }
@@ -3083,7 +3238,8 @@
 "ACTIVE",
 "STALLED",
 "NEEDS_ATTENTION",
-"DEGRADED"
+"DEGRADED",
+"DEPROVISIONING"
 ],
 "enumDescriptions": [
 "Unspecified",
@@ -3093,7 +3249,8 @@
 "ACTIVE means that the component is ready for use.",
 "STALLED means that provisioning could not be done.",
 "NEEDS_ATTENTION means that the component is ready, but some user intervention is required. (For example that the user should migrate workloads to a new control plane revision.)",
-"DEGRADED means that the component is ready, but operating in a degraded state."
+"DEGRADED means that the component is ready, but operating in a degraded state.",
+"DEPROVISIONING means that deprovisioning is in progress."
 ],
 "type": "string"
 }
@@ -3155,12 +3312,14 @@
 "enum": [
 "MANAGEMENT_UNSPECIFIED",
 "MANAGEMENT_AUTOMATIC",
-"MANAGEMENT_MANUAL"
+"MANAGEMENT_MANUAL",
+"MANAGEMENT_NOT_INSTALLED"
 ],
 "enumDescriptions": [
-"Unspecified",
+"Unspecified.",
 "Google should manage my Service Mesh for the cluster.",
-"User will manually configure their service mesh components."
+"User will manually configure their service mesh components.",
+"Google should remove any managed Service Mesh components from this cluster and deprovision any resources."
 ],
 "type": "string"
 }

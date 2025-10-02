@@ -109,6 +109,12 @@ h1, h2, h3 {
   <code><a href="#list">list(parent, filter=None, orderBy=None, pageSize=None, pageToken=None, readMask=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Lists Models in a Location.</p>
 <p class="toc_element">
+  <code><a href="#listCheckpoints">listCheckpoints(name, pageSize=None, pageToken=None, x__xgafv=None)</a></code></p>
+<p class="firstline">Lists checkpoints of the specified model version.</p>
+<p class="toc_element">
+  <code><a href="#listCheckpoints_next">listCheckpoints_next()</a></code></p>
+<p class="firstline">Retrieves the next page of results.</p>
+<p class="toc_element">
   <code><a href="#listVersions">listVersions(name, filter=None, orderBy=None, pageSize=None, pageToken=None, readMask=None, x__xgafv=None)</a></code></p>
 <p class="firstline">Lists versions of the specified model.</p>
 <p class="toc_element">
@@ -330,8 +336,17 @@ Returns:
     },
     &quot;modelGardenSource&quot;: { # Contains information about the source of the models generated from Model Garden. # Source information of Model Garden models.
       &quot;publicModelName&quot;: &quot;A String&quot;, # Required. The model garden source model resource name.
+      &quot;skipHfModelCache&quot;: True or False, # Optional. Whether to avoid pulling the model from the HF cache.
+      &quot;versionId&quot;: &quot;A String&quot;, # Optional. The model garden source model version ID.
     },
   },
+  &quot;checkpoints&quot;: [ # Optional. Output only. The checkpoints of the model.
+    { # Describes the machine learning model version checkpoint.
+      &quot;checkpointId&quot;: &quot;A String&quot;, # The ID of the checkpoint.
+      &quot;epoch&quot;: &quot;A String&quot;, # The epoch of the checkpoint.
+      &quot;step&quot;: &quot;A String&quot;, # The step of the checkpoint.
+    },
+  ],
   &quot;containerSpec&quot;: { # Specification of a container for serving predictions. Some fields in this message correspond to fields in the [Kubernetes Container v1 core specification](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core). # Input only. The specification of the container that is to be used when deploying this Model. The specification is ingested upon ModelService.UploadModel, and all binaries it contains are copied and stored internally by Vertex AI. Not required for AutoML Models.
     &quot;args&quot;: [ # Immutable. Specifies arguments for the command that runs when the container starts. This overrides the container&#x27;s [`CMD`](https://docs.docker.com/engine/reference/builder/#cmd). Specify this field as an array of executable and arguments, similar to a Docker `CMD`&#x27;s &quot;default parameters&quot; form. If you don&#x27;t specify this field but do specify the command field, then the command from the `command` field runs without any additional arguments. See the [Kubernetes documentation about how the `command` and `args` fields interact with a container&#x27;s `ENTRYPOINT` and `CMD`](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#notes). If you don&#x27;t specify this field and don&#x27;t specify the `command` field, then the container&#x27;s [`ENTRYPOINT`](https://docs.docker.com/engine/reference/builder/#cmd) and `CMD` determine what runs based on their default behavior. See the Docker documentation about [how `CMD` and `ENTRYPOINT` interact](https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact). In this field, you can reference [environment variables set by Vertex AI](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables) and environment variables set in the env field. You cannot reference environment variables set in the Docker image. In order for environment variables to be expanded, reference them by using the following syntax: $( VARIABLE_NAME) Note that this differs from Bash variable expansion, which does not use parentheses. If a variable cannot be resolved, the reference in the input string is used unchanged. To avoid variable expansion, you can escape this syntax with `$$`; for example: $$(VARIABLE_NAME) This field corresponds to the `args` field of the Kubernetes Containers [v1 core API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core).
       &quot;A String&quot;,
@@ -357,9 +372,10 @@ Returns:
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -373,7 +389,9 @@ Returns:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -382,15 +400,17 @@ Returns:
     },
     &quot;healthRoute&quot;: &quot;A String&quot;, # Immutable. HTTP path on the container to send health checks to. Vertex AI intermittently sends GET requests to this path on the container&#x27;s IP address and port to check that the container is healthy. Read more about [health checks](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#health). For example, if you set this field to `/bar`, then Vertex AI intermittently sends a GET request to the `/bar` path on the port of your container specified by the first value of this `ModelContainerSpec`&#x27;s ports field. If you don&#x27;t specify this field, it defaults to the following value when you deploy this Model to an Endpoint: /v1/endpoints/ENDPOINT/deployedModels/ DEPLOYED_MODEL:predict The placeholders in this value are replaced as follows: * ENDPOINT: The last segment (following `endpoints/`)of the Endpoint.name][] field of the Endpoint where this Model has been deployed. (Vertex AI makes this value available to your container code as the [`AIP_ENDPOINT_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).) * DEPLOYED_MODEL: DeployedModel.id of the `DeployedModel`. (Vertex AI makes this value available to your container code as the [`AIP_DEPLOYED_MODEL_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).)
     &quot;imageUri&quot;: &quot;A String&quot;, # Required. Immutable. URI of the Docker image to be used as the custom container for serving predictions. This URI must identify an image in Artifact Registry or Container Registry. Learn more about the [container publishing requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#publishing), including permissions requirements for the Vertex AI Service Agent. The container image is ingested upon ModelService.UploadModel, stored internally, and this original path is afterwards not used. To learn about the requirements for the Docker image itself, see [Custom container requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#). You can use the URI to one of Vertex AI&#x27;s [pre-built container images for prediction](https://cloud.google.com/vertex-ai/docs/predictions/pre-built-containers) in this field.
+    &quot;invokeRoutePrefix&quot;: &quot;A String&quot;, # Immutable. Invoke route prefix for the custom container. &quot;/*&quot; is the only supported value right now. By setting this field, any non-root route on this model will be accessible with invoke http call eg: &quot;/invoke/foo/bar&quot;, however the [PredictionService.Invoke] RPC is not supported yet. Only one of `predict_route` or `invoke_route_prefix` can be set, and we default to using `predict_route` if this field is not set. If this field is set, the Model can only be deployed to dedicated endpoint.
     &quot;livenessProbe&quot;: { # Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic. # Immutable. Specification for Kubernetes liveness probe.
       &quot;exec&quot;: { # ExecAction specifies a command to execute. # ExecAction probes the health of a container by executing a command.
         &quot;command&quot;: [ # Command is the command line to execute inside the container, the working directory for the command is root (&#x27;/&#x27;) in the container&#x27;s filesystem. The command is simply exec&#x27;d, it is not run inside a shell, so traditional shell instructions (&#x27;|&#x27;, etc) won&#x27;t work. To use a shell, you need to explicitly call out to that shell. Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -404,7 +424,9 @@ Returns:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -424,9 +446,10 @@ Returns:
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -440,7 +463,9 @@ Returns:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -457,8 +482,10 @@ Returns:
     &quot;validationAnnotationsCount&quot;: &quot;A String&quot;, # Number of Annotations that are used for validating this Model during training.
     &quot;validationDataItemsCount&quot;: &quot;A String&quot;, # Number of DataItems that were used for validating this Model during training.
   },
+  &quot;defaultCheckpointId&quot;: &quot;A String&quot;, # The default checkpoint id of a model version.
   &quot;deployedModels&quot;: [ # Output only. The pointers to DeployedModels created from this Model. Note that Model could have been deployed to Endpoints in different Locations.
     { # Points to a DeployedModel.
+      &quot;checkpointId&quot;: &quot;A String&quot;, # Immutable. The ID of the Checkpoint deployed in the DeployedModel.
       &quot;deployedModelId&quot;: &quot;A String&quot;, # Immutable. An ID of a DeployedModel in the above Endpoint.
       &quot;endpoint&quot;: &quot;A String&quot;, # Immutable. A resource name of an Endpoint.
     },
@@ -520,7 +547,7 @@ Returns:
         &quot;exampleGcsSource&quot;: { # The Cloud Storage input instances. # The Cloud Storage input instances.
           &quot;dataFormat&quot;: &quot;A String&quot;, # The format in which instances are given, if not specified, assume it&#x27;s JSONL format. Currently only JSONL format is supported.
           &quot;gcsSource&quot;: { # The Google Cloud Storage location for the input content. # The Cloud Storage location for the input instances.
-            &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/gsutil/addlhelp/WildcardNames.
+            &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/wildcards.
               &quot;A String&quot;,
             ],
           },
@@ -607,7 +634,7 @@ Returns:
       &quot;exportableContents&quot;: [ # Output only. The content of this Model that may be exported.
         &quot;A String&quot;,
       ],
-      &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code.
+      &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code. * `genie` A tuned Model Garden model.
     },
   ],
   &quot;supportedInputStorageFormats&quot;: [ # Output only. The formats this Model supports in BatchPredictionJob.input_config. If PredictSchemata.instance_schema_uri exists, the instances should be given as per that schema. The possible formats are: * `jsonl` The JSON Lines format, where each instance is a single line. Uses GcsSource. * `csv` The CSV format, where each instance is a single comma-separated line. The first line in the file is the header, containing comma-separated field names. Uses GcsSource. * `tf-record` The TFRecord format, where each instance is a single record in tfrecord syntax. Uses GcsSource. * `tf-record-gzip` Similar to `tf-record`, but the file is gzipped. Uses GcsSource. * `bigquery` Each instance is a single row in BigQuery. Uses BigQuerySource. * `file-list` Each line of the file is the location of an instance to process, uses `gcs_source` field of the InputConfig object. If this Model doesn&#x27;t support any of these formats it means it cannot be used with a BatchPredictionJob. However, if it has supported_deployment_resources_types, it could serve online predictions by using PredictionService.Predict or PredictionService.Explain.
@@ -692,8 +719,17 @@ Returns:
         },
         &quot;modelGardenSource&quot;: { # Contains information about the source of the models generated from Model Garden. # Source information of Model Garden models.
           &quot;publicModelName&quot;: &quot;A String&quot;, # Required. The model garden source model resource name.
+          &quot;skipHfModelCache&quot;: True or False, # Optional. Whether to avoid pulling the model from the HF cache.
+          &quot;versionId&quot;: &quot;A String&quot;, # Optional. The model garden source model version ID.
         },
       },
+      &quot;checkpoints&quot;: [ # Optional. Output only. The checkpoints of the model.
+        { # Describes the machine learning model version checkpoint.
+          &quot;checkpointId&quot;: &quot;A String&quot;, # The ID of the checkpoint.
+          &quot;epoch&quot;: &quot;A String&quot;, # The epoch of the checkpoint.
+          &quot;step&quot;: &quot;A String&quot;, # The step of the checkpoint.
+        },
+      ],
       &quot;containerSpec&quot;: { # Specification of a container for serving predictions. Some fields in this message correspond to fields in the [Kubernetes Container v1 core specification](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core). # Input only. The specification of the container that is to be used when deploying this Model. The specification is ingested upon ModelService.UploadModel, and all binaries it contains are copied and stored internally by Vertex AI. Not required for AutoML Models.
         &quot;args&quot;: [ # Immutable. Specifies arguments for the command that runs when the container starts. This overrides the container&#x27;s [`CMD`](https://docs.docker.com/engine/reference/builder/#cmd). Specify this field as an array of executable and arguments, similar to a Docker `CMD`&#x27;s &quot;default parameters&quot; form. If you don&#x27;t specify this field but do specify the command field, then the command from the `command` field runs without any additional arguments. See the [Kubernetes documentation about how the `command` and `args` fields interact with a container&#x27;s `ENTRYPOINT` and `CMD`](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#notes). If you don&#x27;t specify this field and don&#x27;t specify the `command` field, then the container&#x27;s [`ENTRYPOINT`](https://docs.docker.com/engine/reference/builder/#cmd) and `CMD` determine what runs based on their default behavior. See the Docker documentation about [how `CMD` and `ENTRYPOINT` interact](https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact). In this field, you can reference [environment variables set by Vertex AI](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables) and environment variables set in the env field. You cannot reference environment variables set in the Docker image. In order for environment variables to be expanded, reference them by using the following syntax: $( VARIABLE_NAME) Note that this differs from Bash variable expansion, which does not use parentheses. If a variable cannot be resolved, the reference in the input string is used unchanged. To avoid variable expansion, you can escape this syntax with `$$`; for example: $$(VARIABLE_NAME) This field corresponds to the `args` field of the Kubernetes Containers [v1 core API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core).
           &quot;A String&quot;,
@@ -719,9 +755,10 @@ Returns:
               &quot;A String&quot;,
             ],
           },
+          &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
           &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
             &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
           },
           &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
             &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -735,7 +772,9 @@ Returns:
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
             &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
           },
+          &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
           &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+          &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
           &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
             &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -744,15 +783,17 @@ Returns:
         },
         &quot;healthRoute&quot;: &quot;A String&quot;, # Immutable. HTTP path on the container to send health checks to. Vertex AI intermittently sends GET requests to this path on the container&#x27;s IP address and port to check that the container is healthy. Read more about [health checks](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#health). For example, if you set this field to `/bar`, then Vertex AI intermittently sends a GET request to the `/bar` path on the port of your container specified by the first value of this `ModelContainerSpec`&#x27;s ports field. If you don&#x27;t specify this field, it defaults to the following value when you deploy this Model to an Endpoint: /v1/endpoints/ENDPOINT/deployedModels/ DEPLOYED_MODEL:predict The placeholders in this value are replaced as follows: * ENDPOINT: The last segment (following `endpoints/`)of the Endpoint.name][] field of the Endpoint where this Model has been deployed. (Vertex AI makes this value available to your container code as the [`AIP_ENDPOINT_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).) * DEPLOYED_MODEL: DeployedModel.id of the `DeployedModel`. (Vertex AI makes this value available to your container code as the [`AIP_DEPLOYED_MODEL_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).)
         &quot;imageUri&quot;: &quot;A String&quot;, # Required. Immutable. URI of the Docker image to be used as the custom container for serving predictions. This URI must identify an image in Artifact Registry or Container Registry. Learn more about the [container publishing requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#publishing), including permissions requirements for the Vertex AI Service Agent. The container image is ingested upon ModelService.UploadModel, stored internally, and this original path is afterwards not used. To learn about the requirements for the Docker image itself, see [Custom container requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#). You can use the URI to one of Vertex AI&#x27;s [pre-built container images for prediction](https://cloud.google.com/vertex-ai/docs/predictions/pre-built-containers) in this field.
+        &quot;invokeRoutePrefix&quot;: &quot;A String&quot;, # Immutable. Invoke route prefix for the custom container. &quot;/*&quot; is the only supported value right now. By setting this field, any non-root route on this model will be accessible with invoke http call eg: &quot;/invoke/foo/bar&quot;, however the [PredictionService.Invoke] RPC is not supported yet. Only one of `predict_route` or `invoke_route_prefix` can be set, and we default to using `predict_route` if this field is not set. If this field is set, the Model can only be deployed to dedicated endpoint.
         &quot;livenessProbe&quot;: { # Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic. # Immutable. Specification for Kubernetes liveness probe.
           &quot;exec&quot;: { # ExecAction specifies a command to execute. # ExecAction probes the health of a container by executing a command.
             &quot;command&quot;: [ # Command is the command line to execute inside the container, the working directory for the command is root (&#x27;/&#x27;) in the container&#x27;s filesystem. The command is simply exec&#x27;d, it is not run inside a shell, so traditional shell instructions (&#x27;|&#x27;, etc) won&#x27;t work. To use a shell, you need to explicitly call out to that shell. Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
               &quot;A String&quot;,
             ],
           },
+          &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
           &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
             &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
           },
           &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
             &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -766,7 +807,9 @@ Returns:
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
             &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
           },
+          &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
           &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+          &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
           &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
             &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -786,9 +829,10 @@ Returns:
               &quot;A String&quot;,
             ],
           },
+          &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
           &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
             &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
           },
           &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
             &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -802,7 +846,9 @@ Returns:
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
             &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
           },
+          &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
           &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+          &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
           &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
             &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -819,8 +865,10 @@ Returns:
         &quot;validationAnnotationsCount&quot;: &quot;A String&quot;, # Number of Annotations that are used for validating this Model during training.
         &quot;validationDataItemsCount&quot;: &quot;A String&quot;, # Number of DataItems that were used for validating this Model during training.
       },
+      &quot;defaultCheckpointId&quot;: &quot;A String&quot;, # The default checkpoint id of a model version.
       &quot;deployedModels&quot;: [ # Output only. The pointers to DeployedModels created from this Model. Note that Model could have been deployed to Endpoints in different Locations.
         { # Points to a DeployedModel.
+          &quot;checkpointId&quot;: &quot;A String&quot;, # Immutable. The ID of the Checkpoint deployed in the DeployedModel.
           &quot;deployedModelId&quot;: &quot;A String&quot;, # Immutable. An ID of a DeployedModel in the above Endpoint.
           &quot;endpoint&quot;: &quot;A String&quot;, # Immutable. A resource name of an Endpoint.
         },
@@ -882,7 +930,7 @@ Returns:
             &quot;exampleGcsSource&quot;: { # The Cloud Storage input instances. # The Cloud Storage input instances.
               &quot;dataFormat&quot;: &quot;A String&quot;, # The format in which instances are given, if not specified, assume it&#x27;s JSONL format. Currently only JSONL format is supported.
               &quot;gcsSource&quot;: { # The Google Cloud Storage location for the input content. # The Cloud Storage location for the input instances.
-                &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/gsutil/addlhelp/WildcardNames.
+                &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/wildcards.
                   &quot;A String&quot;,
                 ],
               },
@@ -969,7 +1017,7 @@ Returns:
           &quot;exportableContents&quot;: [ # Output only. The content of this Model that may be exported.
             &quot;A String&quot;,
           ],
-          &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code.
+          &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code. * `genie` A tuned Model Garden model.
         },
       ],
       &quot;supportedInputStorageFormats&quot;: [ # Output only. The formats this Model supports in BatchPredictionJob.input_config. If PredictSchemata.instance_schema_uri exists, the instances should be given as per that schema. The possible formats are: * `jsonl` The JSON Lines format, where each instance is a single line. Uses GcsSource. * `csv` The CSV format, where each instance is a single comma-separated line. The first line in the file is the header, containing comma-separated field names. Uses GcsSource. * `tf-record` The TFRecord format, where each instance is a single record in tfrecord syntax. Uses GcsSource. * `tf-record-gzip` Similar to `tf-record`, but the file is gzipped. Uses GcsSource. * `bigquery` Each instance is a single row in BigQuery. Uses BigQuerySource. * `file-list` Each line of the file is the location of an instance to process, uses `gcs_source` field of the InputConfig object. If this Model doesn&#x27;t support any of these formats it means it cannot be used with a BatchPredictionJob. However, if it has supported_deployment_resources_types, it could serve online predictions by using PredictionService.Predict or PredictionService.Explain.
@@ -991,6 +1039,48 @@ Returns:
   ],
   &quot;nextPageToken&quot;: &quot;A String&quot;, # A token to retrieve next page of results. Pass to ListModelsRequest.page_token to obtain that page.
 }</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="listCheckpoints">listCheckpoints(name, pageSize=None, pageToken=None, x__xgafv=None)</code>
+  <pre>Lists checkpoints of the specified model version.
+
+Args:
+  name: string, Required. The name of the model version to list checkpoints for. `projects/{project}/locations/{location}/models/{model}@{version}` Example: `projects/{project}/locations/{location}/models/{model}@2` or `projects/{project}/locations/{location}/models/{model}@golden` If no version ID or alias is specified, the latest version will be used. (required)
+  pageSize: integer, Optional. The standard list page size.
+  pageToken: string, Optional. The standard list page token. Typically obtained via next_page_token of the previous ListModelVersionCheckpoints call.
+  x__xgafv: string, V1 error format.
+    Allowed values
+      1 - v1 error format
+      2 - v2 error format
+
+Returns:
+  An object of the form:
+
+    { # Response message for ModelService.ListModelVersionCheckpoints
+  &quot;checkpoints&quot;: [ # List of Model Version checkpoints.
+    { # Describes the machine learning model version checkpoint.
+      &quot;checkpointId&quot;: &quot;A String&quot;, # The ID of the checkpoint.
+      &quot;epoch&quot;: &quot;A String&quot;, # The epoch of the checkpoint.
+      &quot;step&quot;: &quot;A String&quot;, # The step of the checkpoint.
+    },
+  ],
+  &quot;nextPageToken&quot;: &quot;A String&quot;, # A token to retrieve the next page of results. Pass to ListModelVersionCheckpointsRequest.page_token to obtain that page.
+}</pre>
+</div>
+
+<div class="method">
+    <code class="details" id="listCheckpoints_next">listCheckpoints_next()</code>
+  <pre>Retrieves the next page of results.
+
+        Args:
+          previous_request: The request for the previous page. (required)
+          previous_response: The response from the request for the previous page. (required)
+
+        Returns:
+          A request object that you can call &#x27;execute()&#x27; on to request the next
+          page. Returns None if there are no more items in the collection.
+        </pre>
 </div>
 
 <div class="method">
@@ -1022,8 +1112,17 @@ Returns:
         },
         &quot;modelGardenSource&quot;: { # Contains information about the source of the models generated from Model Garden. # Source information of Model Garden models.
           &quot;publicModelName&quot;: &quot;A String&quot;, # Required. The model garden source model resource name.
+          &quot;skipHfModelCache&quot;: True or False, # Optional. Whether to avoid pulling the model from the HF cache.
+          &quot;versionId&quot;: &quot;A String&quot;, # Optional. The model garden source model version ID.
         },
       },
+      &quot;checkpoints&quot;: [ # Optional. Output only. The checkpoints of the model.
+        { # Describes the machine learning model version checkpoint.
+          &quot;checkpointId&quot;: &quot;A String&quot;, # The ID of the checkpoint.
+          &quot;epoch&quot;: &quot;A String&quot;, # The epoch of the checkpoint.
+          &quot;step&quot;: &quot;A String&quot;, # The step of the checkpoint.
+        },
+      ],
       &quot;containerSpec&quot;: { # Specification of a container for serving predictions. Some fields in this message correspond to fields in the [Kubernetes Container v1 core specification](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core). # Input only. The specification of the container that is to be used when deploying this Model. The specification is ingested upon ModelService.UploadModel, and all binaries it contains are copied and stored internally by Vertex AI. Not required for AutoML Models.
         &quot;args&quot;: [ # Immutable. Specifies arguments for the command that runs when the container starts. This overrides the container&#x27;s [`CMD`](https://docs.docker.com/engine/reference/builder/#cmd). Specify this field as an array of executable and arguments, similar to a Docker `CMD`&#x27;s &quot;default parameters&quot; form. If you don&#x27;t specify this field but do specify the command field, then the command from the `command` field runs without any additional arguments. See the [Kubernetes documentation about how the `command` and `args` fields interact with a container&#x27;s `ENTRYPOINT` and `CMD`](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#notes). If you don&#x27;t specify this field and don&#x27;t specify the `command` field, then the container&#x27;s [`ENTRYPOINT`](https://docs.docker.com/engine/reference/builder/#cmd) and `CMD` determine what runs based on their default behavior. See the Docker documentation about [how `CMD` and `ENTRYPOINT` interact](https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact). In this field, you can reference [environment variables set by Vertex AI](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables) and environment variables set in the env field. You cannot reference environment variables set in the Docker image. In order for environment variables to be expanded, reference them by using the following syntax: $( VARIABLE_NAME) Note that this differs from Bash variable expansion, which does not use parentheses. If a variable cannot be resolved, the reference in the input string is used unchanged. To avoid variable expansion, you can escape this syntax with `$$`; for example: $$(VARIABLE_NAME) This field corresponds to the `args` field of the Kubernetes Containers [v1 core API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core).
           &quot;A String&quot;,
@@ -1049,9 +1148,10 @@ Returns:
               &quot;A String&quot;,
             ],
           },
+          &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
           &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
             &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
           },
           &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
             &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -1065,7 +1165,9 @@ Returns:
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
             &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
           },
+          &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
           &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+          &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
           &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
             &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -1074,15 +1176,17 @@ Returns:
         },
         &quot;healthRoute&quot;: &quot;A String&quot;, # Immutable. HTTP path on the container to send health checks to. Vertex AI intermittently sends GET requests to this path on the container&#x27;s IP address and port to check that the container is healthy. Read more about [health checks](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#health). For example, if you set this field to `/bar`, then Vertex AI intermittently sends a GET request to the `/bar` path on the port of your container specified by the first value of this `ModelContainerSpec`&#x27;s ports field. If you don&#x27;t specify this field, it defaults to the following value when you deploy this Model to an Endpoint: /v1/endpoints/ENDPOINT/deployedModels/ DEPLOYED_MODEL:predict The placeholders in this value are replaced as follows: * ENDPOINT: The last segment (following `endpoints/`)of the Endpoint.name][] field of the Endpoint where this Model has been deployed. (Vertex AI makes this value available to your container code as the [`AIP_ENDPOINT_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).) * DEPLOYED_MODEL: DeployedModel.id of the `DeployedModel`. (Vertex AI makes this value available to your container code as the [`AIP_DEPLOYED_MODEL_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).)
         &quot;imageUri&quot;: &quot;A String&quot;, # Required. Immutable. URI of the Docker image to be used as the custom container for serving predictions. This URI must identify an image in Artifact Registry or Container Registry. Learn more about the [container publishing requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#publishing), including permissions requirements for the Vertex AI Service Agent. The container image is ingested upon ModelService.UploadModel, stored internally, and this original path is afterwards not used. To learn about the requirements for the Docker image itself, see [Custom container requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#). You can use the URI to one of Vertex AI&#x27;s [pre-built container images for prediction](https://cloud.google.com/vertex-ai/docs/predictions/pre-built-containers) in this field.
+        &quot;invokeRoutePrefix&quot;: &quot;A String&quot;, # Immutable. Invoke route prefix for the custom container. &quot;/*&quot; is the only supported value right now. By setting this field, any non-root route on this model will be accessible with invoke http call eg: &quot;/invoke/foo/bar&quot;, however the [PredictionService.Invoke] RPC is not supported yet. Only one of `predict_route` or `invoke_route_prefix` can be set, and we default to using `predict_route` if this field is not set. If this field is set, the Model can only be deployed to dedicated endpoint.
         &quot;livenessProbe&quot;: { # Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic. # Immutable. Specification for Kubernetes liveness probe.
           &quot;exec&quot;: { # ExecAction specifies a command to execute. # ExecAction probes the health of a container by executing a command.
             &quot;command&quot;: [ # Command is the command line to execute inside the container, the working directory for the command is root (&#x27;/&#x27;) in the container&#x27;s filesystem. The command is simply exec&#x27;d, it is not run inside a shell, so traditional shell instructions (&#x27;|&#x27;, etc) won&#x27;t work. To use a shell, you need to explicitly call out to that shell. Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
               &quot;A String&quot;,
             ],
           },
+          &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
           &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
             &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
           },
           &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
             &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -1096,7 +1200,9 @@ Returns:
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
             &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
           },
+          &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
           &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+          &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
           &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
             &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -1116,9 +1222,10 @@ Returns:
               &quot;A String&quot;,
             ],
           },
+          &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
           &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
             &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+            &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
           },
           &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
             &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -1132,7 +1239,9 @@ Returns:
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
             &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
           },
+          &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
           &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+          &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
           &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
             &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
             &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -1149,8 +1258,10 @@ Returns:
         &quot;validationAnnotationsCount&quot;: &quot;A String&quot;, # Number of Annotations that are used for validating this Model during training.
         &quot;validationDataItemsCount&quot;: &quot;A String&quot;, # Number of DataItems that were used for validating this Model during training.
       },
+      &quot;defaultCheckpointId&quot;: &quot;A String&quot;, # The default checkpoint id of a model version.
       &quot;deployedModels&quot;: [ # Output only. The pointers to DeployedModels created from this Model. Note that Model could have been deployed to Endpoints in different Locations.
         { # Points to a DeployedModel.
+          &quot;checkpointId&quot;: &quot;A String&quot;, # Immutable. The ID of the Checkpoint deployed in the DeployedModel.
           &quot;deployedModelId&quot;: &quot;A String&quot;, # Immutable. An ID of a DeployedModel in the above Endpoint.
           &quot;endpoint&quot;: &quot;A String&quot;, # Immutable. A resource name of an Endpoint.
         },
@@ -1212,7 +1323,7 @@ Returns:
             &quot;exampleGcsSource&quot;: { # The Cloud Storage input instances. # The Cloud Storage input instances.
               &quot;dataFormat&quot;: &quot;A String&quot;, # The format in which instances are given, if not specified, assume it&#x27;s JSONL format. Currently only JSONL format is supported.
               &quot;gcsSource&quot;: { # The Google Cloud Storage location for the input content. # The Cloud Storage location for the input instances.
-                &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/gsutil/addlhelp/WildcardNames.
+                &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/wildcards.
                   &quot;A String&quot;,
                 ],
               },
@@ -1299,7 +1410,7 @@ Returns:
           &quot;exportableContents&quot;: [ # Output only. The content of this Model that may be exported.
             &quot;A String&quot;,
           ],
-          &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code.
+          &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code. * `genie` A tuned Model Garden model.
         },
       ],
       &quot;supportedInputStorageFormats&quot;: [ # Output only. The formats this Model supports in BatchPredictionJob.input_config. If PredictSchemata.instance_schema_uri exists, the instances should be given as per that schema. The possible formats are: * `jsonl` The JSON Lines format, where each instance is a single line. Uses GcsSource. * `csv` The CSV format, where each instance is a single comma-separated line. The first line in the file is the header, containing comma-separated field names. Uses GcsSource. * `tf-record` The TFRecord format, where each instance is a single record in tfrecord syntax. Uses GcsSource. * `tf-record-gzip` Similar to `tf-record`, but the file is gzipped. Uses GcsSource. * `bigquery` Each instance is a single row in BigQuery. Uses BigQuerySource. * `file-list` Each line of the file is the location of an instance to process, uses `gcs_source` field of the InputConfig object. If this Model doesn&#x27;t support any of these formats it means it cannot be used with a BatchPredictionJob. However, if it has supported_deployment_resources_types, it could serve online predictions by using PredictionService.Predict or PredictionService.Explain.
@@ -1382,8 +1493,17 @@ Returns:
     },
     &quot;modelGardenSource&quot;: { # Contains information about the source of the models generated from Model Garden. # Source information of Model Garden models.
       &quot;publicModelName&quot;: &quot;A String&quot;, # Required. The model garden source model resource name.
+      &quot;skipHfModelCache&quot;: True or False, # Optional. Whether to avoid pulling the model from the HF cache.
+      &quot;versionId&quot;: &quot;A String&quot;, # Optional. The model garden source model version ID.
     },
   },
+  &quot;checkpoints&quot;: [ # Optional. Output only. The checkpoints of the model.
+    { # Describes the machine learning model version checkpoint.
+      &quot;checkpointId&quot;: &quot;A String&quot;, # The ID of the checkpoint.
+      &quot;epoch&quot;: &quot;A String&quot;, # The epoch of the checkpoint.
+      &quot;step&quot;: &quot;A String&quot;, # The step of the checkpoint.
+    },
+  ],
   &quot;containerSpec&quot;: { # Specification of a container for serving predictions. Some fields in this message correspond to fields in the [Kubernetes Container v1 core specification](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core). # Input only. The specification of the container that is to be used when deploying this Model. The specification is ingested upon ModelService.UploadModel, and all binaries it contains are copied and stored internally by Vertex AI. Not required for AutoML Models.
     &quot;args&quot;: [ # Immutable. Specifies arguments for the command that runs when the container starts. This overrides the container&#x27;s [`CMD`](https://docs.docker.com/engine/reference/builder/#cmd). Specify this field as an array of executable and arguments, similar to a Docker `CMD`&#x27;s &quot;default parameters&quot; form. If you don&#x27;t specify this field but do specify the command field, then the command from the `command` field runs without any additional arguments. See the [Kubernetes documentation about how the `command` and `args` fields interact with a container&#x27;s `ENTRYPOINT` and `CMD`](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#notes). If you don&#x27;t specify this field and don&#x27;t specify the `command` field, then the container&#x27;s [`ENTRYPOINT`](https://docs.docker.com/engine/reference/builder/#cmd) and `CMD` determine what runs based on their default behavior. See the Docker documentation about [how `CMD` and `ENTRYPOINT` interact](https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact). In this field, you can reference [environment variables set by Vertex AI](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables) and environment variables set in the env field. You cannot reference environment variables set in the Docker image. In order for environment variables to be expanded, reference them by using the following syntax: $( VARIABLE_NAME) Note that this differs from Bash variable expansion, which does not use parentheses. If a variable cannot be resolved, the reference in the input string is used unchanged. To avoid variable expansion, you can escape this syntax with `$$`; for example: $$(VARIABLE_NAME) This field corresponds to the `args` field of the Kubernetes Containers [v1 core API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core).
       &quot;A String&quot;,
@@ -1409,9 +1529,10 @@ Returns:
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -1425,7 +1546,9 @@ Returns:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -1434,15 +1557,17 @@ Returns:
     },
     &quot;healthRoute&quot;: &quot;A String&quot;, # Immutable. HTTP path on the container to send health checks to. Vertex AI intermittently sends GET requests to this path on the container&#x27;s IP address and port to check that the container is healthy. Read more about [health checks](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#health). For example, if you set this field to `/bar`, then Vertex AI intermittently sends a GET request to the `/bar` path on the port of your container specified by the first value of this `ModelContainerSpec`&#x27;s ports field. If you don&#x27;t specify this field, it defaults to the following value when you deploy this Model to an Endpoint: /v1/endpoints/ENDPOINT/deployedModels/ DEPLOYED_MODEL:predict The placeholders in this value are replaced as follows: * ENDPOINT: The last segment (following `endpoints/`)of the Endpoint.name][] field of the Endpoint where this Model has been deployed. (Vertex AI makes this value available to your container code as the [`AIP_ENDPOINT_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).) * DEPLOYED_MODEL: DeployedModel.id of the `DeployedModel`. (Vertex AI makes this value available to your container code as the [`AIP_DEPLOYED_MODEL_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).)
     &quot;imageUri&quot;: &quot;A String&quot;, # Required. Immutable. URI of the Docker image to be used as the custom container for serving predictions. This URI must identify an image in Artifact Registry or Container Registry. Learn more about the [container publishing requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#publishing), including permissions requirements for the Vertex AI Service Agent. The container image is ingested upon ModelService.UploadModel, stored internally, and this original path is afterwards not used. To learn about the requirements for the Docker image itself, see [Custom container requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#). You can use the URI to one of Vertex AI&#x27;s [pre-built container images for prediction](https://cloud.google.com/vertex-ai/docs/predictions/pre-built-containers) in this field.
+    &quot;invokeRoutePrefix&quot;: &quot;A String&quot;, # Immutable. Invoke route prefix for the custom container. &quot;/*&quot; is the only supported value right now. By setting this field, any non-root route on this model will be accessible with invoke http call eg: &quot;/invoke/foo/bar&quot;, however the [PredictionService.Invoke] RPC is not supported yet. Only one of `predict_route` or `invoke_route_prefix` can be set, and we default to using `predict_route` if this field is not set. If this field is set, the Model can only be deployed to dedicated endpoint.
     &quot;livenessProbe&quot;: { # Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic. # Immutable. Specification for Kubernetes liveness probe.
       &quot;exec&quot;: { # ExecAction specifies a command to execute. # ExecAction probes the health of a container by executing a command.
         &quot;command&quot;: [ # Command is the command line to execute inside the container, the working directory for the command is root (&#x27;/&#x27;) in the container&#x27;s filesystem. The command is simply exec&#x27;d, it is not run inside a shell, so traditional shell instructions (&#x27;|&#x27;, etc) won&#x27;t work. To use a shell, you need to explicitly call out to that shell. Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -1456,7 +1581,9 @@ Returns:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -1476,9 +1603,10 @@ Returns:
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -1492,7 +1620,9 @@ Returns:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -1509,8 +1639,10 @@ Returns:
     &quot;validationAnnotationsCount&quot;: &quot;A String&quot;, # Number of Annotations that are used for validating this Model during training.
     &quot;validationDataItemsCount&quot;: &quot;A String&quot;, # Number of DataItems that were used for validating this Model during training.
   },
+  &quot;defaultCheckpointId&quot;: &quot;A String&quot;, # The default checkpoint id of a model version.
   &quot;deployedModels&quot;: [ # Output only. The pointers to DeployedModels created from this Model. Note that Model could have been deployed to Endpoints in different Locations.
     { # Points to a DeployedModel.
+      &quot;checkpointId&quot;: &quot;A String&quot;, # Immutable. The ID of the Checkpoint deployed in the DeployedModel.
       &quot;deployedModelId&quot;: &quot;A String&quot;, # Immutable. An ID of a DeployedModel in the above Endpoint.
       &quot;endpoint&quot;: &quot;A String&quot;, # Immutable. A resource name of an Endpoint.
     },
@@ -1572,7 +1704,7 @@ Returns:
         &quot;exampleGcsSource&quot;: { # The Cloud Storage input instances. # The Cloud Storage input instances.
           &quot;dataFormat&quot;: &quot;A String&quot;, # The format in which instances are given, if not specified, assume it&#x27;s JSONL format. Currently only JSONL format is supported.
           &quot;gcsSource&quot;: { # The Google Cloud Storage location for the input content. # The Cloud Storage location for the input instances.
-            &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/gsutil/addlhelp/WildcardNames.
+            &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/wildcards.
               &quot;A String&quot;,
             ],
           },
@@ -1659,7 +1791,7 @@ Returns:
       &quot;exportableContents&quot;: [ # Output only. The content of this Model that may be exported.
         &quot;A String&quot;,
       ],
-      &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code.
+      &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code. * `genie` A tuned Model Garden model.
     },
   ],
   &quot;supportedInputStorageFormats&quot;: [ # Output only. The formats this Model supports in BatchPredictionJob.input_config. If PredictSchemata.instance_schema_uri exists, the instances should be given as per that schema. The possible formats are: * `jsonl` The JSON Lines format, where each instance is a single line. Uses GcsSource. * `csv` The CSV format, where each instance is a single comma-separated line. The first line in the file is the header, containing comma-separated field names. Uses GcsSource. * `tf-record` The TFRecord format, where each instance is a single record in tfrecord syntax. Uses GcsSource. * `tf-record-gzip` Similar to `tf-record`, but the file is gzipped. Uses GcsSource. * `bigquery` Each instance is a single row in BigQuery. Uses BigQuerySource. * `file-list` Each line of the file is the location of an instance to process, uses `gcs_source` field of the InputConfig object. If this Model doesn&#x27;t support any of these formats it means it cannot be used with a BatchPredictionJob. However, if it has supported_deployment_resources_types, it could serve online predictions by using PredictionService.Predict or PredictionService.Explain.
@@ -1697,8 +1829,17 @@ Args:
     },
     &quot;modelGardenSource&quot;: { # Contains information about the source of the models generated from Model Garden. # Source information of Model Garden models.
       &quot;publicModelName&quot;: &quot;A String&quot;, # Required. The model garden source model resource name.
+      &quot;skipHfModelCache&quot;: True or False, # Optional. Whether to avoid pulling the model from the HF cache.
+      &quot;versionId&quot;: &quot;A String&quot;, # Optional. The model garden source model version ID.
     },
   },
+  &quot;checkpoints&quot;: [ # Optional. Output only. The checkpoints of the model.
+    { # Describes the machine learning model version checkpoint.
+      &quot;checkpointId&quot;: &quot;A String&quot;, # The ID of the checkpoint.
+      &quot;epoch&quot;: &quot;A String&quot;, # The epoch of the checkpoint.
+      &quot;step&quot;: &quot;A String&quot;, # The step of the checkpoint.
+    },
+  ],
   &quot;containerSpec&quot;: { # Specification of a container for serving predictions. Some fields in this message correspond to fields in the [Kubernetes Container v1 core specification](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core). # Input only. The specification of the container that is to be used when deploying this Model. The specification is ingested upon ModelService.UploadModel, and all binaries it contains are copied and stored internally by Vertex AI. Not required for AutoML Models.
     &quot;args&quot;: [ # Immutable. Specifies arguments for the command that runs when the container starts. This overrides the container&#x27;s [`CMD`](https://docs.docker.com/engine/reference/builder/#cmd). Specify this field as an array of executable and arguments, similar to a Docker `CMD`&#x27;s &quot;default parameters&quot; form. If you don&#x27;t specify this field but do specify the command field, then the command from the `command` field runs without any additional arguments. See the [Kubernetes documentation about how the `command` and `args` fields interact with a container&#x27;s `ENTRYPOINT` and `CMD`](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#notes). If you don&#x27;t specify this field and don&#x27;t specify the `command` field, then the container&#x27;s [`ENTRYPOINT`](https://docs.docker.com/engine/reference/builder/#cmd) and `CMD` determine what runs based on their default behavior. See the Docker documentation about [how `CMD` and `ENTRYPOINT` interact](https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact). In this field, you can reference [environment variables set by Vertex AI](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables) and environment variables set in the env field. You cannot reference environment variables set in the Docker image. In order for environment variables to be expanded, reference them by using the following syntax: $( VARIABLE_NAME) Note that this differs from Bash variable expansion, which does not use parentheses. If a variable cannot be resolved, the reference in the input string is used unchanged. To avoid variable expansion, you can escape this syntax with `$$`; for example: $$(VARIABLE_NAME) This field corresponds to the `args` field of the Kubernetes Containers [v1 core API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core).
       &quot;A String&quot;,
@@ -1724,9 +1865,10 @@ Args:
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -1740,7 +1882,9 @@ Args:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -1749,15 +1893,17 @@ Args:
     },
     &quot;healthRoute&quot;: &quot;A String&quot;, # Immutable. HTTP path on the container to send health checks to. Vertex AI intermittently sends GET requests to this path on the container&#x27;s IP address and port to check that the container is healthy. Read more about [health checks](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#health). For example, if you set this field to `/bar`, then Vertex AI intermittently sends a GET request to the `/bar` path on the port of your container specified by the first value of this `ModelContainerSpec`&#x27;s ports field. If you don&#x27;t specify this field, it defaults to the following value when you deploy this Model to an Endpoint: /v1/endpoints/ENDPOINT/deployedModels/ DEPLOYED_MODEL:predict The placeholders in this value are replaced as follows: * ENDPOINT: The last segment (following `endpoints/`)of the Endpoint.name][] field of the Endpoint where this Model has been deployed. (Vertex AI makes this value available to your container code as the [`AIP_ENDPOINT_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).) * DEPLOYED_MODEL: DeployedModel.id of the `DeployedModel`. (Vertex AI makes this value available to your container code as the [`AIP_DEPLOYED_MODEL_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).)
     &quot;imageUri&quot;: &quot;A String&quot;, # Required. Immutable. URI of the Docker image to be used as the custom container for serving predictions. This URI must identify an image in Artifact Registry or Container Registry. Learn more about the [container publishing requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#publishing), including permissions requirements for the Vertex AI Service Agent. The container image is ingested upon ModelService.UploadModel, stored internally, and this original path is afterwards not used. To learn about the requirements for the Docker image itself, see [Custom container requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#). You can use the URI to one of Vertex AI&#x27;s [pre-built container images for prediction](https://cloud.google.com/vertex-ai/docs/predictions/pre-built-containers) in this field.
+    &quot;invokeRoutePrefix&quot;: &quot;A String&quot;, # Immutable. Invoke route prefix for the custom container. &quot;/*&quot; is the only supported value right now. By setting this field, any non-root route on this model will be accessible with invoke http call eg: &quot;/invoke/foo/bar&quot;, however the [PredictionService.Invoke] RPC is not supported yet. Only one of `predict_route` or `invoke_route_prefix` can be set, and we default to using `predict_route` if this field is not set. If this field is set, the Model can only be deployed to dedicated endpoint.
     &quot;livenessProbe&quot;: { # Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic. # Immutable. Specification for Kubernetes liveness probe.
       &quot;exec&quot;: { # ExecAction specifies a command to execute. # ExecAction probes the health of a container by executing a command.
         &quot;command&quot;: [ # Command is the command line to execute inside the container, the working directory for the command is root (&#x27;/&#x27;) in the container&#x27;s filesystem. The command is simply exec&#x27;d, it is not run inside a shell, so traditional shell instructions (&#x27;|&#x27;, etc) won&#x27;t work. To use a shell, you need to explicitly call out to that shell. Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -1771,7 +1917,9 @@ Args:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -1791,9 +1939,10 @@ Args:
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -1807,7 +1956,9 @@ Args:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -1824,8 +1975,10 @@ Args:
     &quot;validationAnnotationsCount&quot;: &quot;A String&quot;, # Number of Annotations that are used for validating this Model during training.
     &quot;validationDataItemsCount&quot;: &quot;A String&quot;, # Number of DataItems that were used for validating this Model during training.
   },
+  &quot;defaultCheckpointId&quot;: &quot;A String&quot;, # The default checkpoint id of a model version.
   &quot;deployedModels&quot;: [ # Output only. The pointers to DeployedModels created from this Model. Note that Model could have been deployed to Endpoints in different Locations.
     { # Points to a DeployedModel.
+      &quot;checkpointId&quot;: &quot;A String&quot;, # Immutable. The ID of the Checkpoint deployed in the DeployedModel.
       &quot;deployedModelId&quot;: &quot;A String&quot;, # Immutable. An ID of a DeployedModel in the above Endpoint.
       &quot;endpoint&quot;: &quot;A String&quot;, # Immutable. A resource name of an Endpoint.
     },
@@ -1887,7 +2040,7 @@ Args:
         &quot;exampleGcsSource&quot;: { # The Cloud Storage input instances. # The Cloud Storage input instances.
           &quot;dataFormat&quot;: &quot;A String&quot;, # The format in which instances are given, if not specified, assume it&#x27;s JSONL format. Currently only JSONL format is supported.
           &quot;gcsSource&quot;: { # The Google Cloud Storage location for the input content. # The Cloud Storage location for the input instances.
-            &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/gsutil/addlhelp/WildcardNames.
+            &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/wildcards.
               &quot;A String&quot;,
             ],
           },
@@ -1974,7 +2127,7 @@ Args:
       &quot;exportableContents&quot;: [ # Output only. The content of this Model that may be exported.
         &quot;A String&quot;,
       ],
-      &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code.
+      &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code. * `genie` A tuned Model Garden model.
     },
   ],
   &quot;supportedInputStorageFormats&quot;: [ # Output only. The formats this Model supports in BatchPredictionJob.input_config. If PredictSchemata.instance_schema_uri exists, the instances should be given as per that schema. The possible formats are: * `jsonl` The JSON Lines format, where each instance is a single line. Uses GcsSource. * `csv` The CSV format, where each instance is a single comma-separated line. The first line in the file is the header, containing comma-separated field names. Uses GcsSource. * `tf-record` The TFRecord format, where each instance is a single record in tfrecord syntax. Uses GcsSource. * `tf-record-gzip` Similar to `tf-record`, but the file is gzipped. Uses GcsSource. * `bigquery` Each instance is a single row in BigQuery. Uses BigQuerySource. * `file-list` Each line of the file is the location of an instance to process, uses `gcs_source` field of the InputConfig object. If this Model doesn&#x27;t support any of these formats it means it cannot be used with a BatchPredictionJob. However, if it has supported_deployment_resources_types, it could serve online predictions by using PredictionService.Predict or PredictionService.Explain.
@@ -2011,8 +2164,17 @@ Returns:
     },
     &quot;modelGardenSource&quot;: { # Contains information about the source of the models generated from Model Garden. # Source information of Model Garden models.
       &quot;publicModelName&quot;: &quot;A String&quot;, # Required. The model garden source model resource name.
+      &quot;skipHfModelCache&quot;: True or False, # Optional. Whether to avoid pulling the model from the HF cache.
+      &quot;versionId&quot;: &quot;A String&quot;, # Optional. The model garden source model version ID.
     },
   },
+  &quot;checkpoints&quot;: [ # Optional. Output only. The checkpoints of the model.
+    { # Describes the machine learning model version checkpoint.
+      &quot;checkpointId&quot;: &quot;A String&quot;, # The ID of the checkpoint.
+      &quot;epoch&quot;: &quot;A String&quot;, # The epoch of the checkpoint.
+      &quot;step&quot;: &quot;A String&quot;, # The step of the checkpoint.
+    },
+  ],
   &quot;containerSpec&quot;: { # Specification of a container for serving predictions. Some fields in this message correspond to fields in the [Kubernetes Container v1 core specification](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core). # Input only. The specification of the container that is to be used when deploying this Model. The specification is ingested upon ModelService.UploadModel, and all binaries it contains are copied and stored internally by Vertex AI. Not required for AutoML Models.
     &quot;args&quot;: [ # Immutable. Specifies arguments for the command that runs when the container starts. This overrides the container&#x27;s [`CMD`](https://docs.docker.com/engine/reference/builder/#cmd). Specify this field as an array of executable and arguments, similar to a Docker `CMD`&#x27;s &quot;default parameters&quot; form. If you don&#x27;t specify this field but do specify the command field, then the command from the `command` field runs without any additional arguments. See the [Kubernetes documentation about how the `command` and `args` fields interact with a container&#x27;s `ENTRYPOINT` and `CMD`](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#notes). If you don&#x27;t specify this field and don&#x27;t specify the `command` field, then the container&#x27;s [`ENTRYPOINT`](https://docs.docker.com/engine/reference/builder/#cmd) and `CMD` determine what runs based on their default behavior. See the Docker documentation about [how `CMD` and `ENTRYPOINT` interact](https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact). In this field, you can reference [environment variables set by Vertex AI](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables) and environment variables set in the env field. You cannot reference environment variables set in the Docker image. In order for environment variables to be expanded, reference them by using the following syntax: $( VARIABLE_NAME) Note that this differs from Bash variable expansion, which does not use parentheses. If a variable cannot be resolved, the reference in the input string is used unchanged. To avoid variable expansion, you can escape this syntax with `$$`; for example: $$(VARIABLE_NAME) This field corresponds to the `args` field of the Kubernetes Containers [v1 core API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core).
       &quot;A String&quot;,
@@ -2038,9 +2200,10 @@ Returns:
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -2054,7 +2217,9 @@ Returns:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -2063,15 +2228,17 @@ Returns:
     },
     &quot;healthRoute&quot;: &quot;A String&quot;, # Immutable. HTTP path on the container to send health checks to. Vertex AI intermittently sends GET requests to this path on the container&#x27;s IP address and port to check that the container is healthy. Read more about [health checks](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#health). For example, if you set this field to `/bar`, then Vertex AI intermittently sends a GET request to the `/bar` path on the port of your container specified by the first value of this `ModelContainerSpec`&#x27;s ports field. If you don&#x27;t specify this field, it defaults to the following value when you deploy this Model to an Endpoint: /v1/endpoints/ENDPOINT/deployedModels/ DEPLOYED_MODEL:predict The placeholders in this value are replaced as follows: * ENDPOINT: The last segment (following `endpoints/`)of the Endpoint.name][] field of the Endpoint where this Model has been deployed. (Vertex AI makes this value available to your container code as the [`AIP_ENDPOINT_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).) * DEPLOYED_MODEL: DeployedModel.id of the `DeployedModel`. (Vertex AI makes this value available to your container code as the [`AIP_DEPLOYED_MODEL_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).)
     &quot;imageUri&quot;: &quot;A String&quot;, # Required. Immutable. URI of the Docker image to be used as the custom container for serving predictions. This URI must identify an image in Artifact Registry or Container Registry. Learn more about the [container publishing requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#publishing), including permissions requirements for the Vertex AI Service Agent. The container image is ingested upon ModelService.UploadModel, stored internally, and this original path is afterwards not used. To learn about the requirements for the Docker image itself, see [Custom container requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#). You can use the URI to one of Vertex AI&#x27;s [pre-built container images for prediction](https://cloud.google.com/vertex-ai/docs/predictions/pre-built-containers) in this field.
+    &quot;invokeRoutePrefix&quot;: &quot;A String&quot;, # Immutable. Invoke route prefix for the custom container. &quot;/*&quot; is the only supported value right now. By setting this field, any non-root route on this model will be accessible with invoke http call eg: &quot;/invoke/foo/bar&quot;, however the [PredictionService.Invoke] RPC is not supported yet. Only one of `predict_route` or `invoke_route_prefix` can be set, and we default to using `predict_route` if this field is not set. If this field is set, the Model can only be deployed to dedicated endpoint.
     &quot;livenessProbe&quot;: { # Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic. # Immutable. Specification for Kubernetes liveness probe.
       &quot;exec&quot;: { # ExecAction specifies a command to execute. # ExecAction probes the health of a container by executing a command.
         &quot;command&quot;: [ # Command is the command line to execute inside the container, the working directory for the command is root (&#x27;/&#x27;) in the container&#x27;s filesystem. The command is simply exec&#x27;d, it is not run inside a shell, so traditional shell instructions (&#x27;|&#x27;, etc) won&#x27;t work. To use a shell, you need to explicitly call out to that shell. Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -2085,7 +2252,9 @@ Returns:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -2105,9 +2274,10 @@ Returns:
           &quot;A String&quot;,
         ],
       },
+      &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
       &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
         &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+        &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
       },
       &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
         &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -2121,7 +2291,9 @@ Returns:
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
         &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
       },
+      &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
       &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+      &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
       &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
         &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
         &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -2138,8 +2310,10 @@ Returns:
     &quot;validationAnnotationsCount&quot;: &quot;A String&quot;, # Number of Annotations that are used for validating this Model during training.
     &quot;validationDataItemsCount&quot;: &quot;A String&quot;, # Number of DataItems that were used for validating this Model during training.
   },
+  &quot;defaultCheckpointId&quot;: &quot;A String&quot;, # The default checkpoint id of a model version.
   &quot;deployedModels&quot;: [ # Output only. The pointers to DeployedModels created from this Model. Note that Model could have been deployed to Endpoints in different Locations.
     { # Points to a DeployedModel.
+      &quot;checkpointId&quot;: &quot;A String&quot;, # Immutable. The ID of the Checkpoint deployed in the DeployedModel.
       &quot;deployedModelId&quot;: &quot;A String&quot;, # Immutable. An ID of a DeployedModel in the above Endpoint.
       &quot;endpoint&quot;: &quot;A String&quot;, # Immutable. A resource name of an Endpoint.
     },
@@ -2201,7 +2375,7 @@ Returns:
         &quot;exampleGcsSource&quot;: { # The Cloud Storage input instances. # The Cloud Storage input instances.
           &quot;dataFormat&quot;: &quot;A String&quot;, # The format in which instances are given, if not specified, assume it&#x27;s JSONL format. Currently only JSONL format is supported.
           &quot;gcsSource&quot;: { # The Google Cloud Storage location for the input content. # The Cloud Storage location for the input instances.
-            &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/gsutil/addlhelp/WildcardNames.
+            &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/wildcards.
               &quot;A String&quot;,
             ],
           },
@@ -2288,7 +2462,7 @@ Returns:
       &quot;exportableContents&quot;: [ # Output only. The content of this Model that may be exported.
         &quot;A String&quot;,
       ],
-      &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code.
+      &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code. * `genie` A tuned Model Garden model.
     },
   ],
   &quot;supportedInputStorageFormats&quot;: [ # Output only. The formats this Model supports in BatchPredictionJob.input_config. If PredictSchemata.instance_schema_uri exists, the instances should be given as per that schema. The possible formats are: * `jsonl` The JSON Lines format, where each instance is a single line. Uses GcsSource. * `csv` The CSV format, where each instance is a single comma-separated line. The first line in the file is the header, containing comma-separated field names. Uses GcsSource. * `tf-record` The TFRecord format, where each instance is a single record in tfrecord syntax. Uses GcsSource. * `tf-record-gzip` Similar to `tf-record`, but the file is gzipped. Uses GcsSource. * `bigquery` Each instance is a single row in BigQuery. Uses BigQuerySource. * `file-list` Each line of the file is the location of an instance to process, uses `gcs_source` field of the InputConfig object. If this Model doesn&#x27;t support any of these formats it means it cannot be used with a BatchPredictionJob. However, if it has supported_deployment_resources_types, it could serve online predictions by using PredictionService.Predict or PredictionService.Explain.
@@ -2403,7 +2577,7 @@ Args:
     &quot;exampleGcsSource&quot;: { # The Cloud Storage input instances. # The Cloud Storage input instances.
       &quot;dataFormat&quot;: &quot;A String&quot;, # The format in which instances are given, if not specified, assume it&#x27;s JSONL format. Currently only JSONL format is supported.
       &quot;gcsSource&quot;: { # The Google Cloud Storage location for the input content. # The Cloud Storage location for the input instances.
-        &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/gsutil/addlhelp/WildcardNames.
+        &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/wildcards.
           &quot;A String&quot;,
         ],
       },
@@ -2464,8 +2638,17 @@ Args:
       },
       &quot;modelGardenSource&quot;: { # Contains information about the source of the models generated from Model Garden. # Source information of Model Garden models.
         &quot;publicModelName&quot;: &quot;A String&quot;, # Required. The model garden source model resource name.
+        &quot;skipHfModelCache&quot;: True or False, # Optional. Whether to avoid pulling the model from the HF cache.
+        &quot;versionId&quot;: &quot;A String&quot;, # Optional. The model garden source model version ID.
       },
     },
+    &quot;checkpoints&quot;: [ # Optional. Output only. The checkpoints of the model.
+      { # Describes the machine learning model version checkpoint.
+        &quot;checkpointId&quot;: &quot;A String&quot;, # The ID of the checkpoint.
+        &quot;epoch&quot;: &quot;A String&quot;, # The epoch of the checkpoint.
+        &quot;step&quot;: &quot;A String&quot;, # The step of the checkpoint.
+      },
+    ],
     &quot;containerSpec&quot;: { # Specification of a container for serving predictions. Some fields in this message correspond to fields in the [Kubernetes Container v1 core specification](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core). # Input only. The specification of the container that is to be used when deploying this Model. The specification is ingested upon ModelService.UploadModel, and all binaries it contains are copied and stored internally by Vertex AI. Not required for AutoML Models.
       &quot;args&quot;: [ # Immutable. Specifies arguments for the command that runs when the container starts. This overrides the container&#x27;s [`CMD`](https://docs.docker.com/engine/reference/builder/#cmd). Specify this field as an array of executable and arguments, similar to a Docker `CMD`&#x27;s &quot;default parameters&quot; form. If you don&#x27;t specify this field but do specify the command field, then the command from the `command` field runs without any additional arguments. See the [Kubernetes documentation about how the `command` and `args` fields interact with a container&#x27;s `ENTRYPOINT` and `CMD`](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#notes). If you don&#x27;t specify this field and don&#x27;t specify the `command` field, then the container&#x27;s [`ENTRYPOINT`](https://docs.docker.com/engine/reference/builder/#cmd) and `CMD` determine what runs based on their default behavior. See the Docker documentation about [how `CMD` and `ENTRYPOINT` interact](https://docs.docker.com/engine/reference/builder/#understand-how-cmd-and-entrypoint-interact). In this field, you can reference [environment variables set by Vertex AI](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables) and environment variables set in the env field. You cannot reference environment variables set in the Docker image. In order for environment variables to be expanded, reference them by using the following syntax: $( VARIABLE_NAME) Note that this differs from Bash variable expansion, which does not use parentheses. If a variable cannot be resolved, the reference in the input string is used unchanged. To avoid variable expansion, you can escape this syntax with `$$`; for example: $$(VARIABLE_NAME) This field corresponds to the `args` field of the Kubernetes Containers [v1 core API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#container-v1-core).
         &quot;A String&quot;,
@@ -2491,9 +2674,10 @@ Args:
             &quot;A String&quot;,
           ],
         },
+        &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
         &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
           &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-          &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+          &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
         },
         &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
           &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -2507,7 +2691,9 @@ Args:
           &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
           &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
         },
+        &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
         &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+        &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
         &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
           &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
           &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -2516,15 +2702,17 @@ Args:
       },
       &quot;healthRoute&quot;: &quot;A String&quot;, # Immutable. HTTP path on the container to send health checks to. Vertex AI intermittently sends GET requests to this path on the container&#x27;s IP address and port to check that the container is healthy. Read more about [health checks](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#health). For example, if you set this field to `/bar`, then Vertex AI intermittently sends a GET request to the `/bar` path on the port of your container specified by the first value of this `ModelContainerSpec`&#x27;s ports field. If you don&#x27;t specify this field, it defaults to the following value when you deploy this Model to an Endpoint: /v1/endpoints/ENDPOINT/deployedModels/ DEPLOYED_MODEL:predict The placeholders in this value are replaced as follows: * ENDPOINT: The last segment (following `endpoints/`)of the Endpoint.name][] field of the Endpoint where this Model has been deployed. (Vertex AI makes this value available to your container code as the [`AIP_ENDPOINT_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).) * DEPLOYED_MODEL: DeployedModel.id of the `DeployedModel`. (Vertex AI makes this value available to your container code as the [`AIP_DEPLOYED_MODEL_ID` environment variable](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#aip-variables).)
       &quot;imageUri&quot;: &quot;A String&quot;, # Required. Immutable. URI of the Docker image to be used as the custom container for serving predictions. This URI must identify an image in Artifact Registry or Container Registry. Learn more about the [container publishing requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#publishing), including permissions requirements for the Vertex AI Service Agent. The container image is ingested upon ModelService.UploadModel, stored internally, and this original path is afterwards not used. To learn about the requirements for the Docker image itself, see [Custom container requirements](https://cloud.google.com/vertex-ai/docs/predictions/custom-container-requirements#). You can use the URI to one of Vertex AI&#x27;s [pre-built container images for prediction](https://cloud.google.com/vertex-ai/docs/predictions/pre-built-containers) in this field.
+      &quot;invokeRoutePrefix&quot;: &quot;A String&quot;, # Immutable. Invoke route prefix for the custom container. &quot;/*&quot; is the only supported value right now. By setting this field, any non-root route on this model will be accessible with invoke http call eg: &quot;/invoke/foo/bar&quot;, however the [PredictionService.Invoke] RPC is not supported yet. Only one of `predict_route` or `invoke_route_prefix` can be set, and we default to using `predict_route` if this field is not set. If this field is set, the Model can only be deployed to dedicated endpoint.
       &quot;livenessProbe&quot;: { # Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic. # Immutable. Specification for Kubernetes liveness probe.
         &quot;exec&quot;: { # ExecAction specifies a command to execute. # ExecAction probes the health of a container by executing a command.
           &quot;command&quot;: [ # Command is the command line to execute inside the container, the working directory for the command is root (&#x27;/&#x27;) in the container&#x27;s filesystem. The command is simply exec&#x27;d, it is not run inside a shell, so traditional shell instructions (&#x27;|&#x27;, etc) won&#x27;t work. To use a shell, you need to explicitly call out to that shell. Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
             &quot;A String&quot;,
           ],
         },
+        &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
         &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
           &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-          &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+          &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
         },
         &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
           &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -2538,7 +2726,9 @@ Args:
           &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
           &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
         },
+        &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
         &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+        &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
         &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
           &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
           &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -2558,9 +2748,10 @@ Args:
             &quot;A String&quot;,
           ],
         },
+        &quot;failureThreshold&quot;: 42, # Number of consecutive failures before the probe is considered failed. Defaults to 3. Minimum value is 1. Maps to Kubernetes probe argument &#x27;failureThreshold&#x27;.
         &quot;grpc&quot;: { # GrpcAction checks the health of a container using a gRPC service. # GrpcAction probes the health of a container by sending a gRPC request.
           &quot;port&quot;: 42, # Port number of the gRPC service. Number must be in the range 1 to 65535.
-          &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md). If this is not specified, the default behavior is defined by gRPC.
+          &quot;service&quot;: &quot;A String&quot;, # Service is the name of the service to place in the gRPC HealthCheckRequest. See https://github.com/grpc/grpc/blob/master/doc/health-checking.md. If this is not specified, the default behavior is defined by gRPC.
         },
         &quot;httpGet&quot;: { # HttpGetAction describes an action based on HTTP Get requests. # HttpGetAction probes the health of a container by sending an HTTP GET request.
           &quot;host&quot;: &quot;A String&quot;, # Host name to connect to, defaults to the model serving container&#x27;s IP. You probably want to set &quot;Host&quot; in httpHeaders instead.
@@ -2574,7 +2765,9 @@ Args:
           &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
           &quot;scheme&quot;: &quot;A String&quot;, # Scheme to use for connecting to the host. Defaults to HTTP. Acceptable values are &quot;HTTP&quot; or &quot;HTTPS&quot;.
         },
+        &quot;initialDelaySeconds&quot;: 42, # Number of seconds to wait before starting the probe. Defaults to 0. Minimum value is 0. Maps to Kubernetes probe argument &#x27;initialDelaySeconds&#x27;.
         &quot;periodSeconds&quot;: 42, # How often (in seconds) to perform the probe. Default to 10 seconds. Minimum value is 1. Must be less than timeout_seconds. Maps to Kubernetes probe argument &#x27;periodSeconds&#x27;.
+        &quot;successThreshold&quot;: 42, # Number of consecutive successes before the probe is considered successful. Defaults to 1. Minimum value is 1. Maps to Kubernetes probe argument &#x27;successThreshold&#x27;.
         &quot;tcpSocket&quot;: { # TcpSocketAction probes the health of a container by opening a TCP socket connection. # TcpSocketAction probes the health of a container by opening a TCP socket connection.
           &quot;host&quot;: &quot;A String&quot;, # Optional: Host name to connect to, defaults to the model serving container&#x27;s IP.
           &quot;port&quot;: 42, # Number of the port to access on the container. Number must be in the range 1 to 65535.
@@ -2591,8 +2784,10 @@ Args:
       &quot;validationAnnotationsCount&quot;: &quot;A String&quot;, # Number of Annotations that are used for validating this Model during training.
       &quot;validationDataItemsCount&quot;: &quot;A String&quot;, # Number of DataItems that were used for validating this Model during training.
     },
+    &quot;defaultCheckpointId&quot;: &quot;A String&quot;, # The default checkpoint id of a model version.
     &quot;deployedModels&quot;: [ # Output only. The pointers to DeployedModels created from this Model. Note that Model could have been deployed to Endpoints in different Locations.
       { # Points to a DeployedModel.
+        &quot;checkpointId&quot;: &quot;A String&quot;, # Immutable. The ID of the Checkpoint deployed in the DeployedModel.
         &quot;deployedModelId&quot;: &quot;A String&quot;, # Immutable. An ID of a DeployedModel in the above Endpoint.
         &quot;endpoint&quot;: &quot;A String&quot;, # Immutable. A resource name of an Endpoint.
       },
@@ -2654,7 +2849,7 @@ Args:
           &quot;exampleGcsSource&quot;: { # The Cloud Storage input instances. # The Cloud Storage input instances.
             &quot;dataFormat&quot;: &quot;A String&quot;, # The format in which instances are given, if not specified, assume it&#x27;s JSONL format. Currently only JSONL format is supported.
             &quot;gcsSource&quot;: { # The Google Cloud Storage location for the input content. # The Cloud Storage location for the input instances.
-              &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/gsutil/addlhelp/WildcardNames.
+              &quot;uris&quot;: [ # Required. Google Cloud Storage URI(-s) to the input file(s). May contain wildcards. For more information on wildcards, see https://cloud.google.com/storage/docs/wildcards.
                 &quot;A String&quot;,
               ],
             },
@@ -2741,7 +2936,7 @@ Args:
         &quot;exportableContents&quot;: [ # Output only. The content of this Model that may be exported.
           &quot;A String&quot;,
         ],
-        &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code.
+        &quot;id&quot;: &quot;A String&quot;, # Output only. The ID of the export format. The possible format IDs are: * `tflite` Used for Android mobile devices. * `edgetpu-tflite` Used for [Edge TPU](https://cloud.google.com/edge-tpu/) devices. * `tf-saved-model` A tensorflow model in SavedModel format. * `tf-js` A [TensorFlow.js](https://www.tensorflow.org/js) model that can be used in the browser and in Node.js using JavaScript. * `core-ml` Used for iOS mobile devices. * `custom-trained` A Model that was uploaded or trained by custom code. * `genie` A tuned Model Garden model.
       },
     ],
     &quot;supportedInputStorageFormats&quot;: [ # Output only. The formats this Model supports in BatchPredictionJob.input_config. If PredictSchemata.instance_schema_uri exists, the instances should be given as per that schema. The possible formats are: * `jsonl` The JSON Lines format, where each instance is a single line. Uses GcsSource. * `csv` The CSV format, where each instance is a single comma-separated line. The first line in the file is the header, containing comma-separated field names. Uses GcsSource. * `tf-record` The TFRecord format, where each instance is a single record in tfrecord syntax. Uses GcsSource. * `tf-record-gzip` Similar to `tf-record`, but the file is gzipped. Uses GcsSource. * `bigquery` Each instance is a single row in BigQuery. Uses BigQuerySource. * `file-list` Each line of the file is the location of an instance to process, uses `gcs_source` field of the InputConfig object. If this Model doesn&#x27;t support any of these formats it means it cannot be used with a BatchPredictionJob. However, if it has supported_deployment_resources_types, it could serve online predictions by using PredictionService.Predict or PredictionService.Explain.

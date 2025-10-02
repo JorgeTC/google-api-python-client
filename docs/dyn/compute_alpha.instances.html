@@ -434,6 +434,7 @@ Args:
       &quot;subnetworkRangeName&quot;: &quot;A String&quot;, # The name of a subnetwork secondary IP range from which to allocate an IP alias range. If not specified, the primary range of the subnetwork is used.
     },
   ],
+  &quot;enableVpcScopedDns&quot;: True or False, # Optional. If true, DNS resolution will be enabled over this interface. Only valid with network_attachment.
   &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint hash of contents stored in this network interface. This field will be ignored when inserting an Instance or adding a NetworkInterface. An up-to-date fingerprint must be provided in order to update the NetworkInterface. The request will fail with error 400 Bad Request if the fingerprint is not provided, or 412 Precondition Failed if the fingerprint is out of date.
   &quot;igmpQuery&quot;: &quot;A String&quot;, # Indicate whether igmp query is enabled on the network interface or not. If enabled, also indicates the version of IGMP supported.
   &quot;internalIpv6PrefixLength&quot;: 42, # The prefix length of the primary internal IPv6 range.
@@ -473,7 +474,7 @@ Args:
     },
   ],
   &quot;subnetwork&quot;: &quot;A String&quot;, # The URL of the Subnetwork resource for this instance. If the network resource is in legacy mode, do not specify this field. If the network is in auto subnet mode, specifying the subnetwork is optional. If the network is in custom subnet mode, specifying the subnetwork is required. If you specify this field, you can specify the subnetwork as a full or partial URL. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/project/regions/region /subnetworks/subnetwork - regions/region/subnetworks/subnetwork
-  &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be in range from 2 to 4094 inclusively.
+  &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be an integer in the range from 2 to 255 inclusively.
 }
 
   requestId: string, An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported ( 00000000-0000-0000-0000-000000000000).
@@ -769,6 +770,10 @@ Returns:
           &quot;canIpForward&quot;: True or False, # Allows this instance to send and receive packets with non-matching destination or source IPs. This is required if you plan to use this instance to forward routes. For more information, see Enabling IP Forwarding .
           &quot;confidentialInstanceConfig&quot;: { # A set of Confidential Instance options.
             &quot;confidentialInstanceType&quot;: &quot;A String&quot;, # Defines the type of technology used by the confidential instance.
+            &quot;confidentialParavisorConfig&quot;: { # A set of Confidential Paravisor (SVSM) options. # Defines a set of Confidential Paravisor (SVSM) options.
+              &quot;confidentialTpmType&quot;: &quot;A String&quot;,
+              &quot;sevSnpIrqMode&quot;: &quot;A String&quot;,
+            },
             &quot;enableConfidentialCompute&quot;: True or False, # Defines whether the instance should have confidential compute enabled.
           },
           &quot;cpuPlatform&quot;: &quot;A String&quot;, # [Output Only] The CPU platform used by this instance.
@@ -792,7 +797,7 @@ Returns:
               &quot;forceAttach&quot;: True or False, # [Input Only] Whether to force attach the regional disk even if it&#x27;s currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.
               &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.
                 { # Guest OS features.
-                  &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+                  &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
                 },
               ],
               &quot;index&quot;: 42, # [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.
@@ -805,7 +810,7 @@ Returns:
                 &quot;enableConfidentialCompute&quot;: True or False, # Whether this disk is using confidential compute mode.
                 &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options. Guest OS features are applied by merging initializeParams.guestOsFeatures and disks.guestOsFeatures
                   { # Guest OS features.
-                    &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+                    &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
                   },
                 ],
                 &quot;interface&quot;: &quot;A String&quot;, # [Deprecated] Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.
@@ -902,6 +907,8 @@ Returns:
           ],
           &quot;hostname&quot;: &quot;A String&quot;, # Specifies the hostname of the instance. The specified hostname must be RFC1035 compliant. If hostname is not specified, the default hostname is [INSTANCE_NAME].c.[PROJECT_ID].internal when using the global DNS, and [INSTANCE_NAME].[ZONE].c.[PROJECT_ID].internal when using zonal DNS.
           &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
+          &quot;identity&quot;: &quot;A String&quot;,
+          &quot;identityCertificate&quot;: True or False,
           &quot;instanceEncryptionKey&quot;: { # Encrypts suspended data for an instance with a customer-managed encryption key. If you are creating a new instance, this field will encrypt the local SSD and in-memory contents of the instance during the suspend operation. If you do not provide an encryption key when creating the instance, then the local SSD and in-memory contents will be encrypted using an automatically generated key during the suspend operation.
             &quot;kmsKeyName&quot;: &quot;A String&quot;, # The name of the encryption key that is stored in Google Cloud KMS. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key The fully-qualifed key name may be returned for resource GET requests. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1
             &quot;kmsKeyServiceAccount&quot;: &quot;A String&quot;, # The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example: &quot;kmsKeyServiceAccount&quot;: &quot;name@project_id.iam.gserviceaccount.com/
@@ -919,7 +926,7 @@ Returns:
           &quot;lastStopTimestamp&quot;: &quot;A String&quot;, # [Output Only] Last stop timestamp in RFC3339 text format.
           &quot;lastSuspendedTimestamp&quot;: &quot;A String&quot;, # [Output Only] Last suspended timestamp in RFC3339 text format.
           &quot;machineType&quot;: &quot;A String&quot;, # Full or partial URL of the machine type resource to use for this instance, in the format: zones/zone/machineTypes/machine-type. This is provided by the client when the instance is created. For example, the following is a valid partial url to a predefined machine type: zones/us-central1-f/machineTypes/n1-standard-1 To create a custom machine type, provide a URL to a machine type in the following format, where CPUS is 1 or an even number up to 32 (2, 4, 6, ... 24, etc), and MEMORY is the total memory for this instance. Memory must be a multiple of 256 MB and must be supplied in MB (e.g. 5 GB of memory is 5120 MB): zones/zone/machineTypes/custom-CPUS-MEMORY For example: zones/us-central1-f/machineTypes/custom-4-5120 For a full list of restrictions, read the Specifications for custom machine types.
-          &quot;metadata&quot;: { # A metadata key/value entry. # The metadata key/value pairs assigned to this instance. This includes custom metadata and predefined keys.
+          &quot;metadata&quot;: { # A metadata key/value entry. # The metadata key/value pairs assigned to this instance. This includes metadata keys that were explicitly defined for the instance.
             &quot;fingerprint&quot;: &quot;A String&quot;, # Specifies a fingerprint for this request, which is essentially a hash of the metadata&#x27;s contents and used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update metadata. You must always provide an up-to-date fingerprint hash in order to update or change metadata, otherwise the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the resource.
             &quot;items&quot;: [ # Array of key/value pairs. The total size of all keys and values must be less than 512 KB.
               { # Metadata
@@ -955,6 +962,7 @@ Returns:
                   &quot;subnetworkRangeName&quot;: &quot;A String&quot;, # The name of a subnetwork secondary IP range from which to allocate an IP alias range. If not specified, the primary range of the subnetwork is used.
                 },
               ],
+              &quot;enableVpcScopedDns&quot;: True or False, # Optional. If true, DNS resolution will be enabled over this interface. Only valid with network_attachment.
               &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint hash of contents stored in this network interface. This field will be ignored when inserting an Instance or adding a NetworkInterface. An up-to-date fingerprint must be provided in order to update the NetworkInterface. The request will fail with error 400 Bad Request if the fingerprint is not provided, or 412 Precondition Failed if the fingerprint is out of date.
               &quot;igmpQuery&quot;: &quot;A String&quot;, # Indicate whether igmp query is enabled on the network interface or not. If enabled, also indicates the version of IGMP supported.
               &quot;internalIpv6PrefixLength&quot;: 42, # The prefix length of the primary internal IPv6 range.
@@ -994,7 +1002,7 @@ Returns:
                 },
               ],
               &quot;subnetwork&quot;: &quot;A String&quot;, # The URL of the Subnetwork resource for this instance. If the network resource is in legacy mode, do not specify this field. If the network is in auto subnet mode, specifying the subnetwork is optional. If the network is in custom subnet mode, specifying the subnetwork is required. If you specify this field, you can specify the subnetwork as a full or partial URL. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/project/regions/region /subnetworks/subnetwork - regions/region/subnetworks/subnetwork
-              &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be in range from 2 to 4094 inclusively.
+              &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be an integer in the range from 2 to 255 inclusively.
             },
           ],
           &quot;networkPerformanceConfig&quot;: {
@@ -1002,6 +1010,10 @@ Returns:
             &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;,
           },
           &quot;params&quot;: { # Additional instance params. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+            &quot;requestValidForDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Relative deadline for waiting for capacity. Relevant only for Instances.Insert API.
+              &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+              &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+            },
             &quot;resourceManagerTags&quot;: { # Resource manager tags to be bound to the instance. Tag keys and values have the same definition as resource manager tags. Keys must be in the format `tagKeys/{tag_key_id}`, and values are in the format `tagValues/456`. The field is ignored (both PUT &amp; PATCH) when empty.
               &quot;a_key&quot;: &quot;A String&quot;,
             },
@@ -1051,6 +1063,18 @@ Returns:
                 &quot;uuid&quot;: &quot;A String&quot;, # The UUID of the accelerator.
               },
             ],
+            &quot;consumedReservation&quot;: &quot;A String&quot;, # [Output Only] The full resource name of the reservation that this instance is consuming from.
+            &quot;consumedReservationBlock&quot;: &quot;A String&quot;, # [Output Only] The full resource name of the reservation block that this instance is consuming from.
+            &quot;effectiveInstanceMetadata&quot;: { # Effective values of predefined metadata keys for an instance. # [Output Only] Effective metadata is a field that consolidates project, zonal instance settings, and instance-level predefined metadata keys to provide the overridden value for those metadata keys at the instance level.
+              &quot;blockProjectSshKeysMetadataValue&quot;: True or False, # Effective block-project-ssh-keys value at Instance level.
+              &quot;enableGuestAttributesMetadataValue&quot;: True or False, # Effective enable-guest-attributes value at Instance level.
+              &quot;enableOsInventoryMetadataValue&quot;: True or False, # Effective enable-os-inventory value at Instance level.
+              &quot;enableOsconfigMetadataValue&quot;: True or False, # Effective enable-osconfig value at Instance level.
+              &quot;enableOsloginMetadataValue&quot;: True or False, # Effective enable-oslogin value at Instance level.
+              &quot;serialPortEnableMetadataValue&quot;: True or False, # Effective serial-port-enable value at Instance level.
+              &quot;serialPortLoggingEnableMetadataValue&quot;: True or False, # Effective serial-port-logging-enable value at Instance level.
+              &quot;vmDnsSettingMetadataValue&quot;: &quot;A String&quot;, # Effective VM DNS setting at Instance level.
+            },
             &quot;lastInstanceTerminationDetails&quot;: { # [Output Only] Contains last termination details why the instance was terminated.
               &quot;terminationReason&quot;: &quot;A String&quot;, # Reason for termination
             },
@@ -1060,6 +1084,11 @@ Returns:
               &quot;cluster&quot;: &quot;A String&quot;, # [Output Only] The global name of the Compute Engine cluster where the running instance is located.
               &quot;host&quot;: &quot;A String&quot;, # [Output Only] The ID of the host on which the running instance is located. Instances on the same host experience the lowest possible network latency.
               &quot;subblock&quot;: &quot;A String&quot;, # [Output Only] The ID of the sub-block in which the running instance is located. Instances in the same sub-block experience lower network latency than instances in the same block.
+            },
+            &quot;reservationConsumptionInfo&quot;: { # [Output Only] Reservation information that the instance is consuming from.
+              &quot;consumedReservation&quot;: &quot;A String&quot;, # The full resource name of the reservation that this instance is consuming from.
+              &quot;consumedReservationBlock&quot;: &quot;A String&quot;, # The full resource name of the reservation block that this instance is consuming from.
+              &quot;consumedReservationSubBlock&quot;: &quot;A String&quot;, # The full resource name of the reservation sub-block that this instance is consuming from.
             },
             &quot;scheduling&quot;: {
               &quot;availabilityDomain&quot;: 42, # Specifies the availability domain to place the instance in. The value must be a number between 1 and the number of availability domains specified in the spread placement policy attached to the instance.
@@ -1086,6 +1115,10 @@ Returns:
               &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
               &quot;date&quot;: &quot;A String&quot;, # [Output Only] The date when the maintenance will take place. This value is in RFC3339 text format. DEPRECATED: Use window_start_time instead.
               &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+              &quot;maintenanceOnShutdown&quot;: True or False, # Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.
+              &quot;maintenanceReasons&quot;: [ # The reasons for the maintenance. Only valid for vms.
+                &quot;A String&quot;,
+              ],
               &quot;maintenanceStatus&quot;: &quot;A String&quot;,
               &quot;startTimeWindow&quot;: { # Represents a window of time using two timestamps: `earliest` and `latest`. # [Output Only] The start time window of the maintenance disruption. DEPRECATED: Use window_start_time instead. TimeWindow is a container for two strings that represent timestamps in &quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ssZ&quot; text format.
                 &quot;earliest&quot;: &quot;A String&quot;,
@@ -1140,11 +1173,16 @@ Returns:
               &quot;discardLocalSsd&quot;: True or False, # If true, the contents of any attached Local SSD disks will be discarded else, the Local SSD data will be preserved when the instance is stopped at the end of the run duration/termination time.
             },
             &quot;preemptible&quot;: True or False, # Defines whether the instance is preemptible. This can only be set during instance creation or while the instance is stopped and therefore, in a `TERMINATED` state. See Instance Life Cycle for more information on the possible instance states.
-            &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
-            &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+            &quot;preemptionNoticeDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Specifies the Metadata Service preemption notice duration before the GCE ACPI G2 Soft Off signal is triggered for Spot VMs only. If not specified, there will be no wait before the G2 Soft Off signal is triggered.
               &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
               &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
             },
+            &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
+            &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # DEPRECATED: please use skipGuestOsShutdown. Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+              &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+              &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+            },
+            &quot;skipGuestOsShutdown&quot;: True or False, # Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.
             &quot;terminationTime&quot;: &quot;A String&quot;, # Specifies the timestamp, when the instance will be terminated, in RFC3339 text format. If specified, the instance termination action will be performed at the termination time.
             &quot;windowsLicenseOptimizationMode&quot;: &quot;A String&quot;, # Represents the Windows Server License Optimization Mode of the VM. If unspecified, the default mode is `OFF`.
           },
@@ -1205,6 +1243,10 @@ Returns:
             &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
             &quot;date&quot;: &quot;A String&quot;, # [Output Only] The date when the maintenance will take place. This value is in RFC3339 text format. DEPRECATED: Use window_start_time instead.
             &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+            &quot;maintenanceOnShutdown&quot;: True or False, # Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.
+            &quot;maintenanceReasons&quot;: [ # The reasons for the maintenance. Only valid for vms.
+              &quot;A String&quot;,
+            ],
             &quot;maintenanceStatus&quot;: &quot;A String&quot;,
             &quot;startTimeWindow&quot;: { # Represents a window of time using two timestamps: `earliest` and `latest`. # [Output Only] The start time window of the maintenance disruption. DEPRECATED: Use window_start_time instead. TimeWindow is a container for two strings that represent timestamps in &quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ssZ&quot; text format.
               &quot;earliest&quot;: &quot;A String&quot;,
@@ -1290,7 +1332,7 @@ Args:
   &quot;forceAttach&quot;: True or False, # [Input Only] Whether to force attach the regional disk even if it&#x27;s currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.
   &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.
     { # Guest OS features.
-      &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+      &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
     },
   ],
   &quot;index&quot;: 42, # [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.
@@ -1303,7 +1345,7 @@ Args:
     &quot;enableConfidentialCompute&quot;: True or False, # Whether this disk is using confidential compute mode.
     &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options. Guest OS features are applied by merging initializeParams.guestOsFeatures and disks.guestOsFeatures
       { # Guest OS features.
-        &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+        &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
       },
     ],
     &quot;interface&quot;: &quot;A String&quot;, # [Deprecated] Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.
@@ -1518,6 +1560,130 @@ Args:
 
 { # A transient resource used in compute.instances.bulkInsert and compute.regionInstances.bulkInsert . This resource is not persisted anywhere, it is used only for processing the requests.
   &quot;count&quot;: &quot;A String&quot;, # The maximum number of instances to create.
+  &quot;instanceFlexibilityPolicy&quot;: { # A flexible specification of machine types for instances to create. # A flexible specification of machine type of instances to create.
+    &quot;instanceSelections&quot;: { # Specification of alternative, flexible instance subsets. One of them will be selected to create the instances based on various criteria, like: - ranks, - location policy, - current capacity, - available reservations (you can specify affinity in InstanceProperties), - SWAN/GOOSE limitations. Key is an arbitrary, unique RFC1035 string that identifies the instance selection.
+      &quot;a_key&quot;: { # Specification of machine type to use. Every position inside this message is an alternative. The count specified in the shape flexibility must not exceed the number of entries in per_instance_properties or the capacity of the name_pattern, if used.
+        &quot;disks&quot;: [ # Disks to be attached to the instances created from in this selection. They override the disks specified in the instance properties.
+          { # An instance-attached disk resource.
+            &quot;architecture&quot;: &quot;A String&quot;, # [Output Only] The architecture of the attached disk. Valid values are ARM64 or X86_64.
+            &quot;autoDelete&quot;: True or False, # Specifies whether the disk will be auto-deleted when the instance is deleted (but not when the disk is detached from the instance).
+            &quot;boot&quot;: True or False, # Indicates that this is a boot disk. The virtual machine will use the first partition of the disk for its root filesystem.
+            &quot;deviceName&quot;: &quot;A String&quot;, # Specifies a unique device name of your choice that is reflected into the /dev/disk/by-id/google-* tree of a Linux operating system running within the instance. This name can be used to reference the device for mounting, resizing, and so on, from within the instance. If not specified, the server chooses a default device name to apply to this disk, in the form persistent-disk-x, where x is a number assigned by Google Compute Engine. This field is only applicable for persistent disks.
+            &quot;diskEncryptionKey&quot;: { # Encrypts or decrypts a disk using a customer-supplied encryption key. If you are creating a new disk, this field encrypts the new disk using an encryption key that you provide. If you are attaching an existing disk that is already encrypted, this field decrypts the disk using the customer-supplied encryption key. If you encrypt a disk using a customer-supplied key, you must provide the same key again when you attempt to use this resource at a later time. For example, you must provide the key when you create a snapshot or an image from the disk or when you attach the disk to a virtual machine instance. If you do not provide an encryption key, then the disk will be encrypted using an automatically generated key and you do not need to provide a key to use the disk later. Note: Instance templates do not store customer-supplied encryption keys, so you cannot use your own keys to encrypt disks in a managed instance group. You cannot create VMs that have disks with customer-supplied keys using the bulk insert method.
+              &quot;kmsKeyName&quot;: &quot;A String&quot;, # The name of the encryption key that is stored in Google Cloud KMS. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key The fully-qualifed key name may be returned for resource GET requests. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1
+              &quot;kmsKeyServiceAccount&quot;: &quot;A String&quot;, # The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example: &quot;kmsKeyServiceAccount&quot;: &quot;name@project_id.iam.gserviceaccount.com/
+              &quot;rawKey&quot;: &quot;A String&quot;, # Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or the rsaEncryptedKey. For example: &quot;rawKey&quot;: &quot;SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0=&quot;
+              &quot;rsaEncryptedKey&quot;: &quot;A String&quot;, # Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or the rsaEncryptedKey. For example: &quot;rsaEncryptedKey&quot;: &quot;ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe==&quot; The key must meet the following requirements before you can provide it to Compute Engine: 1. The key is wrapped using a RSA public key certificate provided by Google. 2. After being wrapped, the key must be encoded in RFC 4648 base64 encoding. Gets the RSA public key certificate provided by Google at: https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem
+              &quot;sha256&quot;: &quot;A String&quot;, # [Output only] The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.
+            },
+            &quot;diskSizeGb&quot;: &quot;A String&quot;, # The size of the disk in GB.
+            &quot;forceAttach&quot;: True or False, # [Input Only] Whether to force attach the regional disk even if it&#x27;s currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.
+            &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.
+              { # Guest OS features.
+                &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
+              },
+            ],
+            &quot;index&quot;: 42, # [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.
+            &quot;initializeParams&quot;: { # [Input Only] Specifies the parameters for a new disk that will be created alongside the new instance. Use initialization parameters to create boot disks or local SSDs attached to the new instance. This field is persisted and returned for instanceTemplate and not returned in the context of instance. This property is mutually exclusive with the source property; you can only define one or the other, but not both. # [Input Only] Specifies the parameters for a new disk that will be created alongside the new instance. Use initialization parameters to create boot disks or local SSDs attached to the new instance. This property is mutually exclusive with the source property; you can only define one or the other, but not both.
+              &quot;architecture&quot;: &quot;A String&quot;, # The architecture of the attached disk. Valid values are arm64 or x86_64.
+              &quot;description&quot;: &quot;A String&quot;, # An optional description. Provide this property when creating the disk.
+              &quot;diskName&quot;: &quot;A String&quot;, # Specifies the disk name. If not specified, the default is to use the name of the instance. If a disk with the same name already exists in the given region, the existing disk is attached to the new instance and the new disk is not created.
+              &quot;diskSizeGb&quot;: &quot;A String&quot;, # Specifies the size of the disk in base-2 GB. The size must be at least 10 GB. If you specify a sourceImage, which is required for boot disks, the default size is the size of the sourceImage. If you do not specify a sourceImage, the default disk size is 500 GB.
+              &quot;diskType&quot;: &quot;A String&quot;, # Specifies the disk type to use to create the instance. If not specified, the default is pd-standard, specified using the full URL. For example: https://www.googleapis.com/compute/v1/projects/project/zones/zone /diskTypes/pd-standard For a full list of acceptable values, see Persistent disk types. If you specify this field when creating a VM, you can provide either the full or partial URL. For example, the following values are valid: - https://www.googleapis.com/compute/v1/projects/project/zones/zone /diskTypes/diskType - projects/project/zones/zone/diskTypes/diskType - zones/zone/diskTypes/diskType If you specify this field when creating or updating an instance template or all-instances configuration, specify the type of the disk, not the URL. For example: pd-standard.
+              &quot;enableConfidentialCompute&quot;: True or False, # Whether this disk is using confidential compute mode.
+              &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options. Guest OS features are applied by merging initializeParams.guestOsFeatures and disks.guestOsFeatures
+                { # Guest OS features.
+                  &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
+                },
+              ],
+              &quot;interface&quot;: &quot;A String&quot;, # [Deprecated] Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.
+              &quot;labels&quot;: { # Labels to apply to this disk. These can be later modified by the disks.setLabels method. This field is only applicable for persistent disks.
+                &quot;a_key&quot;: &quot;A String&quot;,
+              },
+              &quot;licenseCodes&quot;: [ # Integer license codes indicating which licenses are attached to this disk.
+                &quot;A String&quot;,
+              ],
+              &quot;licenses&quot;: [ # A list of publicly visible licenses. Reserved for Google&#x27;s use.
+                &quot;A String&quot;,
+              ],
+              &quot;multiWriter&quot;: True or False, # Indicates whether or not the disk can be read/write attached to more than one instance.
+              &quot;onUpdateAction&quot;: &quot;A String&quot;, # Specifies which action to take on instance update with this disk. Default is to use the existing disk.
+              &quot;provisionedIops&quot;: &quot;A String&quot;, # Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle. Values must be between 10,000 and 120,000. For more details, see the Extreme persistent disk documentation.
+              &quot;provisionedThroughput&quot;: &quot;A String&quot;, # Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle. Values must greater than or equal to 1.
+              &quot;replicaZones&quot;: [ # Required for each regional disk associated with the instance. Specify the URLs of the zones where the disk should be replicated to. You must provide exactly two replica zones, and one zone must be the same as the instance zone.
+                &quot;A String&quot;,
+              ],
+              &quot;resourceManagerTags&quot;: { # Resource manager tags to be bound to the disk. Tag keys and values have the same definition as resource manager tags. Keys must be in the format `tagKeys/{tag_key_id}`, and values are in the format `tagValues/456`. The field is ignored (both PUT &amp; PATCH) when empty.
+                &quot;a_key&quot;: &quot;A String&quot;,
+              },
+              &quot;resourcePolicies&quot;: [ # Resource policies applied to this disk for automatic snapshot creations. Specified using the full or partial URL. For instance template, specify only the resource policy name.
+                &quot;A String&quot;,
+              ],
+              &quot;sourceImage&quot;: &quot;A String&quot;, # The source image to create this disk. When creating a new instance boot disk, one of initializeParams.sourceImage or initializeParams.sourceSnapshot or disks.source is required. To create a disk with one of the public operating system images, specify the image by its family name. For example, specify family/debian-9 to use the latest Debian 9 image: projects/debian-cloud/global/images/family/debian-9 Alternatively, use a specific version of a public operating system image: projects/debian-cloud/global/images/debian-9-stretch-vYYYYMMDD To create a disk with a custom image that you created, specify the image name in the following format: global/images/my-custom-image You can also specify a custom image by its image family, which returns the latest version of the image in that family. Replace the image name with family/family-name: global/images/family/my-image-family If the source image is deleted later, this field will not be set.
+              &quot;sourceImageEncryptionKey&quot;: { # The customer-supplied encryption key of the source image. Required if the source image is protected by a customer-supplied encryption key. InstanceTemplate and InstancePropertiesPatch do not store customer-supplied encryption keys, so you cannot create disks for instances in a managed instance group if the source images are encrypted with your own keys.
+                &quot;kmsKeyName&quot;: &quot;A String&quot;, # The name of the encryption key that is stored in Google Cloud KMS. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key The fully-qualifed key name may be returned for resource GET requests. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1
+                &quot;kmsKeyServiceAccount&quot;: &quot;A String&quot;, # The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example: &quot;kmsKeyServiceAccount&quot;: &quot;name@project_id.iam.gserviceaccount.com/
+                &quot;rawKey&quot;: &quot;A String&quot;, # Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or the rsaEncryptedKey. For example: &quot;rawKey&quot;: &quot;SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0=&quot;
+                &quot;rsaEncryptedKey&quot;: &quot;A String&quot;, # Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or the rsaEncryptedKey. For example: &quot;rsaEncryptedKey&quot;: &quot;ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe==&quot; The key must meet the following requirements before you can provide it to Compute Engine: 1. The key is wrapped using a RSA public key certificate provided by Google. 2. After being wrapped, the key must be encoded in RFC 4648 base64 encoding. Gets the RSA public key certificate provided by Google at: https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem
+                &quot;sha256&quot;: &quot;A String&quot;, # [Output only] The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.
+              },
+              &quot;sourceInstantSnapshot&quot;: &quot;A String&quot;, # The source instant-snapshot to create this disk. When creating a new instance boot disk, one of initializeParams.sourceSnapshot or initializeParams.sourceInstantSnapshot initializeParams.sourceImage or disks.source is required. To create a disk with a snapshot that you created, specify the snapshot name in the following format: us-central1-a/instantSnapshots/my-backup If the source instant-snapshot is deleted later, this field will not be set.
+              &quot;sourceSnapshot&quot;: &quot;A String&quot;, # The source snapshot to create this disk. When creating a new instance boot disk, one of initializeParams.sourceSnapshot or initializeParams.sourceImage or disks.source is required. To create a disk with a snapshot that you created, specify the snapshot name in the following format: global/snapshots/my-backup If the source snapshot is deleted later, this field will not be set. Note: You cannot create VMs in bulk using a snapshot as the source. Use an image instead when you create VMs using the bulk insert method.
+              &quot;sourceSnapshotEncryptionKey&quot;: { # The customer-supplied encryption key of the source snapshot.
+                &quot;kmsKeyName&quot;: &quot;A String&quot;, # The name of the encryption key that is stored in Google Cloud KMS. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key The fully-qualifed key name may be returned for resource GET requests. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1
+                &quot;kmsKeyServiceAccount&quot;: &quot;A String&quot;, # The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example: &quot;kmsKeyServiceAccount&quot;: &quot;name@project_id.iam.gserviceaccount.com/
+                &quot;rawKey&quot;: &quot;A String&quot;, # Specifies a 256-bit customer-supplied encryption key, encoded in RFC 4648 base64 to either encrypt or decrypt this resource. You can provide either the rawKey or the rsaEncryptedKey. For example: &quot;rawKey&quot;: &quot;SGVsbG8gZnJvbSBHb29nbGUgQ2xvdWQgUGxhdGZvcm0=&quot;
+                &quot;rsaEncryptedKey&quot;: &quot;A String&quot;, # Specifies an RFC 4648 base64 encoded, RSA-wrapped 2048-bit customer-supplied encryption key to either encrypt or decrypt this resource. You can provide either the rawKey or the rsaEncryptedKey. For example: &quot;rsaEncryptedKey&quot;: &quot;ieCx/NcW06PcT7Ep1X6LUTc/hLvUDYyzSZPPVCVPTVEohpeHASqC8uw5TzyO9U+Fka9JFH z0mBibXUInrC/jEk014kCK/NPjYgEMOyssZ4ZINPKxlUh2zn1bV+MCaTICrdmuSBTWlUUiFoD D6PYznLwh8ZNdaheCeZ8ewEXgFQ8V+sDroLaN3Xs3MDTXQEMMoNUXMCZEIpg9Vtp9x2oe==&quot; The key must meet the following requirements before you can provide it to Compute Engine: 1. The key is wrapped using a RSA public key certificate provided by Google. 2. After being wrapped, the key must be encoded in RFC 4648 base64 encoding. Gets the RSA public key certificate provided by Google at: https://cloud-certs.storage.googleapis.com/google-cloud-csek-ingress.pem
+                &quot;sha256&quot;: &quot;A String&quot;, # [Output only] The RFC 4648 base64 encoded SHA-256 hash of the customer-supplied encryption key that protects this resource.
+              },
+              &quot;storagePool&quot;: &quot;A String&quot;, # The storage pool in which the new disk is created. You can provide this as a partial or full URL to the resource. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project/zones/zone /storagePools/storagePool - projects/project/zones/zone/storagePools/storagePool - zones/zone/storagePools/storagePool
+            },
+            &quot;interface&quot;: &quot;A String&quot;, # Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. For most machine types, the default is SCSI. Local SSDs can use either NVME or SCSI. In certain configurations, persistent disks can use NVMe. For more information, see About persistent disks.
+            &quot;kind&quot;: &quot;compute#attachedDisk&quot;, # [Output Only] Type of the resource. Always compute#attachedDisk for attached disks.
+            &quot;licenses&quot;: [ # [Output Only] Any valid publicly visible licenses.
+              &quot;A String&quot;,
+            ],
+            &quot;locked&quot;: True or False, # [Output Only] Whether to indicate the attached disk is locked. The locked disk is not allowed to be detached from the instance, or to be used as the source of the snapshot creation, and the image creation. The instance with at least one locked attached disk is not allow to be used as source of machine image creation, instant snapshot creation, and not allowed to be deleted with --keep-disk parameter set to true for locked disks.
+            &quot;mode&quot;: &quot;A String&quot;, # The mode in which to attach this disk, either READ_WRITE or READ_ONLY. If not specified, the default is to attach the disk in READ_WRITE mode.
+            &quot;savedState&quot;: &quot;A String&quot;, # For LocalSSD disks on VM Instances in STOPPED or SUSPENDED state, this field is set to PRESERVED if the LocalSSD data has been saved to a persistent location by customer request. (see the discard_local_ssd option on Stop/Suspend). Read-only in the api.
+            &quot;shieldedInstanceInitialState&quot;: { # Initial State for shielded instance, these are public keys which are safe to store in public # [Output Only] shielded vm initial state stored on disk
+              &quot;dbs&quot;: [ # The Key Database (db).
+                {
+                  &quot;content&quot;: &quot;A String&quot;, # The raw content in the secure keys file.
+                  &quot;fileType&quot;: &quot;A String&quot;, # The file type of source file.
+                },
+              ],
+              &quot;dbxs&quot;: [ # The forbidden key database (dbx).
+                {
+                  &quot;content&quot;: &quot;A String&quot;, # The raw content in the secure keys file.
+                  &quot;fileType&quot;: &quot;A String&quot;, # The file type of source file.
+                },
+              ],
+              &quot;keks&quot;: [ # The Key Exchange Key (KEK).
+                {
+                  &quot;content&quot;: &quot;A String&quot;, # The raw content in the secure keys file.
+                  &quot;fileType&quot;: &quot;A String&quot;, # The file type of source file.
+                },
+              ],
+              &quot;pk&quot;: { # The Platform Key (PK).
+                &quot;content&quot;: &quot;A String&quot;, # The raw content in the secure keys file.
+                &quot;fileType&quot;: &quot;A String&quot;, # The file type of source file.
+              },
+            },
+            &quot;source&quot;: &quot;A String&quot;, # Specifies a valid partial or full URL to an existing Persistent Disk resource. When creating a new instance boot disk, one of initializeParams.sourceImage or initializeParams.sourceSnapshot or disks.source is required. If desired, you can also attach existing non-root persistent disks using this property. This field is only applicable for persistent disks. Note that for InstanceTemplate, specify the disk name for zonal disk, and the URL for regional disk.
+            &quot;type&quot;: &quot;A String&quot;, # Specifies the type of the disk, either SCRATCH or PERSISTENT. If not specified, the default is PERSISTENT.
+            &quot;userLicenses&quot;: [ # [Output Only] A list of user provided licenses. It represents a list of URLs to the license resource. Unlike regular licenses, user provided licenses can be modified after the disk is created.
+              &quot;A String&quot;,
+            ],
+          },
+        ],
+        &quot;machineTypes&quot;: [ # Alternative machine types to use for instances that are created from these properties. This field only accepts a machine type names, for example `n2-standard-4` and not URLs or partial URLs.
+          &quot;A String&quot;,
+        ],
+        &quot;rank&quot;: &quot;A String&quot;, # Rank when prioritizing the shape flexibilities. The instance selections with rank are considered first, in the ascending order of the rank. If not set, defaults to 0.
+      },
+    },
+  },
   &quot;instanceProperties&quot;: { # The instance properties defining the VM instances to be created. Required if sourceInstanceTemplate is not provided.
     &quot;advancedMachineFeatures&quot;: { # Specifies options for controlling advanced machine features. Options that would traditionally be configured in a BIOS belong here. Features that require operating system support may have corresponding entries in the GuestOsFeatures of an Image (e.g., whether or not the OS in the Image supports nested virtualization being enabled or disabled). # Controls for advanced machine-related behavior features. Note that for MachineImage, this is not supported yet.
       &quot;enableNestedVirtualization&quot;: True or False, # Whether to enable nested virtualization or not (default is false).
@@ -1532,6 +1698,10 @@ Args:
     &quot;canIpForward&quot;: True or False, # Enables instances created based on these properties to send packets with source IP addresses other than their own and receive packets with destination IP addresses other than their own. If these instances will be used as an IP gateway or it will be set as the next-hop in a Route resource, specify true. If unsure, leave this set to false. See the Enable IP forwarding documentation for more information.
     &quot;confidentialInstanceConfig&quot;: { # A set of Confidential Instance options. # Specifies the Confidential Instance options. Note that for MachineImage, this is not supported yet.
       &quot;confidentialInstanceType&quot;: &quot;A String&quot;, # Defines the type of technology used by the confidential instance.
+      &quot;confidentialParavisorConfig&quot;: { # A set of Confidential Paravisor (SVSM) options. # Defines a set of Confidential Paravisor (SVSM) options.
+        &quot;confidentialTpmType&quot;: &quot;A String&quot;,
+        &quot;sevSnpIrqMode&quot;: &quot;A String&quot;,
+      },
       &quot;enableConfidentialCompute&quot;: True or False, # Defines whether the instance should have confidential compute enabled.
     },
     &quot;description&quot;: &quot;A String&quot;, # An optional text description for the instances that are created from these properties.
@@ -1552,7 +1722,7 @@ Args:
         &quot;forceAttach&quot;: True or False, # [Input Only] Whether to force attach the regional disk even if it&#x27;s currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.
         &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.
           { # Guest OS features.
-            &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+            &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
           },
         ],
         &quot;index&quot;: 42, # [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.
@@ -1565,7 +1735,7 @@ Args:
           &quot;enableConfidentialCompute&quot;: True or False, # Whether this disk is using confidential compute mode.
           &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options. Guest OS features are applied by merging initializeParams.guestOsFeatures and disks.guestOsFeatures
             { # Guest OS features.
-              &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+              &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
             },
           ],
           &quot;interface&quot;: &quot;A String&quot;, # [Deprecated] Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.
@@ -1658,6 +1828,8 @@ Args:
         &quot;acceleratorType&quot;: &quot;A String&quot;, # Full or partial URL of the accelerator type resource to attach to this instance. For example: projects/my-project/zones/us-central1-c/acceleratorTypes/nvidia-tesla-p100 If you are creating an instance template, specify only the accelerator name. See GPUs on Compute Engine for a full list of accelerator types.
       },
     ],
+    &quot;identity&quot;: &quot;A String&quot;,
+    &quot;identityCertificate&quot;: True or False,
     &quot;keyRevocationActionType&quot;: &quot;A String&quot;, # KeyRevocationActionType of the instance. Supported options are &quot;STOP&quot; and &quot;NONE&quot;. The default value is &quot;NONE&quot; if it is not specified.
     &quot;labels&quot;: { # Labels to apply to instances that are created from these properties.
       &quot;a_key&quot;: &quot;A String&quot;,
@@ -1698,6 +1870,7 @@ Args:
             &quot;subnetworkRangeName&quot;: &quot;A String&quot;, # The name of a subnetwork secondary IP range from which to allocate an IP alias range. If not specified, the primary range of the subnetwork is used.
           },
         ],
+        &quot;enableVpcScopedDns&quot;: True or False, # Optional. If true, DNS resolution will be enabled over this interface. Only valid with network_attachment.
         &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint hash of contents stored in this network interface. This field will be ignored when inserting an Instance or adding a NetworkInterface. An up-to-date fingerprint must be provided in order to update the NetworkInterface. The request will fail with error 400 Bad Request if the fingerprint is not provided, or 412 Precondition Failed if the fingerprint is out of date.
         &quot;igmpQuery&quot;: &quot;A String&quot;, # Indicate whether igmp query is enabled on the network interface or not. If enabled, also indicates the version of IGMP supported.
         &quot;internalIpv6PrefixLength&quot;: 42, # The prefix length of the primary internal IPv6 range.
@@ -1737,7 +1910,7 @@ Args:
           },
         ],
         &quot;subnetwork&quot;: &quot;A String&quot;, # The URL of the Subnetwork resource for this instance. If the network resource is in legacy mode, do not specify this field. If the network is in auto subnet mode, specifying the subnetwork is optional. If the network is in custom subnet mode, specifying the subnetwork is required. If you specify this field, you can specify the subnetwork as a full or partial URL. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/project/regions/region /subnetworks/subnetwork - regions/region/subnetworks/subnetwork
-        &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be in range from 2 to 4094 inclusively.
+        &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be an integer in the range from 2 to 255 inclusively.
       },
     ],
     &quot;networkPerformanceConfig&quot;: { # Note that for MachineImage, this is not supported yet.
@@ -1807,11 +1980,16 @@ Args:
         &quot;discardLocalSsd&quot;: True or False, # If true, the contents of any attached Local SSD disks will be discarded else, the Local SSD data will be preserved when the instance is stopped at the end of the run duration/termination time.
       },
       &quot;preemptible&quot;: True or False, # Defines whether the instance is preemptible. This can only be set during instance creation or while the instance is stopped and therefore, in a `TERMINATED` state. See Instance Life Cycle for more information on the possible instance states.
-      &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
-      &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+      &quot;preemptionNoticeDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Specifies the Metadata Service preemption notice duration before the GCE ACPI G2 Soft Off signal is triggered for Spot VMs only. If not specified, there will be no wait before the G2 Soft Off signal is triggered.
         &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
         &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
       },
+      &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
+      &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # DEPRECATED: please use skipGuestOsShutdown. Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+        &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+        &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+      },
+      &quot;skipGuestOsShutdown&quot;: True or False, # Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.
       &quot;terminationTime&quot;: &quot;A String&quot;, # Specifies the timestamp, when the instance will be terminated, in RFC3339 text format. If specified, the instance termination action will be performed at the termination time.
       &quot;windowsLicenseOptimizationMode&quot;: &quot;A String&quot;, # Represents the Windows Server License Optimization Mode of the VM. If unspecified, the default mode is `OFF`.
     },
@@ -2542,6 +2720,10 @@ Returns:
   &quot;canIpForward&quot;: True or False, # Allows this instance to send and receive packets with non-matching destination or source IPs. This is required if you plan to use this instance to forward routes. For more information, see Enabling IP Forwarding .
   &quot;confidentialInstanceConfig&quot;: { # A set of Confidential Instance options.
     &quot;confidentialInstanceType&quot;: &quot;A String&quot;, # Defines the type of technology used by the confidential instance.
+    &quot;confidentialParavisorConfig&quot;: { # A set of Confidential Paravisor (SVSM) options. # Defines a set of Confidential Paravisor (SVSM) options.
+      &quot;confidentialTpmType&quot;: &quot;A String&quot;,
+      &quot;sevSnpIrqMode&quot;: &quot;A String&quot;,
+    },
     &quot;enableConfidentialCompute&quot;: True or False, # Defines whether the instance should have confidential compute enabled.
   },
   &quot;cpuPlatform&quot;: &quot;A String&quot;, # [Output Only] The CPU platform used by this instance.
@@ -2565,7 +2747,7 @@ Returns:
       &quot;forceAttach&quot;: True or False, # [Input Only] Whether to force attach the regional disk even if it&#x27;s currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.
       &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.
         { # Guest OS features.
-          &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+          &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
         },
       ],
       &quot;index&quot;: 42, # [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.
@@ -2578,7 +2760,7 @@ Returns:
         &quot;enableConfidentialCompute&quot;: True or False, # Whether this disk is using confidential compute mode.
         &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options. Guest OS features are applied by merging initializeParams.guestOsFeatures and disks.guestOsFeatures
           { # Guest OS features.
-            &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+            &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
           },
         ],
         &quot;interface&quot;: &quot;A String&quot;, # [Deprecated] Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.
@@ -2675,6 +2857,8 @@ Returns:
   ],
   &quot;hostname&quot;: &quot;A String&quot;, # Specifies the hostname of the instance. The specified hostname must be RFC1035 compliant. If hostname is not specified, the default hostname is [INSTANCE_NAME].c.[PROJECT_ID].internal when using the global DNS, and [INSTANCE_NAME].[ZONE].c.[PROJECT_ID].internal when using zonal DNS.
   &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
+  &quot;identity&quot;: &quot;A String&quot;,
+  &quot;identityCertificate&quot;: True or False,
   &quot;instanceEncryptionKey&quot;: { # Encrypts suspended data for an instance with a customer-managed encryption key. If you are creating a new instance, this field will encrypt the local SSD and in-memory contents of the instance during the suspend operation. If you do not provide an encryption key when creating the instance, then the local SSD and in-memory contents will be encrypted using an automatically generated key during the suspend operation.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # The name of the encryption key that is stored in Google Cloud KMS. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key The fully-qualifed key name may be returned for resource GET requests. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1
     &quot;kmsKeyServiceAccount&quot;: &quot;A String&quot;, # The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example: &quot;kmsKeyServiceAccount&quot;: &quot;name@project_id.iam.gserviceaccount.com/
@@ -2692,7 +2876,7 @@ Returns:
   &quot;lastStopTimestamp&quot;: &quot;A String&quot;, # [Output Only] Last stop timestamp in RFC3339 text format.
   &quot;lastSuspendedTimestamp&quot;: &quot;A String&quot;, # [Output Only] Last suspended timestamp in RFC3339 text format.
   &quot;machineType&quot;: &quot;A String&quot;, # Full or partial URL of the machine type resource to use for this instance, in the format: zones/zone/machineTypes/machine-type. This is provided by the client when the instance is created. For example, the following is a valid partial url to a predefined machine type: zones/us-central1-f/machineTypes/n1-standard-1 To create a custom machine type, provide a URL to a machine type in the following format, where CPUS is 1 or an even number up to 32 (2, 4, 6, ... 24, etc), and MEMORY is the total memory for this instance. Memory must be a multiple of 256 MB and must be supplied in MB (e.g. 5 GB of memory is 5120 MB): zones/zone/machineTypes/custom-CPUS-MEMORY For example: zones/us-central1-f/machineTypes/custom-4-5120 For a full list of restrictions, read the Specifications for custom machine types.
-  &quot;metadata&quot;: { # A metadata key/value entry. # The metadata key/value pairs assigned to this instance. This includes custom metadata and predefined keys.
+  &quot;metadata&quot;: { # A metadata key/value entry. # The metadata key/value pairs assigned to this instance. This includes metadata keys that were explicitly defined for the instance.
     &quot;fingerprint&quot;: &quot;A String&quot;, # Specifies a fingerprint for this request, which is essentially a hash of the metadata&#x27;s contents and used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update metadata. You must always provide an up-to-date fingerprint hash in order to update or change metadata, otherwise the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the resource.
     &quot;items&quot;: [ # Array of key/value pairs. The total size of all keys and values must be less than 512 KB.
       { # Metadata
@@ -2728,6 +2912,7 @@ Returns:
           &quot;subnetworkRangeName&quot;: &quot;A String&quot;, # The name of a subnetwork secondary IP range from which to allocate an IP alias range. If not specified, the primary range of the subnetwork is used.
         },
       ],
+      &quot;enableVpcScopedDns&quot;: True or False, # Optional. If true, DNS resolution will be enabled over this interface. Only valid with network_attachment.
       &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint hash of contents stored in this network interface. This field will be ignored when inserting an Instance or adding a NetworkInterface. An up-to-date fingerprint must be provided in order to update the NetworkInterface. The request will fail with error 400 Bad Request if the fingerprint is not provided, or 412 Precondition Failed if the fingerprint is out of date.
       &quot;igmpQuery&quot;: &quot;A String&quot;, # Indicate whether igmp query is enabled on the network interface or not. If enabled, also indicates the version of IGMP supported.
       &quot;internalIpv6PrefixLength&quot;: 42, # The prefix length of the primary internal IPv6 range.
@@ -2767,7 +2952,7 @@ Returns:
         },
       ],
       &quot;subnetwork&quot;: &quot;A String&quot;, # The URL of the Subnetwork resource for this instance. If the network resource is in legacy mode, do not specify this field. If the network is in auto subnet mode, specifying the subnetwork is optional. If the network is in custom subnet mode, specifying the subnetwork is required. If you specify this field, you can specify the subnetwork as a full or partial URL. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/project/regions/region /subnetworks/subnetwork - regions/region/subnetworks/subnetwork
-      &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be in range from 2 to 4094 inclusively.
+      &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be an integer in the range from 2 to 255 inclusively.
     },
   ],
   &quot;networkPerformanceConfig&quot;: {
@@ -2775,6 +2960,10 @@ Returns:
     &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;,
   },
   &quot;params&quot;: { # Additional instance params. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+    &quot;requestValidForDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Relative deadline for waiting for capacity. Relevant only for Instances.Insert API.
+      &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+      &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+    },
     &quot;resourceManagerTags&quot;: { # Resource manager tags to be bound to the instance. Tag keys and values have the same definition as resource manager tags. Keys must be in the format `tagKeys/{tag_key_id}`, and values are in the format `tagValues/456`. The field is ignored (both PUT &amp; PATCH) when empty.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
@@ -2824,6 +3013,18 @@ Returns:
         &quot;uuid&quot;: &quot;A String&quot;, # The UUID of the accelerator.
       },
     ],
+    &quot;consumedReservation&quot;: &quot;A String&quot;, # [Output Only] The full resource name of the reservation that this instance is consuming from.
+    &quot;consumedReservationBlock&quot;: &quot;A String&quot;, # [Output Only] The full resource name of the reservation block that this instance is consuming from.
+    &quot;effectiveInstanceMetadata&quot;: { # Effective values of predefined metadata keys for an instance. # [Output Only] Effective metadata is a field that consolidates project, zonal instance settings, and instance-level predefined metadata keys to provide the overridden value for those metadata keys at the instance level.
+      &quot;blockProjectSshKeysMetadataValue&quot;: True or False, # Effective block-project-ssh-keys value at Instance level.
+      &quot;enableGuestAttributesMetadataValue&quot;: True or False, # Effective enable-guest-attributes value at Instance level.
+      &quot;enableOsInventoryMetadataValue&quot;: True or False, # Effective enable-os-inventory value at Instance level.
+      &quot;enableOsconfigMetadataValue&quot;: True or False, # Effective enable-osconfig value at Instance level.
+      &quot;enableOsloginMetadataValue&quot;: True or False, # Effective enable-oslogin value at Instance level.
+      &quot;serialPortEnableMetadataValue&quot;: True or False, # Effective serial-port-enable value at Instance level.
+      &quot;serialPortLoggingEnableMetadataValue&quot;: True or False, # Effective serial-port-logging-enable value at Instance level.
+      &quot;vmDnsSettingMetadataValue&quot;: &quot;A String&quot;, # Effective VM DNS setting at Instance level.
+    },
     &quot;lastInstanceTerminationDetails&quot;: { # [Output Only] Contains last termination details why the instance was terminated.
       &quot;terminationReason&quot;: &quot;A String&quot;, # Reason for termination
     },
@@ -2833,6 +3034,11 @@ Returns:
       &quot;cluster&quot;: &quot;A String&quot;, # [Output Only] The global name of the Compute Engine cluster where the running instance is located.
       &quot;host&quot;: &quot;A String&quot;, # [Output Only] The ID of the host on which the running instance is located. Instances on the same host experience the lowest possible network latency.
       &quot;subblock&quot;: &quot;A String&quot;, # [Output Only] The ID of the sub-block in which the running instance is located. Instances in the same sub-block experience lower network latency than instances in the same block.
+    },
+    &quot;reservationConsumptionInfo&quot;: { # [Output Only] Reservation information that the instance is consuming from.
+      &quot;consumedReservation&quot;: &quot;A String&quot;, # The full resource name of the reservation that this instance is consuming from.
+      &quot;consumedReservationBlock&quot;: &quot;A String&quot;, # The full resource name of the reservation block that this instance is consuming from.
+      &quot;consumedReservationSubBlock&quot;: &quot;A String&quot;, # The full resource name of the reservation sub-block that this instance is consuming from.
     },
     &quot;scheduling&quot;: {
       &quot;availabilityDomain&quot;: 42, # Specifies the availability domain to place the instance in. The value must be a number between 1 and the number of availability domains specified in the spread placement policy attached to the instance.
@@ -2859,6 +3065,10 @@ Returns:
       &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
       &quot;date&quot;: &quot;A String&quot;, # [Output Only] The date when the maintenance will take place. This value is in RFC3339 text format. DEPRECATED: Use window_start_time instead.
       &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+      &quot;maintenanceOnShutdown&quot;: True or False, # Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.
+      &quot;maintenanceReasons&quot;: [ # The reasons for the maintenance. Only valid for vms.
+        &quot;A String&quot;,
+      ],
       &quot;maintenanceStatus&quot;: &quot;A String&quot;,
       &quot;startTimeWindow&quot;: { # Represents a window of time using two timestamps: `earliest` and `latest`. # [Output Only] The start time window of the maintenance disruption. DEPRECATED: Use window_start_time instead. TimeWindow is a container for two strings that represent timestamps in &quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ssZ&quot; text format.
         &quot;earliest&quot;: &quot;A String&quot;,
@@ -2913,11 +3123,16 @@ Returns:
       &quot;discardLocalSsd&quot;: True or False, # If true, the contents of any attached Local SSD disks will be discarded else, the Local SSD data will be preserved when the instance is stopped at the end of the run duration/termination time.
     },
     &quot;preemptible&quot;: True or False, # Defines whether the instance is preemptible. This can only be set during instance creation or while the instance is stopped and therefore, in a `TERMINATED` state. See Instance Life Cycle for more information on the possible instance states.
-    &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
-    &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+    &quot;preemptionNoticeDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Specifies the Metadata Service preemption notice duration before the GCE ACPI G2 Soft Off signal is triggered for Spot VMs only. If not specified, there will be no wait before the G2 Soft Off signal is triggered.
       &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
       &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
     },
+    &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
+    &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # DEPRECATED: please use skipGuestOsShutdown. Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+      &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+      &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+    },
+    &quot;skipGuestOsShutdown&quot;: True or False, # Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.
     &quot;terminationTime&quot;: &quot;A String&quot;, # Specifies the timestamp, when the instance will be terminated, in RFC3339 text format. If specified, the instance termination action will be performed at the termination time.
     &quot;windowsLicenseOptimizationMode&quot;: &quot;A String&quot;, # Represents the Windows Server License Optimization Mode of the VM. If unspecified, the default mode is `OFF`.
   },
@@ -2978,6 +3193,10 @@ Returns:
     &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
     &quot;date&quot;: &quot;A String&quot;, # [Output Only] The date when the maintenance will take place. This value is in RFC3339 text format. DEPRECATED: Use window_start_time instead.
     &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+    &quot;maintenanceOnShutdown&quot;: True or False, # Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.
+    &quot;maintenanceReasons&quot;: [ # The reasons for the maintenance. Only valid for vms.
+      &quot;A String&quot;,
+    ],
     &quot;maintenanceStatus&quot;: &quot;A String&quot;,
     &quot;startTimeWindow&quot;: { # Represents a window of time using two timestamps: `earliest` and `latest`. # [Output Only] The start time window of the maintenance disruption. DEPRECATED: Use window_start_time instead. TimeWindow is a container for two strings that represent timestamps in &quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ssZ&quot; text format.
       &quot;earliest&quot;: &quot;A String&quot;,
@@ -3033,6 +3252,7 @@ Returns:
               &quot;A String&quot;,
             ],
             &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+            &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
             &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
               &quot;A String&quot;,
             ],
@@ -3057,6 +3277,7 @@ Returns:
               &quot;A String&quot;,
             ],
             &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+            &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
             &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
               &quot;A String&quot;,
             ],
@@ -3077,6 +3298,9 @@ Returns:
           &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
           &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
           &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+          &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+            &quot;A String&quot;,
+          ],
           &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
             &quot;A String&quot;,
           ],
@@ -3089,6 +3313,7 @@ Returns:
           &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
             &quot;A String&quot;,
           ],
+          &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
           &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
         },
       ],
@@ -3112,6 +3337,7 @@ Returns:
               &quot;A String&quot;,
             ],
             &quot;destNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic destination.
+            &quot;destNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic destination. Allowed values are: - UNSPECIFIED - INTERNET - NON_INTERNET
             &quot;destRegionCodes&quot;: [ # Region codes whose IP addresses will be used to match for destination of traffic. Should be specified as 2 letter country code defined as per ISO 3166 alpha-2 country codes. ex.&quot;US&quot; Maximum number of dest region codes allowed is 5000.
               &quot;A String&quot;,
             ],
@@ -3136,6 +3362,7 @@ Returns:
               &quot;A String&quot;,
             ],
             &quot;srcNetworkScope&quot;: &quot;A String&quot;, # Network scope of the traffic source.
+            &quot;srcNetworkType&quot;: &quot;A String&quot;, # Network type of the traffic source. Allowed values are: - UNSPECIFIED - INTERNET - INTRA_VPC - NON_INTERNET - VPC_NETWORKS
             &quot;srcNetworks&quot;: [ # Networks of the traffic source. It can be either a full or partial url.
               &quot;A String&quot;,
             ],
@@ -3156,6 +3383,9 @@ Returns:
           &quot;ruleName&quot;: &quot;A String&quot;, # An optional name for the rule. This field is not a unique identifier and can be updated.
           &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall policy rule.
           &quot;securityProfileGroup&quot;: &quot;A String&quot;, # A fully-qualified URL of a SecurityProfile resource instance. Example: https://networksecurity.googleapis.com/v1/projects/{project}/locations/{location}/securityProfileGroups/my-security-profile-group Must be specified if action is one of &#x27;apply_security_profile_group&#x27; or &#x27;mirror&#x27;. Cannot be specified for other actions.
+          &quot;targetForwardingRules&quot;: [ # A list of forwarding rules to which this rule applies. This field allows you to control which load balancers get this rule. For example, the following are valid values: - https://www.googleapis.com/compute/v1/projects/project /global/forwardingRules/forwardingRule - https://www.googleapis.com/compute/v1/projects/project/regions/region /forwardingRules/forwardingRule - projects/project/global/ forwardingRules/forwardingRule - projects/project/regions/region/forwardingRules/ forwardingRule
+            &quot;A String&quot;,
+          ],
           &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule.
             &quot;A String&quot;,
           ],
@@ -3168,6 +3398,7 @@ Returns:
           &quot;targetServiceAccounts&quot;: [ # A list of service accounts indicating the sets of instances that are applied with this rule.
             &quot;A String&quot;,
           ],
+          &quot;targetType&quot;: &quot;A String&quot;, # Target types of the firewall policy rule. Default value is INSTANCES.
           &quot;tlsInspect&quot;: True or False, # Boolean flag indicating if the traffic should be TLS decrypted. Can be set only if action = &#x27;apply_security_profile_group&#x27; and cannot be set for other actions.
         },
       ],
@@ -3209,6 +3440,11 @@ Returns:
       },
       &quot;name&quot;: &quot;A String&quot;, # Name of the resource; provided by the client when the resource is created. The name must be 1-63 characters long, and comply with RFC1035. Specifically, the name must be 1-63 characters long and match the regular expression `[a-z]([-a-z0-9]*[a-z0-9])?`. The first character must be a lowercase letter, and all following characters (except for the last character) must be a dash, lowercase letter, or digit. The last character must be a lowercase letter or digit.
       &quot;network&quot;: &quot;A String&quot;, # URL of the network resource for this firewall rule. If not specified when creating a firewall rule, the default network is used: global/networks/default If you choose to specify this field, you can specify the network as a full or partial URL. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/myproject/global/networks/my-network - projects/myproject/global/networks/my-network - global/networks/default
+      &quot;params&quot;: { # Additional firewall parameters. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+        &quot;resourceManagerTags&quot;: { # Tag keys/values directly bound to this resource. Tag keys and values have the same definition as resource manager tags. The field is allowed for INSERT only. The keys/values to set on the resource should be specified in either ID { : } or Namespaced format { : }. For example the following are valid inputs: * {&quot;tagKeys/333&quot; : &quot;tagValues/444&quot;, &quot;tagKeys/123&quot; : &quot;tagValues/456&quot;} * {&quot;123/environment&quot; : &quot;production&quot;, &quot;345/abc&quot; : &quot;xyz&quot;} Note: * Invalid combinations of ID &amp; namespaced format is not supported. For instance: {&quot;123/environment&quot; : &quot;tagValues/444&quot;} is invalid.
+          &quot;a_key&quot;: &quot;A String&quot;,
+        },
+      },
       &quot;priority&quot;: 42, # Priority for this rule. This is an integer between `0` and `65535`, both inclusive. The default value is `1000`. Relative priorities determine which rule takes effect if multiple rules apply. Lower values indicate higher priority. For example, a rule with priority `0` has higher precedence than a rule with priority `1`. DENY rules take precedence over ALLOW rules if they have equal priority. Note that VPC networks have implied rules with a priority of `65535`. To avoid conflicts with the implied rules, use a priority number less than `65535`.
       &quot;selfLink&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for the resource.
       &quot;selfLinkWithId&quot;: &quot;A String&quot;, # [Output Only] Server-defined URL for this resource with the resource id.
@@ -3234,7 +3470,7 @@ Returns:
       &quot;id&quot;: &quot;A String&quot;, # The unique identifier for the security policy. This identifier is defined by the server.
       &quot;rules&quot;: [ # The rules that apply to the network.
         { # Represents a rule that describes one or more match conditions along with the action to be taken when traffic matches this condition (allow or deny).
-          &quot;action&quot;: &quot;A String&quot;, # The Action to perform when the rule is matched. The following are the valid actions: - allow: allow access to target. - deny(STATUS): deny access to target, returns the HTTP response code specified. Valid values for `STATUS` are 403, 404, and 502. - rate_based_ban: limit client traffic to the configured threshold and ban the client if the traffic exceeds the threshold. Configure parameters for this action in RateLimitOptions. Requires rate_limit_options to be set. - redirect: redirect to a different target. This can either be an internal reCAPTCHA redirect, or an external URL-based redirect via a 302 response. Parameters for this action can be configured via redirectOptions. This action is only supported in Global Security Policies of type CLOUD_ARMOR. - throttle: limit client traffic to the configured threshold. Configure parameters for this action in rateLimitOptions. Requires rate_limit_options to be set for this.
+          &quot;action&quot;: &quot;A String&quot;, # The Action to perform when the rule is matched. The following are the valid actions: - allow: allow access to target. - deny(STATUS): deny access to target, returns the HTTP response code specified. Valid values for `STATUS` are 403, 404, and 502. - rate_based_ban: limit client traffic to the configured threshold and ban the client if the traffic exceeds the threshold. Configure parameters for this action in RateLimitOptions. Requires rate_limit_options to be set. - redirect: redirect to a different target. This can either be an internal reCAPTCHA redirect, or an external URL-based redirect via a 302 response. Parameters for this action can be configured via redirectOptions. This action is only supported in Global Security Policies of type CLOUD_ARMOR. - throttle: limit client traffic to the configured threshold. Configure parameters for this action in rateLimitOptions. Requires rate_limit_options to be set for this. - fairshare (preview only): when traffic reaches the threshold limit, requests from the clients matching this rule begin to be rate-limited using the Fair Share algorithm. This action is only allowed in security policies of type `CLOUD_ARMOR_INTERNAL_SERVICE`.
           &quot;description&quot;: &quot;A String&quot;, # An optional description of this resource. Provide this property when you create the resource.
           &quot;direction&quot;: &quot;A String&quot;, # The direction in which this rule applies. This field may only be specified when versioned_expr is set to FIREWALL.
           &quot;enableLogging&quot;: True or False, # Denotes whether to enable logging for a particular rule. If logging is enabled, logs will be exported to the configured export destination in Stackdriver. Logs may be exported to BigQuery or Pub/Sub. Note: you cannot enable logging on &quot;goto_next&quot; rules. This field may only be specified when the versioned_expr is set to FIREWALL.
@@ -3272,7 +3508,7 @@ Returns:
                 &quot;A String&quot;,
               ],
             },
-            &quot;expr&quot;: { # Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: &quot;Summary size limit&quot; description: &quot;Determines if a summary is less than 100 chars&quot; expression: &quot;document.summary.size() &lt; 100&quot; Example (Equality): title: &quot;Requestor is owner&quot; description: &quot;Determines if requestor is the document owner&quot; expression: &quot;document.owner == request.auth.claims.email&quot; Example (Logic): title: &quot;Public documents&quot; description: &quot;Determine whether the document should be publicly visible&quot; expression: &quot;document.type != &#x27;private&#x27; &amp;&amp; document.type != &#x27;internal&#x27;&quot; Example (Data Manipulation): title: &quot;Notification string&quot; description: &quot;Create a notification string with a timestamp.&quot; expression: &quot;&#x27;New message received at &#x27; + string(document.create_time)&quot; The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. # User defined CEVAL expression. A CEVAL expression is used to specify match criteria such as origin.ip, source.region_code and contents in the request header. Expressions containing `evaluateThreatIntelligence` require Cloud Armor Managed Protection Plus tier and are not supported in Edge Policies nor in Regional Policies. Expressions containing `evaluatePreconfiguredExpr(&#x27;sourceiplist-*&#x27;)` require Cloud Armor Managed Protection Plus tier and are only supported in Global Security Policies.
+            &quot;expr&quot;: { # Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: &quot;Summary size limit&quot; description: &quot;Determines if a summary is less than 100 chars&quot; expression: &quot;document.summary.size() &lt; 100&quot; Example (Equality): title: &quot;Requestor is owner&quot; description: &quot;Determines if requestor is the document owner&quot; expression: &quot;document.owner == request.auth.claims.email&quot; Example (Logic): title: &quot;Public documents&quot; description: &quot;Determine whether the document should be publicly visible&quot; expression: &quot;document.type != &#x27;private&#x27; &amp;&amp; document.type != &#x27;internal&#x27;&quot; Example (Data Manipulation): title: &quot;Notification string&quot; description: &quot;Create a notification string with a timestamp.&quot; expression: &quot;&#x27;New message received at &#x27; + string(document.create_time)&quot; The exact variables and functions that may be referenced within an expression are determined by the service that evaluates it. See the service documentation for additional information. # User defined CEVAL expression. A CEVAL expression is used to specify match criteria such as origin.ip, source.region_code and contents in the request header. Expressions containing `evaluateThreatIntelligence` require a Cloud Armor Enterprise subscription and are not supported in Edge Policies nor in Regional Policies. Expressions containing `evaluatePreconfiguredExpr(&#x27;sourceiplist-*&#x27;)` require a Cloud Armor Enterprise subscription and are only supported in Global Security Policies.
               &quot;description&quot;: &quot;A String&quot;, # Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI.
               &quot;expression&quot;: &quot;A String&quot;, # Textual representation of an expression in Common Expression Language syntax.
               &quot;location&quot;: &quot;A String&quot;, # Optional. String indicating the location of the expression for error reporting, e.g. a file name and a position in the file.
@@ -3357,14 +3593,14 @@ Returns:
           },
           &quot;preview&quot;: True or False, # If set to true, the specified action is not enforced.
           &quot;priority&quot;: 42, # An integer indicating the priority of a rule in the list. The priority must be a positive value between 0 and 2147483647. Rules are evaluated from highest to lowest priority where 0 is the highest priority and 2147483647 is the lowest priority.
-          &quot;rateLimitOptions&quot;: { # Must be specified if the action is &quot;rate_based_ban&quot; or &quot;throttle&quot;. Cannot be specified for any other actions.
+          &quot;rateLimitOptions&quot;: { # Must be specified if the action is &quot;rate_based_ban&quot; or &quot;throttle&quot; or &quot;fairshare&quot;. Cannot be specified for any other actions.
             &quot;banDurationSec&quot;: 42, # Can only be specified if the action for the rule is &quot;rate_based_ban&quot;. If specified, determines the time (in seconds) the traffic will continue to be banned by the rate limit after the rate falls below the threshold.
             &quot;banThreshold&quot;: { # Can only be specified if the action for the rule is &quot;rate_based_ban&quot;. If specified, the key will be banned for the configured &#x27;ban_duration_sec&#x27; when the number of requests that exceed the &#x27;rate_limit_threshold&#x27; also exceed this &#x27;ban_threshold&#x27;.
               &quot;count&quot;: 42, # Number of HTTP(S) requests for calculating the threshold.
               &quot;intervalSec&quot;: 42, # Interval over which the threshold is computed.
             },
             &quot;conformAction&quot;: &quot;A String&quot;, # Action to take for requests that are under the configured rate limit threshold. Valid option is &quot;allow&quot; only.
-            &quot;enforceOnKey&quot;: &quot;A String&quot;, # Determines the key to enforce the rate_limit_threshold on. Possible values are: - ALL: A single rate limit threshold is applied to all the requests matching this rule. This is the default value if &quot;enforceOnKey&quot; is not configured. - IP: The source IP address of the request is the key. Each IP has this limit enforced separately. - HTTP_HEADER: The value of the HTTP header whose name is configured under &quot;enforceOnKeyName&quot;. The key value is truncated to the first 128 bytes of the header value. If no such header is present in the request, the key type defaults to ALL. - XFF_IP: The first IP address (i.e. the originating client IP address) specified in the list of IPs under X-Forwarded-For HTTP header. If no such header is present or the value is not a valid IP, the key defaults to the source IP address of the request i.e. key type IP. - HTTP_COOKIE: The value of the HTTP cookie whose name is configured under &quot;enforceOnKeyName&quot;. The key value is truncated to the first 128 bytes of the cookie value. If no such cookie is present in the request, the key type defaults to ALL. - HTTP_PATH: The URL path of the HTTP request. The key value is truncated to the first 128 bytes. - SNI: Server name indication in the TLS session of the HTTPS request. The key value is truncated to the first 128 bytes. The key type defaults to ALL on a HTTP session. - REGION_CODE: The country/region from which the request originates. - TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL. - USER_IP: The IP address of the originating client, which is resolved based on &quot;userIpRequestHeaders&quot; configured with the security policy. If there is no &quot;userIpRequestHeaders&quot; configuration or an IP address cannot be resolved from it, the key type defaults to IP. - TLS_JA4_FINGERPRINT: JA4 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL.
+            &quot;enforceOnKey&quot;: &quot;A String&quot;, # Determines the key to enforce the rate_limit_threshold on. Possible values are: - ALL: A single rate limit threshold is applied to all the requests matching this rule. This is the default value if &quot;enforceOnKey&quot; is not configured. - IP: The source IP address of the request is the key. Each IP has this limit enforced separately. - HTTP_HEADER: The value of the HTTP header whose name is configured under &quot;enforceOnKeyName&quot;. The key value is truncated to the first 128 bytes of the header value. If no such header is present in the request, the key type defaults to ALL. - XFF_IP: The first IP address (i.e. the originating client IP address) specified in the list of IPs under X-Forwarded-For HTTP header. If no such header is present or the value is not a valid IP, the key defaults to the source IP address of the request i.e. key type IP. - HTTP_COOKIE: The value of the HTTP cookie whose name is configured under &quot;enforceOnKeyName&quot;. The key value is truncated to the first 128 bytes of the cookie value. If no such cookie is present in the request, the key type defaults to ALL. - HTTP_PATH: The URL path of the HTTP request. The key value is truncated to the first 128 bytes. - SNI: Server name indication in the TLS session of the HTTPS request. The key value is truncated to the first 128 bytes. The key type defaults to ALL on a HTTP session. - REGION_CODE: The country/region from which the request originates. - TLS_JA3_FINGERPRINT: JA3 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL. - USER_IP: The IP address of the originating client, which is resolved based on &quot;userIpRequestHeaders&quot; configured with the security policy. If there is no &quot;userIpRequestHeaders&quot; configuration or an IP address cannot be resolved from it, the key type defaults to IP. - TLS_JA4_FINGERPRINT: JA4 TLS/SSL fingerprint if the client connects using HTTPS, HTTP/2 or HTTP/3. If not available, the key type defaults to ALL. For &quot;fairshare&quot; action, this value is limited to ALL i.e. a single rate limit threshold is enforced for all the requests matching the rule.
             &quot;enforceOnKeyConfigs&quot;: [ # If specified, any combination of values of enforce_on_key_type/enforce_on_key_name is treated as the key on which ratelimit threshold/action is enforced. You can specify up to 3 enforce_on_key_configs. If enforce_on_key_configs is specified, enforce_on_key must not be specified.
               {
                 &quot;enforceOnKeyName&quot;: &quot;A String&quot;, # Rate limit key name applicable only for the following key types: HTTP_HEADER -- Name of the HTTP header whose value is taken as the key value. HTTP_COOKIE -- Name of the HTTP cookie whose value is taken as the key value.
@@ -3379,7 +3615,7 @@ Returns:
             },
             &quot;exceedRedirectOptions&quot;: { # Parameters defining the redirect action that is used as the exceed action. Cannot be specified if the exceed action is not redirect. This field is only supported in Global Security Policies of type CLOUD_ARMOR.
               &quot;target&quot;: &quot;A String&quot;, # Target for the redirect action. This is required if the type is EXTERNAL_302 and cannot be specified for GOOGLE_RECAPTCHA.
-              &quot;type&quot;: &quot;A String&quot;, # Type of the redirect action.
+              &quot;type&quot;: &quot;A String&quot;, # Type of the redirect action. Possible values are: - GOOGLE_RECAPTCHA: redirect to reCAPTCHA for manual challenge assessment. - EXTERNAL_302: redirect to a different URL via a 302 response.
             },
             &quot;rateLimitThreshold&quot;: { # Threshold at which to begin ratelimiting.
               &quot;count&quot;: 42, # Number of HTTP(S) requests for calculating the threshold.
@@ -3388,10 +3624,10 @@ Returns:
           },
           &quot;redirectOptions&quot;: { # Parameters defining the redirect action. Cannot be specified for any other actions. This field is only supported in Global Security Policies of type CLOUD_ARMOR.
             &quot;target&quot;: &quot;A String&quot;, # Target for the redirect action. This is required if the type is EXTERNAL_302 and cannot be specified for GOOGLE_RECAPTCHA.
-            &quot;type&quot;: &quot;A String&quot;, # Type of the redirect action.
+            &quot;type&quot;: &quot;A String&quot;, # Type of the redirect action. Possible values are: - GOOGLE_RECAPTCHA: redirect to reCAPTCHA for manual challenge assessment. - EXTERNAL_302: redirect to a different URL via a 302 response.
           },
           &quot;redirectTarget&quot;: &quot;A String&quot;, # This must be specified for redirect actions. Cannot be specified for any other actions.
-          &quot;ruleManagedProtectionTier&quot;: &quot;A String&quot;, # [Output Only] The minimum managed protection tier required for this rule. [Deprecated] Use requiredManagedProtectionTiers instead.
+          &quot;ruleManagedProtectionTier&quot;: &quot;A String&quot;, # [Output Only] The minimum Cloud Armor subscription required for this rule. [Deprecated] Use requiredManagedProtectionTiers instead.
           &quot;ruleNumber&quot;: &quot;A String&quot;, # Identifier for the rule. This is only unique within the given security policy. This can only be set during rule creation, if rule number is not specified it will be generated by the server.
           &quot;ruleTupleCount&quot;: 42, # [Output Only] Calculation of the complexity of a single firewall security policy rule.
           &quot;targetResources&quot;: [ # A list of network resource URLs to which this rule applies. This field allows you to control which network&#x27;s VMs get this rule. If this field is left blank, all VMs within the organization will receive the rule. This field may only be specified when versioned_expr is set to FIREWALL.
@@ -3661,6 +3897,10 @@ Args:
   &quot;canIpForward&quot;: True or False, # Allows this instance to send and receive packets with non-matching destination or source IPs. This is required if you plan to use this instance to forward routes. For more information, see Enabling IP Forwarding .
   &quot;confidentialInstanceConfig&quot;: { # A set of Confidential Instance options.
     &quot;confidentialInstanceType&quot;: &quot;A String&quot;, # Defines the type of technology used by the confidential instance.
+    &quot;confidentialParavisorConfig&quot;: { # A set of Confidential Paravisor (SVSM) options. # Defines a set of Confidential Paravisor (SVSM) options.
+      &quot;confidentialTpmType&quot;: &quot;A String&quot;,
+      &quot;sevSnpIrqMode&quot;: &quot;A String&quot;,
+    },
     &quot;enableConfidentialCompute&quot;: True or False, # Defines whether the instance should have confidential compute enabled.
   },
   &quot;cpuPlatform&quot;: &quot;A String&quot;, # [Output Only] The CPU platform used by this instance.
@@ -3684,7 +3924,7 @@ Args:
       &quot;forceAttach&quot;: True or False, # [Input Only] Whether to force attach the regional disk even if it&#x27;s currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.
       &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.
         { # Guest OS features.
-          &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+          &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
         },
       ],
       &quot;index&quot;: 42, # [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.
@@ -3697,7 +3937,7 @@ Args:
         &quot;enableConfidentialCompute&quot;: True or False, # Whether this disk is using confidential compute mode.
         &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options. Guest OS features are applied by merging initializeParams.guestOsFeatures and disks.guestOsFeatures
           { # Guest OS features.
-            &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+            &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
           },
         ],
         &quot;interface&quot;: &quot;A String&quot;, # [Deprecated] Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.
@@ -3794,6 +4034,8 @@ Args:
   ],
   &quot;hostname&quot;: &quot;A String&quot;, # Specifies the hostname of the instance. The specified hostname must be RFC1035 compliant. If hostname is not specified, the default hostname is [INSTANCE_NAME].c.[PROJECT_ID].internal when using the global DNS, and [INSTANCE_NAME].[ZONE].c.[PROJECT_ID].internal when using zonal DNS.
   &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
+  &quot;identity&quot;: &quot;A String&quot;,
+  &quot;identityCertificate&quot;: True or False,
   &quot;instanceEncryptionKey&quot;: { # Encrypts suspended data for an instance with a customer-managed encryption key. If you are creating a new instance, this field will encrypt the local SSD and in-memory contents of the instance during the suspend operation. If you do not provide an encryption key when creating the instance, then the local SSD and in-memory contents will be encrypted using an automatically generated key during the suspend operation.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # The name of the encryption key that is stored in Google Cloud KMS. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key The fully-qualifed key name may be returned for resource GET requests. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1
     &quot;kmsKeyServiceAccount&quot;: &quot;A String&quot;, # The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example: &quot;kmsKeyServiceAccount&quot;: &quot;name@project_id.iam.gserviceaccount.com/
@@ -3811,7 +4053,7 @@ Args:
   &quot;lastStopTimestamp&quot;: &quot;A String&quot;, # [Output Only] Last stop timestamp in RFC3339 text format.
   &quot;lastSuspendedTimestamp&quot;: &quot;A String&quot;, # [Output Only] Last suspended timestamp in RFC3339 text format.
   &quot;machineType&quot;: &quot;A String&quot;, # Full or partial URL of the machine type resource to use for this instance, in the format: zones/zone/machineTypes/machine-type. This is provided by the client when the instance is created. For example, the following is a valid partial url to a predefined machine type: zones/us-central1-f/machineTypes/n1-standard-1 To create a custom machine type, provide a URL to a machine type in the following format, where CPUS is 1 or an even number up to 32 (2, 4, 6, ... 24, etc), and MEMORY is the total memory for this instance. Memory must be a multiple of 256 MB and must be supplied in MB (e.g. 5 GB of memory is 5120 MB): zones/zone/machineTypes/custom-CPUS-MEMORY For example: zones/us-central1-f/machineTypes/custom-4-5120 For a full list of restrictions, read the Specifications for custom machine types.
-  &quot;metadata&quot;: { # A metadata key/value entry. # The metadata key/value pairs assigned to this instance. This includes custom metadata and predefined keys.
+  &quot;metadata&quot;: { # A metadata key/value entry. # The metadata key/value pairs assigned to this instance. This includes metadata keys that were explicitly defined for the instance.
     &quot;fingerprint&quot;: &quot;A String&quot;, # Specifies a fingerprint for this request, which is essentially a hash of the metadata&#x27;s contents and used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update metadata. You must always provide an up-to-date fingerprint hash in order to update or change metadata, otherwise the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the resource.
     &quot;items&quot;: [ # Array of key/value pairs. The total size of all keys and values must be less than 512 KB.
       { # Metadata
@@ -3847,6 +4089,7 @@ Args:
           &quot;subnetworkRangeName&quot;: &quot;A String&quot;, # The name of a subnetwork secondary IP range from which to allocate an IP alias range. If not specified, the primary range of the subnetwork is used.
         },
       ],
+      &quot;enableVpcScopedDns&quot;: True or False, # Optional. If true, DNS resolution will be enabled over this interface. Only valid with network_attachment.
       &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint hash of contents stored in this network interface. This field will be ignored when inserting an Instance or adding a NetworkInterface. An up-to-date fingerprint must be provided in order to update the NetworkInterface. The request will fail with error 400 Bad Request if the fingerprint is not provided, or 412 Precondition Failed if the fingerprint is out of date.
       &quot;igmpQuery&quot;: &quot;A String&quot;, # Indicate whether igmp query is enabled on the network interface or not. If enabled, also indicates the version of IGMP supported.
       &quot;internalIpv6PrefixLength&quot;: 42, # The prefix length of the primary internal IPv6 range.
@@ -3886,7 +4129,7 @@ Args:
         },
       ],
       &quot;subnetwork&quot;: &quot;A String&quot;, # The URL of the Subnetwork resource for this instance. If the network resource is in legacy mode, do not specify this field. If the network is in auto subnet mode, specifying the subnetwork is optional. If the network is in custom subnet mode, specifying the subnetwork is required. If you specify this field, you can specify the subnetwork as a full or partial URL. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/project/regions/region /subnetworks/subnetwork - regions/region/subnetworks/subnetwork
-      &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be in range from 2 to 4094 inclusively.
+      &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be an integer in the range from 2 to 255 inclusively.
     },
   ],
   &quot;networkPerformanceConfig&quot;: {
@@ -3894,6 +4137,10 @@ Args:
     &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;,
   },
   &quot;params&quot;: { # Additional instance params. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+    &quot;requestValidForDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Relative deadline for waiting for capacity. Relevant only for Instances.Insert API.
+      &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+      &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+    },
     &quot;resourceManagerTags&quot;: { # Resource manager tags to be bound to the instance. Tag keys and values have the same definition as resource manager tags. Keys must be in the format `tagKeys/{tag_key_id}`, and values are in the format `tagValues/456`. The field is ignored (both PUT &amp; PATCH) when empty.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
@@ -3943,6 +4190,18 @@ Args:
         &quot;uuid&quot;: &quot;A String&quot;, # The UUID of the accelerator.
       },
     ],
+    &quot;consumedReservation&quot;: &quot;A String&quot;, # [Output Only] The full resource name of the reservation that this instance is consuming from.
+    &quot;consumedReservationBlock&quot;: &quot;A String&quot;, # [Output Only] The full resource name of the reservation block that this instance is consuming from.
+    &quot;effectiveInstanceMetadata&quot;: { # Effective values of predefined metadata keys for an instance. # [Output Only] Effective metadata is a field that consolidates project, zonal instance settings, and instance-level predefined metadata keys to provide the overridden value for those metadata keys at the instance level.
+      &quot;blockProjectSshKeysMetadataValue&quot;: True or False, # Effective block-project-ssh-keys value at Instance level.
+      &quot;enableGuestAttributesMetadataValue&quot;: True or False, # Effective enable-guest-attributes value at Instance level.
+      &quot;enableOsInventoryMetadataValue&quot;: True or False, # Effective enable-os-inventory value at Instance level.
+      &quot;enableOsconfigMetadataValue&quot;: True or False, # Effective enable-osconfig value at Instance level.
+      &quot;enableOsloginMetadataValue&quot;: True or False, # Effective enable-oslogin value at Instance level.
+      &quot;serialPortEnableMetadataValue&quot;: True or False, # Effective serial-port-enable value at Instance level.
+      &quot;serialPortLoggingEnableMetadataValue&quot;: True or False, # Effective serial-port-logging-enable value at Instance level.
+      &quot;vmDnsSettingMetadataValue&quot;: &quot;A String&quot;, # Effective VM DNS setting at Instance level.
+    },
     &quot;lastInstanceTerminationDetails&quot;: { # [Output Only] Contains last termination details why the instance was terminated.
       &quot;terminationReason&quot;: &quot;A String&quot;, # Reason for termination
     },
@@ -3952,6 +4211,11 @@ Args:
       &quot;cluster&quot;: &quot;A String&quot;, # [Output Only] The global name of the Compute Engine cluster where the running instance is located.
       &quot;host&quot;: &quot;A String&quot;, # [Output Only] The ID of the host on which the running instance is located. Instances on the same host experience the lowest possible network latency.
       &quot;subblock&quot;: &quot;A String&quot;, # [Output Only] The ID of the sub-block in which the running instance is located. Instances in the same sub-block experience lower network latency than instances in the same block.
+    },
+    &quot;reservationConsumptionInfo&quot;: { # [Output Only] Reservation information that the instance is consuming from.
+      &quot;consumedReservation&quot;: &quot;A String&quot;, # The full resource name of the reservation that this instance is consuming from.
+      &quot;consumedReservationBlock&quot;: &quot;A String&quot;, # The full resource name of the reservation block that this instance is consuming from.
+      &quot;consumedReservationSubBlock&quot;: &quot;A String&quot;, # The full resource name of the reservation sub-block that this instance is consuming from.
     },
     &quot;scheduling&quot;: {
       &quot;availabilityDomain&quot;: 42, # Specifies the availability domain to place the instance in. The value must be a number between 1 and the number of availability domains specified in the spread placement policy attached to the instance.
@@ -3978,6 +4242,10 @@ Args:
       &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
       &quot;date&quot;: &quot;A String&quot;, # [Output Only] The date when the maintenance will take place. This value is in RFC3339 text format. DEPRECATED: Use window_start_time instead.
       &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+      &quot;maintenanceOnShutdown&quot;: True or False, # Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.
+      &quot;maintenanceReasons&quot;: [ # The reasons for the maintenance. Only valid for vms.
+        &quot;A String&quot;,
+      ],
       &quot;maintenanceStatus&quot;: &quot;A String&quot;,
       &quot;startTimeWindow&quot;: { # Represents a window of time using two timestamps: `earliest` and `latest`. # [Output Only] The start time window of the maintenance disruption. DEPRECATED: Use window_start_time instead. TimeWindow is a container for two strings that represent timestamps in &quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ssZ&quot; text format.
         &quot;earliest&quot;: &quot;A String&quot;,
@@ -4032,11 +4300,16 @@ Args:
       &quot;discardLocalSsd&quot;: True or False, # If true, the contents of any attached Local SSD disks will be discarded else, the Local SSD data will be preserved when the instance is stopped at the end of the run duration/termination time.
     },
     &quot;preemptible&quot;: True or False, # Defines whether the instance is preemptible. This can only be set during instance creation or while the instance is stopped and therefore, in a `TERMINATED` state. See Instance Life Cycle for more information on the possible instance states.
-    &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
-    &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+    &quot;preemptionNoticeDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Specifies the Metadata Service preemption notice duration before the GCE ACPI G2 Soft Off signal is triggered for Spot VMs only. If not specified, there will be no wait before the G2 Soft Off signal is triggered.
       &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
       &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
     },
+    &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
+    &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # DEPRECATED: please use skipGuestOsShutdown. Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+      &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+      &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+    },
+    &quot;skipGuestOsShutdown&quot;: True or False, # Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.
     &quot;terminationTime&quot;: &quot;A String&quot;, # Specifies the timestamp, when the instance will be terminated, in RFC3339 text format. If specified, the instance termination action will be performed at the termination time.
     &quot;windowsLicenseOptimizationMode&quot;: &quot;A String&quot;, # Represents the Windows Server License Optimization Mode of the VM. If unspecified, the default mode is `OFF`.
   },
@@ -4097,6 +4370,10 @@ Args:
     &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
     &quot;date&quot;: &quot;A String&quot;, # [Output Only] The date when the maintenance will take place. This value is in RFC3339 text format. DEPRECATED: Use window_start_time instead.
     &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+    &quot;maintenanceOnShutdown&quot;: True or False, # Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.
+    &quot;maintenanceReasons&quot;: [ # The reasons for the maintenance. Only valid for vms.
+      &quot;A String&quot;,
+    ],
     &quot;maintenanceStatus&quot;: &quot;A String&quot;,
     &quot;startTimeWindow&quot;: { # Represents a window of time using two timestamps: `earliest` and `latest`. # [Output Only] The start time window of the maintenance disruption. DEPRECATED: Use window_start_time instead. TimeWindow is a container for two strings that represent timestamps in &quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ssZ&quot; text format.
       &quot;earliest&quot;: &quot;A String&quot;,
@@ -4272,6 +4549,10 @@ Returns:
       &quot;canIpForward&quot;: True or False, # Allows this instance to send and receive packets with non-matching destination or source IPs. This is required if you plan to use this instance to forward routes. For more information, see Enabling IP Forwarding .
       &quot;confidentialInstanceConfig&quot;: { # A set of Confidential Instance options.
         &quot;confidentialInstanceType&quot;: &quot;A String&quot;, # Defines the type of technology used by the confidential instance.
+        &quot;confidentialParavisorConfig&quot;: { # A set of Confidential Paravisor (SVSM) options. # Defines a set of Confidential Paravisor (SVSM) options.
+          &quot;confidentialTpmType&quot;: &quot;A String&quot;,
+          &quot;sevSnpIrqMode&quot;: &quot;A String&quot;,
+        },
         &quot;enableConfidentialCompute&quot;: True or False, # Defines whether the instance should have confidential compute enabled.
       },
       &quot;cpuPlatform&quot;: &quot;A String&quot;, # [Output Only] The CPU platform used by this instance.
@@ -4295,7 +4576,7 @@ Returns:
           &quot;forceAttach&quot;: True or False, # [Input Only] Whether to force attach the regional disk even if it&#x27;s currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.
           &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.
             { # Guest OS features.
-              &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+              &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
             },
           ],
           &quot;index&quot;: 42, # [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.
@@ -4308,7 +4589,7 @@ Returns:
             &quot;enableConfidentialCompute&quot;: True or False, # Whether this disk is using confidential compute mode.
             &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options. Guest OS features are applied by merging initializeParams.guestOsFeatures and disks.guestOsFeatures
               { # Guest OS features.
-                &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+                &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
               },
             ],
             &quot;interface&quot;: &quot;A String&quot;, # [Deprecated] Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.
@@ -4405,6 +4686,8 @@ Returns:
       ],
       &quot;hostname&quot;: &quot;A String&quot;, # Specifies the hostname of the instance. The specified hostname must be RFC1035 compliant. If hostname is not specified, the default hostname is [INSTANCE_NAME].c.[PROJECT_ID].internal when using the global DNS, and [INSTANCE_NAME].[ZONE].c.[PROJECT_ID].internal when using zonal DNS.
       &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
+      &quot;identity&quot;: &quot;A String&quot;,
+      &quot;identityCertificate&quot;: True or False,
       &quot;instanceEncryptionKey&quot;: { # Encrypts suspended data for an instance with a customer-managed encryption key. If you are creating a new instance, this field will encrypt the local SSD and in-memory contents of the instance during the suspend operation. If you do not provide an encryption key when creating the instance, then the local SSD and in-memory contents will be encrypted using an automatically generated key during the suspend operation.
         &quot;kmsKeyName&quot;: &quot;A String&quot;, # The name of the encryption key that is stored in Google Cloud KMS. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key The fully-qualifed key name may be returned for resource GET requests. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1
         &quot;kmsKeyServiceAccount&quot;: &quot;A String&quot;, # The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example: &quot;kmsKeyServiceAccount&quot;: &quot;name@project_id.iam.gserviceaccount.com/
@@ -4422,7 +4705,7 @@ Returns:
       &quot;lastStopTimestamp&quot;: &quot;A String&quot;, # [Output Only] Last stop timestamp in RFC3339 text format.
       &quot;lastSuspendedTimestamp&quot;: &quot;A String&quot;, # [Output Only] Last suspended timestamp in RFC3339 text format.
       &quot;machineType&quot;: &quot;A String&quot;, # Full or partial URL of the machine type resource to use for this instance, in the format: zones/zone/machineTypes/machine-type. This is provided by the client when the instance is created. For example, the following is a valid partial url to a predefined machine type: zones/us-central1-f/machineTypes/n1-standard-1 To create a custom machine type, provide a URL to a machine type in the following format, where CPUS is 1 or an even number up to 32 (2, 4, 6, ... 24, etc), and MEMORY is the total memory for this instance. Memory must be a multiple of 256 MB and must be supplied in MB (e.g. 5 GB of memory is 5120 MB): zones/zone/machineTypes/custom-CPUS-MEMORY For example: zones/us-central1-f/machineTypes/custom-4-5120 For a full list of restrictions, read the Specifications for custom machine types.
-      &quot;metadata&quot;: { # A metadata key/value entry. # The metadata key/value pairs assigned to this instance. This includes custom metadata and predefined keys.
+      &quot;metadata&quot;: { # A metadata key/value entry. # The metadata key/value pairs assigned to this instance. This includes metadata keys that were explicitly defined for the instance.
         &quot;fingerprint&quot;: &quot;A String&quot;, # Specifies a fingerprint for this request, which is essentially a hash of the metadata&#x27;s contents and used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update metadata. You must always provide an up-to-date fingerprint hash in order to update or change metadata, otherwise the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the resource.
         &quot;items&quot;: [ # Array of key/value pairs. The total size of all keys and values must be less than 512 KB.
           { # Metadata
@@ -4458,6 +4741,7 @@ Returns:
               &quot;subnetworkRangeName&quot;: &quot;A String&quot;, # The name of a subnetwork secondary IP range from which to allocate an IP alias range. If not specified, the primary range of the subnetwork is used.
             },
           ],
+          &quot;enableVpcScopedDns&quot;: True or False, # Optional. If true, DNS resolution will be enabled over this interface. Only valid with network_attachment.
           &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint hash of contents stored in this network interface. This field will be ignored when inserting an Instance or adding a NetworkInterface. An up-to-date fingerprint must be provided in order to update the NetworkInterface. The request will fail with error 400 Bad Request if the fingerprint is not provided, or 412 Precondition Failed if the fingerprint is out of date.
           &quot;igmpQuery&quot;: &quot;A String&quot;, # Indicate whether igmp query is enabled on the network interface or not. If enabled, also indicates the version of IGMP supported.
           &quot;internalIpv6PrefixLength&quot;: 42, # The prefix length of the primary internal IPv6 range.
@@ -4497,7 +4781,7 @@ Returns:
             },
           ],
           &quot;subnetwork&quot;: &quot;A String&quot;, # The URL of the Subnetwork resource for this instance. If the network resource is in legacy mode, do not specify this field. If the network is in auto subnet mode, specifying the subnetwork is optional. If the network is in custom subnet mode, specifying the subnetwork is required. If you specify this field, you can specify the subnetwork as a full or partial URL. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/project/regions/region /subnetworks/subnetwork - regions/region/subnetworks/subnetwork
-          &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be in range from 2 to 4094 inclusively.
+          &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be an integer in the range from 2 to 255 inclusively.
         },
       ],
       &quot;networkPerformanceConfig&quot;: {
@@ -4505,6 +4789,10 @@ Returns:
         &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;,
       },
       &quot;params&quot;: { # Additional instance params. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+        &quot;requestValidForDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Relative deadline for waiting for capacity. Relevant only for Instances.Insert API.
+          &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+          &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+        },
         &quot;resourceManagerTags&quot;: { # Resource manager tags to be bound to the instance. Tag keys and values have the same definition as resource manager tags. Keys must be in the format `tagKeys/{tag_key_id}`, and values are in the format `tagValues/456`. The field is ignored (both PUT &amp; PATCH) when empty.
           &quot;a_key&quot;: &quot;A String&quot;,
         },
@@ -4554,6 +4842,18 @@ Returns:
             &quot;uuid&quot;: &quot;A String&quot;, # The UUID of the accelerator.
           },
         ],
+        &quot;consumedReservation&quot;: &quot;A String&quot;, # [Output Only] The full resource name of the reservation that this instance is consuming from.
+        &quot;consumedReservationBlock&quot;: &quot;A String&quot;, # [Output Only] The full resource name of the reservation block that this instance is consuming from.
+        &quot;effectiveInstanceMetadata&quot;: { # Effective values of predefined metadata keys for an instance. # [Output Only] Effective metadata is a field that consolidates project, zonal instance settings, and instance-level predefined metadata keys to provide the overridden value for those metadata keys at the instance level.
+          &quot;blockProjectSshKeysMetadataValue&quot;: True or False, # Effective block-project-ssh-keys value at Instance level.
+          &quot;enableGuestAttributesMetadataValue&quot;: True or False, # Effective enable-guest-attributes value at Instance level.
+          &quot;enableOsInventoryMetadataValue&quot;: True or False, # Effective enable-os-inventory value at Instance level.
+          &quot;enableOsconfigMetadataValue&quot;: True or False, # Effective enable-osconfig value at Instance level.
+          &quot;enableOsloginMetadataValue&quot;: True or False, # Effective enable-oslogin value at Instance level.
+          &quot;serialPortEnableMetadataValue&quot;: True or False, # Effective serial-port-enable value at Instance level.
+          &quot;serialPortLoggingEnableMetadataValue&quot;: True or False, # Effective serial-port-logging-enable value at Instance level.
+          &quot;vmDnsSettingMetadataValue&quot;: &quot;A String&quot;, # Effective VM DNS setting at Instance level.
+        },
         &quot;lastInstanceTerminationDetails&quot;: { # [Output Only] Contains last termination details why the instance was terminated.
           &quot;terminationReason&quot;: &quot;A String&quot;, # Reason for termination
         },
@@ -4563,6 +4863,11 @@ Returns:
           &quot;cluster&quot;: &quot;A String&quot;, # [Output Only] The global name of the Compute Engine cluster where the running instance is located.
           &quot;host&quot;: &quot;A String&quot;, # [Output Only] The ID of the host on which the running instance is located. Instances on the same host experience the lowest possible network latency.
           &quot;subblock&quot;: &quot;A String&quot;, # [Output Only] The ID of the sub-block in which the running instance is located. Instances in the same sub-block experience lower network latency than instances in the same block.
+        },
+        &quot;reservationConsumptionInfo&quot;: { # [Output Only] Reservation information that the instance is consuming from.
+          &quot;consumedReservation&quot;: &quot;A String&quot;, # The full resource name of the reservation that this instance is consuming from.
+          &quot;consumedReservationBlock&quot;: &quot;A String&quot;, # The full resource name of the reservation block that this instance is consuming from.
+          &quot;consumedReservationSubBlock&quot;: &quot;A String&quot;, # The full resource name of the reservation sub-block that this instance is consuming from.
         },
         &quot;scheduling&quot;: {
           &quot;availabilityDomain&quot;: 42, # Specifies the availability domain to place the instance in. The value must be a number between 1 and the number of availability domains specified in the spread placement policy attached to the instance.
@@ -4589,6 +4894,10 @@ Returns:
           &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
           &quot;date&quot;: &quot;A String&quot;, # [Output Only] The date when the maintenance will take place. This value is in RFC3339 text format. DEPRECATED: Use window_start_time instead.
           &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+          &quot;maintenanceOnShutdown&quot;: True or False, # Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.
+          &quot;maintenanceReasons&quot;: [ # The reasons for the maintenance. Only valid for vms.
+            &quot;A String&quot;,
+          ],
           &quot;maintenanceStatus&quot;: &quot;A String&quot;,
           &quot;startTimeWindow&quot;: { # Represents a window of time using two timestamps: `earliest` and `latest`. # [Output Only] The start time window of the maintenance disruption. DEPRECATED: Use window_start_time instead. TimeWindow is a container for two strings that represent timestamps in &quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ssZ&quot; text format.
             &quot;earliest&quot;: &quot;A String&quot;,
@@ -4643,11 +4952,16 @@ Returns:
           &quot;discardLocalSsd&quot;: True or False, # If true, the contents of any attached Local SSD disks will be discarded else, the Local SSD data will be preserved when the instance is stopped at the end of the run duration/termination time.
         },
         &quot;preemptible&quot;: True or False, # Defines whether the instance is preemptible. This can only be set during instance creation or while the instance is stopped and therefore, in a `TERMINATED` state. See Instance Life Cycle for more information on the possible instance states.
-        &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
-        &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+        &quot;preemptionNoticeDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Specifies the Metadata Service preemption notice duration before the GCE ACPI G2 Soft Off signal is triggered for Spot VMs only. If not specified, there will be no wait before the G2 Soft Off signal is triggered.
           &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
           &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
         },
+        &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
+        &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # DEPRECATED: please use skipGuestOsShutdown. Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+          &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+          &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+        },
+        &quot;skipGuestOsShutdown&quot;: True or False, # Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.
         &quot;terminationTime&quot;: &quot;A String&quot;, # Specifies the timestamp, when the instance will be terminated, in RFC3339 text format. If specified, the instance termination action will be performed at the termination time.
         &quot;windowsLicenseOptimizationMode&quot;: &quot;A String&quot;, # Represents the Windows Server License Optimization Mode of the VM. If unspecified, the default mode is `OFF`.
       },
@@ -4708,6 +5022,10 @@ Returns:
         &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
         &quot;date&quot;: &quot;A String&quot;, # [Output Only] The date when the maintenance will take place. This value is in RFC3339 text format. DEPRECATED: Use window_start_time instead.
         &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+        &quot;maintenanceOnShutdown&quot;: True or False, # Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.
+        &quot;maintenanceReasons&quot;: [ # The reasons for the maintenance. Only valid for vms.
+          &quot;A String&quot;,
+        ],
         &quot;maintenanceStatus&quot;: &quot;A String&quot;,
         &quot;startTimeWindow&quot;: { # Represents a window of time using two timestamps: `earliest` and `latest`. # [Output Only] The start time window of the maintenance disruption. DEPRECATED: Use window_start_time instead. TimeWindow is a container for two strings that represent timestamps in &quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ssZ&quot; text format.
           &quot;earliest&quot;: &quot;A String&quot;,
@@ -5226,6 +5544,7 @@ Args:
 
 {
   &quot;actionHint&quot;: &quot;A String&quot;, # The action hint to report the host as faulty.
+  &quot;disruptionSchedule&quot;: &quot;A String&quot;, # The disruption schedule for the VM. Required field, only allows IMMEDIATE.
   &quot;faultReasons&quot;: [
     {
       &quot;behavior&quot;: &quot;A String&quot;,
@@ -6866,11 +7185,16 @@ Args:
     &quot;discardLocalSsd&quot;: True or False, # If true, the contents of any attached Local SSD disks will be discarded else, the Local SSD data will be preserved when the instance is stopped at the end of the run duration/termination time.
   },
   &quot;preemptible&quot;: True or False, # Defines whether the instance is preemptible. This can only be set during instance creation or while the instance is stopped and therefore, in a `TERMINATED` state. See Instance Life Cycle for more information on the possible instance states.
-  &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
-  &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+  &quot;preemptionNoticeDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Specifies the Metadata Service preemption notice duration before the GCE ACPI G2 Soft Off signal is triggered for Spot VMs only. If not specified, there will be no wait before the G2 Soft Off signal is triggered.
     &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
     &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
   },
+  &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
+  &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # DEPRECATED: please use skipGuestOsShutdown. Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+    &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+    &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+  },
+  &quot;skipGuestOsShutdown&quot;: True or False, # Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.
   &quot;terminationTime&quot;: &quot;A String&quot;, # Specifies the timestamp, when the instance will be terminated, in RFC3339 text format. If specified, the instance termination action will be performed at the termination time.
   &quot;windowsLicenseOptimizationMode&quot;: &quot;A String&quot;, # Represents the Windows Server License Optimization Mode of the VM. If unspecified, the default mode is `OFF`.
 }
@@ -8383,6 +8707,10 @@ Args:
   &quot;canIpForward&quot;: True or False, # Allows this instance to send and receive packets with non-matching destination or source IPs. This is required if you plan to use this instance to forward routes. For more information, see Enabling IP Forwarding .
   &quot;confidentialInstanceConfig&quot;: { # A set of Confidential Instance options.
     &quot;confidentialInstanceType&quot;: &quot;A String&quot;, # Defines the type of technology used by the confidential instance.
+    &quot;confidentialParavisorConfig&quot;: { # A set of Confidential Paravisor (SVSM) options. # Defines a set of Confidential Paravisor (SVSM) options.
+      &quot;confidentialTpmType&quot;: &quot;A String&quot;,
+      &quot;sevSnpIrqMode&quot;: &quot;A String&quot;,
+    },
     &quot;enableConfidentialCompute&quot;: True or False, # Defines whether the instance should have confidential compute enabled.
   },
   &quot;cpuPlatform&quot;: &quot;A String&quot;, # [Output Only] The CPU platform used by this instance.
@@ -8406,7 +8734,7 @@ Args:
       &quot;forceAttach&quot;: True or False, # [Input Only] Whether to force attach the regional disk even if it&#x27;s currently attached to another instance. If you try to force attach a zonal disk to an instance, you will receive an error.
       &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options.
         { # Guest OS features.
-          &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+          &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
         },
       ],
       &quot;index&quot;: 42, # [Output Only] A zero-based index to this disk, where 0 is reserved for the boot disk. If you have many disks attached to an instance, each disk would have a unique index number.
@@ -8419,7 +8747,7 @@ Args:
         &quot;enableConfidentialCompute&quot;: True or False, # Whether this disk is using confidential compute mode.
         &quot;guestOsFeatures&quot;: [ # A list of features to enable on the guest operating system. Applicable only for bootable images. Read Enabling guest operating system features to see a list of available options. Guest OS features are applied by merging initializeParams.guestOsFeatures and disks.guestOsFeatures
           { # Guest OS features.
-            &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF For more information, see Enabling guest operating system features.
+            &quot;type&quot;: &quot;A String&quot;, # The ID of a supported feature. To add multiple values, use commas to separate values. Set to one or more of the following values: - VIRTIO_SCSI_MULTIQUEUE - WINDOWS - MULTI_IP_SUBNET - UEFI_COMPATIBLE - GVNIC - SEV_CAPABLE - SUSPEND_RESUME_COMPATIBLE - SEV_LIVE_MIGRATABLE_V2 - SEV_SNP_CAPABLE - TDX_CAPABLE - IDPF - SNP_SVSM_CAPABLE For more information, see Enabling guest operating system features.
           },
         ],
         &quot;interface&quot;: &quot;A String&quot;, # [Deprecated] Specifies the disk interface to use for attaching this disk, which is either SCSI or NVME. The default is SCSI.
@@ -8516,6 +8844,8 @@ Args:
   ],
   &quot;hostname&quot;: &quot;A String&quot;, # Specifies the hostname of the instance. The specified hostname must be RFC1035 compliant. If hostname is not specified, the default hostname is [INSTANCE_NAME].c.[PROJECT_ID].internal when using the global DNS, and [INSTANCE_NAME].[ZONE].c.[PROJECT_ID].internal when using zonal DNS.
   &quot;id&quot;: &quot;A String&quot;, # [Output Only] The unique identifier for the resource. This identifier is defined by the server.
+  &quot;identity&quot;: &quot;A String&quot;,
+  &quot;identityCertificate&quot;: True or False,
   &quot;instanceEncryptionKey&quot;: { # Encrypts suspended data for an instance with a customer-managed encryption key. If you are creating a new instance, this field will encrypt the local SSD and in-memory contents of the instance during the suspend operation. If you do not provide an encryption key when creating the instance, then the local SSD and in-memory contents will be encrypted using an automatically generated key during the suspend operation.
     &quot;kmsKeyName&quot;: &quot;A String&quot;, # The name of the encryption key that is stored in Google Cloud KMS. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key The fully-qualifed key name may be returned for resource GET requests. For example: &quot;kmsKeyName&quot;: &quot;projects/kms_project_id/locations/region/keyRings/ key_region/cryptoKeys/key /cryptoKeyVersions/1
     &quot;kmsKeyServiceAccount&quot;: &quot;A String&quot;, # The service account being used for the encryption request for the given KMS key. If absent, the Compute Engine default service account is used. For example: &quot;kmsKeyServiceAccount&quot;: &quot;name@project_id.iam.gserviceaccount.com/
@@ -8533,7 +8863,7 @@ Args:
   &quot;lastStopTimestamp&quot;: &quot;A String&quot;, # [Output Only] Last stop timestamp in RFC3339 text format.
   &quot;lastSuspendedTimestamp&quot;: &quot;A String&quot;, # [Output Only] Last suspended timestamp in RFC3339 text format.
   &quot;machineType&quot;: &quot;A String&quot;, # Full or partial URL of the machine type resource to use for this instance, in the format: zones/zone/machineTypes/machine-type. This is provided by the client when the instance is created. For example, the following is a valid partial url to a predefined machine type: zones/us-central1-f/machineTypes/n1-standard-1 To create a custom machine type, provide a URL to a machine type in the following format, where CPUS is 1 or an even number up to 32 (2, 4, 6, ... 24, etc), and MEMORY is the total memory for this instance. Memory must be a multiple of 256 MB and must be supplied in MB (e.g. 5 GB of memory is 5120 MB): zones/zone/machineTypes/custom-CPUS-MEMORY For example: zones/us-central1-f/machineTypes/custom-4-5120 For a full list of restrictions, read the Specifications for custom machine types.
-  &quot;metadata&quot;: { # A metadata key/value entry. # The metadata key/value pairs assigned to this instance. This includes custom metadata and predefined keys.
+  &quot;metadata&quot;: { # A metadata key/value entry. # The metadata key/value pairs assigned to this instance. This includes metadata keys that were explicitly defined for the instance.
     &quot;fingerprint&quot;: &quot;A String&quot;, # Specifies a fingerprint for this request, which is essentially a hash of the metadata&#x27;s contents and used for optimistic locking. The fingerprint is initially generated by Compute Engine and changes after every request to modify or update metadata. You must always provide an up-to-date fingerprint hash in order to update or change metadata, otherwise the request will fail with error 412 conditionNotMet. To see the latest fingerprint, make a get() request to retrieve the resource.
     &quot;items&quot;: [ # Array of key/value pairs. The total size of all keys and values must be less than 512 KB.
       { # Metadata
@@ -8569,6 +8899,7 @@ Args:
           &quot;subnetworkRangeName&quot;: &quot;A String&quot;, # The name of a subnetwork secondary IP range from which to allocate an IP alias range. If not specified, the primary range of the subnetwork is used.
         },
       ],
+      &quot;enableVpcScopedDns&quot;: True or False, # Optional. If true, DNS resolution will be enabled over this interface. Only valid with network_attachment.
       &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint hash of contents stored in this network interface. This field will be ignored when inserting an Instance or adding a NetworkInterface. An up-to-date fingerprint must be provided in order to update the NetworkInterface. The request will fail with error 400 Bad Request if the fingerprint is not provided, or 412 Precondition Failed if the fingerprint is out of date.
       &quot;igmpQuery&quot;: &quot;A String&quot;, # Indicate whether igmp query is enabled on the network interface or not. If enabled, also indicates the version of IGMP supported.
       &quot;internalIpv6PrefixLength&quot;: 42, # The prefix length of the primary internal IPv6 range.
@@ -8608,7 +8939,7 @@ Args:
         },
       ],
       &quot;subnetwork&quot;: &quot;A String&quot;, # The URL of the Subnetwork resource for this instance. If the network resource is in legacy mode, do not specify this field. If the network is in auto subnet mode, specifying the subnetwork is optional. If the network is in custom subnet mode, specifying the subnetwork is required. If you specify this field, you can specify the subnetwork as a full or partial URL. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/project/regions/region /subnetworks/subnetwork - regions/region/subnetworks/subnetwork
-      &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be in range from 2 to 4094 inclusively.
+      &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be an integer in the range from 2 to 255 inclusively.
     },
   ],
   &quot;networkPerformanceConfig&quot;: {
@@ -8616,6 +8947,10 @@ Args:
     &quot;totalEgressBandwidthTier&quot;: &quot;A String&quot;,
   },
   &quot;params&quot;: { # Additional instance params. # Input only. [Input Only] Additional params passed with the request, but not persisted as part of resource payload.
+    &quot;requestValidForDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Relative deadline for waiting for capacity. Relevant only for Instances.Insert API.
+      &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+      &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+    },
     &quot;resourceManagerTags&quot;: { # Resource manager tags to be bound to the instance. Tag keys and values have the same definition as resource manager tags. Keys must be in the format `tagKeys/{tag_key_id}`, and values are in the format `tagValues/456`. The field is ignored (both PUT &amp; PATCH) when empty.
       &quot;a_key&quot;: &quot;A String&quot;,
     },
@@ -8665,6 +9000,18 @@ Args:
         &quot;uuid&quot;: &quot;A String&quot;, # The UUID of the accelerator.
       },
     ],
+    &quot;consumedReservation&quot;: &quot;A String&quot;, # [Output Only] The full resource name of the reservation that this instance is consuming from.
+    &quot;consumedReservationBlock&quot;: &quot;A String&quot;, # [Output Only] The full resource name of the reservation block that this instance is consuming from.
+    &quot;effectiveInstanceMetadata&quot;: { # Effective values of predefined metadata keys for an instance. # [Output Only] Effective metadata is a field that consolidates project, zonal instance settings, and instance-level predefined metadata keys to provide the overridden value for those metadata keys at the instance level.
+      &quot;blockProjectSshKeysMetadataValue&quot;: True or False, # Effective block-project-ssh-keys value at Instance level.
+      &quot;enableGuestAttributesMetadataValue&quot;: True or False, # Effective enable-guest-attributes value at Instance level.
+      &quot;enableOsInventoryMetadataValue&quot;: True or False, # Effective enable-os-inventory value at Instance level.
+      &quot;enableOsconfigMetadataValue&quot;: True or False, # Effective enable-osconfig value at Instance level.
+      &quot;enableOsloginMetadataValue&quot;: True or False, # Effective enable-oslogin value at Instance level.
+      &quot;serialPortEnableMetadataValue&quot;: True or False, # Effective serial-port-enable value at Instance level.
+      &quot;serialPortLoggingEnableMetadataValue&quot;: True or False, # Effective serial-port-logging-enable value at Instance level.
+      &quot;vmDnsSettingMetadataValue&quot;: &quot;A String&quot;, # Effective VM DNS setting at Instance level.
+    },
     &quot;lastInstanceTerminationDetails&quot;: { # [Output Only] Contains last termination details why the instance was terminated.
       &quot;terminationReason&quot;: &quot;A String&quot;, # Reason for termination
     },
@@ -8674,6 +9021,11 @@ Args:
       &quot;cluster&quot;: &quot;A String&quot;, # [Output Only] The global name of the Compute Engine cluster where the running instance is located.
       &quot;host&quot;: &quot;A String&quot;, # [Output Only] The ID of the host on which the running instance is located. Instances on the same host experience the lowest possible network latency.
       &quot;subblock&quot;: &quot;A String&quot;, # [Output Only] The ID of the sub-block in which the running instance is located. Instances in the same sub-block experience lower network latency than instances in the same block.
+    },
+    &quot;reservationConsumptionInfo&quot;: { # [Output Only] Reservation information that the instance is consuming from.
+      &quot;consumedReservation&quot;: &quot;A String&quot;, # The full resource name of the reservation that this instance is consuming from.
+      &quot;consumedReservationBlock&quot;: &quot;A String&quot;, # The full resource name of the reservation block that this instance is consuming from.
+      &quot;consumedReservationSubBlock&quot;: &quot;A String&quot;, # The full resource name of the reservation sub-block that this instance is consuming from.
     },
     &quot;scheduling&quot;: {
       &quot;availabilityDomain&quot;: 42, # Specifies the availability domain to place the instance in. The value must be a number between 1 and the number of availability domains specified in the spread placement policy attached to the instance.
@@ -8700,6 +9052,10 @@ Args:
       &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
       &quot;date&quot;: &quot;A String&quot;, # [Output Only] The date when the maintenance will take place. This value is in RFC3339 text format. DEPRECATED: Use window_start_time instead.
       &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+      &quot;maintenanceOnShutdown&quot;: True or False, # Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.
+      &quot;maintenanceReasons&quot;: [ # The reasons for the maintenance. Only valid for vms.
+        &quot;A String&quot;,
+      ],
       &quot;maintenanceStatus&quot;: &quot;A String&quot;,
       &quot;startTimeWindow&quot;: { # Represents a window of time using two timestamps: `earliest` and `latest`. # [Output Only] The start time window of the maintenance disruption. DEPRECATED: Use window_start_time instead. TimeWindow is a container for two strings that represent timestamps in &quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ssZ&quot; text format.
         &quot;earliest&quot;: &quot;A String&quot;,
@@ -8754,11 +9110,16 @@ Args:
       &quot;discardLocalSsd&quot;: True or False, # If true, the contents of any attached Local SSD disks will be discarded else, the Local SSD data will be preserved when the instance is stopped at the end of the run duration/termination time.
     },
     &quot;preemptible&quot;: True or False, # Defines whether the instance is preemptible. This can only be set during instance creation or while the instance is stopped and therefore, in a `TERMINATED` state. See Instance Life Cycle for more information on the possible instance states.
-    &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
-    &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+    &quot;preemptionNoticeDuration&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # Specifies the Metadata Service preemption notice duration before the GCE ACPI G2 Soft Off signal is triggered for Spot VMs only. If not specified, there will be no wait before the G2 Soft Off signal is triggered.
       &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
       &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
     },
+    &quot;provisioningModel&quot;: &quot;A String&quot;, # Specifies the provisioning model of the instance.
+    &quot;shutdownTimeout&quot;: { # A Duration represents a fixed-length span of time represented as a count of seconds and fractions of seconds at nanosecond resolution. It is independent of any calendar and concepts like &quot;day&quot; or &quot;month&quot;. Range is approximately 10,000 years. # DEPRECATED: please use skipGuestOsShutdown. Timeout between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off during shutdown operation of VM. For Standard VMs values between 0s and 120s are allowed. For Spot and Preemptible VMs supported values are between 0s and 30s. If no value is specified for shutdownDuration, default values are 90s for Standard VMs and 30s for Spot/Preemptible VMs.
+      &quot;nanos&quot;: 42, # Span of time that&#x27;s a fraction of a second at nanosecond resolution. Durations less than one second are represented with a 0 `seconds` field and a positive `nanos` field. Must be from 0 to 999,999,999 inclusive.
+      &quot;seconds&quot;: &quot;A String&quot;, # Span of time at a resolution of a second. Must be from 0 to 315,576,000,000 inclusive. Note: these bounds are computed from: 60 sec/min * 60 min/hr * 24 hr/day * 365.25 days/year * 10000 years
+    },
+    &quot;skipGuestOsShutdown&quot;: True or False, # Default is false and there will be 120 seconds between GCE ACPI G2 Soft Off and ACPI G3 Mechanical Off for Standard VMs and 30 seconds for Spot VMs.
     &quot;terminationTime&quot;: &quot;A String&quot;, # Specifies the timestamp, when the instance will be terminated, in RFC3339 text format. If specified, the instance termination action will be performed at the termination time.
     &quot;windowsLicenseOptimizationMode&quot;: &quot;A String&quot;, # Represents the Windows Server License Optimization Mode of the VM. If unspecified, the default mode is `OFF`.
   },
@@ -8819,6 +9180,10 @@ Args:
     &quot;canReschedule&quot;: True or False, # Indicates if the maintenance can be customer triggered.
     &quot;date&quot;: &quot;A String&quot;, # [Output Only] The date when the maintenance will take place. This value is in RFC3339 text format. DEPRECATED: Use window_start_time instead.
     &quot;latestWindowStartTime&quot;: &quot;A String&quot;, # The latest time for the planned maintenance window to start. This timestamp value is in RFC3339 text format.
+    &quot;maintenanceOnShutdown&quot;: True or False, # Indicates whether the UpcomingMaintenance will be triggered on VM shutdown.
+    &quot;maintenanceReasons&quot;: [ # The reasons for the maintenance. Only valid for vms.
+      &quot;A String&quot;,
+    ],
     &quot;maintenanceStatus&quot;: &quot;A String&quot;,
     &quot;startTimeWindow&quot;: { # Represents a window of time using two timestamps: `earliest` and `latest`. # [Output Only] The start time window of the maintenance disruption. DEPRECATED: Use window_start_time instead. TimeWindow is a container for two strings that represent timestamps in &quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ssZ&quot; text format.
       &quot;earliest&quot;: &quot;A String&quot;,
@@ -9276,6 +9641,7 @@ Args:
       &quot;subnetworkRangeName&quot;: &quot;A String&quot;, # The name of a subnetwork secondary IP range from which to allocate an IP alias range. If not specified, the primary range of the subnetwork is used.
     },
   ],
+  &quot;enableVpcScopedDns&quot;: True or False, # Optional. If true, DNS resolution will be enabled over this interface. Only valid with network_attachment.
   &quot;fingerprint&quot;: &quot;A String&quot;, # Fingerprint hash of contents stored in this network interface. This field will be ignored when inserting an Instance or adding a NetworkInterface. An up-to-date fingerprint must be provided in order to update the NetworkInterface. The request will fail with error 400 Bad Request if the fingerprint is not provided, or 412 Precondition Failed if the fingerprint is out of date.
   &quot;igmpQuery&quot;: &quot;A String&quot;, # Indicate whether igmp query is enabled on the network interface or not. If enabled, also indicates the version of IGMP supported.
   &quot;internalIpv6PrefixLength&quot;: 42, # The prefix length of the primary internal IPv6 range.
@@ -9315,7 +9681,7 @@ Args:
     },
   ],
   &quot;subnetwork&quot;: &quot;A String&quot;, # The URL of the Subnetwork resource for this instance. If the network resource is in legacy mode, do not specify this field. If the network is in auto subnet mode, specifying the subnetwork is optional. If the network is in custom subnet mode, specifying the subnetwork is required. If you specify this field, you can specify the subnetwork as a full or partial URL. For example, the following are all valid URLs: - https://www.googleapis.com/compute/v1/projects/project/regions/region /subnetworks/subnetwork - regions/region/subnetworks/subnetwork
-  &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be in range from 2 to 4094 inclusively.
+  &quot;vlan&quot;: 42, # VLAN tag of a dynamic network interface, must be an integer in the range from 2 to 255 inclusively.
 }
 
   requestId: string, An optional request ID to identify requests. Specify a unique request ID so that if you must retry your request, the server will know to ignore the request if it has already been completed. For example, consider a situation where you make an initial request and the request times out. If you make the request again with the same request ID, the server can check if original operation with the same request ID was received, and if so, will ignore the second request. This prevents clients from accidentally creating duplicate commitments. The request ID must be a valid UUID with the exception that zero UUID is not supported ( 00000000-0000-0000-0000-000000000000).

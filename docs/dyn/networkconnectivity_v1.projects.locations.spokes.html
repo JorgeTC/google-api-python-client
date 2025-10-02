@@ -122,13 +122,17 @@ Args:
 { # A Network Connectivity Center spoke represents one or more network connectivity resources. When you create a spoke, you associate it with a hub. You must also identify a value for exactly one of the following fields: * linked_vpn_tunnels * linked_interconnect_attachments * linked_router_appliance_instances * linked_vpc_network
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the spoke was created.
   &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the spoke.
+  &quot;etag&quot;: &quot;A String&quot;, # Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
+  &quot;fieldPathsPendingUpdate&quot;: [ # Optional. The list of fields waiting for hub administration&#x27;s approval.
+    &quot;A String&quot;,
+  ],
   &quot;group&quot;: &quot;A String&quot;, # Optional. The name of the group that this spoke is associated with.
   &quot;hub&quot;: &quot;A String&quot;, # Immutable. The name of the hub that this spoke is attached to.
   &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # Optional. VLAN attachments that are associated with the spoke.
-    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+    &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
       &quot;A String&quot;,
     ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
@@ -147,10 +151,16 @@ Args:
     &quot;network&quot;: &quot;A String&quot;, # Immutable. The URI of the Service Consumer VPC that the Producer VPC is peered with.
     &quot;peering&quot;: &quot;A String&quot;, # Immutable. The name of the VPC peering between the Service Consumer VPC and the Producer VPC (defined in the Tenant project) which is added to the NCC hub. This peering must be in ACTIVE state.
     &quot;producerNetwork&quot;: &quot;A String&quot;, # Output only. The URI of the Producer VPC.
+    &quot;proposedExcludeExportRanges&quot;: [ # Output only. The proposed exclude export IP ranges waiting for hub administration&#x27;s approval.
+      &quot;A String&quot;,
+    ],
+    &quot;proposedIncludeExportRanges&quot;: [ # Output only. The proposed include export IP ranges waiting for hub administration&#x27;s approval.
+      &quot;A String&quot;,
+    ],
     &quot;serviceConsumerVpcSpoke&quot;: &quot;A String&quot;, # Output only. The Service Consumer Network spoke.
   },
   &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Optional. Router appliance instances that are associated with the spoke.
-    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+    &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
       &quot;A String&quot;,
     ],
     &quot;instances&quot;: [ # The list of router appliance instances.
@@ -169,13 +179,19 @@ Args:
     &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
       &quot;A String&quot;,
     ],
-    &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network.
+    &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network. Because they are directly connected through VPC peering, NCC export filters do not apply between the service consumer VPC spoke and any of its producer VPC spokes. This VPC spoke cannot be deleted as long as any of these producer VPC spokes are connected to the NCC Hub.
+      &quot;A String&quot;,
+    ],
+    &quot;proposedExcludeExportRanges&quot;: [ # Output only. The proposed exclude export IP ranges waiting for hub administration&#x27;s approval.
+      &quot;A String&quot;,
+    ],
+    &quot;proposedIncludeExportRanges&quot;: [ # Output only. The proposed include export IP ranges waiting for hub administration&#x27;s approval.
       &quot;A String&quot;,
     ],
     &quot;uri&quot;: &quot;A String&quot;, # Required. The URI of the VPC network resource.
   },
   &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # Optional. VPN tunnels that are associated with the spoke.
-    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+    &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
       &quot;A String&quot;,
     ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
@@ -282,13 +298,17 @@ Returns:
     { # A Network Connectivity Center spoke represents one or more network connectivity resources. When you create a spoke, you associate it with a hub. You must also identify a value for exactly one of the following fields: * linked_vpn_tunnels * linked_interconnect_attachments * linked_router_appliance_instances * linked_vpc_network
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the spoke was created.
   &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the spoke.
+  &quot;etag&quot;: &quot;A String&quot;, # Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
+  &quot;fieldPathsPendingUpdate&quot;: [ # Optional. The list of fields waiting for hub administration&#x27;s approval.
+    &quot;A String&quot;,
+  ],
   &quot;group&quot;: &quot;A String&quot;, # Optional. The name of the group that this spoke is associated with.
   &quot;hub&quot;: &quot;A String&quot;, # Immutable. The name of the hub that this spoke is attached to.
   &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # Optional. VLAN attachments that are associated with the spoke.
-    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+    &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
       &quot;A String&quot;,
     ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
@@ -307,10 +327,16 @@ Returns:
     &quot;network&quot;: &quot;A String&quot;, # Immutable. The URI of the Service Consumer VPC that the Producer VPC is peered with.
     &quot;peering&quot;: &quot;A String&quot;, # Immutable. The name of the VPC peering between the Service Consumer VPC and the Producer VPC (defined in the Tenant project) which is added to the NCC hub. This peering must be in ACTIVE state.
     &quot;producerNetwork&quot;: &quot;A String&quot;, # Output only. The URI of the Producer VPC.
+    &quot;proposedExcludeExportRanges&quot;: [ # Output only. The proposed exclude export IP ranges waiting for hub administration&#x27;s approval.
+      &quot;A String&quot;,
+    ],
+    &quot;proposedIncludeExportRanges&quot;: [ # Output only. The proposed include export IP ranges waiting for hub administration&#x27;s approval.
+      &quot;A String&quot;,
+    ],
     &quot;serviceConsumerVpcSpoke&quot;: &quot;A String&quot;, # Output only. The Service Consumer Network spoke.
   },
   &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Optional. Router appliance instances that are associated with the spoke.
-    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+    &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
       &quot;A String&quot;,
     ],
     &quot;instances&quot;: [ # The list of router appliance instances.
@@ -329,13 +355,19 @@ Returns:
     &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
       &quot;A String&quot;,
     ],
-    &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network.
+    &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network. Because they are directly connected through VPC peering, NCC export filters do not apply between the service consumer VPC spoke and any of its producer VPC spokes. This VPC spoke cannot be deleted as long as any of these producer VPC spokes are connected to the NCC Hub.
+      &quot;A String&quot;,
+    ],
+    &quot;proposedExcludeExportRanges&quot;: [ # Output only. The proposed exclude export IP ranges waiting for hub administration&#x27;s approval.
+      &quot;A String&quot;,
+    ],
+    &quot;proposedIncludeExportRanges&quot;: [ # Output only. The proposed include export IP ranges waiting for hub administration&#x27;s approval.
       &quot;A String&quot;,
     ],
     &quot;uri&quot;: &quot;A String&quot;, # Required. The URI of the VPC network resource.
   },
   &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # Optional. VPN tunnels that are associated with the spoke.
-    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+    &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
       &quot;A String&quot;,
     ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
@@ -431,13 +463,17 @@ Returns:
     { # A Network Connectivity Center spoke represents one or more network connectivity resources. When you create a spoke, you associate it with a hub. You must also identify a value for exactly one of the following fields: * linked_vpn_tunnels * linked_interconnect_attachments * linked_router_appliance_instances * linked_vpc_network
       &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the spoke was created.
       &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the spoke.
+      &quot;etag&quot;: &quot;A String&quot;, # Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
+      &quot;fieldPathsPendingUpdate&quot;: [ # Optional. The list of fields waiting for hub administration&#x27;s approval.
+        &quot;A String&quot;,
+      ],
       &quot;group&quot;: &quot;A String&quot;, # Optional. The name of the group that this spoke is associated with.
       &quot;hub&quot;: &quot;A String&quot;, # Immutable. The name of the hub that this spoke is attached to.
       &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
         &quot;a_key&quot;: &quot;A String&quot;,
       },
       &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # Optional. VLAN attachments that are associated with the spoke.
-        &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+        &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
           &quot;A String&quot;,
         ],
         &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
@@ -456,10 +492,16 @@ Returns:
         &quot;network&quot;: &quot;A String&quot;, # Immutable. The URI of the Service Consumer VPC that the Producer VPC is peered with.
         &quot;peering&quot;: &quot;A String&quot;, # Immutable. The name of the VPC peering between the Service Consumer VPC and the Producer VPC (defined in the Tenant project) which is added to the NCC hub. This peering must be in ACTIVE state.
         &quot;producerNetwork&quot;: &quot;A String&quot;, # Output only. The URI of the Producer VPC.
+        &quot;proposedExcludeExportRanges&quot;: [ # Output only. The proposed exclude export IP ranges waiting for hub administration&#x27;s approval.
+          &quot;A String&quot;,
+        ],
+        &quot;proposedIncludeExportRanges&quot;: [ # Output only. The proposed include export IP ranges waiting for hub administration&#x27;s approval.
+          &quot;A String&quot;,
+        ],
         &quot;serviceConsumerVpcSpoke&quot;: &quot;A String&quot;, # Output only. The Service Consumer Network spoke.
       },
       &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Optional. Router appliance instances that are associated with the spoke.
-        &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+        &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
           &quot;A String&quot;,
         ],
         &quot;instances&quot;: [ # The list of router appliance instances.
@@ -478,13 +520,19 @@ Returns:
         &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
           &quot;A String&quot;,
         ],
-        &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network.
+        &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network. Because they are directly connected through VPC peering, NCC export filters do not apply between the service consumer VPC spoke and any of its producer VPC spokes. This VPC spoke cannot be deleted as long as any of these producer VPC spokes are connected to the NCC Hub.
+          &quot;A String&quot;,
+        ],
+        &quot;proposedExcludeExportRanges&quot;: [ # Output only. The proposed exclude export IP ranges waiting for hub administration&#x27;s approval.
+          &quot;A String&quot;,
+        ],
+        &quot;proposedIncludeExportRanges&quot;: [ # Output only. The proposed include export IP ranges waiting for hub administration&#x27;s approval.
           &quot;A String&quot;,
         ],
         &quot;uri&quot;: &quot;A String&quot;, # Required. The URI of the VPC network resource.
       },
       &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # Optional. VPN tunnels that are associated with the spoke.
-        &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+        &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
           &quot;A String&quot;,
         ],
         &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
@@ -539,13 +587,17 @@ Args:
 { # A Network Connectivity Center spoke represents one or more network connectivity resources. When you create a spoke, you associate it with a hub. You must also identify a value for exactly one of the following fields: * linked_vpn_tunnels * linked_interconnect_attachments * linked_router_appliance_instances * linked_vpc_network
   &quot;createTime&quot;: &quot;A String&quot;, # Output only. The time the spoke was created.
   &quot;description&quot;: &quot;A String&quot;, # Optional. An optional description of the spoke.
+  &quot;etag&quot;: &quot;A String&quot;, # Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding.
+  &quot;fieldPathsPendingUpdate&quot;: [ # Optional. The list of fields waiting for hub administration&#x27;s approval.
+    &quot;A String&quot;,
+  ],
   &quot;group&quot;: &quot;A String&quot;, # Optional. The name of the group that this spoke is associated with.
   &quot;hub&quot;: &quot;A String&quot;, # Immutable. The name of the hub that this spoke is attached to.
   &quot;labels&quot;: { # Optional labels in key-value pair format. For more information about labels, see [Requirements for labels](https://cloud.google.com/resource-manager/docs/creating-managing-labels#requirements).
     &quot;a_key&quot;: &quot;A String&quot;,
   },
   &quot;linkedInterconnectAttachments&quot;: { # A collection of VLAN attachment resources. These resources should be redundant attachments that all advertise the same prefixes to Google Cloud. Alternatively, in active/passive configurations, all attachments should be capable of advertising the same prefixes. # Optional. VLAN attachments that are associated with the spoke.
-    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+    &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
       &quot;A String&quot;,
     ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).
@@ -564,10 +616,16 @@ Args:
     &quot;network&quot;: &quot;A String&quot;, # Immutable. The URI of the Service Consumer VPC that the Producer VPC is peered with.
     &quot;peering&quot;: &quot;A String&quot;, # Immutable. The name of the VPC peering between the Service Consumer VPC and the Producer VPC (defined in the Tenant project) which is added to the NCC hub. This peering must be in ACTIVE state.
     &quot;producerNetwork&quot;: &quot;A String&quot;, # Output only. The URI of the Producer VPC.
+    &quot;proposedExcludeExportRanges&quot;: [ # Output only. The proposed exclude export IP ranges waiting for hub administration&#x27;s approval.
+      &quot;A String&quot;,
+    ],
+    &quot;proposedIncludeExportRanges&quot;: [ # Output only. The proposed include export IP ranges waiting for hub administration&#x27;s approval.
+      &quot;A String&quot;,
+    ],
     &quot;serviceConsumerVpcSpoke&quot;: &quot;A String&quot;, # Output only. The Service Consumer Network spoke.
   },
   &quot;linkedRouterApplianceInstances&quot;: { # A collection of router appliance instances. If you configure multiple router appliance instances to receive data from the same set of sites outside of Google Cloud, we recommend that you associate those instances with the same spoke. # Optional. Router appliance instances that are associated with the spoke.
-    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+    &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
       &quot;A String&quot;,
     ],
     &quot;instances&quot;: [ # The list of router appliance instances.
@@ -586,13 +644,19 @@ Args:
     &quot;includeExportRanges&quot;: [ # Optional. IP ranges allowed to be included from peering.
       &quot;A String&quot;,
     ],
-    &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network.
+    &quot;producerVpcSpokes&quot;: [ # Output only. The list of Producer VPC spokes that this VPC spoke is a service consumer VPC spoke for. These producer VPCs are connected through VPC peering to this spoke&#x27;s backing VPC network. Because they are directly connected through VPC peering, NCC export filters do not apply between the service consumer VPC spoke and any of its producer VPC spokes. This VPC spoke cannot be deleted as long as any of these producer VPC spokes are connected to the NCC Hub.
+      &quot;A String&quot;,
+    ],
+    &quot;proposedExcludeExportRanges&quot;: [ # Output only. The proposed exclude export IP ranges waiting for hub administration&#x27;s approval.
+      &quot;A String&quot;,
+    ],
+    &quot;proposedIncludeExportRanges&quot;: [ # Output only. The proposed include export IP ranges waiting for hub administration&#x27;s approval.
       &quot;A String&quot;,
     ],
     &quot;uri&quot;: &quot;A String&quot;, # Required. The URI of the VPC network resource.
   },
   &quot;linkedVpnTunnels&quot;: { # A collection of Cloud VPN tunnel resources. These resources should be redundant HA VPN tunnels that all advertise the same prefixes to Google Cloud. Alternatively, in a passive/active configuration, all tunnels should be capable of advertising the same prefixes. # Optional. VPN tunnels that are associated with the spoke.
-    &quot;includeImportRanges&quot;: [ # Optional. IP ranges allowed to be included during import from hub (does not control transit connectivity). The only allowed value for now is &quot;ALL_IPV4_RANGES&quot;.
+    &quot;includeImportRanges&quot;: [ # Optional. Hub routes fully encompassed by include import ranges are included during import from hub.
       &quot;A String&quot;,
     ],
     &quot;siteToSiteDataTransfer&quot;: True or False, # A value that controls whether site-to-site data transfer is enabled for these resources. Data transfer is available only in [supported locations](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/concepts/locations).

@@ -124,7 +124,7 @@ Args:
           &quot;entityMentionData&quot;: { # The data for an entity mention annotation. This represents a mention of an `Entity` in the conversation. # Data specifying an entity mention.
             &quot;entityUniqueId&quot;: &quot;A String&quot;, # The key of this entity in conversation entities. Can be used to retrieve the exact `Entity` this mention is attached to.
             &quot;sentiment&quot;: { # The data for a sentiment annotation. # Sentiment expressed for this mention of the entity.
-              &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+              &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
               &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
             },
             &quot;type&quot;: &quot;A String&quot;, # The type of the entity mention.
@@ -138,7 +138,7 @@ Args:
           },
           &quot;issueMatchData&quot;: { # The data for an issue match annotation. # Data specifying an issue match.
             &quot;issueAssignment&quot;: { # Information about the issue. # Information about the issue&#x27;s assignment.
-              &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analyis and immutable since then.
+              &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analysis and immutable since then.
               &quot;issue&quot;: &quot;A String&quot;, # Resource name of the assigned issue.
               &quot;score&quot;: 3.14, # Score indicating the likelihood of the issue assignment. currently bounded on [0,1].
             },
@@ -148,7 +148,7 @@ Args:
             &quot;phraseMatcher&quot;: &quot;A String&quot;, # The unique identifier (the resource name) of the phrase matcher.
           },
           &quot;sentimentData&quot;: { # The data for a sentiment annotation. # Data specifying sentiment.
-            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
             &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
           },
           &quot;silenceData&quot;: { # The data for a silence annotation. # Data specifying silence.
@@ -163,7 +163,7 @@ Args:
           },
           &quot;salience&quot;: 3.14, # The salience score associated with the entity in the [0, 1.0] range. The salience score for an entity provides information about the importance or centrality of that entity to the entire document text. Scores closer to 0 are less salient, while scores closer to 1.0 are highly salient.
           &quot;sentiment&quot;: { # The data for a sentiment annotation. # The aggregate sentiment expressed for this entity in the conversation.
-            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
             &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
           },
           &quot;type&quot;: &quot;A String&quot;, # The entity type.
@@ -179,7 +179,7 @@ Args:
         &quot;issueModel&quot;: &quot;A String&quot;, # Issue model that generates the result. Format: projects/{project}/locations/{location}/issueModels/{issue_model}
         &quot;issues&quot;: [ # All the matched issues.
           { # Information about the issue.
-            &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analyis and immutable since then.
+            &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analysis and immutable since then.
             &quot;issue&quot;: &quot;A String&quot;, # Resource name of the assigned issue.
             &quot;score&quot;: 3.14, # Score indicating the likelihood of the issue assignment. currently bounded on [0,1].
           },
@@ -210,7 +210,11 @@ Args:
                     &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
                     &quot;numValue&quot;: 3.14, # Numerical value.
                     &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                    &quot;rationale&quot;: { # Wrapper for the rationale for the answer. # Output only. The rationale for the answer. This field is only populated for answers that are generated by the LLM. Manual edits currently do not have rationales.
+                      &quot;rationale&quot;: &quot;A String&quot;, # The rationale string for the answer.
+                    },
                     &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                    &quot;skipValue&quot;: True or False, # Output only. A value of &quot;Skip&quot;. If provided, this field may only be set to `true`. If a question receives this answer, it will be excluded from any score calculations. This would mean that the question was not evaluated.
                     &quot;strValue&quot;: &quot;A String&quot;, # String value.
                   },
                   &quot;sourceType&quot;: &quot;A String&quot;, # What created the answer.
@@ -223,7 +227,11 @@ Args:
                 &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
                 &quot;numValue&quot;: 3.14, # Numerical value.
                 &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                &quot;rationale&quot;: { # Wrapper for the rationale for the answer. # Output only. The rationale for the answer. This field is only populated for answers that are generated by the LLM. Manual edits currently do not have rationales.
+                  &quot;rationale&quot;: &quot;A String&quot;, # The rationale string for the answer.
+                },
                 &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                &quot;skipValue&quot;: True or False, # Output only. A value of &quot;Skip&quot;. If provided, this field may only be set to `true`. If a question receives this answer, it will be excluded from any score calculations. This would mean that the question was not evaluated.
                 &quot;strValue&quot;: &quot;A String&quot;, # String value.
               },
               &quot;conversation&quot;: &quot;A String&quot;, # The conversation the answer applies to.
@@ -266,7 +274,7 @@ Args:
         { # One channel of conversation-level sentiment data.
           &quot;channelTag&quot;: 42, # The channel of the audio that the data applies to.
           &quot;sentimentData&quot;: { # The data for a sentiment annotation. # Data specifying sentiment.
-            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
             &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
           },
         },
@@ -303,6 +311,7 @@ Args:
     &quot;runSummarizationAnnotator&quot;: True or False, # Whether to run the summarization annotator.
     &quot;summarizationConfig&quot;: { # Configuration for summarization. # Configuration for the summarization annotator.
       &quot;conversationProfile&quot;: &quot;A String&quot;, # Resource name of the Dialogflow conversation profile. Format: projects/{project}/locations/{location}/conversationProfiles/{conversation_profile}
+      &quot;generator&quot;: &quot;A String&quot;, # The resource name of the existing created generator. Format: projects//locations//generators/
       &quot;summarizationModel&quot;: &quot;A String&quot;, # Default summarization model to be used.
     },
   },
@@ -389,7 +398,7 @@ Returns:
           &quot;entityMentionData&quot;: { # The data for an entity mention annotation. This represents a mention of an `Entity` in the conversation. # Data specifying an entity mention.
             &quot;entityUniqueId&quot;: &quot;A String&quot;, # The key of this entity in conversation entities. Can be used to retrieve the exact `Entity` this mention is attached to.
             &quot;sentiment&quot;: { # The data for a sentiment annotation. # Sentiment expressed for this mention of the entity.
-              &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+              &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
               &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
             },
             &quot;type&quot;: &quot;A String&quot;, # The type of the entity mention.
@@ -403,7 +412,7 @@ Returns:
           },
           &quot;issueMatchData&quot;: { # The data for an issue match annotation. # Data specifying an issue match.
             &quot;issueAssignment&quot;: { # Information about the issue. # Information about the issue&#x27;s assignment.
-              &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analyis and immutable since then.
+              &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analysis and immutable since then.
               &quot;issue&quot;: &quot;A String&quot;, # Resource name of the assigned issue.
               &quot;score&quot;: 3.14, # Score indicating the likelihood of the issue assignment. currently bounded on [0,1].
             },
@@ -413,7 +422,7 @@ Returns:
             &quot;phraseMatcher&quot;: &quot;A String&quot;, # The unique identifier (the resource name) of the phrase matcher.
           },
           &quot;sentimentData&quot;: { # The data for a sentiment annotation. # Data specifying sentiment.
-            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
             &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
           },
           &quot;silenceData&quot;: { # The data for a silence annotation. # Data specifying silence.
@@ -428,7 +437,7 @@ Returns:
           },
           &quot;salience&quot;: 3.14, # The salience score associated with the entity in the [0, 1.0] range. The salience score for an entity provides information about the importance or centrality of that entity to the entire document text. Scores closer to 0 are less salient, while scores closer to 1.0 are highly salient.
           &quot;sentiment&quot;: { # The data for a sentiment annotation. # The aggregate sentiment expressed for this entity in the conversation.
-            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
             &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
           },
           &quot;type&quot;: &quot;A String&quot;, # The entity type.
@@ -444,7 +453,7 @@ Returns:
         &quot;issueModel&quot;: &quot;A String&quot;, # Issue model that generates the result. Format: projects/{project}/locations/{location}/issueModels/{issue_model}
         &quot;issues&quot;: [ # All the matched issues.
           { # Information about the issue.
-            &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analyis and immutable since then.
+            &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analysis and immutable since then.
             &quot;issue&quot;: &quot;A String&quot;, # Resource name of the assigned issue.
             &quot;score&quot;: 3.14, # Score indicating the likelihood of the issue assignment. currently bounded on [0,1].
           },
@@ -475,7 +484,11 @@ Returns:
                     &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
                     &quot;numValue&quot;: 3.14, # Numerical value.
                     &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                    &quot;rationale&quot;: { # Wrapper for the rationale for the answer. # Output only. The rationale for the answer. This field is only populated for answers that are generated by the LLM. Manual edits currently do not have rationales.
+                      &quot;rationale&quot;: &quot;A String&quot;, # The rationale string for the answer.
+                    },
                     &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                    &quot;skipValue&quot;: True or False, # Output only. A value of &quot;Skip&quot;. If provided, this field may only be set to `true`. If a question receives this answer, it will be excluded from any score calculations. This would mean that the question was not evaluated.
                     &quot;strValue&quot;: &quot;A String&quot;, # String value.
                   },
                   &quot;sourceType&quot;: &quot;A String&quot;, # What created the answer.
@@ -488,7 +501,11 @@ Returns:
                 &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
                 &quot;numValue&quot;: 3.14, # Numerical value.
                 &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                &quot;rationale&quot;: { # Wrapper for the rationale for the answer. # Output only. The rationale for the answer. This field is only populated for answers that are generated by the LLM. Manual edits currently do not have rationales.
+                  &quot;rationale&quot;: &quot;A String&quot;, # The rationale string for the answer.
+                },
                 &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                &quot;skipValue&quot;: True or False, # Output only. A value of &quot;Skip&quot;. If provided, this field may only be set to `true`. If a question receives this answer, it will be excluded from any score calculations. This would mean that the question was not evaluated.
                 &quot;strValue&quot;: &quot;A String&quot;, # String value.
               },
               &quot;conversation&quot;: &quot;A String&quot;, # The conversation the answer applies to.
@@ -531,7 +548,7 @@ Returns:
         { # One channel of conversation-level sentiment data.
           &quot;channelTag&quot;: 42, # The channel of the audio that the data applies to.
           &quot;sentimentData&quot;: { # The data for a sentiment annotation. # Data specifying sentiment.
-            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+            &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
             &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
           },
         },
@@ -568,6 +585,7 @@ Returns:
     &quot;runSummarizationAnnotator&quot;: True or False, # Whether to run the summarization annotator.
     &quot;summarizationConfig&quot;: { # Configuration for summarization. # Configuration for the summarization annotator.
       &quot;conversationProfile&quot;: &quot;A String&quot;, # Resource name of the Dialogflow conversation profile. Format: projects/{project}/locations/{location}/conversationProfiles/{conversation_profile}
+      &quot;generator&quot;: &quot;A String&quot;, # The resource name of the existing created generator. Format: projects//locations//generators/
       &quot;summarizationModel&quot;: &quot;A String&quot;, # Default summarization model to be used.
     },
   },
@@ -613,7 +631,7 @@ Returns:
               &quot;entityMentionData&quot;: { # The data for an entity mention annotation. This represents a mention of an `Entity` in the conversation. # Data specifying an entity mention.
                 &quot;entityUniqueId&quot;: &quot;A String&quot;, # The key of this entity in conversation entities. Can be used to retrieve the exact `Entity` this mention is attached to.
                 &quot;sentiment&quot;: { # The data for a sentiment annotation. # Sentiment expressed for this mention of the entity.
-                  &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+                  &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
                   &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
                 },
                 &quot;type&quot;: &quot;A String&quot;, # The type of the entity mention.
@@ -627,7 +645,7 @@ Returns:
               },
               &quot;issueMatchData&quot;: { # The data for an issue match annotation. # Data specifying an issue match.
                 &quot;issueAssignment&quot;: { # Information about the issue. # Information about the issue&#x27;s assignment.
-                  &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analyis and immutable since then.
+                  &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analysis and immutable since then.
                   &quot;issue&quot;: &quot;A String&quot;, # Resource name of the assigned issue.
                   &quot;score&quot;: 3.14, # Score indicating the likelihood of the issue assignment. currently bounded on [0,1].
                 },
@@ -637,7 +655,7 @@ Returns:
                 &quot;phraseMatcher&quot;: &quot;A String&quot;, # The unique identifier (the resource name) of the phrase matcher.
               },
               &quot;sentimentData&quot;: { # The data for a sentiment annotation. # Data specifying sentiment.
-                &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+                &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
                 &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
               },
               &quot;silenceData&quot;: { # The data for a silence annotation. # Data specifying silence.
@@ -652,7 +670,7 @@ Returns:
               },
               &quot;salience&quot;: 3.14, # The salience score associated with the entity in the [0, 1.0] range. The salience score for an entity provides information about the importance or centrality of that entity to the entire document text. Scores closer to 0 are less salient, while scores closer to 1.0 are highly salient.
               &quot;sentiment&quot;: { # The data for a sentiment annotation. # The aggregate sentiment expressed for this entity in the conversation.
-                &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+                &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
                 &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
               },
               &quot;type&quot;: &quot;A String&quot;, # The entity type.
@@ -668,7 +686,7 @@ Returns:
             &quot;issueModel&quot;: &quot;A String&quot;, # Issue model that generates the result. Format: projects/{project}/locations/{location}/issueModels/{issue_model}
             &quot;issues&quot;: [ # All the matched issues.
               { # Information about the issue.
-                &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analyis and immutable since then.
+                &quot;displayName&quot;: &quot;A String&quot;, # Immutable. Display name of the assigned issue. This field is set at time of analysis and immutable since then.
                 &quot;issue&quot;: &quot;A String&quot;, # Resource name of the assigned issue.
                 &quot;score&quot;: 3.14, # Score indicating the likelihood of the issue assignment. currently bounded on [0,1].
               },
@@ -699,7 +717,11 @@ Returns:
                         &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
                         &quot;numValue&quot;: 3.14, # Numerical value.
                         &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                        &quot;rationale&quot;: { # Wrapper for the rationale for the answer. # Output only. The rationale for the answer. This field is only populated for answers that are generated by the LLM. Manual edits currently do not have rationales.
+                          &quot;rationale&quot;: &quot;A String&quot;, # The rationale string for the answer.
+                        },
                         &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                        &quot;skipValue&quot;: True or False, # Output only. A value of &quot;Skip&quot;. If provided, this field may only be set to `true`. If a question receives this answer, it will be excluded from any score calculations. This would mean that the question was not evaluated.
                         &quot;strValue&quot;: &quot;A String&quot;, # String value.
                       },
                       &quot;sourceType&quot;: &quot;A String&quot;, # What created the answer.
@@ -712,7 +734,11 @@ Returns:
                     &quot;normalizedScore&quot;: 3.14, # Output only. Normalized score of the questions. Calculated as score / potential_score.
                     &quot;numValue&quot;: 3.14, # Numerical value.
                     &quot;potentialScore&quot;: 3.14, # Output only. The maximum potential score of the question.
+                    &quot;rationale&quot;: { # Wrapper for the rationale for the answer. # Output only. The rationale for the answer. This field is only populated for answers that are generated by the LLM. Manual edits currently do not have rationales.
+                      &quot;rationale&quot;: &quot;A String&quot;, # The rationale string for the answer.
+                    },
                     &quot;score&quot;: 3.14, # Output only. Numerical score of the answer.
+                    &quot;skipValue&quot;: True or False, # Output only. A value of &quot;Skip&quot;. If provided, this field may only be set to `true`. If a question receives this answer, it will be excluded from any score calculations. This would mean that the question was not evaluated.
                     &quot;strValue&quot;: &quot;A String&quot;, # String value.
                   },
                   &quot;conversation&quot;: &quot;A String&quot;, # The conversation the answer applies to.
@@ -755,7 +781,7 @@ Returns:
             { # One channel of conversation-level sentiment data.
               &quot;channelTag&quot;: 42, # The channel of the audio that the data applies to.
               &quot;sentimentData&quot;: { # The data for a sentiment annotation. # Data specifying sentiment.
-                &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the abolute magnitude of sentiment regardless of score.
+                &quot;magnitude&quot;: 3.14, # A non-negative number from 0 to infinity which represents the absolute magnitude of sentiment regardless of score.
                 &quot;score&quot;: 3.14, # The sentiment score between -1.0 (negative) and 1.0 (positive).
               },
             },
@@ -792,6 +818,7 @@ Returns:
         &quot;runSummarizationAnnotator&quot;: True or False, # Whether to run the summarization annotator.
         &quot;summarizationConfig&quot;: { # Configuration for summarization. # Configuration for the summarization annotator.
           &quot;conversationProfile&quot;: &quot;A String&quot;, # Resource name of the Dialogflow conversation profile. Format: projects/{project}/locations/{location}/conversationProfiles/{conversation_profile}
+          &quot;generator&quot;: &quot;A String&quot;, # The resource name of the existing created generator. Format: projects//locations//generators/
           &quot;summarizationModel&quot;: &quot;A String&quot;, # Default summarization model to be used.
         },
       },

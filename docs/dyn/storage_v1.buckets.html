@@ -93,7 +93,7 @@ h1, h2, h3 {
   <code><a href="#insert">insert(project, body=None, enableObjectRetention=None, predefinedAcl=None, predefinedDefaultObjectAcl=None, projection=None, userProject=None)</a></code></p>
 <p class="firstline">Creates a new bucket.</p>
 <p class="toc_element">
-  <code><a href="#list">list(project, maxResults=None, pageToken=None, prefix=None, projection=None, softDeleted=None, userProject=None)</a></code></p>
+  <code><a href="#list">list(project, maxResults=None, pageToken=None, prefix=None, projection=None, returnPartialSuccess=None, softDeleted=None, userProject=None)</a></code></p>
 <p class="firstline">Retrieves a list of buckets for a given project.</p>
 <p class="toc_element">
   <code><a href="#list_next">list_next()</a></code></p>
@@ -247,7 +247,19 @@ Returns:
     },
   ],
   &quot;encryption&quot;: { # Encryption configuration for a bucket.
+    &quot;customerManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Managed Encryption Keys. Defaults to NotRestricted.
+    },
+    &quot;customerSuppliedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Supplied Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Supplied Encryption Keys. Defaults to NotRestricted.
+    },
     &quot;defaultKmsKeyName&quot;: &quot;A String&quot;, # A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified.
+    &quot;googleManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Google Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Google-Managed Encryption Keys. Defaults to NotRestricted.
+    },
   },
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1 Entity tag for the bucket.
   &quot;generation&quot;: &quot;A String&quot;, # The generation of this bucket.
@@ -268,6 +280,8 @@ Returns:
   },
   &quot;id&quot;: &quot;A String&quot;, # The ID of the bucket. For buckets, the id and name properties are the same.
   &quot;ipFilter&quot;: { # The bucket&#x27;s IP filter configuration. Specifies the network sources that are allowed to access the operations on the bucket, as well as its underlying objects. Only enforced when the mode is set to &#x27;Enabled&#x27;.
+    &quot;allowAllServiceAgentAccess&quot;: True or False, # Whether to allow all service agents to access the bucket regardless of the IP filter configuration.
+    &quot;allowCrossOrgVpcs&quot;: True or False, # Whether to allow cross-org VPCs in the bucket&#x27;s IP filter configuration.
     &quot;mode&quot;: &quot;A String&quot;, # The mode of the IP filter. Valid values are &#x27;Enabled&#x27; and &#x27;Disabled&#x27;.
     &quot;publicNetworkSource&quot;: { # The public network source of the bucket&#x27;s IP filter.
       &quot;allowedIpCidrRanges&quot;: [ # The list of public IPv4, IPv6 cidr ranges that are allowed to access the bucket.
@@ -382,28 +396,28 @@ Returns:
         &quot;title&quot;: &quot;A String&quot;, # An optional title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
       },
       &quot;members&quot;: [ # A collection of identifiers for members who may assume the provided role. Recognized identifiers are as follows:
-          # - allUsers — A special identifier that represents anyone on the internet; with or without a Google account.
-          # - allAuthenticatedUsers — A special identifier that represents anyone who is authenticated with a Google account or a service account.
-          # - user:emailid — An email address that represents a specific account. For example, user:alice@gmail.com or user:joe@example.com.
-          # - serviceAccount:emailid — An email address that represents a service account. For example,  serviceAccount:my-other-app@appspot.gserviceaccount.com .
-          # - group:emailid — An email address that represents a Google group. For example, group:admins@example.com.
-          # - domain:domain — A Google Apps domain name that represents all the users of that domain. For example, domain:google.com or domain:example.com.
-          # - projectOwner:projectid — Owners of the given project. For example, projectOwner:my-example-project
-          # - projectEditor:projectid — Editors of the given project. For example, projectEditor:my-example-project
-          # - projectViewer:projectid — Viewers of the given project. For example, projectViewer:my-example-project
+          # - allUsers - A special identifier that represents anyone on the internet; with or without a Google account.
+          # - allAuthenticatedUsers - A special identifier that represents anyone who is authenticated with a Google account or a service account.
+          # - user:emailid - An email address that represents a specific account. For example, user:alice@gmail.com or user:joe@example.com.
+          # - serviceAccount:emailid - An email address that represents a service account. For example,  serviceAccount:my-other-app@appspot.gserviceaccount.com .
+          # - group:emailid - An email address that represents a Google group. For example, group:admins@example.com.
+          # - domain:domain - A Google Apps domain name that represents all the users of that domain. For example, domain:google.com or domain:example.com.
+          # - projectOwner:projectid - Owners of the given project. For example, projectOwner:my-example-project
+          # - projectEditor:projectid - Editors of the given project. For example, projectEditor:my-example-project
+          # - projectViewer:projectid - Viewers of the given project. For example, projectViewer:my-example-project
         &quot;A String&quot;,
       ],
       &quot;role&quot;: &quot;A String&quot;, # The role to which members belong. Two types of roles are supported: new IAM roles, which grant permissions that do not map directly to those provided by ACLs, and legacy IAM roles, which do map directly to ACL permissions. All roles are of the format roles/storage.specificRole.
           # The new IAM roles are:
-          # - roles/storage.admin — Full control of Google Cloud Storage resources.
-          # - roles/storage.objectViewer — Read-Only access to Google Cloud Storage objects.
-          # - roles/storage.objectCreator — Access to create objects in Google Cloud Storage.
-          # - roles/storage.objectAdmin — Full control of Google Cloud Storage objects.   The legacy IAM roles are:
-          # - roles/storage.legacyObjectReader — Read-only access to objects without listing. Equivalent to an ACL entry on an object with the READER role.
-          # - roles/storage.legacyObjectOwner — Read/write access to existing objects without listing. Equivalent to an ACL entry on an object with the OWNER role.
-          # - roles/storage.legacyBucketReader — Read access to buckets with object listing. Equivalent to an ACL entry on a bucket with the READER role.
-          # - roles/storage.legacyBucketWriter — Read access to buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the WRITER role.
-          # - roles/storage.legacyBucketOwner — Read and write access to existing buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the OWNER role.
+          # - roles/storage.admin - Full control of Google Cloud Storage resources.
+          # - roles/storage.objectViewer - Read-Only access to Google Cloud Storage objects.
+          # - roles/storage.objectCreator - Access to create objects in Google Cloud Storage.
+          # - roles/storage.objectAdmin - Full control of Google Cloud Storage objects.   The legacy IAM roles are:
+          # - roles/storage.legacyObjectReader - Read-only access to objects without listing. Equivalent to an ACL entry on an object with the READER role.
+          # - roles/storage.legacyObjectOwner - Read/write access to existing objects without listing. Equivalent to an ACL entry on an object with the OWNER role.
+          # - roles/storage.legacyBucketReader - Read access to buckets with object listing. Equivalent to an ACL entry on a bucket with the READER role.
+          # - roles/storage.legacyBucketWriter - Read access to buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the WRITER role.
+          # - roles/storage.legacyBucketOwner - Read and write access to existing buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the OWNER role.
     },
   ],
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1  Entity tag for the policy.
@@ -540,7 +554,19 @@ Args:
     },
   ],
   &quot;encryption&quot;: { # Encryption configuration for a bucket.
+    &quot;customerManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Managed Encryption Keys. Defaults to NotRestricted.
+    },
+    &quot;customerSuppliedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Supplied Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Supplied Encryption Keys. Defaults to NotRestricted.
+    },
     &quot;defaultKmsKeyName&quot;: &quot;A String&quot;, # A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified.
+    &quot;googleManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Google Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Google-Managed Encryption Keys. Defaults to NotRestricted.
+    },
   },
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1 Entity tag for the bucket.
   &quot;generation&quot;: &quot;A String&quot;, # The generation of this bucket.
@@ -561,6 +587,8 @@ Args:
   },
   &quot;id&quot;: &quot;A String&quot;, # The ID of the bucket. For buckets, the id and name properties are the same.
   &quot;ipFilter&quot;: { # The bucket&#x27;s IP filter configuration. Specifies the network sources that are allowed to access the operations on the bucket, as well as its underlying objects. Only enforced when the mode is set to &#x27;Enabled&#x27;.
+    &quot;allowAllServiceAgentAccess&quot;: True or False, # Whether to allow all service agents to access the bucket regardless of the IP filter configuration.
+    &quot;allowCrossOrgVpcs&quot;: True or False, # Whether to allow cross-org VPCs in the bucket&#x27;s IP filter configuration.
     &quot;mode&quot;: &quot;A String&quot;, # The mode of the IP filter. Valid values are &#x27;Enabled&#x27; and &#x27;Disabled&#x27;.
     &quot;publicNetworkSource&quot;: { # The public network source of the bucket&#x27;s IP filter.
       &quot;allowedIpCidrRanges&quot;: [ # The list of public IPv4, IPv6 cidr ranges that are allowed to access the bucket.
@@ -768,7 +796,19 @@ Returns:
     },
   ],
   &quot;encryption&quot;: { # Encryption configuration for a bucket.
+    &quot;customerManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Managed Encryption Keys. Defaults to NotRestricted.
+    },
+    &quot;customerSuppliedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Supplied Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Supplied Encryption Keys. Defaults to NotRestricted.
+    },
     &quot;defaultKmsKeyName&quot;: &quot;A String&quot;, # A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified.
+    &quot;googleManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Google Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Google-Managed Encryption Keys. Defaults to NotRestricted.
+    },
   },
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1 Entity tag for the bucket.
   &quot;generation&quot;: &quot;A String&quot;, # The generation of this bucket.
@@ -789,6 +829,8 @@ Returns:
   },
   &quot;id&quot;: &quot;A String&quot;, # The ID of the bucket. For buckets, the id and name properties are the same.
   &quot;ipFilter&quot;: { # The bucket&#x27;s IP filter configuration. Specifies the network sources that are allowed to access the operations on the bucket, as well as its underlying objects. Only enforced when the mode is set to &#x27;Enabled&#x27;.
+    &quot;allowAllServiceAgentAccess&quot;: True or False, # Whether to allow all service agents to access the bucket regardless of the IP filter configuration.
+    &quot;allowCrossOrgVpcs&quot;: True or False, # Whether to allow cross-org VPCs in the bucket&#x27;s IP filter configuration.
     &quot;mode&quot;: &quot;A String&quot;, # The mode of the IP filter. Valid values are &#x27;Enabled&#x27; and &#x27;Disabled&#x27;.
     &quot;publicNetworkSource&quot;: { # The public network source of the bucket&#x27;s IP filter.
       &quot;allowedIpCidrRanges&quot;: [ # The list of public IPv4, IPv6 cidr ranges that are allowed to access the bucket.
@@ -882,7 +924,7 @@ Returns:
 </div>
 
 <div class="method">
-    <code class="details" id="list">list(project, maxResults=None, pageToken=None, prefix=None, projection=None, softDeleted=None, userProject=None)</code>
+    <code class="details" id="list">list(project, maxResults=None, pageToken=None, prefix=None, projection=None, returnPartialSuccess=None, softDeleted=None, userProject=None)</code>
   <pre>Retrieves a list of buckets for a given project.
 
 Args:
@@ -894,6 +936,7 @@ Args:
     Allowed values
       full - Include all properties.
       noAcl - Omit owner, acl and defaultObjectAcl properties.
+  returnPartialSuccess: boolean, If true, return a list of bucket resource names for buckets that are in unreachable locations.
   softDeleted: boolean, If true, only soft-deleted bucket versions will be returned. The default is false. For more information, see [Soft Delete](https://cloud.google.com/storage/docs/soft-delete).
   userProject: string, The project to be billed for this request.
 
@@ -993,7 +1036,19 @@ Returns:
         },
       ],
       &quot;encryption&quot;: { # Encryption configuration for a bucket.
+        &quot;customerManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Managed Encryption type by default.
+          &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+          &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Managed Encryption Keys. Defaults to NotRestricted.
+        },
+        &quot;customerSuppliedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Supplied Encryption type by default.
+          &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+          &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Supplied Encryption Keys. Defaults to NotRestricted.
+        },
         &quot;defaultKmsKeyName&quot;: &quot;A String&quot;, # A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified.
+        &quot;googleManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Google Managed Encryption type by default.
+          &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+          &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Google-Managed Encryption Keys. Defaults to NotRestricted.
+        },
       },
       &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1 Entity tag for the bucket.
       &quot;generation&quot;: &quot;A String&quot;, # The generation of this bucket.
@@ -1014,6 +1069,8 @@ Returns:
       },
       &quot;id&quot;: &quot;A String&quot;, # The ID of the bucket. For buckets, the id and name properties are the same.
       &quot;ipFilter&quot;: { # The bucket&#x27;s IP filter configuration. Specifies the network sources that are allowed to access the operations on the bucket, as well as its underlying objects. Only enforced when the mode is set to &#x27;Enabled&#x27;.
+        &quot;allowAllServiceAgentAccess&quot;: True or False, # Whether to allow all service agents to access the bucket regardless of the IP filter configuration.
+        &quot;allowCrossOrgVpcs&quot;: True or False, # Whether to allow cross-org VPCs in the bucket&#x27;s IP filter configuration.
         &quot;mode&quot;: &quot;A String&quot;, # The mode of the IP filter. Valid values are &#x27;Enabled&#x27; and &#x27;Disabled&#x27;.
         &quot;publicNetworkSource&quot;: { # The public network source of the bucket&#x27;s IP filter.
           &quot;allowedIpCidrRanges&quot;: [ # The list of public IPv4, IPv6 cidr ranges that are allowed to access the bucket.
@@ -1107,6 +1164,9 @@ Returns:
   ],
   &quot;kind&quot;: &quot;storage#buckets&quot;, # The kind of item this is. For lists of buckets, this is always storage#buckets.
   &quot;nextPageToken&quot;: &quot;A String&quot;, # The continuation token, used to page through large result sets. Provide this value in a subsequent request to return the next page of results.
+  &quot;unreachable&quot;: [ # The list of bucket resource names that could not be reached during the listing operation.
+    &quot;A String&quot;,
+  ],
 }</pre>
 </div>
 
@@ -1227,7 +1287,19 @@ Returns:
     },
   ],
   &quot;encryption&quot;: { # Encryption configuration for a bucket.
+    &quot;customerManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Managed Encryption Keys. Defaults to NotRestricted.
+    },
+    &quot;customerSuppliedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Supplied Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Supplied Encryption Keys. Defaults to NotRestricted.
+    },
     &quot;defaultKmsKeyName&quot;: &quot;A String&quot;, # A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified.
+    &quot;googleManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Google Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Google-Managed Encryption Keys. Defaults to NotRestricted.
+    },
   },
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1 Entity tag for the bucket.
   &quot;generation&quot;: &quot;A String&quot;, # The generation of this bucket.
@@ -1248,6 +1320,8 @@ Returns:
   },
   &quot;id&quot;: &quot;A String&quot;, # The ID of the bucket. For buckets, the id and name properties are the same.
   &quot;ipFilter&quot;: { # The bucket&#x27;s IP filter configuration. Specifies the network sources that are allowed to access the operations on the bucket, as well as its underlying objects. Only enforced when the mode is set to &#x27;Enabled&#x27;.
+    &quot;allowAllServiceAgentAccess&quot;: True or False, # Whether to allow all service agents to access the bucket regardless of the IP filter configuration.
+    &quot;allowCrossOrgVpcs&quot;: True or False, # Whether to allow cross-org VPCs in the bucket&#x27;s IP filter configuration.
     &quot;mode&quot;: &quot;A String&quot;, # The mode of the IP filter. Valid values are &#x27;Enabled&#x27; and &#x27;Disabled&#x27;.
     &quot;publicNetworkSource&quot;: { # The public network source of the bucket&#x27;s IP filter.
       &quot;allowedIpCidrRanges&quot;: [ # The list of public IPv4, IPv6 cidr ranges that are allowed to access the bucket.
@@ -1440,7 +1514,19 @@ Args:
     },
   ],
   &quot;encryption&quot;: { # Encryption configuration for a bucket.
+    &quot;customerManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Managed Encryption Keys. Defaults to NotRestricted.
+    },
+    &quot;customerSuppliedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Supplied Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Supplied Encryption Keys. Defaults to NotRestricted.
+    },
     &quot;defaultKmsKeyName&quot;: &quot;A String&quot;, # A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified.
+    &quot;googleManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Google Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Google-Managed Encryption Keys. Defaults to NotRestricted.
+    },
   },
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1 Entity tag for the bucket.
   &quot;generation&quot;: &quot;A String&quot;, # The generation of this bucket.
@@ -1461,6 +1547,8 @@ Args:
   },
   &quot;id&quot;: &quot;A String&quot;, # The ID of the bucket. For buckets, the id and name properties are the same.
   &quot;ipFilter&quot;: { # The bucket&#x27;s IP filter configuration. Specifies the network sources that are allowed to access the operations on the bucket, as well as its underlying objects. Only enforced when the mode is set to &#x27;Enabled&#x27;.
+    &quot;allowAllServiceAgentAccess&quot;: True or False, # Whether to allow all service agents to access the bucket regardless of the IP filter configuration.
+    &quot;allowCrossOrgVpcs&quot;: True or False, # Whether to allow cross-org VPCs in the bucket&#x27;s IP filter configuration.
     &quot;mode&quot;: &quot;A String&quot;, # The mode of the IP filter. Valid values are &#x27;Enabled&#x27; and &#x27;Disabled&#x27;.
     &quot;publicNetworkSource&quot;: { # The public network source of the bucket&#x27;s IP filter.
       &quot;allowedIpCidrRanges&quot;: [ # The list of public IPv4, IPv6 cidr ranges that are allowed to access the bucket.
@@ -1669,7 +1757,19 @@ Returns:
     },
   ],
   &quot;encryption&quot;: { # Encryption configuration for a bucket.
+    &quot;customerManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Managed Encryption Keys. Defaults to NotRestricted.
+    },
+    &quot;customerSuppliedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Supplied Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Supplied Encryption Keys. Defaults to NotRestricted.
+    },
     &quot;defaultKmsKeyName&quot;: &quot;A String&quot;, # A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified.
+    &quot;googleManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Google Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Google-Managed Encryption Keys. Defaults to NotRestricted.
+    },
   },
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1 Entity tag for the bucket.
   &quot;generation&quot;: &quot;A String&quot;, # The generation of this bucket.
@@ -1690,6 +1790,8 @@ Returns:
   },
   &quot;id&quot;: &quot;A String&quot;, # The ID of the bucket. For buckets, the id and name properties are the same.
   &quot;ipFilter&quot;: { # The bucket&#x27;s IP filter configuration. Specifies the network sources that are allowed to access the operations on the bucket, as well as its underlying objects. Only enforced when the mode is set to &#x27;Enabled&#x27;.
+    &quot;allowAllServiceAgentAccess&quot;: True or False, # Whether to allow all service agents to access the bucket regardless of the IP filter configuration.
+    &quot;allowCrossOrgVpcs&quot;: True or False, # Whether to allow cross-org VPCs in the bucket&#x27;s IP filter configuration.
     &quot;mode&quot;: &quot;A String&quot;, # The mode of the IP filter. Valid values are &#x27;Enabled&#x27; and &#x27;Disabled&#x27;.
     &quot;publicNetworkSource&quot;: { # The public network source of the bucket&#x27;s IP filter.
       &quot;allowedIpCidrRanges&quot;: [ # The list of public IPv4, IPv6 cidr ranges that are allowed to access the bucket.
@@ -1935,7 +2037,19 @@ Returns:
     },
   ],
   &quot;encryption&quot;: { # Encryption configuration for a bucket.
+    &quot;customerManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Managed Encryption Keys. Defaults to NotRestricted.
+    },
+    &quot;customerSuppliedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Supplied Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Supplied Encryption Keys. Defaults to NotRestricted.
+    },
     &quot;defaultKmsKeyName&quot;: &quot;A String&quot;, # A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified.
+    &quot;googleManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Google Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Google-Managed Encryption Keys. Defaults to NotRestricted.
+    },
   },
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1 Entity tag for the bucket.
   &quot;generation&quot;: &quot;A String&quot;, # The generation of this bucket.
@@ -1956,6 +2070,8 @@ Returns:
   },
   &quot;id&quot;: &quot;A String&quot;, # The ID of the bucket. For buckets, the id and name properties are the same.
   &quot;ipFilter&quot;: { # The bucket&#x27;s IP filter configuration. Specifies the network sources that are allowed to access the operations on the bucket, as well as its underlying objects. Only enforced when the mode is set to &#x27;Enabled&#x27;.
+    &quot;allowAllServiceAgentAccess&quot;: True or False, # Whether to allow all service agents to access the bucket regardless of the IP filter configuration.
+    &quot;allowCrossOrgVpcs&quot;: True or False, # Whether to allow cross-org VPCs in the bucket&#x27;s IP filter configuration.
     &quot;mode&quot;: &quot;A String&quot;, # The mode of the IP filter. Valid values are &#x27;Enabled&#x27; and &#x27;Disabled&#x27;.
     &quot;publicNetworkSource&quot;: { # The public network source of the bucket&#x27;s IP filter.
       &quot;allowedIpCidrRanges&quot;: [ # The list of public IPv4, IPv6 cidr ranges that are allowed to access the bucket.
@@ -2067,28 +2183,28 @@ Args:
         &quot;title&quot;: &quot;A String&quot;, # An optional title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
       },
       &quot;members&quot;: [ # A collection of identifiers for members who may assume the provided role. Recognized identifiers are as follows:
-          # - allUsers — A special identifier that represents anyone on the internet; with or without a Google account.
-          # - allAuthenticatedUsers — A special identifier that represents anyone who is authenticated with a Google account or a service account.
-          # - user:emailid — An email address that represents a specific account. For example, user:alice@gmail.com or user:joe@example.com.
-          # - serviceAccount:emailid — An email address that represents a service account. For example,  serviceAccount:my-other-app@appspot.gserviceaccount.com .
-          # - group:emailid — An email address that represents a Google group. For example, group:admins@example.com.
-          # - domain:domain — A Google Apps domain name that represents all the users of that domain. For example, domain:google.com or domain:example.com.
-          # - projectOwner:projectid — Owners of the given project. For example, projectOwner:my-example-project
-          # - projectEditor:projectid — Editors of the given project. For example, projectEditor:my-example-project
-          # - projectViewer:projectid — Viewers of the given project. For example, projectViewer:my-example-project
+          # - allUsers - A special identifier that represents anyone on the internet; with or without a Google account.
+          # - allAuthenticatedUsers - A special identifier that represents anyone who is authenticated with a Google account or a service account.
+          # - user:emailid - An email address that represents a specific account. For example, user:alice@gmail.com or user:joe@example.com.
+          # - serviceAccount:emailid - An email address that represents a service account. For example,  serviceAccount:my-other-app@appspot.gserviceaccount.com .
+          # - group:emailid - An email address that represents a Google group. For example, group:admins@example.com.
+          # - domain:domain - A Google Apps domain name that represents all the users of that domain. For example, domain:google.com or domain:example.com.
+          # - projectOwner:projectid - Owners of the given project. For example, projectOwner:my-example-project
+          # - projectEditor:projectid - Editors of the given project. For example, projectEditor:my-example-project
+          # - projectViewer:projectid - Viewers of the given project. For example, projectViewer:my-example-project
         &quot;A String&quot;,
       ],
       &quot;role&quot;: &quot;A String&quot;, # The role to which members belong. Two types of roles are supported: new IAM roles, which grant permissions that do not map directly to those provided by ACLs, and legacy IAM roles, which do map directly to ACL permissions. All roles are of the format roles/storage.specificRole.
           # The new IAM roles are:
-          # - roles/storage.admin — Full control of Google Cloud Storage resources.
-          # - roles/storage.objectViewer — Read-Only access to Google Cloud Storage objects.
-          # - roles/storage.objectCreator — Access to create objects in Google Cloud Storage.
-          # - roles/storage.objectAdmin — Full control of Google Cloud Storage objects.   The legacy IAM roles are:
-          # - roles/storage.legacyObjectReader — Read-only access to objects without listing. Equivalent to an ACL entry on an object with the READER role.
-          # - roles/storage.legacyObjectOwner — Read/write access to existing objects without listing. Equivalent to an ACL entry on an object with the OWNER role.
-          # - roles/storage.legacyBucketReader — Read access to buckets with object listing. Equivalent to an ACL entry on a bucket with the READER role.
-          # - roles/storage.legacyBucketWriter — Read access to buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the WRITER role.
-          # - roles/storage.legacyBucketOwner — Read and write access to existing buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the OWNER role.
+          # - roles/storage.admin - Full control of Google Cloud Storage resources.
+          # - roles/storage.objectViewer - Read-Only access to Google Cloud Storage objects.
+          # - roles/storage.objectCreator - Access to create objects in Google Cloud Storage.
+          # - roles/storage.objectAdmin - Full control of Google Cloud Storage objects.   The legacy IAM roles are:
+          # - roles/storage.legacyObjectReader - Read-only access to objects without listing. Equivalent to an ACL entry on an object with the READER role.
+          # - roles/storage.legacyObjectOwner - Read/write access to existing objects without listing. Equivalent to an ACL entry on an object with the OWNER role.
+          # - roles/storage.legacyBucketReader - Read access to buckets with object listing. Equivalent to an ACL entry on a bucket with the READER role.
+          # - roles/storage.legacyBucketWriter - Read access to buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the WRITER role.
+          # - roles/storage.legacyBucketOwner - Read and write access to existing buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the OWNER role.
     },
   ],
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1  Entity tag for the policy.
@@ -2112,28 +2228,28 @@ Returns:
         &quot;title&quot;: &quot;A String&quot;, # An optional title for the expression, i.e. a short string describing its purpose. This can be used e.g. in UIs which allow to enter the expression.
       },
       &quot;members&quot;: [ # A collection of identifiers for members who may assume the provided role. Recognized identifiers are as follows:
-          # - allUsers — A special identifier that represents anyone on the internet; with or without a Google account.
-          # - allAuthenticatedUsers — A special identifier that represents anyone who is authenticated with a Google account or a service account.
-          # - user:emailid — An email address that represents a specific account. For example, user:alice@gmail.com or user:joe@example.com.
-          # - serviceAccount:emailid — An email address that represents a service account. For example,  serviceAccount:my-other-app@appspot.gserviceaccount.com .
-          # - group:emailid — An email address that represents a Google group. For example, group:admins@example.com.
-          # - domain:domain — A Google Apps domain name that represents all the users of that domain. For example, domain:google.com or domain:example.com.
-          # - projectOwner:projectid — Owners of the given project. For example, projectOwner:my-example-project
-          # - projectEditor:projectid — Editors of the given project. For example, projectEditor:my-example-project
-          # - projectViewer:projectid — Viewers of the given project. For example, projectViewer:my-example-project
+          # - allUsers - A special identifier that represents anyone on the internet; with or without a Google account.
+          # - allAuthenticatedUsers - A special identifier that represents anyone who is authenticated with a Google account or a service account.
+          # - user:emailid - An email address that represents a specific account. For example, user:alice@gmail.com or user:joe@example.com.
+          # - serviceAccount:emailid - An email address that represents a service account. For example,  serviceAccount:my-other-app@appspot.gserviceaccount.com .
+          # - group:emailid - An email address that represents a Google group. For example, group:admins@example.com.
+          # - domain:domain - A Google Apps domain name that represents all the users of that domain. For example, domain:google.com or domain:example.com.
+          # - projectOwner:projectid - Owners of the given project. For example, projectOwner:my-example-project
+          # - projectEditor:projectid - Editors of the given project. For example, projectEditor:my-example-project
+          # - projectViewer:projectid - Viewers of the given project. For example, projectViewer:my-example-project
         &quot;A String&quot;,
       ],
       &quot;role&quot;: &quot;A String&quot;, # The role to which members belong. Two types of roles are supported: new IAM roles, which grant permissions that do not map directly to those provided by ACLs, and legacy IAM roles, which do map directly to ACL permissions. All roles are of the format roles/storage.specificRole.
           # The new IAM roles are:
-          # - roles/storage.admin — Full control of Google Cloud Storage resources.
-          # - roles/storage.objectViewer — Read-Only access to Google Cloud Storage objects.
-          # - roles/storage.objectCreator — Access to create objects in Google Cloud Storage.
-          # - roles/storage.objectAdmin — Full control of Google Cloud Storage objects.   The legacy IAM roles are:
-          # - roles/storage.legacyObjectReader — Read-only access to objects without listing. Equivalent to an ACL entry on an object with the READER role.
-          # - roles/storage.legacyObjectOwner — Read/write access to existing objects without listing. Equivalent to an ACL entry on an object with the OWNER role.
-          # - roles/storage.legacyBucketReader — Read access to buckets with object listing. Equivalent to an ACL entry on a bucket with the READER role.
-          # - roles/storage.legacyBucketWriter — Read access to buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the WRITER role.
-          # - roles/storage.legacyBucketOwner — Read and write access to existing buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the OWNER role.
+          # - roles/storage.admin - Full control of Google Cloud Storage resources.
+          # - roles/storage.objectViewer - Read-Only access to Google Cloud Storage objects.
+          # - roles/storage.objectCreator - Access to create objects in Google Cloud Storage.
+          # - roles/storage.objectAdmin - Full control of Google Cloud Storage objects.   The legacy IAM roles are:
+          # - roles/storage.legacyObjectReader - Read-only access to objects without listing. Equivalent to an ACL entry on an object with the READER role.
+          # - roles/storage.legacyObjectOwner - Read/write access to existing objects without listing. Equivalent to an ACL entry on an object with the OWNER role.
+          # - roles/storage.legacyBucketReader - Read access to buckets with object listing. Equivalent to an ACL entry on a bucket with the READER role.
+          # - roles/storage.legacyBucketWriter - Read access to buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the WRITER role.
+          # - roles/storage.legacyBucketOwner - Read and write access to existing buckets with object listing/creation/deletion. Equivalent to an ACL entry on a bucket with the OWNER role.
     },
   ],
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1  Entity tag for the policy.
@@ -2158,26 +2274,26 @@ Returns:
     { # A storage.(buckets|objects|managedFolders).testIamPermissions response.
   &quot;kind&quot;: &quot;storage#testIamPermissionsResponse&quot;, # The kind of item this is.
   &quot;permissions&quot;: [ # The permissions held by the caller. Permissions are always of the format storage.resource.capability, where resource is one of buckets, objects, or managedFolders. The supported permissions are as follows:
-      # - storage.buckets.delete — Delete bucket.
-      # - storage.buckets.get — Read bucket metadata.
-      # - storage.buckets.getIamPolicy — Read bucket IAM policy.
-      # - storage.buckets.create — Create bucket.
-      # - storage.buckets.list — List buckets.
-      # - storage.buckets.setIamPolicy — Update bucket IAM policy.
-      # - storage.buckets.update — Update bucket metadata.
-      # - storage.objects.delete — Delete object.
-      # - storage.objects.get — Read object data and metadata.
-      # - storage.objects.getIamPolicy — Read object IAM policy.
-      # - storage.objects.create — Create object.
-      # - storage.objects.list — List objects.
-      # - storage.objects.setIamPolicy — Update object IAM policy.
-      # - storage.objects.update — Update object metadata.
-      # - storage.managedFolders.delete — Delete managed folder.
-      # - storage.managedFolders.get — Read managed folder metadata.
-      # - storage.managedFolders.getIamPolicy — Read managed folder IAM policy.
-      # - storage.managedFolders.create — Create managed folder.
-      # - storage.managedFolders.list — List managed folders.
-      # - storage.managedFolders.setIamPolicy — Update managed folder IAM policy.
+      # - storage.buckets.delete - Delete bucket.
+      # - storage.buckets.get - Read bucket metadata.
+      # - storage.buckets.getIamPolicy - Read bucket IAM policy.
+      # - storage.buckets.create - Create bucket.
+      # - storage.buckets.list - List buckets.
+      # - storage.buckets.setIamPolicy - Update bucket IAM policy.
+      # - storage.buckets.update - Update bucket metadata.
+      # - storage.objects.delete - Delete object.
+      # - storage.objects.get - Read object data and metadata.
+      # - storage.objects.getIamPolicy - Read object IAM policy.
+      # - storage.objects.create - Create object.
+      # - storage.objects.list - List objects.
+      # - storage.objects.setIamPolicy - Update object IAM policy.
+      # - storage.objects.update - Update object metadata.
+      # - storage.managedFolders.delete - Delete managed folder.
+      # - storage.managedFolders.get - Read managed folder metadata.
+      # - storage.managedFolders.getIamPolicy - Read managed folder IAM policy.
+      # - storage.managedFolders.create - Create managed folder.
+      # - storage.managedFolders.list - List managed folders.
+      # - storage.managedFolders.setIamPolicy - Update managed folder IAM policy.
     &quot;A String&quot;,
   ],
 }</pre>
@@ -2283,7 +2399,19 @@ Args:
     },
   ],
   &quot;encryption&quot;: { # Encryption configuration for a bucket.
+    &quot;customerManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Managed Encryption Keys. Defaults to NotRestricted.
+    },
+    &quot;customerSuppliedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Supplied Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Supplied Encryption Keys. Defaults to NotRestricted.
+    },
     &quot;defaultKmsKeyName&quot;: &quot;A String&quot;, # A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified.
+    &quot;googleManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Google Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Google-Managed Encryption Keys. Defaults to NotRestricted.
+    },
   },
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1 Entity tag for the bucket.
   &quot;generation&quot;: &quot;A String&quot;, # The generation of this bucket.
@@ -2304,6 +2432,8 @@ Args:
   },
   &quot;id&quot;: &quot;A String&quot;, # The ID of the bucket. For buckets, the id and name properties are the same.
   &quot;ipFilter&quot;: { # The bucket&#x27;s IP filter configuration. Specifies the network sources that are allowed to access the operations on the bucket, as well as its underlying objects. Only enforced when the mode is set to &#x27;Enabled&#x27;.
+    &quot;allowAllServiceAgentAccess&quot;: True or False, # Whether to allow all service agents to access the bucket regardless of the IP filter configuration.
+    &quot;allowCrossOrgVpcs&quot;: True or False, # Whether to allow cross-org VPCs in the bucket&#x27;s IP filter configuration.
     &quot;mode&quot;: &quot;A String&quot;, # The mode of the IP filter. Valid values are &#x27;Enabled&#x27; and &#x27;Disabled&#x27;.
     &quot;publicNetworkSource&quot;: { # The public network source of the bucket&#x27;s IP filter.
       &quot;allowedIpCidrRanges&quot;: [ # The list of public IPv4, IPv6 cidr ranges that are allowed to access the bucket.
@@ -2512,7 +2642,19 @@ Returns:
     },
   ],
   &quot;encryption&quot;: { # Encryption configuration for a bucket.
+    &quot;customerManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Managed Encryption Keys. Defaults to NotRestricted.
+    },
+    &quot;customerSuppliedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Customer Supplied Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Customer-Supplied Encryption Keys. Defaults to NotRestricted.
+    },
     &quot;defaultKmsKeyName&quot;: &quot;A String&quot;, # A Cloud KMS key that will be used to encrypt objects inserted into this bucket, if no encryption method is specified.
+    &quot;googleManagedEncryptionEnforcementConfig&quot;: { # If set, the new objects created in this bucket must comply with this enforcement config. Changing this has no effect on existing objects; it applies to new objects only. If omitted, the new objects are allowed to be encrypted with Google Managed Encryption type by default.
+      &quot;effectiveTime&quot;: &quot;A String&quot;, # Server-determined value that indicates the time from which configuration was enforced and effective. This value is in RFC 3339 format.
+      &quot;restrictionMode&quot;: &quot;A String&quot;, # Restriction mode for Google-Managed Encryption Keys. Defaults to NotRestricted.
+    },
   },
   &quot;etag&quot;: &quot;A String&quot;, # HTTP 1.1 Entity tag for the bucket.
   &quot;generation&quot;: &quot;A String&quot;, # The generation of this bucket.
@@ -2533,6 +2675,8 @@ Returns:
   },
   &quot;id&quot;: &quot;A String&quot;, # The ID of the bucket. For buckets, the id and name properties are the same.
   &quot;ipFilter&quot;: { # The bucket&#x27;s IP filter configuration. Specifies the network sources that are allowed to access the operations on the bucket, as well as its underlying objects. Only enforced when the mode is set to &#x27;Enabled&#x27;.
+    &quot;allowAllServiceAgentAccess&quot;: True or False, # Whether to allow all service agents to access the bucket regardless of the IP filter configuration.
+    &quot;allowCrossOrgVpcs&quot;: True or False, # Whether to allow cross-org VPCs in the bucket&#x27;s IP filter configuration.
     &quot;mode&quot;: &quot;A String&quot;, # The mode of the IP filter. Valid values are &#x27;Enabled&#x27; and &#x27;Disabled&#x27;.
     &quot;publicNetworkSource&quot;: { # The public network source of the bucket&#x27;s IP filter.
       &quot;allowedIpCidrRanges&quot;: [ # The list of public IPv4, IPv6 cidr ranges that are allowed to access the bucket.
